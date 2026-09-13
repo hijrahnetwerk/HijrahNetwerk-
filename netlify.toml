@@ -1,0 +1,19 @@
+[build]
+  command = "npm run build"
+  publish = "."
+
+# Zorgt dat directe bezoeken aan bv. /login of /dashboard (zonder .html) ook werken
+[[redirects]]
+  from = "/login"
+  to = "/login.html"
+  status = 200
+
+[[redirects]]
+  from = "/register"
+  to = "/register.html"
+  status = 200
+
+[[redirects]]
+  from = "/dashboard"
+  to = "/dashboard.html"
+  status = 200

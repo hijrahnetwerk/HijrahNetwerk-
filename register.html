@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Account aanmaken — Hijrah Netwerk</title>
+<link rel="stylesheet" href="assets/auth-style.css">
+</head>
+<body>
+
+<div class="auth-card">
+  <a href="index.html" class="back-home">← Terug naar de website</a>
+  <div class="brand"><span class="brand-mark">HN</span> Hijrah Netwerk</div>
+
+  <h1>Maak je account aan</h1>
+  <p class="lead">Registreer met je e-mailadres om toegang te krijgen tot je dashboard.</p>
+
+  <div class="msg" id="msg"></div>
+
+  <form id="register-form">
+    <div class="field">
+      <label for="email">E-mailadres</label>
+      <input type="email" id="email" required autocomplete="email" placeholder="jij@voorbeeld.com">
+    </div>
+    <div class="field">
+      <label for="password">Wachtwoord</label>
+      <input type="password" id="password" required minlength="6" autocomplete="new-password" placeholder="Minstens 6 tekens">
+    </div>
+    <button type="submit" class="btn btn-primary" id="submit-btn">Account aanmaken</button>
+  </form>
+
+  <div class="auth-links">
+    Al een account? <a href="login.html">Inloggen</a>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="assets/config.js"></script>
+<script src="assets/supabase-client.js"></script>
+<script src="assets/auth.js"></script>
+<script>
+  const form = document.getElementById('register-form');
+  const msg = document.getElementById('msg');
+  const submitBtn = document.getElementById('submit-btn');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    msg.className = 'msg';
+    msg.textContent = '';
+
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<span class="spinner"></span> Bezig...';
+
+    const { data, error } = await hnSignUp(email, password);
+
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Account aanmaken';
+
+    if (error) {
+      msg.className = 'msg error';
+      msg.textContent = hnFriendlyError(error);
+      return;
+    }
+
+    // Twee mogelijke gevallen, afhankelijk van je Supabase-instelling
+    // "Confirm email" (aan/uit — zie instructies):
+    if (data.session) {
+      // Bevestiging staat UIT in Supabase → meteen ingelogd
+      window.location.href = 'dashboard.html';
+    } else {
+      // Bevestiging staat AAN → gebruiker moet eerst e-mail bevestigen
+      msg.className = 'msg success';
+      msg.textContent = 'Bijna klaar! Check je inbox (' + email + ') en klik op de bevestigingslink om je account te activeren.';
+      form.reset();
+    }
+  });
+</script>
+
+</body>
+</html>

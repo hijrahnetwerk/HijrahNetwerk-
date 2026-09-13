@@ -1,0 +1,9 @@
+{
+  "name": "hijrah-netwerk",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Hijrah Netwerk — statische site met Supabase Auth",
+  "scripts": {
+    "build": "node build.js"
+  }
+}

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mijn dashboard — Hijrah Netwerk</title>
+<style>
+  :root{
+    --brown:#684a25; --brown-dark:#4d3819; --orange:#df842c; --orange-dark:#c66f1e;
+    --gold:#e9a74b; --gold-light:#f6e4c9; --cream:#fbf8f4; --ink:#2b241c; --ink-soft:#5c5346;
+    --line:#ece5da; --shadow-md:0 8px 24px rgba(104,74,37,.08); --radius-lg:24px; --radius-full:999px;
+    --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+  }
+  *{ box-sizing:border-box; }
+  body{ margin:0; font-family:var(--font); background:var(--cream); color:var(--ink); min-height:100vh; }
+  a{ text-decoration:none; color:inherit; }
+  header{ background:#fff; border-bottom:1px solid var(--line); padding:16px 24px; display:flex; align-items:center; justify-content:space-between; }
+  .brand{ display:flex; align-items:center; gap:10px; font-weight:800; color:var(--brown-dark); }
+  .brand-mark{ width:32px; height:32px; border-radius:9px; background:linear-gradient(155deg,var(--gold),var(--orange)); display:flex; align-items:center; justify-content:center; color:#fff; font-size:13px; font-weight:800; }
+  .logout-btn{ padding:9px 18px; border-radius:var(--radius-full); border:1px solid var(--line); background:#fff; font-weight:600; font-size:13.5px; cursor:pointer; color:var(--brown-dark); }
+  .logout-btn:hover{ border-color:var(--orange); color:var(--orange-dark); }
+  main{ max-width:720px; margin:0 auto; padding:48px 24px; }
+  .welcome-card{ background:#fff; border:1px solid var(--line); border-radius:var(--radius-lg); box-shadow:var(--shadow-md); padding:32px; }
+  h1{ margin:0 0 8px; font-size:24px; color:var(--brown-dark); }
+  .status-row{ display:flex; align-items:center; gap:8px; margin:18px 0; font-size:14px; color:var(--ink-soft); }
+  .dot{ width:8px; height:8px; border-radius:50%; background:#3f8b5c; }
+  .info-row{ display:flex; justify-content:space-between; padding:12px 0; border-bottom:1px solid #f2ede4; font-size:14px; }
+  .info-row:last-child{ border-bottom:none; }
+  .info-row span:first-child{ color:var(--ink-soft); }
+  .info-row span:last-child{ font-weight:700; color:var(--brown-dark); }
+  .loading-screen{ display:flex; align-items:center; justify-content:center; min-height:100vh; color:var(--ink-soft); font-size:14px; }
+</style>
+</head>
+<body>
+
+<div id="loading" class="loading-screen">Bezig met controleren van je sessie...</div>
+
+<div id="app" style="display:none;">
+  <header>
+    <a href="index.html" class="brand"><span class="brand-mark">HN</span> Hijrah Netwerk</a>
+    <button class="logout-btn" id="logout-btn">Uitloggen</button>
+  </header>
+
+  <main>
+    <div class="welcome-card">
+      <h1>Mijn Hijrah Netwerk</h1>
+      <div class="status-row"><span class="dot"></span> Je bent ingelogd</div>
+
+      <div class="info-row"><span>E-mailadres</span><span id="user-email">—</span></div>
+      <div class="info-row"><span>Account aangemaakt op</span><span id="user-created">—</span></div>
+      <div class="info-row"><span>Gebruikers-ID</span><span id="user-id" style="font-size:12px;">—</span></div>
+    </div>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="assets/config.js"></script>
+<script src="assets/supabase-client.js"></script>
+<script src="assets/auth.js"></script>
+<script>
+  (async () => {
+    const { session } = await hnGetSession();
+
+    if (!session || !session.user) {
+      // Niet ingelogd → terug naar login, geen dashboard te zien
+      window.location.href = 'login.html';
+      return;
+    }
+
+    document.getElementById('user-email').textContent = session.user.email;
+    document.getElementById('user-created').textContent = new Date(session.user.created_at).toLocaleDateString('nl-BE', { year:'numeric', month:'long', day:'numeric' });
+    document.getElementById('user-id').textContent = session.user.id;
+
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+  })();
+
+  document.getElementById('logout-btn').addEventListener('click', async () => {
+    await hnSignOut();
+    window.location.href = 'login.html';
+  });
+</script>
+
+</body>
+</html>
