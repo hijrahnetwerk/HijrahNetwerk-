@@ -1,1 +1,1483 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin — Hijrah Netwerk</title>
 
+  <script src="assets/config.js"></script>
+  <script src="supabase-client.js"></script>
+
+  <style>
+    :root {
+      --brown: #684a25;
+      --orange: #df842c;
+      --gold: #e9a74b;
+      --cream: #faf7f2;
+      --white: #ffffff;
+      --text: #29231d;
+      --muted: #756d63;
+      --border: #e8e0d6;
+      --danger: #b33a3a;
+      --success: #39734a;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: var(--cream);
+      color: var(--text);
+    }
+
+    button,
+    input,
+    textarea,
+    select {
+      font: inherit;
+    }
+
+    .layout {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      width: 250px;
+      background: var(--brown);
+      color: white;
+      padding: 24px 16px;
+      flex-shrink: 0;
+    }
+
+    .logo {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .admin-label {
+      font-size: 13px;
+      opacity: .7;
+      margin-bottom: 30px;
+    }
+
+    .nav-button {
+      width: 100%;
+      border: 0;
+      background: transparent;
+      color: white;
+      text-align: left;
+      padding: 12px 14px;
+      border-radius: 9px;
+      cursor: pointer;
+      margin-bottom: 4px;
+    }
+
+    .nav-button:hover,
+    .nav-button.active {
+      background: rgba(255,255,255,.13);
+    }
+
+    .main {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .topbar {
+      height: 72px;
+      background: white;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 30px;
+    }
+
+    .topbar h1 {
+      font-size: 22px;
+      margin: 0;
+    }
+
+    .logout {
+      border: 1px solid var(--border);
+      background: white;
+      padding: 9px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .content {
+      padding: 30px;
+      max-width: 1250px;
+    }
+
+    .page {
+      display: none;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    .intro {
+      margin-bottom: 24px;
+    }
+
+    .intro h2 {
+      margin: 0 0 7px;
+      font-size: 25px;
+    }
+
+    .intro p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      margin-bottom: 28px;
+    }
+
+    .card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 22px;
+    }
+
+    .card-label {
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 8px;
+    }
+
+    .card-number {
+      font-size: 30px;
+      font-weight: 700;
+      color: var(--brown);
+    }
+
+    .panel {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 22px;
+      margin-bottom: 24px;
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 18px;
+    }
+
+    .panel-header h3 {
+      margin: 0;
+      font-size: 18px;
+    }
+
+    .button {
+      border: 0;
+      border-radius: 8px;
+      padding: 10px 15px;
+      cursor: pointer;
+    }
+
+    .button-primary {
+      background: var(--orange);
+      color: white;
+    }
+
+    .button-secondary {
+      background: #f1ece5;
+      color: var(--brown);
+    }
+
+    .button-danger {
+      background: #f8e6e6;
+      color: var(--danger);
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .field.full {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 11px 12px;
+      background: white;
+      color: var(--text);
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      outline: 2px solid rgba(223,132,44,.2);
+      border-color: var(--orange);
+    }
+
+    .form-actions {
+      margin-top: 18px;
+      display: flex;
+      gap: 10px;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th,
+    td {
+      padding: 13px 10px;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+      font-size: 14px;
+    }
+
+    th {
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .03em;
+    }
+
+    .status {
+      display: inline-block;
+      padding: 5px 9px;
+      border-radius: 20px;
+      font-size: 12px;
+    }
+
+    .status-active {
+      background: #e6f2e9;
+      color: var(--success);
+    }
+
+    .status-inactive {
+      background: #f0ece8;
+      color: var(--muted);
+    }
+
+    .actions {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .actions button {
+      border: 0;
+      border-radius: 6px;
+      padding: 7px 9px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    .empty {
+      padding: 25px 10px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .message {
+      display: none;
+      padding: 12px 14px;
+      border-radius: 8px;
+      margin-bottom: 18px;
+      font-size: 14px;
+    }
+
+    .message.show {
+      display: block;
+    }
+
+    .message.success {
+      background: #e7f3e9;
+      color: var(--success);
+    }
+
+    .message.error {
+      background: #f8e5e5;
+      color: var(--danger);
+    }
+
+    .loading {
+      color: var(--muted);
+      padding: 20px 0;
+    }
+
+    @media (max-width: 850px) {
+      .sidebar {
+        width: 205px;
+      }
+
+      .cards {
+        grid-template-columns: 1fr;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .content {
+        padding: 20px;
+      }
+    }
+
+    @media (max-width: 650px) {
+      .layout {
+        display: block;
+      }
+
+      .sidebar {
+        width: 100%;
+        padding: 15px;
+      }
+
+      .sidebar nav {
+        display: flex;
+        overflow-x: auto;
+        gap: 5px;
+      }
+
+      .nav-button {
+        white-space: nowrap;
+        width: auto;
+      }
+
+      .topbar {
+        padding: 0 18px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="layout">
+
+  <aside class="sidebar">
+    <div class="logo">Hijrah Netwerk</div>
+    <div class="admin-label">Beheerdersomgeving</div>
+
+    <nav>
+      <button class="nav-button active" data-page="overview">
+        Overzicht
+      </button>
+
+      <button class="nav-button" data-page="countries">
+        Landen
+      </button>
+
+      <button class="nav-button" data-page="cities">
+        Steden
+      </button>
+
+      <button class="nav-button" data-page="categories">
+        Categorieën
+      </button>
+
+      <button class="nav-button" data-page="topics">
+        Kennisbank
+      </button>
+    </nav>
+  </aside>
+
+  <main class="main">
+
+    <header class="topbar">
+      <h1 id="pageTitle">Overzicht</h1>
+      <button class="logout" id="logoutButton">
+        Uitloggen
+      </button>
+    </header>
+
+    <div class="content">
+
+      <div id="message" class="message"></div>
+
+      <!-- OVERVIEW -->
+
+      <section class="page active" id="page-overview">
+
+        <div class="intro">
+          <h2>Welkom in je beheerpaneel</h2>
+          <p>
+            Beheer hier de inhoud van Hijrah Netwerk vanuit Supabase.
+          </p>
+        </div>
+
+        <div class="cards">
+
+          <div class="card">
+            <div class="card-label">Landen</div>
+            <div class="card-number" id="countryCount">—</div>
+          </div>
+
+          <div class="card">
+            <div class="card-label">Steden</div>
+            <div class="card-number" id="cityCount">—</div>
+          </div>
+
+          <div class="card">
+            <div class="card-label">Kennisbank</div>
+            <div class="card-number" id="topicCount">—</div>
+          </div>
+
+        </div>
+
+        <div class="panel">
+          <h3>Huidige status</h3>
+          <p>
+            Je bent ingelogd als beheerder. De eerste echte beheerfuncties
+            zijn Landen en Steden.
+          </p>
+        </div>
+
+      </section>
+
+
+      <!-- COUNTRIES -->
+
+      <section class="page" id="page-countries">
+
+        <div class="intro">
+          <h2>Landen</h2>
+          <p>
+            Voeg landen toe die beschikbaar moeten zijn binnen Hijrah Netwerk.
+          </p>
+        </div>
+
+        <div class="panel">
+
+          <div class="panel-header">
+            <h3 id="countryFormTitle">Nieuw land toevoegen</h3>
+          </div>
+
+          <form id="countryForm">
+
+            <input type="hidden" id="countryId">
+
+            <div class="form-grid">
+
+              <div class="field">
+                <label for="countryName">Naam</label>
+                <input
+                  id="countryName"
+                  type="text"
+                  placeholder="Bijvoorbeeld Marokko"
+                  required
+                >
+              </div>
+
+              <div class="field">
+                <label for="countryCode">Landcode</label>
+                <input
+                  id="countryCode"
+                  type="text"
+                  placeholder="MA"
+                  maxlength="5"
+                >
+              </div>
+
+              <div class="field full">
+                <label for="countryDescription">Beschrijving</label>
+                <textarea
+                  id="countryDescription"
+                  rows="3"
+                  placeholder="Korte beschrijving van het land..."
+                ></textarea>
+              </div>
+
+            </div>
+
+            <div class="form-actions">
+              <button class="button button-primary" type="submit">
+                Opslaan
+              </button>
+
+              <button
+                class="button button-secondary"
+                type="button"
+                id="cancelCountry"
+                style="display:none;"
+              >
+                Annuleren
+              </button>
+            </div>
+
+          </form>
+
+        </div>
+
+        <div class="panel">
+
+          <div class="panel-header">
+            <h3>Alle landen</h3>
+          </div>
+
+          <div class="table-wrap">
+
+            <table>
+              <thead>
+                <tr>
+                  <th>Naam</th>
+                  <th>Code</th>
+                  <th>Status</th>
+                  <th>Acties</th>
+                </tr>
+              </thead>
+
+              <tbody id="countriesTable">
+                <tr>
+                  <td colspan="4" class="loading">
+                    Laden...
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- CITIES -->
+
+      <section class="page" id="page-cities">
+
+        <div class="intro">
+          <h2>Steden</h2>
+          <p>
+            Beheer steden en koppel iedere stad aan een land.
+          </p>
+        </div>
+
+        <div class="panel">
+
+          <div class="panel-header">
+            <h3 id="cityFormTitle">Nieuwe stad toevoegen</h3>
+          </div>
+
+          <form id="cityForm">
+
+            <input type="hidden" id="cityId">
+
+            <div class="form-grid">
+
+              <div class="field">
+                <label for="cityName">Naam</label>
+                <input
+                  id="cityName"
+                  type="text"
+                  placeholder="Bijvoorbeeld Tanger"
+                  required
+                >
+              </div>
+
+              <div class="field">
+                <label for="cityCountry">Land</label>
+                <select id="cityCountry" required>
+                  <option value="">Kies een land</option>
+                </select>
+              </div>
+
+              <div class="field full">
+                <label for="cityDescription">Beschrijving</label>
+                <textarea
+                  id="cityDescription"
+                  rows="3"
+                  placeholder="Korte beschrijving van de stad..."
+                ></textarea>
+              </div>
+
+            </div>
+
+            <div class="form-actions">
+
+              <button class="button button-primary" type="submit">
+                Opslaan
+              </button>
+
+              <button
+                class="button button-secondary"
+                type="button"
+                id="cancelCity"
+                style="display:none;"
+              >
+                Annuleren
+              </button>
+
+            </div>
+
+          </form>
+
+        </div>
+
+        <div class="panel">
+
+          <div class="panel-header">
+            <h3>Alle steden</h3>
+          </div>
+
+          <div class="table-wrap">
+
+            <table>
+
+              <thead>
+                <tr>
+                  <th>Stad</th>
+                  <th>Land</th>
+                  <th>Status</th>
+                  <th>Acties</th>
+                </tr>
+              </thead>
+
+              <tbody id="citiesTable">
+                <tr>
+                  <td colspan="4" class="loading">
+                    Laden...
+                  </td>
+                </tr>
+              </tbody>
+
+            </table>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- CATEGORIES -->
+
+      <section class="page" id="page-categories">
+
+        <div class="intro">
+          <h2>Categorieën</h2>
+          <p>
+            Dit onderdeel bouwen we hierna uit voor categorieën en subcategorieën.
+          </p>
+        </div>
+
+        <div class="panel">
+          <h3>Kennisbankstructuur</h3>
+          <p>
+            De database is hiervoor al voorbereid. Categorieën,
+            subcategorieën en Topics zijn gekoppeld aan Supabase.
+          </p>
+        </div>
+
+      </section>
+
+
+      <!-- TOPICS -->
+
+      <section class="page" id="page-topics">
+
+        <div class="intro">
+          <h2>Kennisbank</h2>
+          <p>
+            Hier komt straks de echte Topic-editor voor je Hijrah Wijzer.
+          </p>
+        </div>
+
+        <div class="panel">
+          <h3>Volgende uitbreiding</h3>
+          <p>
+            Artikelen/topics toevoegen, bewerken, publiceren,
+            bronnen beheren en koppelen aan land, stad en categorie.
+          </p>
+        </div>
+
+      </section>
+
+    </div>
+
+  </main>
+
+</div>
+
+
+<script>
+
+  let countries = [];
+  let cities = [];
+
+  function showMessage(text, type = "success") {
+    const message = document.getElementById("message");
+
+    message.textContent = text;
+    message.className = "message show " + type;
+
+    setTimeout(() => {
+      message.className = "message";
+    }, 4000);
+  }
+
+
+  function createSlug(text) {
+    return text
+      .toLowerCase()
+      .trim()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "");
+  }
+
+
+  async function checkAdmin() {
+
+    const { data: sessionData } =
+      await window.hijrahSupabase.auth.getSession();
+
+    const session = sessionData.session;
+
+    if (!session) {
+      window.location.href = "/login.html";
+      return false;
+    }
+
+    const { data: profile, error } =
+      await window.hijrahSupabase
+        .from("profiles")
+        .select("role")
+        .eq("id", session.user.id)
+        .single();
+
+    if (error || !profile || profile.role !== "admin") {
+      document.body.innerHTML = `
+        <div style="
+          min-height:100vh;
+          display:flex;
+          align-items:center;
+          justify-content:center;
+          padding:30px;
+          font-family:Arial,sans-serif;
+          text-align:center;
+        ">
+          <div>
+            <h1>Geen toegang</h1>
+            <p>Dit gedeelte is alleen beschikbaar voor beheerders.</p>
+            <a href="/dashboard.html">Terug naar mijn dashboard</a>
+          </div>
+        </div>
+      `;
+
+      return false;
+    }
+
+    return true;
+  }
+
+
+  async function loadCountries() {
+
+    const { data, error } =
+      await window.hijrahSupabase
+        .from("countries")
+        .select("*")
+        .order("name", { ascending: true });
+
+    if (error) {
+      console.error(error);
+      showMessage("Landen konden niet worden geladen.", "error");
+      return;
+    }
+
+    countries = data || [];
+
+    renderCountries();
+    populateCountrySelect();
+
+    document.getElementById("countryCount").textContent =
+      countries.length;
+  }
+
+
+  function renderCountries() {
+
+    const tbody = document.getElementById("countriesTable");
+
+    if (!countries.length) {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="4" class="empty">
+            Nog geen landen toegevoegd.
+          </td>
+        </tr>
+      `;
+      return;
+    }
+
+    tbody.innerHTML = countries.map(country => `
+
+      <tr>
+
+        <td>
+          <strong>${escapeHtml(country.name)}</strong>
+        </td>
+
+        <td>
+          ${escapeHtml(country.code || "—")}
+        </td>
+
+        <td>
+          ${
+            country.is_active
+              ? '<span class="status status-active">Actief</span>'
+              : '<span class="status status-inactive">Inactief</span>'
+          }
+        </td>
+
+        <td>
+
+          <div class="actions">
+
+            <button
+              class="button-secondary"
+              onclick="editCountry('${country.id}')"
+            >
+              Bewerken
+            </button>
+
+            <button
+              class="button-secondary"
+              onclick="toggleCountry('${country.id}', ${country.is_active})"
+            >
+              ${country.is_active ? "Deactiveren" : "Activeren"}
+            </button>
+
+            <button
+              class="button-danger"
+              onclick="deleteCountry('${country.id}')"
+            >
+              Verwijderen
+            </button>
+
+          </div>
+
+        </td>
+
+      </tr>
+
+    `).join("");
+  }
+
+
+  function populateCountrySelect() {
+
+    const select = document.getElementById("cityCountry");
+
+    const currentValue = select.value;
+
+    select.innerHTML =
+      '<option value="">Kies een land</option>' +
+      countries
+        .filter(country => country.is_active)
+        .map(country => `
+          <option value="${country.id}">
+            ${escapeHtml(country.name)}
+          </option>
+        `)
+        .join("");
+
+    if (currentValue) {
+      select.value = currentValue;
+    }
+  }
+
+
+  async function loadCities() {
+
+    const { data, error } =
+      await window.hijrahSupabase
+        .from("cities")
+        .select(`
+          *,
+          countries (
+            name
+          )
+        `)
+        .order("name", { ascending: true });
+
+    if (error) {
+      console.error(error);
+      showMessage("Steden konden niet worden geladen.", "error");
+      return;
+    }
+
+    cities = data || [];
+
+    renderCities();
+
+    document.getElementById("cityCount").textContent =
+      cities.length;
+  }
+
+
+  function renderCities() {
+
+    const tbody = document.getElementById("citiesTable");
+
+    if (!cities.length) {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="4" class="empty">
+            Nog geen steden toegevoegd.
+          </td>
+        </tr>
+      `;
+      return;
+    }
+
+    tbody.innerHTML = cities.map(city => `
+
+      <tr>
+
+        <td>
+          <strong>${escapeHtml(city.name)}</strong>
+        </td>
+
+        <td>
+          ${escapeHtml(city.countries?.name || "—")}
+        </td>
+
+        <td>
+          ${
+            city.is_active
+              ? '<span class="status status-active">Actief</span>'
+              : '<span class="status status-inactive">Inactief</span>'
+          }
+        </td>
+
+        <td>
+
+          <div class="actions">
+
+            <button
+              class="button-secondary"
+              onclick="editCity('${city.id}')"
+            >
+              Bewerken
+            </button>
+
+            <button
+              class="button-secondary"
+              onclick="toggleCity('${city.id}', ${city.is_active})"
+            >
+              ${city.is_active ? "Deactiveren" : "Activeren"}
+            </button>
+
+            <button
+              class="button-danger"
+              onclick="deleteCity('${city.id}')"
+            >
+              Verwijderen
+            </button>
+
+          </div>
+
+        </td>
+
+      </tr>
+
+    `).join("");
+  }
+
+
+  document
+    .getElementById("countryForm")
+    .addEventListener("submit", async function(event) {
+
+      event.preventDefault();
+
+      const id =
+        document.getElementById("countryId").value;
+
+      const name =
+        document.getElementById("countryName").value.trim();
+
+      const code =
+        document.getElementById("countryCode").value.trim();
+
+      const description =
+        document.getElementById("countryDescription").value.trim();
+
+      const payload = {
+        name,
+        slug: createSlug(name),
+        code: code || null,
+        description: description || null
+      };
+
+      let result;
+
+      if (id) {
+
+        result =
+          await window.hijrahSupabase
+            .from("countries")
+            .update(payload)
+            .eq("id", id);
+
+      } else {
+
+        result =
+          await window.hijrahSupabase
+            .from("countries")
+            .insert(payload);
+
+      }
+
+      if (result.error) {
+        console.error(result.error);
+        showMessage(result.error.message, "error");
+        return;
+      }
+
+      showMessage(
+        id
+          ? "Land bijgewerkt."
+          : "Land toegevoegd."
+      );
+
+      resetCountryForm();
+
+      await loadCountries();
+      await loadCities();
+    });
+
+
+  function editCountry(id) {
+
+    const country =
+      countries.find(item => item.id === id);
+
+    if (!country) return;
+
+    document.getElementById("countryId").value =
+      country.id;
+
+    document.getElementById("countryName").value =
+      country.name || "";
+
+    document.getElementById("countryCode").value =
+      country.code || "";
+
+    document.getElementById("countryDescription").value =
+      country.description || "";
+
+    document.getElementById("countryFormTitle").textContent =
+      "Land bewerken";
+
+    document.getElementById("cancelCountry").style.display =
+      "inline-block";
+
+    showPage("countries");
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+  }
+
+
+  async function toggleCountry(id, currentStatus) {
+
+    const { error } =
+      await window.hijrahSupabase
+        .from("countries")
+        .update({
+          is_active: !currentStatus
+        })
+        .eq("id", id);
+
+    if (error) {
+      showMessage(error.message, "error");
+      return;
+    }
+
+    showMessage(
+      currentStatus
+        ? "Land gedeactiveerd."
+        : "Land geactiveerd."
+    );
+
+    await loadCountries();
+    await loadCities();
+  }
+
+
+  async function deleteCountry(id) {
+
+    const hasCities =
+      cities.some(city => city.country_id === id);
+
+    if (hasCities) {
+      showMessage(
+        "Dit land heeft nog steden. Verwijder of verplaats eerst de steden.",
+        "error"
+      );
+      return;
+    }
+
+    if (!confirm("Dit land definitief verwijderen?")) {
+      return;
+    }
+
+    const { error } =
+      await window.hijrahSupabase
+        .from("countries")
+        .delete()
+        .eq("id", id);
+
+    if (error) {
+      showMessage(error.message, "error");
+      return;
+    }
+
+    showMessage("Land verwijderd.");
+
+    await loadCountries();
+  }
+
+
+  function resetCountryForm() {
+
+    document.getElementById("countryForm").reset();
+
+    document.getElementById("countryId").value = "";
+
+    document.getElementById("countryFormTitle").textContent =
+      "Nieuw land toevoegen";
+
+    document.getElementById("cancelCountry").style.display =
+      "none";
+  }
+
+
+  document
+    .getElementById("cancelCountry")
+    .addEventListener("click", resetCountryForm);
+
+
+  document
+    .getElementById("cityForm")
+    .addEventListener("submit", async function(event) {
+
+      event.preventDefault();
+
+      const id =
+        document.getElementById("cityId").value;
+
+      const name =
+        document.getElementById("cityName").value.trim();
+
+      const countryId =
+        document.getElementById("cityCountry").value;
+
+      const description =
+        document.getElementById("cityDescription").value.trim();
+
+      const payload = {
+        name,
+        slug: createSlug(name),
+        country_id: countryId,
+        description: description || null
+      };
+
+      let result;
+
+      if (id) {
+
+        result =
+          await window.hijrahSupabase
+            .from("cities")
+            .update(payload)
+            .eq("id", id);
+
+      } else {
+
+        result =
+          await window.hijrahSupabase
+            .from("cities")
+            .insert(payload);
+
+      }
+
+      if (result.error) {
+        console.error(result.error);
+        showMessage(result.error.message, "error");
+        return;
+      }
+
+      showMessage(
+        id
+          ? "Stad bijgewerkt."
+          : "Stad toegevoegd."
+      );
+
+      resetCityForm();
+
+      await loadCities();
+    });
+
+
+  function editCity(id) {
+
+    const city =
+      cities.find(item => item.id === id);
+
+    if (!city) return;
+
+    document.getElementById("cityId").value =
+      city.id;
+
+    document.getElementById("cityName").value =
+      city.name || "";
+
+    document.getElementById("cityCountry").value =
+      city.country_id || "";
+
+    document.getElementById("cityDescription").value =
+      city.description || "";
+
+    document.getElementById("cityFormTitle").textContent =
+      "Stad bewerken";
+
+    document.getElementById("cancelCity").style.display =
+      "inline-block";
+
+    showPage("cities");
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+  }
+
+
+  async function toggleCity(id, currentStatus) {
+
+    const { error } =
+      await window.hijrahSupabase
+        .from("cities")
+        .update({
+          is_active: !currentStatus
+        })
+        .eq("id", id);
+
+    if (error) {
+      showMessage(error.message, "error");
+      return;
+    }
+
+    showMessage(
+      currentStatus
+        ? "Stad gedeactiveerd."
+        : "Stad geactiveerd."
+    );
+
+    await loadCities();
+  }
+
+
+  async function deleteCity(id) {
+
+    if (!confirm("Deze stad definitief verwijderen?")) {
+      return;
+    }
+
+    const { error } =
+      await window.hijrahSupabase
+        .from("cities")
+        .delete()
+        .eq("id", id);
+
+    if (error) {
+      showMessage(error.message, "error");
+      return;
+    }
+
+    showMessage("Stad verwijderd.");
+
+    await loadCities();
+  }
+
+
+  function resetCityForm() {
+
+    document.getElementById("cityForm").reset();
+
+    document.getElementById("cityId").value = "";
+
+    document.getElementById("cityFormTitle").textContent =
+      "Nieuwe stad toevoegen";
+
+    document.getElementById("cancelCity").style.display =
+      "none";
+  }
+
+
+  document
+    .getElementById("cancelCity")
+    .addEventListener("click", resetCityForm);
+
+
+  async function loadTopicCount() {
+
+    const { count, error } =
+      await window.hijrahSupabase
+        .from("topic")
+        .select("*", {
+          count: "exact",
+          head: true
+        });
+
+    if (!error) {
+      document.getElementById("topicCount").textContent =
+        count ?? 0;
+    }
+  }
+
+
+  function showPage(pageName) {
+
+    document
+      .querySelectorAll(".page")
+      .forEach(page => {
+        page.classList.remove("active");
+      });
+
+    document
+      .querySelectorAll(".nav-button")
+      .forEach(button => {
+        button.classList.remove("active");
+      });
+
+    const page =
+      document.getElementById("page-" + pageName);
+
+    const button =
+      document.querySelector(
+        `.nav-button[data-page="${pageName}"]`
+      );
+
+    if (page) {
+      page.classList.add("active");
+    }
+
+    if (button) {
+      button.classList.add("active");
+    }
+
+    const titles = {
+      overview: "Overzicht",
+      countries: "Landen",
+      cities: "Steden",
+      categories: "Categorieën",
+      topics: "Kennisbank"
+    };
+
+    document.getElementById("pageTitle").textContent =
+      titles[pageName] || "Admin";
+  }
+
+
+  document
+    .querySelectorAll(".nav-button")
+    .forEach(button => {
+
+      button.addEventListener("click", () => {
+
+        showPage(
+          button.dataset.page
+        );
+
+      });
+
+    });
+
+
+  document
+    .getElementById("logoutButton")
+    .addEventListener("click", async () => {
+
+      await window.hijrahSupabase.auth.signOut();
+
+      window.location.href = "/login.html";
+
+    });
+
+
+  function escapeHtml(value) {
+
+    if (value === null || value === undefined) {
+      return "";
+    }
+
+    return String(value)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
+
+
+  async function initAdmin() {
+
+    const allowed = await checkAdmin();
+
+    if (!allowed) return;
+
+    await loadCountries();
+    await loadCities();
+    await loadTopicCount();
+  }
+
+
+  initAdmin();
+
+</script>
+
+</body>
+</html>
