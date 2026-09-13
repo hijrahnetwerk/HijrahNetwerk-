@@ -1,84 +1,131 @@
+```html
 <!DOCTYPE html>
 <html lang="nl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Inloggen — Hijrah Netwerk</title>
-<link rel="stylesheet" href="assets/auth-style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inloggen — Hijrah Netwerk</title>
+  <link rel="stylesheet" href="auth-style.css">
 </head>
+
 <body>
 
-<div class="auth-card">
-  <a href="index.html" class="back-home">← Terug naar de website</a>
-  <div class="brand"><span class="brand-mark">HN</span> Hijrah Netwerk</div>
+  <div class="auth-page">
 
-  <h1>Welkom terug</h1>
-  <p class="lead">Log in om verder te gaan op je Hijrah Netwerk-dashboard.</p>
+    <a href="/" class="back-link">← Terug naar de website</a>
 
-  <div class="msg" id="msg"></div>
+    <div class="auth-card">
 
-  <form id="login-form">
-    <div class="field">
-      <label for="email">E-mailadres</label>
-      <input type="email" id="email" required autocomplete="email" placeholder="jij@voorbeeld.com">
+      <div class="auth-logo">
+        <strong>HN</strong>
+        <span>Hijrah Netwerk</span>
+      </div>
+
+      <h1>Welkom terug</h1>
+
+      <p class="auth-intro">
+        Log in op jouw Hijrah Netwerk-account.
+      </p>
+
+      <form id="login-form">
+
+        <div class="form-group">
+          <label for="email">E-mailadres</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            autocomplete="email"
+            required
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="password">Wachtwoord</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            autocomplete="current-password"
+            required
+          >
+        </div>
+
+        <button type="submit" class="auth-button">
+          Inloggen
+        </button>
+
+        <p id="login-message" class="auth-message"></p>
+
+      </form>
+
+      <p class="auth-forgot">
+        <a href="/reset-password.html">Wachtwoord vergeten?</a>
+      </p>
+
+      <p class="auth-switch">
+        Nog geen account?
+        <a href="/register.html">Account aanmaken</a>
+      </p>
+
     </div>
-    <div class="field">
-      <label for="password">Wachtwoord</label>
-      <input type="password" id="password" required autocomplete="current-password" placeholder="••••••••">
-    </div>
-    <button type="submit" class="btn btn-primary" id="submit-btn">Inloggen</button>
-  </form>
 
-  <div class="auth-links">
-    <a href="reset-password.html">Wachtwoord vergeten?</a>
   </div>
-  <div class="auth-links">
-    Nog geen account? <a href="register.html">Account aanmaken</a>
-  </div>
-</div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="assets/config.js"></script>
-<script src="assets/supabase-client.js"></script>
-<script src="assets/auth.js"></script>
-<script>
-  const form = document.getElementById('login-form');
-  const msg = document.getElementById('msg');
-  const submitBtn = document.getElementById('submit-btn');
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="assets/config.js"></script>
+  <script src="supabase-client.js"></script>
+  <script src="auth.js"></script>
 
-  // Als er al een geldige sessie is, meteen naar het dashboard sturen.
-  (async () => {
-    const { session } = await hnGetSession();
-    if (session) window.location.href = 'dashboard.html';
-  })();
+  <script>
+    (async function () {
+      const { data } = await hnGetSession();
 
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    msg.className = 'msg';
-    msg.textContent = '';
+      if (data && data.session) {
+        window.location.href = "/dashboard.html";
+      }
+    })();
 
-    const email = document.getElementById('email').value.trim();
-    const password = document.getElementById('password').value;
+    const form = document.getElementById('login-form');
+    const message = document.getElementById('login-message');
 
-    submitBtn.disabled = true;
-    submitBtn.innerHTML = '<span class="spinner"></span> Inloggen...';
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
 
-    const { data, error } = await hnSignIn(email, password);
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
 
-    submitBtn.disabled = false;
-    submitBtn.textContent = 'Inloggen';
+      message.textContent = 'Bezig met inloggen...';
+      message.className = 'auth-message';
 
-    if (error) {
-      msg.className = 'msg error';
-      msg.textContent = hnFriendlyError(error);
-      return;
-    }
+      try {
+        const { data, error } = await hnSignIn(email, password);
 
-    if (data && data.session) {
-      window.location.href = 'dashboard.html';
-    }
-  });
-</script>
+        if (error) {
+          message.textContent =
+            error.message || 'E-mailadres of wachtwoord is niet correct.';
+          message.className = 'auth-message error';
+          return;
+        }
+
+        if (data && data.session) {
+          window.location.href = "/dashboard.html";
+        } else {
+          message.textContent =
+            'Inloggen is gelukt, maar er kon geen sessie worden aangemaakt.';
+          message.className = 'auth-message error';
+        }
+
+      } catch (err) {
+        console.error(err);
+
+        message.textContent =
+          'Er ging iets mis. Probeer het opnieuw.';
+        message.className = 'auth-message error';
+      }
+    });
+  </script>
 
 </body>
 </html>
+```
