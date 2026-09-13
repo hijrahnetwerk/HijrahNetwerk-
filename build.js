@@ -33,7 +33,10 @@ window.__ENV = {
 };
 `;
 
-const outPath = path.join(__dirname, 'assets', 'config.js');
+const assetsDir = path.join(__dirname, 'assets');
+fs.mkdirSync(assetsDir, { recursive: true });
+
+const outPath = path.join(assetsDir, 'config.js');
 fs.writeFileSync(outPath, configContent, 'utf8');
 
 console.log('[build.js] assets/config.js succesvol gegenereerd met Supabase-configuratie.');
