@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Kennisbank — Hijrah Netwerk</title>
+  <meta
+    name="description"
+    content="Doorzoek de Hijrah Netwerk kennisbank op land, stad en onderwerp."
+  >
+
+  <style>
+    :root {
+      --brown: #684a25;
+      --brown-dark: #4d3819;
+      --orange: #df842c;
+      --gold: #e9a74b;
+      --cream: #fbf8f4;
+      --white: #ffffff;
+      --ink: #2b241c;
+      --muted: #6f665b;
+      --line: #ece5da;
+      --success: #3f744b;
+      --success-bg: #e8f3ea;
+      --shadow: 0 10px 30px rgba(104, 74, 37, 0.08);
+      --radius: 18px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Arial,
+        sans-serif;
+      color: var(--ink);
+      background: var(--cream);
+      line-height: 1.55;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    .wrap {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .nav {
+      min-height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .brand {
+      font-weight: 800;
+      color: var(--brown-dark);
+      font-size: 19px;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .nav-links a {
+      padding: 9px 12px;
+      border-radius: 999px;
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .nav-links a:hover {
+      background: #f5efe7;
+      color: var(--brown-dark);
+    }
+
+    .hero {
+      padding: 65px 0 35px;
+    }
+
+    .eyebrow {
+      display: inline-block;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: #fdf1e3;
+      color: #a55e16;
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .hero h1 {
+      margin: 15px 0 12px;
+      color: var(--brown-dark);
+      font-size: clamp(34px, 5vw, 50px);
+      line-height: 1.1;
+    }
+
+    .hero p {
+      max-width: 720px;
+      margin: 0;
+      color: var(--muted);
+      font-size: 17px;
+    }
+
+    .search-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 25px;
+      max-width: 900px;
+    }
+
+    .search-row input {
+      flex: 1;
+      min-width: 0;
+      padding: 15px 18px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #fff;
+      color: var(--ink);
+      outline: none;
+    }
+
+    .search-row input:focus {
+      border-color: var(--orange);
+      box-shadow: 0 0 0 4px rgba(223, 132, 44, 0.1);
+    }
+
+    .btn {
+      border: 0;
+      border-radius: 999px;
+      padding: 11px 17px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background: var(--orange);
+      color: white;
+    }
+
+    .btn-secondary {
+      background: #f2ece4;
+      color: var(--brown-dark);
+    }
+
+    .btn-saved {
+      background: var(--success-bg);
+      color: var(--success);
+    }
+
+    .filters {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      padding: 18px;
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    select {
+      width: 100%;
+      padding: 11px 12px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: white;
+      color: var(--ink);
+    }
+
+    .results-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+      margin: 30px 0 15px;
+    }
+
+    .results-header h2 {
+      margin: 0;
+      color: var(--brown-dark);
+      font-size: 23px;
+    }
+
+    .muted {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .results {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      padding-bottom: 50px;
+    }
+
+    .article-card {
+      display: flex;
+      flex-direction: column;
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 21px;
+      box-shadow: 0 1px 2px rgba(43, 36, 28, 0.04);
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 13px;
+    }
+
+    .tag {
+      display: inline-flex;
+      padding: 5px 9px;
+      border-radius: 999px;
+      background: #f6f0e8;
+      color: var(--brown);
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .article-card h3 {
+      margin: 0 0 9px;
+      color: var(--brown-dark);
+      font-size: 18px;
+      line-height: 1.3;
+    }
+
+    .article-card p {
+      margin: 0 0 17px;
+      color: var(--muted);
+      font-size: 14px;
+      flex: 1;
+    }
+
+    .card-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .empty {
+      grid-column: 1 / -1;
+      padding: 38px;
+      text-align: center;
+      border: 1px dashed var(--line);
+      border-radius: var(--radius);
+      color: var(--muted);
+      background: white;
+    }
+
+    .article-view {
+      display: none;
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 30px;
+      margin: 25px 0 50px;
+    }
+
+    .article-view h2 {
+      margin: 10px 0 12px;
+      color: var(--brown-dark);
+      font-size: clamp(28px, 4vw, 38px);
+      line-height: 1.15;
+    }
+
+    .article-content {
+      margin-top: 25px;
+      white-space: pre-wrap;
+      color: #3f382f;
+    }
+
+    .article-source {
+      margin-top: 24px;
+      padding-top: 18px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .notice {
+      display: none;
+      margin: 15px 0;
+      padding: 12px 14px;
+      border-radius: 10px;
+      background: #fdf1e3;
+      color: var(--brown-dark);
+    }
+
+    .notice.show {
+      display: block;
+    }
+
+    @media (max-width: 950px) {
+      .filters {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .results {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 650px) {
+      .nav {
+        align-items: flex-start;
+        flex-direction: column;
+        padding: 14px 0;
+      }
+
+      .hero {
+        padding-top: 40px;
+      }
+
+      .search-row {
+        flex-direction: column;
+      }
+
+      .filters,
+      .results {
+        grid-template-columns: 1fr;
+      }
+
+      .article-view {
+        padding: 21px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<header class="topbar">
+  <div class="wrap nav">
+    <a class="brand" href="index.html">Hijrah Netwerk</a>
+
+    <nav class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="smart-search.html">Smart Search</a>
+      <a href="dashboard.html">Mijn dashboard</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="hero">
+    <span class="eyebrow">Kennisbank</span>
+
+    <h1>Vind praktische HN-informatie.</h1>
+
+    <p>
+      Zoek informatie over landen, steden en onderwerpen binnen de
+      Hijrah Netwerk kennisbank.
+    </p>
+
+    <form id="searchForm" class="search-row">
+      <input
+        id="searchInput"
+        type="search"
+        placeholder="Zoek bijvoorbeeld: huren in Tanger"
+        autocomplete="off"
+      >
+
+      <button class="btn btn-primary" type="submit">
+        Zoeken
+      </button>
+    </form>
+  </section>
+
+  <div id="notice" class="notice"></div>
+
+  <section class="filters">
+
+    <select id="countryFilter">
+      <option value="">Alle landen</option>
+    </select>
+
+    <select id="cityFilter">
+      <option value="">Alle steden</option>
+    </select>
+
+    <select id="categoryFilter">
+      <option value="">Alle categorieën</option>
+    </select>
+
+    <select id="subcategoryFilter">
+      <option value="">Alle subcategorieën</option>
+    </select>
+
+  </section>
+
+  <section id="articleView" class="article-view"></section>
+
+  <section id="listView">
+
+    <div class="results-header">
+      <h2>Artikelen</h2>
+      <span id="resultCount" class="muted">
+        Laden…
+      </span>
+    </div>
+
+    <div id="results" class="results"></div>
+
+  </section>
+
+</main>
+
+<script src="assets/config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-client.js"></script>
+<script src="auth.js"></script>
+
+<script>
+  const db = () => window.hijrahSupabase;
+
+  let topics = [];
+  let countries = [];
+  let cities = [];
+  let categories = [];
+  let subcategories = [];
+  let savedTopics = new Set();
+
+  const params = new URLSearchParams(window.location.search);
+
+  function esc(value) {
+    if (value == null) return "";
+
+    return String(value)
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+  }
+
+  function normalize(value) {
+    return String(value || "")
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "");
+  }
+
+  function showNotice(text) {
+    const element = document.getElementById("notice");
+
+    element.textContent = text;
+    element.classList.add("show");
+
+    setTimeout(() => {
+      element.classList.remove("show");
+    }, 4000);
+  }
+
+  function fillSelect(id, items, label) {
+    const select = document.getElementById(id);
+
+    select.innerHTML =
+      `<option value="">${label}</option>` +
+      items
+        .map(
+          item =>
+            `<option value="${esc(item.id)}">${esc(item.name)}</option>`
+        )
+        .join("");
+  }
+
+  function getFilteredTopics() {
+    const query = normalize(
+      document.getElementById("searchInput").value
+    );
+
+    const countryId =
+      document.getElementById("countryFilter").value;
+
+    const cityId =
+      document.getElementById("cityFilter").value;
+
+    const categoryId =
+      document.getElementById("categoryFilter").value;
+
+    const subcategoryId =
+      document.getElementById("subcategoryFilter").value;
+
+    return topics.filter(topic => {
+
+      if (countryId && topic.country_id !== countryId) {
+        return false;
+      }
+
+      if (cityId && topic.city_id !== cityId) {
+        return false;
+      }
+
+      if (categoryId && topic.category_id !== categoryId) {
+        return false;
+      }
+
+      if (subcategoryId && topic.subcategory_id !== subcategoryId) {
+        return false;
+      }
+
+      if (!query) {
+        return true;
+      }
+
+      const searchable = normalize([
+        topic.title,
+        topic.summary,
+        topic.content,
+        topic.information_type,
+        topic.countries?.name,
+        topic.cities?.name,
+        topic.categories?.name,
+        topic.subcategories?.name
+      ].join(" "));
+
+      return query
+        .split(/\s+/)
+        .filter(Boolean)
+        .every(word => searchable.includes(word));
+    });
+  }
+
+  function renderResults() {
+    const list = getFilteredTopics();
+
+    document.getElementById("resultCount").textContent =
+      `${list.length} artikel${list.length === 1 ? "" : "en"}`;
+
+    const results = document.getElementById("results");
+
+    if (!list.length) {
+      results.innerHTML = `
+        <div class="empty">
+          Geen passende informatie gevonden.
+          Probeer een andere zoekterm of filter.
+        </div>
+      `;
+
+      return;
+    }
+
+    results.innerHTML = list
+      .map(topic => {
+
+        const isSaved = savedTopics.has(topic.id);
+
+        return `
+          <article class="article-card">
+
+            <div class="tags">
+
+              ${
+                topic.countries?.name
+                  ? `<span class="tag">${esc(topic.countries.name)}</span>`
+                  : ""
+              }
+
+              ${
+                topic.cities?.name
+                  ? `<span class="tag">${esc(topic.cities.name)}</span>`
+                  : ""
+              }
+
+              ${
+                topic.categories?.name
+                  ? `<span class="tag">${esc(topic.categories.name)}</span>`
+                  : ""
+              }
+
+              ${
+                topic.information_type
+                  ? `<span class="tag">${esc(topic.information_type)}</span>`
+                  : ""
+              }
+
+            </div>
+
+            <h3>${esc(topic.title)}</h3>
+
+            <p>
+              ${esc(
+                topic.summary ||
+                "Bekijk de volledige informatie in dit artikel."
+              )}
+            </p>
+
+            <div class="card-actions">
+
+              <button
+                class="btn btn-secondary"
+                onclick="openArticle('${topic.id}')"
+              >
+                Lees artikel
+              </button>
+
+              <button
+                class="btn ${isSaved ? "btn-saved" : "btn-secondary"}"
+                onclick="toggleSaved('${topic.id}')"
+              >
+                ${isSaved ? "Opgeslagen" : "Opslaan"}
+              </button>
+
+            </div>
+
+          </article>
+        `;
+      })
+      .join("");
+  }
+
+  async function loadSavedArticles() {
+
+    const { data: sessionData } =
+      await db().auth.getSession();
+
+    const session = sessionData?.session;
+
+    if (!session) {
+      return;
+    }
+
+    const { data, error } =
+      await db()
+        .from("saved_articles")
+        .select("topic_id")
+        .eq("user_id", session.user.id);
+
+    if (error) {
+      console.warn("saved_articles:", error);
+      return;
+    }
+
+    savedTopics = new Set(
+      (data || []).map(row => row.topic_id)
+    );
+  }
+
+  async function toggleSaved(topicId) {
+
+    const { data: sessionData } =
+      await db().auth.getSession();
+
+    const session = sessionData?.session;
+
+    if (!session) {
+      window.location.href = "login.html";
+      return;
+    }
+
+    if (savedTopics.has(topicId)) {
+
+      const { error } =
+        await db()
+          .from("saved_articles")
+          .delete()
+          .eq("user_id", session.user.id)
+          .eq("topic_id", topicId);
+
+      if (error) {
+        showNotice(error.message);
+        return;
+      }
+
+      savedTopics.delete(topicId);
+
+    } else {
+
+      const { error } =
+        await db()
+          .from("saved_articles")
+          .insert({
+            user_id: session.user.id,
+            topic_id: topicId
+          });
+
+      if (error) {
+        showNotice(error.message);
+        return;
+      }
+
+      savedTopics.add(topicId);
+    }
+
+    renderResults();
+  }
+
+  function openArticle(topicId) {
+
+    const topic =
+      topics.find(item => item.id === topicId);
+
+    if (!topic) {
+      return;
+    }
+
+    const articleView =
+      document.getElementById("articleView");
+
+    document.getElementById("listView")
+      .style.display = "none";
+
+    articleView.style.display = "block";
+
+    articleView.innerHTML = `
+      <button
+        class="btn btn-secondary"
+        onclick="closeArticle()"
+      >
+        ← Terug naar kennisbank
+      </button>
+
+      <div class="tags" style="margin-top:20px">
+
+        ${
+          topic.countries?.name
+            ? `<span class="tag">${esc(topic.countries.name)}</span>`
+            : ""
+        }
+
+        ${
+          topic.cities?.name
+            ? `<span class="tag">${esc(topic.cities.name)}</span>`
+            : ""
+        }
+
+        ${
+          topic.categories?.name
+            ? `<span class="tag">${esc(topic.categories.name)}</span>`
+            : ""
+        }
+
+        ${
+          topic.subcategories?.name
+            ? `<span class="tag">${esc(topic.subcategories.name)}</span>`
+            : ""
+        }
+
+        ${
+          topic.information_type
+            ? `<span class="tag">${esc(topic.information_type)}</span>`
+            : ""
+        }
+
+      </div>
+
+      <h2>${esc(topic.title)}</h2>
+
+      ${
+        topic.summary
+          ? `<p class="muted">${esc(topic.summary)}</p>`
+          : ""
+      }
+
+      <div
+        class="card-actions"
+        style="margin-top:20px"
+      >
+
+        <button
+          class="btn ${
+            savedTopics.has(topic.id)
+              ? "btn-saved"
+              : "btn-secondary"
+          }"
+          onclick="toggleSaved('${topic.id}')"
+        >
+          ${
+            savedTopics.has(topic.id)
+              ? "Opgeslagen"
+              : "Opslaan"
+          }
+        </button>
+
+        ${
+          topic.source_url
+            ? `
+              <a
+                class="btn btn-secondary"
+                href="${esc(topic.source_url)}"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Bron openen
+              </a>
+            `
+            : ""
+        }
+
+      </div>
+
+      <div class="article-content">
+        ${esc(topic.content || "Geen inhoud beschikbaar.")}
+      </div>
+
+      ${
+        topic.source || topic.source_url
+          ? `
+            <div class="article-source">
+              <strong>Bron:</strong>
+              ${esc(topic.source || "")}
+              ${
+                topic.source_url
+                  ? `
+                    —
+                    <a
+                      href="${esc(topic.source_url)}"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      website
+                    </a>
+                  `
+                  : ""
+              }
+            </div>
+          `
+          : ""
+      }
+    `;
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+
+    history.replaceState(
+      {},
+      "",
+      `kennisbank.html?topic=${encodeURIComponent(topicId)}`
+    );
+  }
+
+  function closeArticle() {
+
+    document.getElementById("articleView")
+      .style.display = "none";
+
+    document.getElementById("listView")
+      .style.display = "block";
+
+    history.replaceState(
+      {},
+      "",
+      "kennisbank.html"
+    );
+  }
+
+  async function loadData() {
+
+    const [
+      countriesResult,
+      citiesResult,
+      categoriesResult,
+      subcategoriesResult,
+      topicsResult
+    ] = await Promise.all([
+
+      db()
+        .from("countries")
+        .select("id,name,slug,is_active")
+        .eq("is_active", true)
+        .order("name"),
+
+      db()
+        .from("cities")
+        .select("id,name,slug,country_id,is_active")
+        .eq("is_active", true)
+        .order("name"),
+
+      db()
+        .from("categories")
+        .select("id,name,slug,is_active")
+        .eq("is_active", true)
+        .order("sort_order")
+        .order("name"),
+
+      db()
+        .from("subcategories")
+        .select("id,name,category_id,is_active")
+        .eq("is_active", true)
+        .order("sort_order")
+        .order("name"),
+
+      db()
+        .from("topic")
+        .select(`
+          *,
+          countries(name),
+          cities(name),
+          categories(name),
+          subcategories(name)
+        `)
+        .eq("published", true)
+        .order("updated_at", {
+          ascending: false
+        })
+    ]);
+
+    const results = [
+      countriesResult,
+      citiesResult,
+      categoriesResult,
+      subcategoriesResult,
+      topicsResult
+    ];
+
+    const firstError =
+      results.find(result => result.error);
+
+    if (firstError) {
+      throw firstError.error;
+    }
+
+    countries = countriesResult.data || [];
+    cities = citiesResult.data || [];
+    categories = categoriesResult.data || [];
+    subcategories = subcategoriesResult.data || [];
+    topics = topicsResult.data || [];
+
+    fillSelect(
+      "countryFilter",
+      countries,
+      "Alle landen"
+    );
+
+    fillSelect(
+      "cityFilter",
+      cities,
+      "Alle steden"
+    );
+
+    fillSelect(
+      "categoryFilter",
+      categories,
+      "Alle categorieën"
+    );
+
+    fillSelect(
+      "subcategoryFilter",
+      subcategories,
+      "Alle subcategorieën"
+    );
+
+    await loadSavedArticles();
+
+    if (params.get("q")) {
+      document.getElementById("searchInput").value =
+        params.get("q");
+    }
+
+    if (params.get("country")) {
+      document.getElementById("countryFilter").value =
+        params.get("country");
+    }
+
+    renderResults();
+
+    if (params.get("topic")) {
+      openArticle(params.get("topic"));
+    }
+  }
+
+  document
+    .getElementById("searchForm")
+    .addEventListener("submit", event => {
+
+      event.preventDefault();
+
+      const query =
+        document
+          .getElementById("searchInput")
+          .value
+          .trim();
+
+      history.replaceState(
+        {},
+        "",
+        `kennisbank.html?q=${encodeURIComponent(query)}`
+      );
+
+      renderResults();
+    });
+
+  [
+    "searchInput",
+    "countryFilter",
+    "cityFilter",
+    "categoryFilter",
+    "subcategoryFilter"
+  ].forEach(id => {
+
+    document
+      .getElementById(id)
+      .addEventListener("input", renderResults);
+
+    document
+      .getElementById(id)
+      .addEventListener("change", renderResults);
+  });
+
+  loadData().catch(error => {
+
+    console.error("HN Kennisbank:", error);
+
+    showNotice(
+      "De kennisbank kon niet worden geladen: " +
+      error.message
+    );
+
+    document.getElementById("results").innerHTML = `
+      <div class="empty">
+        De kennisbank kon momenteel niet worden geladen.
+      </div>
+    `;
+  });
+</script>
+
+</body>
+</html>
