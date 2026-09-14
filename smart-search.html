@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Smart Search — Hijrah Netwerk</title>
+
+  <style>
+    :root {
+      --brown: #684a25;
+      --dark: #4d3819;
+      --orange: #df842c;
+      --gold: #e9a74b;
+      --cream: #fbf8f4;
+      --ink: #2b241c;
+      --muted: #766d61;
+      --line: #ece5da;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--dark);
+      color: white;
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Arial,
+        sans-serif;
+    }
+
+    .wrap {
+      width: min(920px, calc(100% - 40px));
+      margin: 0 auto;
+    }
+
+    .top {
+      height: 70px;
+      display: flex;
+      align-items: center;
+      border-bottom: 1px solid rgba(255,255,255,.1);
+    }
+
+    .top-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+    }
+
+    .brand {
+      color: white;
+      text-decoration: none;
+      font-weight: 800;
+    }
+
+    .back {
+      color: #d9cbb8;
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    .hero {
+      padding: 64px 0 28px;
+    }
+
+    .eyebrow {
+      display: inline-block;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.08);
+      color: var(--gold);
+      font-weight: 800;
+      font-size: 12px;
+      text-transform: uppercase;
+    }
+
+    .hero h1 {
+      font-size: clamp(34px, 5vw, 53px);
+      line-height: 1.1;
+      margin: 16px 0 12px;
+    }
+
+    .hero p {
+      max-width: 720px;
+      color: #d8ccba;
+      font-size: 17px;
+    }
+
+    .panel {
+      margin: 20px 0 45px;
+      padding: 27px;
+      background: white;
+      color: var(--ink);
+      border-radius: 22px;
+      box-shadow: 0 16px 50px rgba(0,0,0,.18);
+    }
+
+    .search {
+      display: flex;
+      gap: 10px;
+    }
+
+    .search input {
+      flex: 1;
+      min-width: 0;
+      padding: 15px 17px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      outline: none;
+      font-size: 16px;
+    }
+
+    .search input:focus {
+      border-color: var(--orange);
+      box-shadow:
+        0 0 0 4px rgba(223,132,44,.1);
+    }
+
+    .btn {
+      border: 0;
+      border-radius: 999px;
+      padding: 12px 18px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .primary {
+      background: var(--orange);
+      color: white;
+    }
+
+    .suggestions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .chip {
+      border: 1px solid var(--line);
+      background: #fff7ee;
+      color: var(--brown);
+      padding: 8px 11px;
+      border-radius: 999px;
+      cursor: pointer;
+    }
+
+    .results {
+      display: grid;
+      gap: 12px;
+      margin-top: 23px;
+    }
+
+    .result {
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 15px;
+      background: var(--cream);
+    }
+
+    .result h3 {
+      margin: 7px 0;
+      color: var(--brown);
+    }
+
+    .result p {
+      margin: 0 0 13px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .tag {
+      padding: 5px 8px;
+      border-radius: 999px;
+      background: #efe7dc;
+      color: var(--brown);
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .empty {
+      padding: 25px;
+      border: 1px dashed var(--line);
+      border-radius: 14px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .explanation {
+      color: #d8ccba;
+      font-size: 13px;
+      line-height: 1.7;
+      padding-bottom: 50px;
+    }
+
+    @media (max-width: 650px) {
+      .search {
+        flex-direction: column;
+      }
+
+      .panel {
+        padding: 19px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<header class="top">
+
+  <div class="wrap top-inner">
+
+    <a class="brand" href="index.html">
+      Hijrah Netwerk
+    </a>
+
+    <a class="back" href="kennisbank.html">
+      Naar kennisbank →
+    </a>
+
+  </div>
+
+</header>
+
+<main class="wrap">
+
+  <section class="hero">
+
+    <span class="eyebrow">
+      Smart Search
+    </span>
+
+    <h1>
+      Beschrijf gewoon wat je zoekt.
+    </h1>
+
+    <p>
+      Zoek in de gepubliceerde HN-kennisbank.
+      Deze eerste versie combineert zoekwoorden en
+      HN-structuur om relevante informatie naar boven te halen.
+    </p>
+
+  </section>
+
+  <section class="panel">
+
+    <form id="searchForm" class="search">
+
+      <input
+        id="searchInput"
+        type="search"
+        placeholder="Bijv. ik zoek een school in Tanger"
+        autocomplete="off"
+      >
+
+      <button class="btn primary">
+        Zoeken
+      </button>
+
+    </form>
+
+    <div class="suggestions">
+
+      <button
+        class="chip"
+        type="button"
+      >
+        huren in Tanger
+      </button>
+
+      <button
+        class="chip"
+        type="button"
+      >
+        scholen in Marokko
+      </button>
+
+      <button
+        class="chip"
+        type="button"
+      >
+        zorg in Tanger
+      </button>
+
+      <button
+        class="chip"
+        type="button"
+      >
+        verblijfsvergunning
+      </button>
+
+    </div>
+
+    <div
+      id="results"
+      class="results"
+    ></div>
+
+  </section>
+
+  <p class="explanation">
+    Deze eerste Smart Search-versie gebruikt alleen
+    gepubliceerde HN-content als bron. Er worden dus geen
+    antwoorden verzonnen buiten je kennisbank. Later kunnen
+    we hier een echte AI-laag bovenop zetten.
+  </p>
+
+</main>
+
+<script src="assets/config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-client.js"></script>
+
+<script>
+  const db = () => window.hijrahSupabase;
+
+  let topics = [];
+
+  const esc = value => {
+
+    if (value == null) {
+      return "";
+    }
+
+    return String(value)
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+  };
+
+  const normalize = value => {
+
+    return String(value || "")
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "");
+  };
+
+  function scoreTopic(topic, query) {
+
+    const words =
+      normalize(query)
+        .split(/\s+/)
+        .filter(Boolean);
+
+    if (!words.length) {
+      return 0;
+    }
+
+    const fields = [
+      [topic.title || "", 8],
+      [topic.summary || "", 5],
+      [topic.categories?.name || "", 5],
+      [topic.subcategories?.name || "", 4],
+      [topic.countries?.name || "", 5],
+      [topic.cities?.name || "", 6],
+      [topic.information_type || "", 2],
+      [topic.content || "", 1]
+    ];
+
+    let score = 0;
+
+    for (const word of words) {
+
+      for (const [text, weight] of fields) {
+
+        if (
+          normalize(text).includes(word)
+        ) {
+          score += weight;
+        }
+      }
+    }
+
+    return score;
+  }
+
+  function renderResults(query) {
+
+    const results =
+      topics
+
+        .map(topic => ({
+          ...topic,
+          score: scoreTopic(topic, query)
+        }))
+
+        .filter(topic => topic.score > 0)
+
+        .sort((a, b) => b.score - a.score)
+
+        .slice(0, 12);
+
+    const container =
+      document.getElementById("results");
+
+    if (!query) {
+
+      container.innerHTML = `
+        <div class="empty">
+          Typ hierboven wat je zoekt.
+        </div>
+      `;
+
+      return;
+    }
+
+    if (!results.length) {
+
+      container.innerHTML = `
+        <div class="empty">
+          Geen passende HN-informatie gevonden.
+          Probeer andere woorden.
+        </div>
+      `;
+
+      return;
+    }
+
+    container.innerHTML =
+      results
+        .map(topic => `
+
+          <article class="result">
+
+            <div class="tags">
+
+              ${
+                topic.countries?.name
+                  ? `<span class="tag">
+                      ${esc(topic.countries.name)}
+                    </span>`
+                  : ""
+              }
+
+              ${
+                topic.cities?.name
+                  ? `<span class="tag">
+                      ${esc(topic.cities.name)}
+                    </span>`
+                  : ""
+              }
+
+              ${
+                topic.categories?.name
+                  ? `<span class="tag">
+                      ${esc(topic.categories.name)}
+                    </span>`
+                  : ""
+              }
+
+            </div>
+
+            <h3>
+              ${esc(topic.title)}
+            </h3>
+
+            <p>
+              ${esc(
+                topic.summary ||
+                "Bekijk de volledige informatie."
+              )}
+            </p>
+
+            <a
+              class="btn"
+              style="background:#efe7dc;color:#684a25;"
+              href="kennisbank.html?topic=${encodeURIComponent(topic.id)}"
+            >
+              Bekijk informatie →
+            </a>
+
+          </article>
+
+        `)
+        .join("");
+  }
+
+  async function loadTopics() {
+
+    const { data, error } =
+      await db()
+        .from("topic")
+        .select(`
+          *,
+          countries(name),
+          cities(name),
+          categories(name),
+          subcategories(name)
+        `)
+        .eq("published", true);
+
+    if (error) {
+
+      console.error(
+        "Smart Search:",
+        error
+      );
+
+      document.getElementById("results").innerHTML = `
+        <div class="empty">
+          Smart Search kon de HN-database niet laden.
+        </div>
+      `;
+
+      return;
+    }
+
+    topics = data || [];
+
+    const params =
+      new URLSearchParams(
+        window.location.search
+      );
+
+    const query =
+      params.get("q") || "";
+
+    document.getElementById(
+      "searchInput"
+    ).value = query;
+
+    renderResults(query);
+  }
+
+  document
+    .getElementById("searchForm")
+    .addEventListener("submit", event => {
+
+      event.preventDefault();
+
+      const query =
+        document
+          .getElementById("searchInput")
+          .value
+          .trim();
+
+      history.replaceState(
+        {},
+        "",
+        `smart-search.html?q=${encodeURIComponent(query)}`
+      );
+
+      renderResults(query);
+    });
+
+  document
+    .querySelectorAll(".chip")
+    .forEach(button => {
+
+      button.addEventListener(
+        "click",
+        () => {
+
+          const query =
+            button.textContent.trim();
+
+          document.getElementById(
+            "searchInput"
+          ).value = query;
+
+          document
+            .getElementById("searchForm")
+            .requestSubmit();
+        }
+      );
+    });
+
+  loadTopics();
+</script>
+
+</body>
+</html>
