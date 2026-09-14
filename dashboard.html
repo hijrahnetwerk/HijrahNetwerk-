@@ -82,5 +82,6 @@ $('logoutBtn').onclick=async()=>{await db().auth.signOut();location.href='/login
 async function init(){tabs();if(!(await requireUser()))return;await loadBase();await Promise.all([loadSaved(),loadProgress(),loadPlan(),loadPreferences()])}
 init();
 </script>
+<script src="copy-protection.js"></script>
 </body>
 </html>
