@@ -637,6 +637,9 @@
   let countries=[];
   let cities=[];
   let selectedId=null;
+  const routeParams=new URLSearchParams(window.location.search);
+  function slugify(value){return String(value||'').toLowerCase().normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');}
+  function countryUrl(country){return '/landen/'+encodeURIComponent(slugify(country.name));}
 
   const esc=v=>String(v??'')
     .replace(/&/g,'&amp;')
@@ -729,8 +732,10 @@
       ? cs.slice(0,8).map(c=>'<span class="destination-city">'+esc(c.name)+'</span>').join('')
       : '<span class="destination-city">Nog geen steden toegevoegd</span>';
 
-    document.getElementById('selectedNavigation').href='navigatie.html?country='+encodeURIComponent(country.id);
-    document.getElementById('selectedKnowledge').href='kennisbank.html?country='+encodeURIComponent(country.id);
+    document.getElementById('selectedNavigation').href='/navigatie?country='+encodeURIComponent(country.id);
+    document.getElementById('selectedKnowledge').href='/kennisbank?country='+encodeURIComponent(country.id);
+    const cleanUrl=countryUrl(country);
+    if(window.location.pathname!==cleanUrl && !window.__hnRouteSelecting) window.history.replaceState({},'',cleanUrl);
 
     document.querySelectorAll('.country-card').forEach(card=>{
       card.classList.toggle('active',String(card.dataset.id)===String(country.id));
@@ -763,7 +768,7 @@
     grid.innerHTML=list.map(c=>{
       const cs=countryCities(c.id);
       const code=isoCode(c);
-      return `<a class="country-card${String(c.id)===String(selectedId)?' active':''}" data-id="${esc(c.id)}" href="navigatie.html?country=${encodeURIComponent(c.id)}" onclick="event.preventDefault();window.__hnSelectCountry('${String(c.id).replace(/'/g,"\\'")}');">
+      return `<a class="country-card${String(c.id)===String(selectedId)?' active':''}" data-id="${esc(c.id)}" href="${countryUrl(c)}" onclick="event.preventDefault();window.__hnSelectCountry('${String(c.id).replace(/'/g,"\\'")}');">
         <div class="country-top">
           <div class="country-title-row">
             <div class="country-flag">${flagEmoji(code)}</div>
@@ -900,9 +905,12 @@
 
     renderCards();
 
-    if(countries.length){
-      selectCountry(countries[0].id,false);
-    }
+    const requestedCountrySlug=routeParams.get('countrySlug')||'';
+    const requestedCitySlug=routeParams.get('citySlug')||'';
+    let initialCountry=countries[0]||null;
+    if(requestedCountrySlug) initialCountry=countries.find(c=>slugify(c.name)===requestedCountrySlug)||initialCountry;
+    if(requestedCitySlug){const requestedCity=cities.find(c=>slugify(c.name)===requestedCitySlug);if(requestedCity) initialCountry=countries.find(c=>String(c.id)===String(requestedCity.country_id))||initialCountry;}
+    if(initialCountry){window.__hnRouteSelecting=true;selectCountry(initialCountry.id,false);window.__hnRouteSelecting=false;renderCards();}
 
     window.__hnSelectCountry=(id)=>{
       selectCountry(id,true);

@@ -6,7 +6,7 @@
 <title>Dr. Yohan Guazzi | Huisarts in Tanger</title>
 <meta name="description" content="Dr. Yohan Guazzi, huisarts in Tanger. Praktische informatie over Cabinet Médical Ibn Zuhr, adres, telefoon, openingstijden en afspraken.">
 <meta name="robots" content="index,follow">
-<link rel="canonical" href="https://hijrah-netwerk.vercel.app/fiche.html?id=8b023d28-599b-483a-bca8-5f88e721cb89">
+<link rel="canonical" href="https://hijrah-netwerk.vercel.app/fiche">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Dr. Yohan Guazzi | Huisarts in Tanger">
 <meta property="og:description" content="Praktische informatie over Dr. Yohan Guazzi en Cabinet Médical Ibn Zuhr in Tanger.">
@@ -212,7 +212,7 @@ h1{font-size:clamp(30px,4vw,42px);line-height:1.1;color:var(--brown-dark);margin
 <link rel="stylesheet" href="assets/public-nav.css">
 <script src="assets/public-nav.js"></script>
 <main class="wrap">
-  <a class="back" href="navigatie.html">← Terug naar Hijrah Navigatie</a>
+  <a class="back" href="/navigatie">← Terug naar Hijrah Navigatie</a>
   <div id="app"><div class="empty">Fiche wordt geladen...</div></div>
 </main>
 
@@ -391,7 +391,8 @@ async function init(){
   const mapsUrl=mapsHref(d,pageTitle,loc);
 
   const seoDescription=(x.summary||d.short_description||('Praktische informatie over '+pageTitle+(loc?' in '+loc:''))) .replace(/\s+/g,' ').trim();
-  const canonicalUrl=window.location.origin+'/fiche/'+encodeURIComponent(String(pageTitle||'fiche').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,''));
+  const canonicalSlug=String(pageTitle||'fiche').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
+  const canonicalUrl=window.location.origin+'/fiche/'+encodeURIComponent(canonicalSlug);
   const setMeta=(selector,attribute,value)=>{
     const el=document.querySelector(selector);
     if(el)el.setAttribute(attribute,value);
@@ -445,7 +446,7 @@ async function init(){
   if(d.phone)html+='<a class="button primary" href="'+esc(telHref(d.phone))+'">'+icon.phone+'Bel</a>';
   if(mapsUrl)html+='<a class="button secondary" target="_blank" rel="noopener" href="'+esc(mapsUrl)+'">'+icon.map+'Google Maps</a>';
   if(d.website)html+='<a class="button outline" target="_blank" rel="noopener" href="'+esc(d.website)+'">'+icon.web+'Website</a>';
-  html+='<a class="button primary" href="bijdragen.html?type=experience&title='+encodeURIComponent(pageTitle)+'">Ervaring delen</a>';
+  html+='<a class="button primary" href="/bijdragen?type=experience&title='+encodeURIComponent(pageTitle)+'">Ervaring delen</a>';
   html+='</div>';
   html+='</div></div></section>';
 
@@ -522,7 +523,7 @@ async function init(){
   }else{
     html+='<p class="empty-note">Er zijn nog geen ervaringen uit de HN-community toegevoegd.</p>';
   }
-  html+='<div class="hero-actions"><a class="button primary" href="bijdragen.html?type=experience&title='+encodeURIComponent(pageTitle)+'">Ervaring delen</a></div></section>';
+  html+='<div class="hero-actions"><a class="button primary" href="/bijdragen?type=experience&title='+encodeURIComponent(pageTitle)+'">Ervaring delen</a></div></section>';
 
   html+='</div>';
 
@@ -551,7 +552,7 @@ async function init(){
 
   html+='</aside></div>';
 
-  html+='<section class="card" style="margin-top:18px"><h2>Informatie corrigeren</h2><p class="empty-note">Zie je iets dat niet klopt of verouderd is? Stuur de correctie naar HN. Niets wordt automatisch aangepast.</p><div class="hero-actions"><a class="button secondary" href="bijdragen.html?type=correction&title='+encodeURIComponent(pageTitle)+'">Correctie insturen</a></div></section>';
+  html+='<section class="card" style="margin-top:18px"><h2>Informatie corrigeren</h2><p class="empty-note">Zie je iets dat niet klopt of verouderd is? Stuur de correctie naar HN. Niets wordt automatisch aangepast.</p><div class="hero-actions"><a class="button secondary" href="/bijdragen?type=correction&title='+encodeURIComponent(pageTitle)+'">Correctie insturen</a></div></section>';
 
   document.getElementById('app').innerHTML=html;
 }

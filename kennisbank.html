@@ -1690,7 +1690,7 @@
           <div class="article-toolbar">
             <a
               class="btn btn-primary"
-              href="fiche.html?id=${encodeURIComponent(topic.id)}"
+              href="/fiche/${encodeURIComponent(slugify(topic.title||topic.id))}"
             >
               Bekijk volledige fiche →
             </a>
@@ -1704,7 +1704,7 @@
         <div class="article-nav">
           ${previous
             ? `
-              <a class="article-nav-link" href="kennisbank.html?topic=${encodeURIComponent(previous.id)}">
+              <a class="article-nav-link" href="/kennisbank/${encodeURIComponent(slugify(previous.title||previous.id))}">
                 <span class="article-nav-label">← Vorige</span>
                 <span class="article-nav-title">${esc(previous.title)}</span>
               </a>
@@ -1714,7 +1714,7 @@
 
           ${next
             ? `
-              <a class="article-nav-link next" href="kennisbank.html?topic=${encodeURIComponent(next.id)}">
+              <a class="article-nav-link next" href="/kennisbank/${encodeURIComponent(slugify(next.title||next.id))}">
                 <span class="article-nav-label">Volgende →</span>
                 <span class="article-nav-title">${esc(next.title)}</span>
               </a>
@@ -1737,7 +1737,7 @@
                 <h3>Andere artikelen</h3>
                 <div class="related-grid">
                   ${fallbackRelated.map(item => `
-                    <a class="related-card" href="kennisbank.html?topic=${encodeURIComponent(item.id)}">
+                    <a class="related-card" href="/kennisbank/${encodeURIComponent(slugify(item.title||item.id))}">
                       <div class="tags">
                         ${item.cities?.name ? `<span class="tag">${esc(item.cities.name)}</span>` : ""}
                         ${item.categories?.name ? `<span class="tag">${esc(item.categories.name)}</span>` : ""}

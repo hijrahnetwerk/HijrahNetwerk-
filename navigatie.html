@@ -117,6 +117,8 @@ const esc=v=>v==null?'':String(v).replace(/&/g,'&amp;').replace(/</g,'&lt;').rep
 let rows=[],countries=[],cities=[],categories=[];
 
 function data(x){return x&&x.card_data&&typeof x.card_data==='object'?x.card_data:{}}
+function slugify(value){return String(value||'').toLowerCase().normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'')}
+function ficheUrl(x){return '/fiche/'+encodeURIComponent(slugify(x.title||x.id))}
 function fill(id,items,label){
  const e=document.getElementById(id);
  e.innerHTML='<option value="">'+label+'</option>'+items.map(x=>'<option value="'+x.id+'">'+esc(x.name)+'</option>').join('');
@@ -200,6 +202,8 @@ async function init(){
   }
 
   rows=topicResult.data||[];
+  const routeSlug=new URLSearchParams(location.search).get('slug');
+  if(routeSlug){const match=rows.find(x=>slugify(x.title)===routeSlug);if(match){window.location.replace(ficheUrl(match));return;}}
 
   const results=await Promise.allSettled([
     database.from('countries').select('id,name').order('name'),

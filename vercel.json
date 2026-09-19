@@ -27,7 +27,7 @@
     },
     {
       "source": "/navigatie/:slug",
-      "destination": "/navigatie.html?slug=:slug"
+      "destination": "/fiche.html?slug=:slug"
     },
     {
       "source": "/fiche/:slug",
