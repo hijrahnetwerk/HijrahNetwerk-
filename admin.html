@@ -4583,10 +4583,38 @@ async function approveSubmission(id){
     recommendation:'Aanbeveling',
     warning:'Waarschuwing'
   };
+  let contributorProfile=null;
+
+  if(submission.submitted_by){
+    const profileResult=await db()
+      .from('profiles')
+      .select('id,public_name,public_code,community_role,application_status')
+      .eq('id',submission.submitted_by)
+      .maybeSingle();
+
+    contributorProfile=profileResult.data||null;
+  }
+
   const summary=(submission.content||'').replace(/\\s+/g,' ').trim().slice(0,220);
+  const contributorName=
+    contributorProfile?.public_name||
+    submission.submitter_name||
+    'Anoniem';
+
   const cardData={
     ...(submission.submission_type==='experience'||submission.submission_type==='review'
-      ? {experiences:[{text:submission.content,name:submission.submitter_name||'Anoniem',date:new Date().toLocaleDateString('nl-NL')}]} : {}),
+      ? {
+          experiences:[{
+            text:submission.content,
+            name:contributorName,
+            profile_code:contributorProfile?.public_code||null,
+            profile_name:contributorProfile?.public_name||null,
+            profile_role:contributorProfile?.community_role||'Communitylid',
+            profile_id:contributorProfile?.id||submission.submitted_by||null,
+            date:new Date().toLocaleDateString('nl-NL')
+          }]
+        }
+      : {}),
     warning:submission.submission_type==='warning'?submission.content:'',
     source_type:'community'
   };
