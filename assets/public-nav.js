@@ -107,24 +107,24 @@
     root.innerHTML=`
       <header class="hn-nav">
         <div class="hn-nav-inner">
-          <a class="hn-brand" href="index.html" aria-label="Hijrah Netwerk">
+          <a class="hn-brand" href="/" aria-label="Hijrah Netwerk">
             <span class="hn-mark">HN</span>
             <span>Hijrah Netwerk</span>
           </a>
 
           <nav class="hn-links" aria-label="Hoofdnavigatie">
-            <a href="index.html">Home</a>
-            <a href="landen.html">Landen &amp; Steden</a>
-            <a href="navigatie.html">Hijrah Navigatie</a>
-            <a href="kennisbank.html">Kennisbank</a>
-            <a href="smart-search.html">Smart Search</a>
-            <a href="community.html">Community</a>
+            <a href="/">Home</a>
+            <a href="/landen">Landen &amp; Steden</a>
+            <a href="/navigatie">Hijrah Navigatie</a>
+            <a href="/kennisbank">Kennisbank</a>
+            <a href="/smart-search">Smart Search</a>
+            <a href="/community">Community</a>
           </nav>
 
           <div class="hn-actions">
-            <a class="hn-action secondary" href="mijn-hijrah.html">Mijn Hijrah</a>
-            <a class="hn-action secondary" href="bijdragen.html">Bijdragen</a>
-            <a class="hn-action primary" href="register.html">Aanmelden</a>
+            <a class="hn-action secondary" href="/mijn-hijrah">Mijn Hijrah</a>
+            <a class="hn-action secondary" href="/bijdragen">Bijdragen</a>
+            <a class="hn-action primary" href="/register">Aanmelden</a>
           </div>
 
           <button class="hn-menu" type="button" aria-label="Open menu" aria-expanded="false">
@@ -139,18 +139,18 @@
             <strong>Hijrah Netwerk</strong>
             <button class="hn-mobile-close" type="button" aria-label="Sluit menu">×</button>
           </div>
-          <a class="hn-mobile-link" href="index.html">Home</a>
-          <a class="hn-mobile-link" href="landen.html">Landen &amp; Steden</a>
-          <a class="hn-mobile-link" href="navigatie.html">Hijrah Navigatie</a>
-          <a class="hn-mobile-link" href="kennisbank.html">Kennisbank</a>
-          <a class="hn-mobile-link" href="smart-search.html">Smart Search</a>
-          <a class="hn-mobile-link" href="community.html">Community</a>
+          <a class="hn-mobile-link" href="/">Home</a>
+          <a class="hn-mobile-link" href="/landen">Landen &amp; Steden</a>
+          <a class="hn-mobile-link" href="/navigatie">Hijrah Navigatie</a>
+          <a class="hn-mobile-link" href="/kennisbank">Kennisbank</a>
+          <a class="hn-mobile-link" href="/smart-search">Smart Search</a>
+          <a class="hn-mobile-link" href="/community">Community</a>
           <a class="hn-mobile-link" href="index.html#over-ons">Over ons</a>
-          <a class="hn-mobile-link" href="bijdragen.html">Bijdragen</a>
+          <a class="hn-mobile-link" href="/bijdragen">Bijdragen</a>
           <div class="hn-mobile-divider"></div>
-          <a class="hn-mobile-link" href="mijn-hijrah.html">Mijn Hijrah</a>
-          <a class="hn-mobile-link" href="login.html">Inloggen</a>
-          <a class="hn-mobile-primary" href="register.html">Aanmelden voor de lancering</a>
+          <a class="hn-mobile-link" href="/mijn-hijrah">Mijn Hijrah</a>
+          <a class="hn-mobile-link" href="/login">Inloggen</a>
+          <a class="hn-mobile-primary" href="/register">Aanmelden voor de lancering</a>
         </div>
       </div>
     `;

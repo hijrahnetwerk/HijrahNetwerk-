@@ -735,6 +735,16 @@
     new URLSearchParams(
       window.location.search
     );
+  const topicSlug = params.get("topicSlug");
+
+  function slugify(value) {
+    return String(value || "")
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "");
+  }
 
 
   /* =========================
@@ -995,9 +1005,9 @@
   }
 
   function articleUrl(topicId) {
-    return window.location.origin +
-      "/kennisbank.html?topic=" +
-      encodeURIComponent(topicId);
+    const topic = topics.find(item => item.id === topicId);
+    const slug = slugify(topic?.title || topicId);
+    return window.location.origin + "/kennisbank/" + encodeURIComponent(slug);
   }
 
   function setMeta(name, content) {
@@ -1923,7 +1933,7 @@
       history.replaceState(
         {},
         "",
-        `kennisbank.html?topic=${encodeURIComponent(topicId)}`
+        articleUrl(topicId)
       );
     }
 
@@ -2150,11 +2160,10 @@
     renderResults();
 
     if (params.get("topic")) {
-
-      openArticle(
-        params.get("topic")
-      );
-
+      openArticle(params.get("topic"));
+    } else if (topicSlug) {
+      const match = topics.find(item => slugify(item.title) === topicSlug);
+      if (match) openArticle(match.id, false);
     }
 
   }

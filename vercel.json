@@ -1,3 +1,69 @@
 {
-  "buildCommand": "node build.js"
+  "buildCommand": "node build.js",
+  "rewrites": [
+    {
+      "source": "/kennisbank",
+      "destination": "/kennisbank.html"
+    },
+    {
+      "source": "/kennisbank/:slug",
+      "destination": "/kennisbank.html?topicSlug=:slug"
+    },
+    {
+      "source": "/landen",
+      "destination": "/landen.html"
+    },
+    {
+      "source": "/landen/:slug",
+      "destination": "/landen.html?countrySlug=:slug"
+    },
+    {
+      "source": "/steden/:slug",
+      "destination": "/landen.html?citySlug=:slug"
+    },
+    {
+      "source": "/navigatie",
+      "destination": "/navigatie.html"
+    },
+    {
+      "source": "/navigatie/:slug",
+      "destination": "/navigatie.html?slug=:slug"
+    },
+    {
+      "source": "/fiche/:slug",
+      "destination": "/fiche.html?slug=:slug"
+    },
+    {
+      "source": "/community",
+      "destination": "/community.html"
+    },
+    {
+      "source": "/smart-search",
+      "destination": "/smart-search.html"
+    },
+    {
+      "source": "/bijdragen",
+      "destination": "/bijdragen.html"
+    },
+    {
+      "source": "/mijn-hijrah",
+      "destination": "/mijn-hijrah.html"
+    },
+    {
+      "source": "/dashboard",
+      "destination": "/dashboard.html"
+    },
+    {
+      "source": "/paspoort",
+      "destination": "/paspoort.html"
+    },
+    {
+      "source": "/login",
+      "destination": "/login.html"
+    },
+    {
+      "source": "/register",
+      "destination": "/register.html"
+    }
+  ]
 }
