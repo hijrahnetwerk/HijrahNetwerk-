@@ -3,58 +3,228 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Fiche | Hijrah Navigatie | Hijrah Netwerk</title>
-<meta name="description" content="Praktische fiche binnen Hijrah Navigatie.">
+<title>Dr. Yohan Guazzi | Huisarts in Tanger</title>
+<meta name="description" content="Dr. Yohan Guazzi, huisarts in Tanger. Praktische informatie over Cabinet Médical Ibn Zuhr, adres, telefoon, openingstijden en afspraken.">
+<meta name="robots" content="index,follow">
+<link rel="canonical" href="https://hijrah-netwerk.vercel.app/fiche.html?id=8b023d28-599b-483a-bca8-5f88e721cb89">
 <script src="assets/config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase-client.js"></script>
 <style>
 :root{--brown:#684a25;--brown-dark:#4d3819;--orange:#df842c;--gold:#e9a74b;--cream:#faf7f2;--text:#29231d;--muted:#756d63;--border:#e8e0d6;--white:#fff}
-*{box-sizing:border-box}body{margin:0;background:var(--cream);color:var(--text);font-family:Arial,sans-serif;line-height:1.55}
-a{text-decoration:none;color:inherit}.top{background:var(--brown);color:#fff}.nav{max-width:1100px;margin:auto;padding:16px 22px;display:flex;justify-content:space-between;align-items:center;gap:20px}.brand{font-weight:700;font-size:20px}.navlinks{display:flex;gap:8px;flex-wrap:wrap}.navlinks a{color:#fff;padding:8px 10px;border-radius:8px;font-size:14px}.navlinks a:hover{background:rgba(255,255,255,.12)}
-.wrap{max-width:1000px;margin:auto;padding:35px 22px 70px}.back{display:inline-block;color:var(--brown);font-weight:700;font-size:14px;margin-bottom:22px}.hero,.panel{background:#fff;border:1px solid var(--border);border-radius:16px}.hero{padding:28px}.eyebrow{display:inline-block;background:#f3e5d4;color:var(--brown);font-size:12px;font-weight:700;padding:6px 10px;border-radius:20px;margin:0 6px 8px 0}h1{font-size:34px;line-height:1.15;color:var(--brown-dark);margin:10px 0}.summary{color:var(--muted);font-size:17px;margin:0}.location{margin-top:16px;color:var(--muted);font-size:14px}.grid{display:grid;grid-template-columns:1.25fr .75fr;gap:18px;margin-top:18px}.panel{padding:22px}.panel h2{font-size:19px;color:var(--brown-dark);margin:0 0 15px}.info{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.item{border:1px solid var(--border);border-radius:10px;padding:12px;background:#fff}.label{font-size:11px;color:var(--muted);text-transform:uppercase;margin-bottom:3px}.value{font-size:14px;white-space:pre-wrap}.value a{color:var(--orange);font-weight:700}.warning{background:#fff6e8;border:1px solid #f0d8ad;border-radius:10px;padding:13px;margin-top:15px}.content{white-space:pre-wrap}.experience{border-top:1px solid var(--border);padding:16px 0}.experience:first-child{border-top:0;padding-top:0}.stars{letter-spacing:2px;color:var(--gold)}.exp-meta{font-size:12px;color:var(--muted);margin-top:6px}.source{font-size:13px;color:var(--muted)}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}.button{display:inline-block;border:0;border-radius:8px;padding:10px 13px;font-size:13px;cursor:pointer}.primary{background:var(--orange);color:#fff}.secondary{background:#f1ece5;color:var(--brown)}.note{font-size:12px;color:var(--muted);margin-top:18px}.error,.empty{text-align:center;padding:30px;color:var(--muted);background:#fff;border:1px solid var(--border);border-radius:14px}
-@media(max-width:760px){.grid{grid-template-columns:1fr}.info{grid-template-columns:1fr}.nav{display:block}.navlinks{margin-top:10px}h1{font-size:29px}.wrap{padding:25px 16px 50px}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--cream);color:var(--text);font-family:Arial,sans-serif;line-height:1.6}
+a{text-decoration:none;color:inherit}
+.top{background:var(--brown);color:#fff}
+.nav{max-width:1100px;margin:auto;padding:16px 22px;display:flex;justify-content:space-between;align-items:center;gap:20px}
+.brand{font-weight:700;font-size:20px}
+.navlinks{display:flex;gap:5px;flex-wrap:wrap}
+.navlinks a{color:#fff;padding:8px 10px;border-radius:8px;font-size:14px}
+.navlinks a:hover{background:rgba(255,255,255,.12)}
+.wrap{max-width:1000px;margin:auto;padding:32px 22px 70px}
+.back{display:inline-block;color:var(--brown);font-weight:700;font-size:14px;margin-bottom:18px}
+.hero,.panel{background:#fff;border:1px solid var(--border);border-radius:16px}
+.hero{padding:30px}
+.badges{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:10px}
+.eyebrow{display:inline-block;background:#f3e5d4;color:var(--brown);font-size:12px;font-weight:700;padding:6px 10px;border-radius:20px}
+h1{font-size:36px;line-height:1.15;color:var(--brown-dark);margin:8px 0 12px}
+.summary{color:var(--muted);font-size:17px;margin:0;max-width:760px}
+.location{margin-top:15px;color:var(--muted);font-size:14px}
+.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:20px}
+.button{display:inline-block;border:0;border-radius:9px;padding:10px 14px;font-size:13px;font-weight:700;cursor:pointer}
+.primary{background:var(--orange);color:#fff}
+.secondary{background:#f1ece5;color:var(--brown)}
+.grid{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(280px,.75fr);gap:18px;margin-top:18px}
+.panel{padding:24px}
+.panel+.panel{margin-top:18px}
+.panel h2{font-size:20px;color:var(--brown-dark);margin:0 0 17px}
+.content{color:var(--text)}
+.content p{margin:0 0 15px}
+.content h3{font-size:16px;color:var(--brown-dark);margin:23px 0 8px}
+.content ul{margin:7px 0 17px;padding-left:22px}
+.content li{margin:5px 0}
+.info{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.item{border:1px solid var(--border);border-radius:10px;padding:13px;background:#fff}
+.label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.03em;margin-bottom:4px}
+.value{font-size:14px;white-space:pre-wrap}
+.value a,.source a{color:var(--orange);font-weight:700}
+.warning{background:#fff6e8;border:1px solid #f0d8ad;border-radius:10px;padding:14px;margin-top:16px}
+.experience{border-top:1px solid var(--border);padding:16px 0}
+.experience:first-child{border-top:0;padding-top:0}
+.stars{letter-spacing:2px;color:var(--gold)}
+.exp-meta{font-size:12px;color:var(--muted);margin-top:7px}
+.source{font-size:13px;color:var(--muted)}
+.source-row{margin-bottom:9px}
+.note{font-size:12px;color:var(--muted);margin-top:18px}
+.error,.empty{text-align:center;padding:30px;color:var(--muted);background:#fff;border:1px solid var(--border);border-radius:14px}
+@media(max-width:760px){
+ .grid{grid-template-columns:1fr}
+ .info{grid-template-columns:1fr}
+ .nav{display:block}
+ .navlinks{margin-top:10px}
+ h1{font-size:29px}
+ .hero{padding:23px}
+ .panel{padding:20px}
+ .wrap{padding:25px 16px 50px}
+}
 </style>
 </head>
 <body>
-<header class="top"><div class="nav"><div class="brand">Hijrah Netwerk</div><div class="navlinks"><a href="/">Website</a><a href="navigatie.html">Hijrah Navigatie</a><a href="kennisbank.html">Kennisbank</a><a href="dashboard.html">Mijn Hijrah</a><a href="bijdragen.html">Informatie insturen</a></div></div></header>
+<header class="top">
+<div class="nav">
+<div class="brand">Hijrah Netwerk</div>
+<div class="navlinks">
+<a href="/">Website</a>
+<a href="navigatie.html">Hijrah Navigatie</a>
+<a href="kennisbank.html">Kennisbank</a>
+<a href="dashboard.html">Mijn Hijrah</a>
+<a href="bijdragen.html">Informatie insturen</a>
+</div>
+</div>
+</header>
+
 <main class="wrap">
 <a class="back" href="navigatie.html">← Terug naar Hijrah Navigatie</a>
 <div id="app"><div class="empty">Fiche wordt geladen...</div></div>
 </main>
+
 <script>
 const db=()=>window.hijrahSupabase;
 const esc=v=>v==null?'':String(v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
 const data=x=>x&&x.card_data&&typeof x.card_data==='object'?x.card_data:{};
 const params=new URLSearchParams(location.search),id=params.get('id');
-function link(v,label){if(!v)return '';return '<a href="'+esc(v)+'" target="_blank" rel="noopener">'+esc(label||v)+'</a>'}
-function item(label,value,html=false){return value?'<div class="item"><div class="label">'+esc(label)+'</div><div class="value">'+(html?value:esc(value))+'</div></div>':''}
+
+function normalizeText(value){
+ if(value==null)return '';
+ return String(value).replace(/\\n/g,'\\n').replace(/\\r/g,'\\n').trim();
+}
+
+function formatContent(value){
+ const text=normalizeText(value);
+ if(!text)return '';
+ const lines=text.split(/\\n+/).map(x=>x.trim()).filter(Boolean);
+ let out='',list=[];
+ const flush=()=>{
+  if(!list.length)return;
+  out+='<ul>'+list.map(x=>'<li>'+esc(x.replace(/^•\\s*/,''))+'</li>').join('')+'</ul>';
+  list=[];
+ };
+ lines.forEach(line=>{
+  if(/^•\\s*/.test(line)){list.push(line);return;}
+  flush();
+  if(/^(Opleiding en professionele achtergrond|Over het cabinet|Consultaties|Afspraken|Huisbezoeken|Teleconsultatie|Belangrijk)$/i.test(line)){
+   out+='<h3>'+esc(line)+'</h3>';
+  }else{
+   out+='<p>'+esc(line)+'</p>';
+  }
+ });
+ flush();
+ return out;
+}
+
+function link(v,label){
+ if(!v)return '';
+ return '<a href="'+esc(v)+'" target="_blank" rel="noopener">'+esc(label||v)+'</a>';
+}
+
+function item(label,value,html=false){
+ return value?'<div class="item"><div class="label">'+esc(label)+'</div><div class="value">'+(html?value:esc(value))+'</div></div>':'';
+}
+
 async function init(){
- if(!id){document.getElementById('app').innerHTML='<div class="error">Geen fiche geselecteerd.</div>';return}
+ if(!id){
+  document.getElementById('app').innerHTML='<div class="error">Geen fiche geselecteerd.</div>';
+  return;
+ }
+
  const [r,c,ci,ca]=await Promise.all([
   db().from('topic').select('id,title,summary,content,information_type,country_id,city_id,category_id,published,visibility,card_data,source,source_url,updated_at,last_checked_at,next_review_at,verified_at,submitted_by').eq('id',id).eq('published',true).maybeSingle(),
   db().from('countries').select('id,name').order('name'),
   db().from('cities').select('id,name').order('name'),
   db().from('categories').select('id,name').order('name')
  ]);
- if(r.error||!r.data){document.getElementById('app').innerHTML='<div class="error">Deze fiche is niet beschikbaar of kon niet worden geladen.</div>';return}
- const x=r.data,d=data(x),country=(c.data||[]).find(y=>y.id===x.country_id)?.name||'',city=(ci.data||[]).find(y=>y.id===x.city_id)?.name||'',cat=(ca.data||[]).find(y=>y.id===x.category_id)?.name||'',loc=[city,country].filter(Boolean).join(', ');
- const exps=Array.isArray(d.experiences)?d.experiences:[], infoType=x.information_type||'Praktische informatie';
+
+ if(r.error||!r.data){
+  document.getElementById('app').innerHTML='<div class="error">Deze fiche is niet beschikbaar of kon niet worden geladen.</div>';
+  return;
+ }
+
+ const x=r.data;
+ const d=data(x);
+ const country=(c.data||[]).find(y=>y.id===x.country_id)?.name||'';
+ const city=(ci.data||[]).find(y=>y.id===x.city_id)?.name||'';
+ const cat=(ca.data||[]).find(y=>y.id===x.category_id)?.name||'';
+ const loc=[city,country].filter(Boolean).join(', ');
+ const exps=Array.isArray(d.experiences)?d.experiences:[];
+ const infoType=x.information_type||'Praktische informatie';
  const verified=x.verified_at||x.last_checked_at;
- let html='<section class="hero"><div><span class="eyebrow">'+esc(cat||'Hijrah Navigatie')+'</span><span class="eyebrow">'+esc(infoType)+'</span></div><h1>'+esc(x.title||'Zonder titel')+'</h1><p class="summary">'+esc(x.summary||d.short_description||'')+'</p>'+(loc?'<div class="location">📍 '+esc(loc)+'</div>':'')+'<div class="actions">'+(d.website?'<a class="button secondary" target="_blank" rel="noopener" href="'+esc(d.website)+'">Website</a>':'')+(d.maps_url?'<a class="button secondary" target="_blank" rel="noopener" href="'+esc(d.maps_url)+'">Route</a>':'')+'<a class="button primary" href="bijdragen.html?type=experience&title='+encodeURIComponent(x.title||'')+'">Ervaring delen</a></div></section>';
+ const pageTitle=x.title||'Hijrah Netwerk';
+ document.title=pageTitle;
+
+ let html='<section class="hero">';
+ html+='<div class="badges"><span class="eyebrow">'+esc(cat||'Hijrah Navigatie')+'</span><span class="eyebrow">'+esc(infoType)+'</span></div>';
+ html+='<h1>'+esc(pageTitle)+'</h1>';
+ html+='<p class="summary">'+esc(x.summary||d.short_description||'')+'</p>';
+ if(loc)html+='<div class="location">📍 '+esc(loc)+'</div>';
+ html+='<div class="actions">';
+ if(d.website)html+='<a class="button secondary" target="_blank" rel="noopener" href="'+esc(d.website)+'">Website</a>';
+ if(d.maps_url)html+='<a class="button secondary" target="_blank" rel="noopener" href="'+esc(d.maps_url)+'">Route</a>';
+ html+='<a class="button primary" href="bijdragen.html?type=experience&title='+encodeURIComponent(pageTitle)+'">Ervaring delen</a>';
+ html+='</div></section>';
+
  html+='<div class="grid"><div>';
- if(x.content)html+='<section class="panel"><h2>Over deze plek of dienst</h2><div class="content">'+esc(x.content)+'</div></section>';
- const info=[item('Type',d.service_type),item('Adres',d.address),item('Wijk',d.neighborhood),item('Talen',d.languages),item('Telefoon',d.phone),item('E-mail',d.email),item('Openingstijden',d.opening_hours),item('Prijs / kosten',d.price),item('Voor kinderen',d.for_children),item('Afspraak nodig',d.appointment),item('Verzekering / CNSS',d.insurance),item('Spoed',d.emergency)];
- if(info.some(Boolean))html+='<section class="panel"><h2>Praktische gegevens</h2><div class="info">'+info.join('')+'</div>'+(d.warning?'<div class="warning">⚠️ '+esc(d.warning)+'</div>':'')+'</section>';
+
+ if(x.content){
+  html+='<section class="panel"><h2>Over deze plek of dienst</h2><div class="content">'+formatContent(x.content)+'</div></section>';
+ }
+
+ const info=[
+  item('Type',d.service_type),
+  item('Adres',d.address),
+  item('Wijk',d.neighborhood),
+  item('Talen',d.languages),
+  item('Telefoon',d.phone),
+  item('E-mail',d.email),
+  item('Openingstijden',d.opening_hours),
+  item('Prijs / kosten',d.price),
+  item('Voor kinderen',d.for_children),
+  item('Afspraak nodig',d.appointment),
+  item('Verzekering / CNSS',d.insurance),
+  item('Spoed',d.emergency)
+ ];
+
+ if(info.some(Boolean)){
+  html+='<section class="panel"><h2>Praktische gegevens</h2><div class="info">'+info.join('')+'</div>';
+  if(d.warning)html+='<div class="warning">⚠️ '+esc(d.warning)+'</div>';
+  html+='</section>';
+ }
+
  html+='</div><aside>';
+
  html+='<section class="panel"><h2>Ervaringen uit de HN-community</h2>';
- if(exps.length)html+=exps.map(e=>'<div class="experience"><div class="stars">'+('★'.repeat(Math.min(5,Math.max(0,Number(e.rating)||0)))+('☆'.repeat(Math.max(0,5-(Number(e.rating)||0)))))+'</div><div class="content" style="margin-top:8px">'+esc(e.text||e.content||'')+'</div><div class="exp-meta">Ingediend door: '+esc(e.name||'Anoniem')+(e.date?' · '+esc(e.date):'')+'</div></div>').join('');else html+='<p class="source">Er zijn nog geen ervaringen uit de HN-community toegevoegd.</p>';
- html+='<a class="button primary" href="bijdragen.html?type=experience&title='+encodeURIComponent(x.title||'')+'">Ervaring delen</a></section>';
- html+='<section class="panel"><h2>Bron & controle</h2><div class="source">'+(x.source?'<div><strong>Bron:</strong> '+esc(x.source)+'</div>':'')+(x.source_url?'<div style="margin-top:6px">'+link(x.source_url,'Bron bekijken')+'</div>':'')+(verified?'<div style="margin-top:10px"><strong>Laatst gecontroleerd:</strong> '+new Date(verified).toLocaleDateString('nl-NL')+'</div>':'')+'<p class="note">Ervaringen en aanbevelingen zijn community-informatie. HN maakt onderscheid tussen bevestigde informatie en ervaringen.</p></div></section>';
+ if(exps.length){
+  html+=exps.map(e=>{
+   const rating=Math.min(5,Math.max(0,Number(e.rating)||0));
+   return '<div class="experience"><div class="stars">'+('★'.repeat(rating)+('☆'.repeat(5-rating)))+'</div><div class="content" style="margin-top:8px">'+esc(e.text||e.content||'')+'</div><div class="exp-meta">Ingediend door: '+esc(e.name||'Anoniem')+(e.date?' · '+esc(e.date):'')+'</div></div>';
+  }).join('');
+ }else{
+  html+='<p class="source">Er zijn nog geen ervaringen uit de HN-community toegevoegd.</p>';
+ }
+ html+='<a class="button primary" href="bijdragen.html?type=experience&title='+encodeURIComponent(pageTitle)+'">Ervaring delen</a></section>';
+
+ html+='<section class="panel"><h2>Bron & controle</h2><div class="source">';
+ if(x.source)html+='<div class="source-row"><strong>Bron:</strong> '+esc(x.source)+'</div>';
+ if(x.source_url)html+='<div class="source-row">'+link(x.source_url,'Bron bekijken')+'</div>';
+ if(verified)html+='<div class="source-row"><strong>Laatst gecontroleerd:</strong> '+new Date(verified).toLocaleDateString('nl-NL')+'</div>';
+ html+='<p class="note">Ervaringen en aanbevelingen zijn community-informatie. HN maakt onderscheid tussen bevestigde informatie en ervaringen.</p></div></section>';
+
  html+='</aside></div>';
- html+='<section class="panel" style="margin-top:18px"><h2>Informatie corrigeren</h2><p class="source">Zie je iets dat niet klopt of verouderd is? Stuur de correctie naar HN. Niets wordt automatisch aangepast.</p><a class="button secondary" href="bijdragen.html?type=correction&title='+encodeURIComponent(x.title||'')+'">Correctie insturen</a></section>';
+
+ html+='<section class="panel" style="margin-top:18px"><h2>Informatie corrigeren</h2><p class="source">Zie je iets dat niet klopt of verouderd is? Stuur de correctie naar HN. Niets wordt automatisch aangepast.</p><a class="button secondary" href="bijdragen.html?type=correction&title='+encodeURIComponent(pageTitle)+'">Correctie insturen</a></section>';
+
  document.getElementById('app').innerHTML=html;
 }
+
 init();
 </script>
 </body>
