@@ -209,33 +209,8 @@ h1{font-size:clamp(30px,4vw,42px);line-height:1.1;color:var(--brown-dark);margin
 </style>
 </head>
 <body>
-<header class="top">
-  <div class="nav">
-    <div class="brand">Hijrah Netwerk</div>
-    <nav class="navlinks desktop-only" aria-label="Hoofdnavigatie">
-      <a href="/">Website</a>
-      <a href="navigatie.html">Hijrah Navigatie</a>
-      <a href="kennisbank.html">Kennisbank</a>
-      <a href="dashboard.html">Mijn Hijrah</a>
-      <a href="bijdragen.html">Informatie insturen</a>
-    </nav>
-  </div>
-<button class="mobile-menu-toggle" type="button" aria-label="Open navigatie" aria-controls="mobileNav" aria-expanded="false" onclick="toggleMobileNav(true)"><span></span><span></span><span></span></button></header>
-
-<div class="mobile-nav" id="mobileNav" aria-hidden="true">
-<div class="mobile-nav-backdrop" onclick="toggleMobileNav(false)"></div>
-<div class="mobile-nav-panel">
-<div class="mobile-nav-head"><strong>Hijrah Netwerk</strong><button class="mobile-nav-close" type="button" aria-label="Sluit navigatie" onclick="toggleMobileNav(false)">×</button></div>
-<a href="/">Home</a>
-<a href="navigatie.html">Hijrah Navigatie</a>
-<a href="kennisbank.html">Kennisbank</a>
-<a href="smart-search.html">Smart Search</a>
-<a href="dashboard.html">Mijn Hijrah</a>
-<a href="bijdragen.html">Informatie insturen</a>
-<div class="mobile-nav-divider"></div>
-<a href="login.html">Inloggen</a>
-<a href="register.html" class="mobile-nav-primary">Aanmelden</a>
-</div></div>
+<link rel="stylesheet" href="assets/public-nav.css">
+<script src="assets/public-nav.js"></script>
 <main class="wrap">
   <a class="back" href="navigatie.html">← Terug naar Hijrah Navigatie</a>
   <div id="app"><div class="empty">Fiche wordt geladen...</div></div>
