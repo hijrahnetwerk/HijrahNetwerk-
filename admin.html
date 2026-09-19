@@ -1083,6 +1083,16 @@ th{
         </div>
 
         <div class="field">
+          <label>Zichtbaarheid</label>
+          <select id="topicVisibility">
+            <option value="public">Openbaar</option>
+            <option value="members">Ingelogde leden</option>
+            <option value="approved_members">Goedgekeurde leden</option>
+            <option value="admin">Alleen Admin</option>
+          </select>
+        </div>
+
+        <div class="field">
           <label>Status</label>
           <select id="topicStatus">
             <option value="needs_research">Needs research</option>
@@ -2426,6 +2436,7 @@ function editTopic(id){
   topicCategory.value=x.category_id||'';
   topicSubcategory.value=x.subcategory_id||'';
   topicInformationType.value=x.information_type||'Algemene informatie';
+  topicVisibility.value=x.visibility||'public';
   topicStatus.value=x.status||'needs_research';
   topicReviewer.value=x.reviewer_id||'';
   topicSource.value=x.source||'';
@@ -2487,6 +2498,7 @@ topicForm.onsubmit=async e=>{
     category_id:topicCategory.value||null,
     subcategory_id:topicSubcategory.value||null,
     information_type:topicInformationType.value,
+    visibility:topicVisibility.value,
     status:topicStatus.value,
     reviewer_id:topicReviewer.value||null,
     source:topicSource.value.trim()||null,
