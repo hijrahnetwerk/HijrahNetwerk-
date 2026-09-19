@@ -262,7 +262,8 @@ textarea{
 .progressfill{
   height:100%;
   background:var(--orange);
-  width:0
+  width:0;
+  transition:width .25s ease
 }
 
 .check{
@@ -350,9 +351,159 @@ textarea{
   line-height:1.5
 }
 
+.plan-section{
+  margin-top:25px;
+  padding-top:22px;
+  border-top:1px solid var(--border)
+}
+
+.plan-section:first-of-type{
+  margin-top:15px;
+  padding-top:0;
+  border-top:0
+}
+
+.section-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:15px;
+  margin-bottom:12px
+}
+
+.section-head h3{
+  margin:0
+}
+
+.save-status{
+  font-size:12px;
+  color:var(--muted);
+  min-height:18px
+}
+
+.next-step{
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:17px;
+  background:#faf8f5
+}
+
+.next-step-title{
+  color:var(--brown);
+  font-size:17px;
+  font-weight:700;
+  margin-bottom:6px
+}
+
+.task-add{
+  display:grid;
+  grid-template-columns:2fr 1fr 1fr auto;
+  gap:8px;
+  margin-bottom:14px
+}
+
+.task-list{
+  display:grid;
+  gap:8px
+}
+
+.task{
+  display:grid;
+  grid-template-columns:auto 1fr auto auto;
+  gap:10px;
+  align-items:center;
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:11px
+}
+
+.task.completed{
+  opacity:.65
+}
+
+.task.completed .task-title{
+  text-decoration:line-through
+}
+
+.task-title{
+  font-size:14px
+}
+
+.priority{
+  font-size:11px;
+  border-radius:20px;
+  padding:5px 8px;
+  background:#f1ece5;
+  color:var(--brown)
+}
+
+.task-date{
+  font-size:12px;
+  color:var(--muted)
+}
+
+.delete-small{
+  border:0;
+  background:transparent;
+  color:var(--danger);
+  cursor:pointer;
+  padding:5px
+}
+
+.budget-total{
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:15px;
+  background:#faf8f5;
+  margin-bottom:12px
+}
+
+.budget-number{
+  font-size:24px;
+  font-weight:700;
+  color:var(--brown)
+}
+
+.checklist{
+  display:grid;
+  gap:7px
+}
+
+.checklist-row{
+  display:flex;
+  gap:10px;
+  align-items:center;
+  padding:9px 0;
+  border-bottom:1px solid #f0ebe5
+}
+
+.checklist-row:last-child{
+  border-bottom:0
+}
+
+.question-row{
+  display:flex;
+  gap:8px;
+  margin-bottom:8px
+}
+
+.question-row input{
+  flex:1
+}
+
+.auto-note{
+  font-size:12px;
+  color:var(--muted);
+  margin-top:8px
+}
+
 @media(max-width:900px){
   .grid{
     grid-template-columns:repeat(2,1fr)
+  }
+
+  .task-add{
+    grid-template-columns:1fr 1fr
   }
 }
 
@@ -368,6 +519,18 @@ textarea{
 
   .wrap{
     padding:24px 16px 50px
+  }
+
+  .task-add{
+    grid-template-columns:1fr
+  }
+
+  .task{
+    grid-template-columns:auto 1fr auto
+  }
+
+  .task .task-date{
+    grid-column:2
   }
 }
 </style>
@@ -459,93 +622,68 @@ textarea{
 
   </div>
 
+  <!-- OVERZICHT -->
+
   <div id="tab-home" class="tabview active">
 
     <h2>Welkom</h2>
 
     <p class="muted">
-      Van hieruit kun je je HN-activiteiten beheren.
-      Je gegevens worden aan je eigen account gekoppeld.
+      Hier zie je jouw belangrijkste gegevens en voortgang.
     </p>
 
     <div class="summary-box">
 
       <div class="summary-item">
-
-        <div class="summary-label">
-          Gewenst land
-        </div>
-
-        <div
-          class="summary-value"
-          id="summaryCountry"
-        >
+        <div class="summary-label">Gewenst land</div>
+        <div class="summary-value" id="summaryCountry">
           Nog niet ingevuld
         </div>
-
       </div>
 
       <div class="summary-item">
-
-        <div class="summary-label">
-          Gewenste stad
-        </div>
-
-        <div
-          class="summary-value"
-          id="summaryCity"
-        >
+        <div class="summary-label">Gewenste stad</div>
+        <div class="summary-value" id="summaryCity">
           Nog niet ingevuld
         </div>
-
       </div>
 
       <div class="summary-item">
-
-        <div class="summary-label">
-          Gewenste datum
-        </div>
-
-        <div
-          class="summary-value"
-          id="summaryDate"
-        >
+        <div class="summary-label">Gewenste datum</div>
+        <div class="summary-value" id="summaryDate">
           Nog niet ingevuld
         </div>
-
       </div>
 
       <div class="summary-item">
-
-        <div class="summary-label">
-          Notities
+        <div class="summary-label">Volgende stap</div>
+        <div class="summary-value" id="summaryNextStep">
+          Nog geen stap bepaald.
         </div>
+      </div>
 
-        <div
-          class="summary-value"
-          id="summaryNotes"
-        >
-          Nog geen notities.
+      <div class="summary-item">
+        <div class="summary-label">Taken</div>
+        <div class="summary-value" id="summaryTasks">
+          0 taken
         </div>
+      </div>
 
+      <div class="summary-item">
+        <div class="summary-label">Budget</div>
+        <div class="summary-value" id="summaryBudget">
+          Nog niet ingevuld
+        </div>
       </div>
 
       <div
         class="summary-item"
         style="grid-column:1/-1"
       >
-
-        <div class="summary-label">
-          Mijn plan / aandachtspunten
+        <div class="summary-label">Mijn notities</div>
+        <div class="summary-value" id="summaryNotes">
+          Nog geen notities.
         </div>
-
-        <div
-          class="summary-value"
-          id="summaryPlanData"
-        >
-          Nog geen plan ingevuld.
-        </div>
-
       </div>
 
     </div>
@@ -560,6 +698,8 @@ textarea{
 
   </div>
 
+  <!-- OPGESLAGEN -->
+
   <div id="tab-saved" class="tabview">
 
     <h2>Opgeslagen informatie</h2>
@@ -568,12 +708,14 @@ textarea{
 
   </div>
 
+  <!-- VOORTGANG -->
+
   <div id="tab-progress" class="tabview">
 
     <h2>Mijn voortgang</h2>
 
     <p class="muted">
-      Je voortgang wordt per account opgeslagen.
+      Je voortgang wordt automatisch aan je account gekoppeld.
     </p>
 
     <div class="progressbar">
@@ -583,10 +725,7 @@ textarea{
       ></div>
     </div>
 
-    <p
-      id="progressText"
-      class="muted"
-    >
+    <p id="progressText" class="muted">
       0 van 0 items afgerond.
     </p>
 
@@ -594,165 +733,302 @@ textarea{
 
   </div>
 
+  <!-- MIJN HIJRAH PLAN -->
+
   <div id="tab-plan" class="tabview">
 
     <h2>Mijn Hijrah Plan</h2>
 
     <p class="muted">
-      Bewaar hier je keuzes, aandachtspunten en persoonlijke notities.
+      Een persoonlijke plek om je emigratie voor te bereiden. Wijzigingen worden automatisch opgeslagen.
     </p>
 
-    <form id="planForm">
+    <div class="save-status" id="planSaveStatus"></div>
 
-      <div class="row">
+    <div class="plan-section">
 
-        <div class="field">
-
-          <label>
-            Gewenst land
-          </label>
-
-          <select id="planCountry"></select>
-
-        </div>
-
-        <div class="field">
-
-          <label>
-            Gewenste stad
-          </label>
-
-          <select id="planCity"></select>
-
-        </div>
-
+      <div class="section-head">
+        <h3>Mijn doel</h3>
       </div>
 
       <div class="row">
 
         <div class="field">
-
-          <label>
-            Gewenste datum
-          </label>
-
-          <input
-            id="planDate"
-            type="date"
-          >
-
+          <label>Gewenst land</label>
+          <select id="planCountry"></select>
         </div>
 
         <div class="field">
+          <label>Gewenste stad</label>
+          <select id="planCity"></select>
+        </div>
 
-          <label>
-            Notities
-          </label>
+        <div class="field">
+          <label>Gewenste vertrekdatum</label>
+          <input id="planDate" type="date">
+        </div>
 
+        <div class="field">
+          <label>Mijn notities</label>
           <textarea
             id="planNotes"
-            placeholder="Schrijf hier je persoonlijke notities..."
+            placeholder="Bijvoorbeeld waarom je wilt emigreren of wat voor jou belangrijk is."
             style="min-height:105px"
           ></textarea>
-
         </div>
-
-      </div>
-
-      <div class="field full">
-
-        <label>
-          Mijn plan / aandachtspunten
-        </label>
-
-        <textarea
-          id="planData"
-          placeholder="Bijvoorbeeld: woning, onderwijs, documenten, budget, medische zorg..."
-        ></textarea>
-
-      </div>
-
-      <button
-        class="button primary"
-        type="submit"
-      >
-        Plan opslaan
-      </button>
-
-    </form>
-
-  </div>
-
-  <div id="tab-profile" class="tabview">
-
-    <h2>Mijn profiel</h2>
-
-    <div class="row">
-
-      <div class="field">
-
-        <label>
-          E-mail
-        </label>
-
-        <input
-          id="profileEmail"
-          readonly
-        >
-
-      </div>
-
-      <div class="field">
-
-        <label>
-          Account aangemaakt
-        </label>
-
-        <input
-          id="profileCreated"
-          readonly
-        >
 
       </div>
 
     </div>
 
-    <h3>Voorkeuren</h3>
+    <div class="plan-section">
 
-    <form id="prefForm">
+      <div class="section-head">
+        <h3>Mijn volgende stap</h3>
+      </div>
 
-      <div class="row">
+      <div class="next-step">
 
-        <div class="field">
-
-          <label>
-            Voorkeursland
-          </label>
-
-          <select id="prefCountry"></select>
-
+        <div
+          class="next-step-title"
+          id="nextStepTitle"
+        >
+          Je volgende stap
         </div>
 
-        <div class="field">
-
-          <label>
-            Voorkeursstad
-          </label>
-
-          <select id="prefCity"></select>
-
+        <div
+          class="muted"
+          id="nextStepDescription"
+        >
+          Vink je voortgang af om te zien wat je volgende stap is.
         </div>
 
       </div>
 
-      <button
-        class="button primary"
-        type="submit"
-      >
-        Voorkeuren opslaan
-      </button>
+    </div>
 
-    </form>
+    <div class="plan-section">
+
+      <div class="section-head">
+        <h3>Mijn taken</h3>
+      </div>
+
+      <div class="task-add">
+
+        <input
+          id="taskTitle"
+          placeholder="Nieuwe taak..."
+        >
+
+        <input
+          id="taskDate"
+          type="date"
+        >
+
+        <select id="taskPriority">
+          <option value="normaal">Normaal</option>
+          <option value="hoog">Hoog</option>
+          <option value="laag">Laag</option>
+        </select>
+
+        <button
+          class="button primary"
+          type="button"
+          id="addTaskBtn"
+        >
+          Toevoegen
+        </button>
+
+      </div>
+
+      <div
+        id="taskList"
+        class="task-list"
+      ></div>
+
+    </div>
+
+    <div class="plan-section">
+
+      <div class="section-head">
+        <h3>Mijn budget</h3>
+      </div>
+
+      <div class="row">
+
+        <div class="field">
+          <label>Eenmalige kosten</label>
+          <input
+            id="budgetOneTime"
+            type="number"
+            min="0"
+            step="0.01"
+            placeholder="Bijvoorbeeld 5000"
+          >
+        </div>
+
+        <div class="field">
+          <label>Geschatte maandelijkse kosten</label>
+          <input
+            id="budgetMonthly"
+            type="number"
+            min="0"
+            step="0.01"
+            placeholder="Bijvoorbeeld 1500"
+          >
+        </div>
+
+      </div>
+
+      <div class="budget-total">
+
+        <div class="summary-label">
+          Totaal eenmalig
+        </div>
+
+        <div
+          class="budget-number"
+          id="budgetTotal"
+        >
+          € 0
+        </div>
+
+        <div class="auto-note">
+          Dit is een persoonlijke schatting. HN gebruikt dit niet als officiële kostenberekening.
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="plan-section">
+
+      <div class="section-head">
+        <h3>Mijn documenten</h3>
+      </div>
+
+      <div
+        id="documentChecklist"
+        class="checklist"
+      ></div>
+
+    </div>
+
+    <div class="plan-section">
+
+      <div class="section-head">
+        <h3>Mijn vragen</h3>
+      </div>
+
+      <p class="muted">
+        Bewaar hier dingen die je nog wilt uitzoeken.
+      </p>
+
+      <div id="questionList"></div>
+
+      <div class="question-row">
+        <input
+          id="questionInput"
+          placeholder="Wat wil je nog weten?"
+        >
+
+        <button
+          class="button primary"
+          type="button"
+          id="addQuestionBtn"
+        >
+          Toevoegen
+        </button>
+      </div>
+
+    </div>
+
+    <div class="plan-section">
+
+      <div class="section-head">
+        <h3>Vertrekchecklist</h3>
+      </div>
+
+      <div
+        id="departureChecklist"
+        class="checklist"
+      ></div>
+
+    </div>
+
+    <div class="plan-section">
+
+      <div class="section-head">
+        <h3>Extra aandachtspunten</h3>
+      </div>
+
+      <textarea
+        id="planDataText"
+        placeholder="Schrijf hier zaken die je niet wilt vergeten..."
+      ></textarea>
+
+      <div class="auto-note">
+        Alles wordt automatisch opgeslagen.
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- PROFIEL -->
+
+  <div id="tab-profile" class="tabview">
+
+    <h2>Mijn profiel</h2>
+
+    <p class="muted">
+      Je accountgegevens worden automatisch vanuit je account geladen.
+    </p>
+
+    <div class="row">
+
+      <div class="field">
+        <label>E-mail</label>
+        <input
+          id="profileEmail"
+          readonly
+        >
+      </div>
+
+      <div class="field">
+        <label>Account aangemaakt</label>
+        <input
+          id="profileCreated"
+          readonly
+        >
+      </div>
+
+    </div>
+
+    <h3>Mijn voorkeuren</h3>
+
+    <p class="muted">
+      Deze voorkeuren kunnen later gebruikt worden om relevante HN-informatie aan je te tonen.
+    </p>
+
+    <div class="row">
+
+      <div class="field">
+        <label>Voorkeursland</label>
+        <select id="prefCountry"></select>
+      </div>
+
+      <div class="field">
+        <label>Voorkeursstad</label>
+        <select id="prefCity"></select>
+      </div>
+
+    </div>
+
+    <div
+      class="save-status"
+      id="profileSaveStatus"
+    ></div>
 
   </div>
 
@@ -776,8 +1052,33 @@ let presenceTimer=null;
 let presenceSessionStarted=null;
 let presenceAvailable=true;
 
+let planSaveTimer=null;
+let profileSaveTimer=null;
+
 const PRESENCE_TIMEOUT=90000;
 const PRESENCE_INTERVAL=30000;
+
+const DOCUMENT_ITEMS=[
+  'Paspoort / identiteitsdocument gecontroleerd',
+  'Geboorteakte geregeld',
+  'Huwelijksdocumenten geregeld indien van toepassing',
+  'Diploma’s en belangrijke certificaten verzameld',
+  'Documenten gelegaliseerd indien nodig',
+  'Medische documenten verzameld',
+  'Schooldocumenten van kinderen verzameld indien van toepassing',
+  'Belangrijke verzekeringsdocumenten gecontroleerd'
+];
+
+const DEPARTURE_ITEMS=[
+  'Belangrijke documenten bij de hand',
+  'Reis en tickets gecontroleerd',
+  'Bagage geregeld',
+  'Geld en betaalmogelijkheden geregeld',
+  'Telefoon en internet voorbereid',
+  'Verzekeringen gecontroleerd',
+  'Belangrijke contacten opgeslagen',
+  'Laatste praktische zaken geregeld'
+];
 
 const $=id=>document.getElementById(id);
 
@@ -792,8 +1093,7 @@ function message(text,type='success'){
 
   e.textContent=text;
 
-  e.className=
-    'message show '+type;
+  e.className='message show '+type;
 
   clearTimeout(window.__mt);
 
@@ -828,9 +1128,7 @@ function options(el,items,placeholder){
     placeholder+
     '</option>'+
     items
-      .filter(
-        x=>x.is_active!==false
-      )
+      .filter(x=>x.is_active!==false)
       .map(
         x=>
           '<option value="'+
@@ -957,11 +1255,6 @@ async function logUserActivity(
 ){
 
   if(!user){
-
-    console.warn(
-      'Activiteit niet gelogd: gebruiker ontbreekt.'
-    );
-
     return false;
   }
 
@@ -983,11 +1276,6 @@ async function logUserActivity(
       console.error(
         'ACTIVITEIT LOGGING FOUT:',
         result.error
-      );
-
-      console.error(
-        'Activiteit payload:',
-        payload
       );
 
       return false;
@@ -1211,11 +1499,6 @@ async function updatePresence(){
       error
     );
 
-    console.error(
-      'Presence payload:',
-      payload
-    );
-
     setPresenceText(
       'Je bent ingelogd, maar aanwezigheid kon niet worden opgeslagen.'
     );
@@ -1373,6 +1656,8 @@ $('planCountry').onchange=()=>{
     null
   );
 
+  schedulePlanSave();
+
 };
 
 $('prefCountry').onchange=()=>{
@@ -1382,6 +1667,8 @@ $('prefCountry').onchange=()=>{
     $('prefCountry').value,
     null
   );
+
+  scheduleProfileSave();
 
 };
 
@@ -1642,6 +1929,8 @@ async function loadProgress(){
     ' items afgerond.';
 
   renderProgress();
+  renderNextStep();
+  renderPlanSummary();
 
 }
 
@@ -1761,6 +2050,90 @@ async function toggleProgress(
 
 
 /* =========================
+   PLAN DATA
+========================= */
+
+function defaultPlanData(){
+
+  return {
+    text:'',
+    tasks:[],
+    budget:{
+      one_time:'',
+      monthly:''
+    },
+    documents:
+      DOCUMENT_ITEMS.map(
+        x=>({
+          label:x,
+          completed:false
+        })
+      ),
+    questions:[],
+    departure:
+      DEPARTURE_ITEMS.map(
+        x=>({
+          label:x,
+          completed:false
+        })
+      )
+  };
+
+}
+
+function normalizePlanData(data){
+
+  let base=defaultPlanData();
+
+  if(
+    data&&
+    typeof data==='object'
+  ){
+
+    base={
+      ...base,
+      ...data
+    };
+
+    base.budget={
+      ...defaultPlanData().budget,
+      ...(data.budget||{})
+    };
+
+    if(!Array.isArray(base.tasks)){
+      base.tasks=[];
+    }
+
+    if(!Array.isArray(base.questions)){
+      base.questions=[];
+    }
+
+    if(!Array.isArray(base.documents)){
+      base.documents=
+        defaultPlanData().documents;
+    }
+
+    if(!Array.isArray(base.departure)){
+      base.departure=
+        defaultPlanData().departure;
+    }
+
+  }
+
+  return base;
+
+}
+
+function getPlanData(){
+
+  return normalizePlanData(
+    plan?.plan_data
+  );
+
+}
+
+
+/* =========================
    MIJN HIJRAH PLAN
 ========================= */
 
@@ -1780,42 +2153,92 @@ function getCityName(id){
 
 }
 
-function renderPlanSummary(){
+function getProgressPercentage(){
 
-  if(!plan){
+  const total=progress.length;
 
-    $('summaryCountry').textContent=
-      'Nog niet ingevuld';
+  const done=
+    progress.filter(
+      x=>x.completed===true
+    ).length;
 
-    $('summaryCity').textContent=
-      'Nog niet ingevuld';
+  return total
+    ? Math.round(done/total*100)
+    : 0;
 
-    $('summaryDate').textContent=
-      'Nog niet ingevuld';
+}
 
-    $('summaryNotes').textContent=
-      'Nog geen notities.';
+function getNextProgressItem(){
 
-    $('summaryPlanData').textContent=
-      'Nog geen plan ingevuld.';
+  return progress.find(
+    x=>x.completed!==true
+  )||null;
+
+}
+
+function renderNextStep(){
+
+  const next=
+    getNextProgressItem();
+
+  if(!next){
+
+    $('nextStepTitle').textContent=
+      progress.length
+        ? 'Alle stappen afgerond'
+        : 'Je volgende stap';
+
+    $('nextStepDescription').textContent=
+      progress.length
+        ? 'Je hebt alle huidige HN-stappen afgerond.'
+        : 'Je voortgangsstappen worden hier getoond.';
 
     return;
   }
 
+  $('nextStepTitle').textContent=
+    next.title||
+    next.item_key||
+    'Volgende stap';
+
+  $('nextStepDescription').textContent=
+    next.completed
+      ? 'Deze stap is afgerond.'
+      : 'Dit is de eerstvolgende stap die nog openstaat.';
+
+}
+
+function renderPlanSummary(){
+
+  const targetCountry=
+    plan?.target_country_id||
+    $('planCountry')?.value||
+    null;
+
+  const targetCity=
+    plan?.target_city_id||
+    $('planCity')?.value||
+    null;
+
+  const targetDate=
+    plan?.target_date||
+    $('planDate')?.value||
+    null;
+
   $('summaryCountry').textContent=
     getCountryName(
-      plan.target_country_id
+      targetCountry
     );
 
   $('summaryCity').textContent=
     getCityName(
-      plan.target_city_id
+      targetCity
     );
 
   $('summaryDate').textContent=
-    plan.target_date
+    targetDate
       ? new Date(
-          plan.target_date+
+          targetDate+
           'T00:00:00'
         ).toLocaleDateString(
           'nl-NL'
@@ -1823,12 +2246,52 @@ function renderPlanSummary(){
       : 'Nog niet ingevuld';
 
   $('summaryNotes').textContent=
-    plan.notes||
+    plan?.notes||
+    $('planNotes')?.value||
     'Nog geen notities.';
 
-  $('summaryPlanData').textContent=
-    plan.plan_data?.text||
-    'Nog geen plan ingevuld.';
+  const data=getPlanData();
+
+  $('summaryTasks').textContent=
+    data.tasks.length+
+    (
+      data.tasks.length===1
+        ? ' taak'
+        : ' taken'
+    );
+
+  const budget=
+    Number(data.budget.one_time)||0;
+
+  $('summaryBudget').textContent=
+    budget>0
+      ? '€ '+formatMoney(budget)
+      : 'Nog niet ingevuld';
+
+  const next=
+    getNextProgressItem();
+
+  $('summaryNextStep').textContent=
+    next?.title||
+    (
+      progress.length
+        ? 'Alle stappen afgerond'
+        : 'Nog niet bepaald'
+    );
+
+}
+
+function formatMoney(value){
+
+  return new Intl.NumberFormat(
+    'nl-NL',
+    {
+      minimumFractionDigits:2,
+      maximumFractionDigits:2
+    }
+  ).format(
+    Number(value)||0
+  );
 
 }
 
@@ -1860,6 +2323,10 @@ async function loadPlan(){
     $('planStatus').textContent=
       'Nieuw';
 
+    renderPlanDataUI(
+      defaultPlanData()
+    );
+
     renderPlanSummary();
 
     return;
@@ -1883,28 +2350,222 @@ async function loadPlan(){
   $('planNotes').value=
     data.notes||'';
 
-  $('planData').value=
-    (
-      data.plan_data&&
-      typeof data.plan_data==='object'
-        ? data.plan_data.text
-        : data.plan_data
-    )||'';
+  renderPlanDataUI(
+    normalizePlanData(
+      data.plan_data
+    )
+  );
 
   renderPlanSummary();
 
 }
 
-$('planForm').onsubmit=
-async e=>{
+function renderPlanDataUI(data){
 
-  e.preventDefault();
+  $('planDataText').value=
+    data.text||'';
 
-  const planText=
-    $('planData').value.trim();
+  $('budgetOneTime').value=
+    data.budget?.one_time||'';
 
-  const notes=
-    $('planNotes').value.trim();
+  $('budgetMonthly').value=
+    data.budget?.monthly||'';
+
+  renderTasks(data.tasks);
+  renderDocuments(data.documents);
+  renderQuestions(data.questions);
+  renderDeparture(data.departure);
+  updateBudget();
+
+}
+
+function renderTasks(tasks){
+
+  const box=$('taskList');
+
+  if(!tasks.length){
+
+    box.innerHTML=
+      '<div class="empty">'+
+      'Je hebt nog geen persoonlijke taken toegevoegd.'+
+      '</div>';
+
+    return;
+  }
+
+  box.innerHTML=
+    tasks.map(
+      (task,index)=>{
+
+        const priorityLabel=
+          task.priority==='hoog'
+            ? 'Hoog'
+            : task.priority==='laag'
+              ? 'Laag'
+              : 'Normaal';
+
+        return `
+          <div class="task ${task.completed?'completed':''}">
+            <input
+              type="checkbox"
+              ${task.completed?'checked':''}
+              onchange="toggleTask(${index},this.checked)"
+            >
+
+            <div>
+              <div class="task-title">
+                ${esc(task.title)}
+              </div>
+
+              ${
+                task.date
+                  ? '<div class="task-date">'+
+                    formatDate(task.date)+
+                    '</div>'
+                  : ''
+              }
+            </div>
+
+            <span class="priority">
+              ${esc(priorityLabel)}
+            </span>
+
+            <button
+              class="delete-small"
+              type="button"
+              onclick="removeTask(${index})"
+            >
+              Verwijderen
+            </button>
+          </div>
+        `;
+
+      }
+    ).join('');
+
+}
+
+function formatDate(date){
+
+  if(!date){
+    return '';
+  }
+
+  return new Date(
+    date+'T00:00:00'
+  ).toLocaleDateString(
+    'nl-NL'
+  );
+
+}
+
+function renderDocuments(items){
+
+  const box=$('documentChecklist');
+
+  box.innerHTML=
+    items.map(
+      (item,index)=>
+        `
+        <label class="checklist-row">
+          <input
+            type="checkbox"
+            ${item.completed?'checked':''}
+            onchange="toggleDocument(${index},this.checked)"
+          >
+          <span>${esc(item.label)}</span>
+        </label>
+        `
+    ).join('');
+
+}
+
+function renderDeparture(items){
+
+  const box=$('departureChecklist');
+
+  box.innerHTML=
+    items.map(
+      (item,index)=>
+        `
+        <label class="checklist-row">
+          <input
+            type="checkbox"
+            ${item.completed?'checked':''}
+            onchange="toggleDeparture(${index},this.checked)"
+          >
+          <span>${esc(item.label)}</span>
+        </label>
+        `
+    ).join('');
+
+}
+
+function renderQuestions(questions){
+
+  const box=$('questionList');
+
+  if(!questions.length){
+
+    box.innerHTML=
+      '<div class="empty">'+
+      'Nog geen vragen toegevoegd.'+
+      '</div>';
+
+    return;
+  }
+
+  box.innerHTML=
+    questions.map(
+      (question,index)=>
+        `
+        <div class="question-row">
+          <input
+            value="${esc(question)}"
+            onchange="updateQuestion(${index},this.value)"
+          >
+          <button
+            class="button danger"
+            type="button"
+            onclick="removeQuestion(${index})"
+          >
+            Verwijderen
+          </button>
+        </div>
+        `
+    ).join('');
+
+}
+
+function updateBudget(){
+
+  const oneTime=
+    Number(
+      $('budgetOneTime').value
+    )||0;
+
+  $('budgetTotal').textContent=
+    '€ '+formatMoney(oneTime);
+
+}
+
+async function savePlan(silent=true){
+
+  if(!user){
+    return false;
+  }
+
+  const data=getPlanData();
+
+  data.text=
+    $('planDataText').value.trim();
+
+  data.budget={
+    one_time:
+      $('budgetOneTime').value||'',
+    monthly:
+      $('budgetMonthly').value||''
+  };
 
   const payload={
 
@@ -1923,14 +2584,15 @@ async e=>{
       null,
 
     notes:
-      notes||
+      $('planNotes').value.trim()||
       null,
 
-    plan_data:{
-      text:planText
-    }
+    plan_data:data
 
   };
+
+  $('planSaveStatus').textContent=
+    'Opslaan...';
 
   const {error}=await db()
     .from('hijrah_plans')
@@ -1948,12 +2610,15 @@ async e=>{
       error
     );
 
+    $('planSaveStatus').textContent=
+      'Opslaan mislukt.';
+
     message(
       error.message,
       'error'
     );
 
-    return;
+    return false;
   }
 
   plan=payload;
@@ -1961,46 +2626,259 @@ async e=>{
   $('planStatus').textContent=
     'Opgeslagen';
 
+  $('planSaveStatus').textContent=
+    '✓ Automatisch opgeslagen';
+
   renderPlanSummary();
 
-  const activitySaved=
-    await logUserActivity(
-      'plan_updated',
-      'Mijn Hijrah Plan aangepast',
-      {
-        target_country_id:
-          payload.target_country_id,
+  return true;
 
-        target_city_id:
-          payload.target_city_id,
+}
 
-        target_date:
-          payload.target_date,
+function schedulePlanSave(){
 
-        has_notes:
-          !!payload.notes,
+  clearTimeout(
+    planSaveTimer
+  );
 
-        has_plan_data:
-          !!payload.plan_data?.text
-      }
+  $('planSaveStatus').textContent=
+    'Wijziging wordt opgeslagen...';
+
+  planSaveTimer=
+    setTimeout(
+      async()=>{
+        const savedOk=
+          await savePlan(true);
+
+        if(savedOk){
+          await logUserActivity(
+            'plan_updated',
+            'Mijn Hijrah Plan aangepast',
+            {
+              target_country_id:
+                $('planCountry').value||null,
+              target_city_id:
+                $('planCity').value||null,
+              target_date:
+                $('planDate').value||null
+            }
+          );
+        }
+      },
+      800
     );
 
-  console.log(
-    'Plan opgeslagen. Activity logging:',
-    activitySaved
-  );
+}
 
-  message(
-    activitySaved
-      ? 'Je Hijrah Plan is opgeslagen.'
-      : 'Je Hijrah Plan is opgeslagen. De wijziging kon nog niet in Activiteiten worden geregistreerd.'
-  );
+$('planDate').onchange=
+schedulePlanSave;
 
+$('planNotes').oninput=
+schedulePlanSave;
+
+$('planDataText').oninput=
+schedulePlanSave;
+
+$('budgetOneTime').oninput=()=>{
+  updateBudget();
+  schedulePlanSave();
 };
+
+$('budgetMonthly').oninput=
+schedulePlanSave;
+
+async function addTask(){
+
+  const title=
+    $('taskTitle').value.trim();
+
+  if(!title){
+    return;
+  }
+
+  const data=getPlanData();
+
+  data.tasks.push({
+    id:
+      'task_'+
+      Date.now(),
+    title:title,
+    date:
+      $('taskDate').value||'',
+    priority:
+      $('taskPriority').value||'normaal',
+    completed:false
+  });
+
+  $('taskTitle').value='';
+  $('taskDate').value='';
+  $('taskPriority').value='normaal';
+
+  renderTasks(data.tasks);
+
+  await savePlan();
+
+}
+
+$('addTaskBtn').onclick=
+addTask;
+
+$('taskTitle').addEventListener(
+  'keydown',
+  e=>{
+    if(e.key==='Enter'){
+      e.preventDefault();
+      addTask();
+    }
+  }
+);
+
+async function toggleTask(index,completed){
+
+  const data=getPlanData();
+
+  if(!data.tasks[index]){
+    return;
+  }
+
+  data.tasks[index].completed=
+    completed;
+
+  renderTasks(data.tasks);
+
+  await savePlan();
+
+}
+
+async function removeTask(index){
+
+  const data=getPlanData();
+
+  data.tasks.splice(
+    index,
+    1
+  );
+
+  renderTasks(data.tasks);
+
+  await savePlan();
+
+}
+
+async function toggleDocument(
+  index,
+  completed
+){
+
+  const data=getPlanData();
+
+  if(!data.documents[index]){
+    return;
+  }
+
+  data.documents[index].completed=
+    completed;
+
+  await savePlan();
+
+}
+
+async function toggleDeparture(
+  index,
+  completed
+){
+
+  const data=getPlanData();
+
+  if(!data.departure[index]){
+    return;
+  }
+
+  data.departure[index].completed=
+    completed;
+
+  await savePlan();
+
+}
+
+async function addQuestion(){
+
+  const input=$('questionInput');
+
+  const question=
+    input.value.trim();
+
+  if(!question){
+    return;
+  }
+
+  const data=getPlanData();
+
+  data.questions.push(
+    question
+  );
+
+  input.value='';
+
+  renderQuestions(
+    data.questions
+  );
+
+  await savePlan();
+
+}
+
+$('addQuestionBtn').onclick=
+addQuestion;
+
+$('questionInput').addEventListener(
+  'keydown',
+  e=>{
+    if(e.key==='Enter'){
+      e.preventDefault();
+      addQuestion();
+    }
+  }
+);
+
+async function updateQuestion(
+  index,
+  value
+){
+
+  const data=getPlanData();
+
+  if(!data.questions[index]){
+    return;
+  }
+
+  data.questions[index]=
+    value.trim();
+
+  await savePlan();
+
+}
+
+async function removeQuestion(index){
+
+  const data=getPlanData();
+
+  data.questions.splice(
+    index,
+    1
+  );
+
+  renderQuestions(
+    data.questions
+  );
+
+  await savePlan();
+
+}
 
 
 /* =========================
-   VOORKEUREN
+   VOORKEUREN / PROFIEL
 ========================= */
 
 async function loadPreferences(){
@@ -2039,10 +2917,7 @@ async function loadPreferences(){
 
 }
 
-$('prefForm').onsubmit=
-async e=>{
-
-  e.preventDefault();
+async function savePreferences(){
 
   const payload={
 
@@ -2061,6 +2936,9 @@ async e=>{
 
   };
 
+  $('profileSaveStatus').textContent=
+    'Opslaan...';
+
   const {error}=await db()
     .from('member_preferences')
     .upsert(
@@ -2072,31 +2950,67 @@ async e=>{
 
   if(error){
 
+    console.error(
+      'VOORKEUREN OPSLAAN FOUT:',
+      error
+    );
+
+    $('profileSaveStatus').textContent=
+      'Opslaan mislukt.';
+
     message(
       error.message,
       'error'
     );
 
-    return;
+    return false;
   }
 
-  await logUserActivity(
-    'preferences_updated',
-    'Voorkeuren aangepast',
-    {
-      preferred_country_id:
-        payload.preferred_country_id,
+  $('profileSaveStatus').textContent=
+    '✓ Automatisch opgeslagen';
 
-      preferred_city_id:
-        payload.preferred_city_id
-    }
+  return true;
+
+}
+
+function scheduleProfileSave(){
+
+  clearTimeout(
+    profileSaveTimer
   );
 
-  message(
-    'Voorkeuren opgeslagen.'
-  );
+  $('profileSaveStatus').textContent=
+    'Wijziging wordt opgeslagen...';
 
-};
+  profileSaveTimer=
+    setTimeout(
+      async()=>{
+        const savedOk=
+          await savePreferences();
+
+        if(savedOk){
+
+          await logUserActivity(
+            'preferences_updated',
+            'Voorkeuren aangepast',
+            {
+              preferred_country_id:
+                $('prefCountry').value||null,
+              preferred_city_id:
+                $('prefCity').value||null
+            }
+          );
+
+        }
+
+      },
+      800
+    );
+
+}
+
+$('prefCity').onchange=
+scheduleProfileSave;
 
 
 /* =========================
@@ -2165,6 +3079,9 @@ async function init(){
     loadPlan(),
     loadPreferences()
   ]);
+
+  renderNextStep();
+  renderPlanSummary();
 
 }
 
