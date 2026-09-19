@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mijn HN Paspoort | Hijrah Netwerk</title>
+<link rel="stylesheet" href="assets/public-nav.css">
+<style>
+:root{--brown:#684a25;--brown-dark:#4d3819;--orange:#df842c;--gold:#e9a74b;--cream:#fbf8f4;--paper:#f7efe2;--line:#dfd0bd;--muted:#756c61}.page{width:min(1040px,calc(100% - 32px));margin:auto;padding:45px 0 80px}.intro{max-width:700px;margin:0 auto 28px;text-align:center}.intro span{display:block;color:#a55e16;font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase}.intro h1{margin:7px 0 8px;color:var(--brown-dark);font-size:clamp(30px,5vw,42px)}.intro p{margin:0;color:var(--muted);font-size:14px;line-height:1.65}.passport{position:relative;overflow:hidden;padding:30px;border-radius:25px;background:linear-gradient(145deg,#765432,#553b1d);color:#fff;box-shadow:0 26px 60px rgba(78,55,29,.20)}.passport-top{display:flex;justify-content:space-between;align-items:flex-start;gap:15px;position:relative;z-index:2}.label{color:rgba(255,255,255,.50);font-size:9px;font-weight:800;letter-spacing:.16em;text-transform:uppercase}.name{margin-top:5px;font-size:25px;font-weight:800}.level{padding:7px 11px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.08);border-radius:999px;font-size:10px;font-weight:800}.page{min-height:auto}.passport-page{position:relative;z-index:2;margin-top:23px;padding:23px 18px;border-radius:7px;background:radial-gradient(circle at 85% 15%,rgba(104,74,37,.06),transparent 25%),linear-gradient(145deg,#fbf5eb,#eee1ce);color:var(--brown-dark);box-shadow:inset 0 0 0 1px rgba(104,74,37,.08)}.passport-page-title{text-align:center;padding-bottom:12px;border-bottom:1px solid rgba(104,74,37,.10)}.passport-page-title strong{display:block;font-size:11px;letter-spacing:.14em}.passport-page-title span{display:block;margin-top:3px;color:#8b7b68;font-size:8px}.stamp-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:25px}.stamp{min-height:145px;padding:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}.stamp-circle{width:92px;height:92px;border:3px double rgba(111,63,38,.66);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#6f3f26;font-size:9px;font-weight:900;line-height:1.25;position:relative;transform:rotate(-5deg);background:rgba(111,63,38,.018)}.stamp:nth-child(2n) .stamp-circle{transform:rotate(4deg)}.stamp:nth-child(3n) .stamp-circle{transform:rotate(-2deg)}.stamp-circle:before{content:"";position:absolute;inset:7px;border:1px dashed rgba(111,63,38,.34);border-radius:50%}.stamp.locked{opacity:.28}.stamp.locked .stamp-circle{border-color:#8a7d6f;color:#8a7d6f}.stamp-name{margin-top:8px;font-size:10px;font-weight:800}.stamp-description{margin-top:3px;color:#8b7b68;font-size:8px;line-height:1.4}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:23px}.stat{padding:13px 8px;border-radius:12px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.10);text-align:center}.stat strong{display:block;font-size:20px}.stat span{display:block;margin-top:4px;color:rgba(255,255,255,.52);font-size:9px}.note{margin:18px auto 0;max-width:720px;text-align:center;color:var(--muted);font-size:11px;line-height:1.6}.error{background:#f8e5e5;color:#a63b3b;border:1px solid #ecd0d0;border-radius:12px;padding:14px;text-align:center}@media(max-width:760px){.page{width:min(100% - 24px,1040px);padding:30px 0 55px}.passport{padding:22px 16px}.stamp-grid{grid-template-columns:repeat(2,1fr)}.stats{grid-template-columns:repeat(2,1fr)}.passport-top{flex-direction:column}}
+</style>
+</head>
+<body>
+<script src="assets/public-nav.js"></script>
+<main class="page">
+  <div class="intro">
+    <span>Mijn Hijrah</span>
+    <h1>Mijn HN Paspoort</h1>
+    <p>Je paspoort begint leeg. Goedgekeurde bijdragen, reviews, referrals en andere mijlpalen laten je paspoort stap voor stap groeien.</p>
+  </div>
+
+  <div id="app" class="passport">Paspoort wordt geladen...</div>
+
+  <div class="note">
+    Nog niet alle stempels zijn direct te verdienen. Sommige mijlpalen worden later door HN toegekend.
+  </div>
+</main>
+<script src="assets/config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-client.js"></script>
+<script src="auth.js"></script>
+<script>
+const app=document.getElementById('app');
+
+function esc(v){return v==null?'':String(v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;')}
+
+async function init(){
+  const {data}=await db().auth.getSession();
+  if(!data?.session){
+    location.href='/login.html';
+    return;
+  }
+
+  const result=await db().rpc('get_my_hn_passport');
+  if(result.error||!result.data){
+    app.innerHTML='<div class="error">'+esc(result.error?.message||'Je HN-paspoort is nog niet beschikbaar.')+'</div>';
+    return;
+  }
+
+  const d=result.data;
+  const stamps=d.stamps||[];
+  const earned=stamps.filter(s=>s.earned).length;
+  const total=d.approved_contributions_count||0;
+
+  app.innerHTML=
+    '<div class="passport-top">'+
+      '<div><div class="label">Hijrah Netwerk</div><div class="name">'+esc(d.public_name)+'</div><div style="margin-top:4px;color:rgba(255,255,255,.52);font-size:10px;">'+esc(d.public_code)+' · '+esc(d.community_role||'Communitylid')+'</div></div>'+
+      '<div class="level">Stempels '+earned+' / '+stamps.length+'</div>'+
+    '</div>'+
+    '<div class="stats">'+
+      '<div class="stat"><strong>'+Number(d.reviews_count||0)+'</strong><span>Reviews</span></div>'+
+      '<div class="stat"><strong>'+Number(d.experiences_count||0)+'</strong><span>Ervaringen</span></div>'+
+      '<div class="stat"><strong>'+Number(d.approved_contributions_count||0)+'</strong><span>Goedgekeurd</span></div>'+
+      '<div class="stat"><strong>'+Number(d.referrals_count||0)+'</strong><span>Referrals</span></div>'+
+    '</div>'+
+    '<div class="passport-page">'+
+      '<div class="passport-page-title"><strong>HN PASSPORT</strong><span>Je verzamelde en openstaande mijlpalen</span></div>'+
+      '<div class="stamp-grid">'+
+        stamps.map((s,i)=>
+          '<div class="stamp '+(s.earned?'':'locked')+'">'+
+            '<div class="stamp-circle">'+String(i+1).padStart(2,'0')+'<br>'+(s.earned?'BEHAALD':'NOG TE BEHALEN')+'</div>'+
+            '<div class="stamp-name">'+esc(s.name)+'</div>'+
+            '<div class="stamp-description">'+esc(s.description)+'</div>'+
+          '</div>'
+        ).join('')+
+      '</div>'+
+    '</div>';
+}
+init();
+</script>
+</body>
+</html>
