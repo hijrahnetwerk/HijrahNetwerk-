@@ -127,6 +127,10 @@ body{
   margin:0 0 14px
 }
 
+.panel h3{
+  margin-top:25px
+}
+
 .tabs{
   display:flex;
   gap:8px;
@@ -321,6 +325,31 @@ textarea{
   display:inline-block
 }
 
+.summary-box{
+  margin-top:20px;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px
+}
+
+.summary-item{
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:14px;
+  background:#faf8f5
+}
+
+.summary-label{
+  font-size:12px;
+  color:var(--muted);
+  margin-bottom:6px
+}
+
+.summary-value{
+  white-space:pre-wrap;
+  line-height:1.5
+}
+
 @media(max-width:900px){
   .grid{
     grid-template-columns:repeat(2,1fr)
@@ -328,7 +357,7 @@ textarea{
 }
 
 @media(max-width:650px){
-  .grid,.row{
+  .grid,.row,.summary-box{
     grid-template-columns:1fr
   }
 
@@ -362,15 +391,22 @@ textarea{
 <div id="message" class="message"></div>
 
 <section class="hero">
+
   <h1>Mijn Hijrah Netwerk</h1>
-  <p id="welcome">Je persoonlijke omgeving.</p>
+
+  <p id="welcome">
+    Je persoonlijke omgeving.
+  </p>
 
   <div class="presence-box">
     <div class="presence-line">
       <span class="online-dot"></span>
-      <span id="presenceText">Je bent online.</span>
+      <span id="presenceText">
+        Je bent online.
+      </span>
     </div>
   </div>
+
 </section>
 
 <section class="grid">
@@ -387,7 +423,7 @@ textarea{
 
   <div class="card">
     <div class="label">Plan</div>
-    <div class="value" id="planStatus">—</div>
+    <div class="value" id="planStatus">Nieuw</div>
   </div>
 
   <div class="card">
@@ -432,6 +468,96 @@ textarea{
       Je gegevens worden aan je eigen account gekoppeld.
     </p>
 
+    <div class="summary-box">
+
+      <div class="summary-item">
+
+        <div class="summary-label">
+          Gewenst land
+        </div>
+
+        <div
+          class="summary-value"
+          id="summaryCountry"
+        >
+          Nog niet ingevuld
+        </div>
+
+      </div>
+
+      <div class="summary-item">
+
+        <div class="summary-label">
+          Gewenste stad
+        </div>
+
+        <div
+          class="summary-value"
+          id="summaryCity"
+        >
+          Nog niet ingevuld
+        </div>
+
+      </div>
+
+      <div class="summary-item">
+
+        <div class="summary-label">
+          Gewenste datum
+        </div>
+
+        <div
+          class="summary-value"
+          id="summaryDate"
+        >
+          Nog niet ingevuld
+        </div>
+
+      </div>
+
+      <div class="summary-item">
+
+        <div class="summary-label">
+          Notities
+        </div>
+
+        <div
+          class="summary-value"
+          id="summaryNotes"
+        >
+          Nog geen notities.
+        </div>
+
+      </div>
+
+      <div
+        class="summary-item"
+        style="grid-column:1/-1"
+      >
+
+        <div class="summary-label">
+          Mijn plan / aandachtspunten
+        </div>
+
+        <div
+          class="summary-value"
+          id="summaryPlanData"
+        >
+          Nog geen plan ingevuld.
+        </div>
+
+      </div>
+
+    </div>
+
+    <button
+      class="button primary"
+      style="margin-top:16px"
+      onclick="openPlanTab()"
+    >
+      Mijn Hijrah Plan openen
+    </button>
+
   </div>
 
   <div id="tab-saved" class="tabview">
@@ -451,10 +577,16 @@ textarea{
     </p>
 
     <div class="progressbar">
-      <div id="progressFill" class="progressfill"></div>
+      <div
+        id="progressFill"
+        class="progressfill"
+      ></div>
     </div>
 
-    <p id="progressText" class="muted">
+    <p
+      id="progressText"
+      class="muted"
+    >
       0 van 0 items afgerond.
     </p>
 
@@ -466,18 +598,32 @@ textarea{
 
     <h2>Mijn Hijrah Plan</h2>
 
+    <p class="muted">
+      Bewaar hier je keuzes, aandachtspunten en persoonlijke notities.
+    </p>
+
     <form id="planForm">
 
       <div class="row">
 
         <div class="field">
-          <label>Gewenst land</label>
+
+          <label>
+            Gewenst land
+          </label>
+
           <select id="planCountry"></select>
+
         </div>
 
         <div class="field">
-          <label>Gewenste stad</label>
+
+          <label>
+            Gewenste stad
+          </label>
+
           <select id="planCity"></select>
+
         </div>
 
       </div>
@@ -485,13 +631,30 @@ textarea{
       <div class="row">
 
         <div class="field">
-          <label>Gewenste datum</label>
-          <input id="planDate" type="date">
+
+          <label>
+            Gewenste datum
+          </label>
+
+          <input
+            id="planDate"
+            type="date"
+          >
+
         </div>
 
         <div class="field">
-          <label>Notities</label>
-          <textarea id="planNotes" style="min-height:105px"></textarea>
+
+          <label>
+            Notities
+          </label>
+
+          <textarea
+            id="planNotes"
+            placeholder="Schrijf hier je persoonlijke notities..."
+            style="min-height:105px"
+          ></textarea>
+
         </div>
 
       </div>
@@ -509,7 +672,10 @@ textarea{
 
       </div>
 
-      <button class="button primary">
+      <button
+        class="button primary"
+        type="submit"
+      >
         Plan opslaan
       </button>
 
@@ -524,13 +690,29 @@ textarea{
     <div class="row">
 
       <div class="field">
-        <label>E-mail</label>
-        <input id="profileEmail" readonly>
+
+        <label>
+          E-mail
+        </label>
+
+        <input
+          id="profileEmail"
+          readonly
+        >
+
       </div>
 
       <div class="field">
-        <label>Account aangemaakt</label>
-        <input id="profileCreated" readonly>
+
+        <label>
+          Account aangemaakt
+        </label>
+
+        <input
+          id="profileCreated"
+          readonly
+        >
+
       </div>
 
     </div>
@@ -542,18 +724,31 @@ textarea{
       <div class="row">
 
         <div class="field">
-          <label>Voorkeursland</label>
+
+          <label>
+            Voorkeursland
+          </label>
+
           <select id="prefCountry"></select>
+
         </div>
 
         <div class="field">
-          <label>Voorkeursstad</label>
+
+          <label>
+            Voorkeursstad
+          </label>
+
           <select id="prefCity"></select>
+
         </div>
 
       </div>
 
-      <button class="button primary">
+      <button
+        class="button primary"
+        type="submit"
+      >
         Voorkeuren opslaan
       </button>
 
@@ -596,13 +791,18 @@ function message(text,type='success'){
   const e=$('message');
 
   e.textContent=text;
-  e.className='message show '+type;
+
+  e.className=
+    'message show '+type;
 
   clearTimeout(window.__mt);
 
-  window.__mt=setTimeout(()=>{
-    e.className='message';
-  },4500);
+  window.__mt=setTimeout(
+    ()=>{
+      e.className='message';
+    },
+    4500
+  );
 
 }
 
@@ -624,13 +824,20 @@ function options(el,items,placeholder){
   const current=el.value;
 
   el.innerHTML=
-    '<option value="">'+placeholder+'</option>'+
+    '<option value="">'+
+    placeholder+
+    '</option>'+
     items
-      .filter(x=>x.is_active!==false)
-      .map(x=>
-        '<option value="'+x.id+'">'+
-        esc(x.name)+
-        '</option>'
+      .filter(
+        x=>x.is_active!==false
+      )
+      .map(
+        x=>
+          '<option value="'+
+          x.id+
+          '">'+
+          esc(x.name)+
+          '</option>'
       )
       .join('');
 
@@ -642,26 +849,45 @@ function options(el,items,placeholder){
 
 function tabs(){
 
-  document.querySelectorAll('.tab').forEach(b=>{
+  document
+    .querySelectorAll('.tab')
+    .forEach(b=>{
 
-    b.onclick=()=>{
+      b.onclick=()=>{
 
-      document
-        .querySelectorAll('.tab')
-        .forEach(x=>x.classList.remove('active'));
+        document
+          .querySelectorAll('.tab')
+          .forEach(
+            x=>x.classList.remove('active')
+          );
 
-      document
-        .querySelectorAll('.tabview')
-        .forEach(x=>x.classList.remove('active'));
+        document
+          .querySelectorAll('.tabview')
+          .forEach(
+            x=>x.classList.remove('active')
+          );
 
-      b.classList.add('active');
+        b.classList.add('active');
 
-      $('tab-'+b.dataset.tab)
-        .classList.add('active');
+        $('tab-'+b.dataset.tab)
+          .classList.add('active');
 
-    };
+      };
 
-  });
+    });
+
+}
+
+function openPlanTab(){
+
+  const button=
+    document.querySelector(
+      '.tab[data-tab="plan"]'
+    );
+
+  if(button){
+    button.click();
+  }
 
 }
 
@@ -699,7 +925,10 @@ async function requireUser(){
 
   $('welcome').textContent=
     'Ingelogd als '+
-    (user.email||'lid')+
+    (
+      user.email||
+      'lid'
+    )+
     '.';
 
   $('profileEmail').value=
@@ -736,41 +965,37 @@ async function logUserActivity(
     return false;
   }
 
+  const payload={
+    user_id:user.id,
+    activity_type:activityType,
+    description:description,
+    details:details
+  };
+
   try{
 
-    const payload={
-      user_id:user.id,
-      activity_type:activityType,
-      description:description,
-      details:details
-    };
-
-    const {data,error}=await db()
+    const result=await db()
       .from('user_activity')
-      .insert(payload)
-      .select('id')
-      .single();
+      .insert(payload);
 
-    if(error){
+    if(result.error){
 
       console.error(
         'ACTIVITEIT LOGGING FOUT:',
-        error
+        result.error
       );
 
       console.error(
-        'Payload:',
+        'Activiteit payload:',
         payload
       );
 
       return false;
-
     }
 
     console.log(
       'HN activiteit opgeslagen:',
-      activityType,
-      data
+      activityType
     );
 
     return true;
@@ -808,18 +1033,21 @@ function getSessionStart(data){
   const now=new Date();
 
   if(
-    !data ||
+    !data||
     !data.last_seen_at
   ){
     return now;
   }
 
   const lastSeen=
-    new Date(data.last_seen_at);
+    new Date(
+      data.last_seen_at
+    );
 
   if(
-    Number.isNaN(lastSeen.getTime()) ||
-    now.getTime()-lastSeen.getTime() >
+    Number.isNaN(lastSeen.getTime())||
+    now.getTime()-
+    lastSeen.getTime()>
     PRESENCE_TIMEOUT
   ){
     return now;
@@ -828,9 +1056,15 @@ function getSessionStart(data){
   if(data.session_started_at){
 
     const start=
-      new Date(data.session_started_at);
+      new Date(
+        data.session_started_at
+      );
 
-    if(!Number.isNaN(start.getTime())){
+    if(
+      !Number.isNaN(
+        start.getTime()
+      )
+    ){
       return start;
     }
 
@@ -873,7 +1107,6 @@ async function startPresence(){
       );
 
       return false;
-
     }
 
     presenceAvailable=true;
@@ -922,8 +1155,8 @@ async function startPresence(){
 async function updatePresence(){
 
   if(
-    !user ||
-    !presenceSessionStarted ||
+    !user||
+    !presenceSessionStarted||
     !presenceAvailable
   ){
     return false;
@@ -988,7 +1221,6 @@ async function updatePresence(){
     );
 
     return false;
-
   }
 
   setPresenceText(
@@ -1006,38 +1238,14 @@ async function updatePresence(){
 
 }
 
-
-/*
-  Wanneer de gebruiker terugkomt naar het tabblad,
-  wordt de aanwezigheid direct bijgewerkt.
-*/
-
 document.addEventListener(
   'visibilitychange',
   async()=>{
 
     if(
-      document.visibilityState==='visible' &&
+      document.visibilityState==='visible'&&
       user
     ){
-
-      if(
-        presenceSessionStarted
-      ){
-
-        const now=new Date();
-
-        if(
-          now.getTime()-
-          presenceSessionStarted.getTime()
-          > 24*60*60*1000
-        ){
-
-          presenceSessionStarted=now;
-
-        }
-
-      }
 
       await updatePresence();
 
@@ -1057,7 +1265,9 @@ async function loadBase(){
 
     db()
       .from('countries')
-      .select('id,name,is_active')
+      .select(
+        'id,name,is_active'
+      )
       .order('name'),
 
     db()
@@ -1106,11 +1316,13 @@ async function loadBase(){
 
   fillCity(
     'planCity',
+    null,
     null
   );
 
   fillCity(
     'prefCity',
+    null,
     null
   );
 
@@ -1125,23 +1337,25 @@ function fillCity(
   const el=$(id);
 
   const list=
-    cities.filter(c=>
-      c.is_active!==false &&
-      (
-        !countryId ||
-        c.country_id===countryId
-      )
+    cities.filter(
+      c=>
+        c.is_active!==false&&
+        (
+          !countryId||
+          c.country_id===countryId
+        )
     );
 
   el.innerHTML=
     '<option value="">Kies stad</option>'+
     list
-      .map(x=>
-        '<option value="'+
-        x.id+
-        '">'+
-        esc(x.name)+
-        '</option>'
+      .map(
+        x=>
+          '<option value="'+
+          x.id+
+          '">'+
+          esc(x.name)+
+          '</option>'
       )
       .join('');
 
@@ -1155,7 +1369,8 @@ $('planCountry').onchange=()=>{
 
   fillCity(
     'planCity',
-    $('planCountry').value
+    $('planCountry').value,
+    null
   );
 
 };
@@ -1164,7 +1379,8 @@ $('prefCountry').onchange=()=>{
 
   fillCity(
     'prefCity',
-    $('prefCountry').value
+    $('prefCountry').value,
+    null
   );
 
 };
@@ -1226,51 +1442,52 @@ function renderSaved(){
   }
 
   box.innerHTML=
-    saved.map(x=>
+    saved.map(
+      x=>
 
-      '<div class="item">'+
+        '<div class="item">'+
 
-        '<div class="item-head">'+
+          '<div class="item-head">'+
 
-          '<div>'+
+            '<div>'+
 
-            '<h3>'+
-            esc(x.topic?.title)+
-            '</h3>'+
+              '<h3>'+
+              esc(x.topic?.title)+
+              '</h3>'+
 
-            '<div class="meta">'+
-              esc(
-                x.topic?.cities?.name||''
-              )+
-              (
-                x.topic?.countries?.name
-                ? ' · '+
-                  esc(
-                    x.topic.countries.name
-                  )
-                : ''
-              )+
+              '<div class="meta">'+
+                esc(
+                  x.topic?.cities?.name||''
+                )+
+                (
+                  x.topic?.countries?.name
+                  ? ' · '+
+                    esc(
+                      x.topic.countries.name
+                    )
+                  : ''
+                )+
+              '</div>'+
+
             '</div>'+
+
+            '<button '+
+              'class="button danger" '+
+              'onclick="removeSaved(\''+
+              esc(x.id)+
+              '\')">'+
+              'Verwijderen'+
+            '</button>'+
 
           '</div>'+
 
-          '<button '+
-            'class="button danger" '+
-            'onclick="removeSaved(\''+
-            esc(x.id)+
-            '\')">'+
-            'Verwijderen'+
-          '</button>'+
+          '<p class="muted">'+
+            esc(
+              x.topic?.summary||''
+            )+
+          '</p>'+
 
-        '</div>'+
-
-        '<p class="muted">'+
-          esc(
-            x.topic?.summary||''
-          )+
-        '</p>'+
-
-      '</div>'
+        '</div>'
 
     ).join('');
 
@@ -1279,7 +1496,9 @@ function renderSaved(){
 async function removeSaved(id){
 
   const item=
-    saved.find(x=>x.id===id);
+    saved.find(
+      x=>x.id===id
+    );
 
   const {error}=await db()
     .from('saved_articles')
@@ -1326,7 +1545,10 @@ async function loadProgress(){
   const s=await db()
     .from('hijrah_steps')
     .select('*')
-    .eq('is_active',true)
+    .eq(
+      'is_active',
+      true
+    )
     .order('sort_order');
 
   if(s.error){
@@ -1438,39 +1660,40 @@ function renderProgress(){
   }
 
   box.innerHTML=
-    progress.map(x=>
+    progress.map(
+      x=>
 
-      '<label class="check">'+
+        '<label class="check">'+
 
-        '<input '+
-          'type="checkbox" '+
-          (
-            x.completed
-              ? 'checked'
-              : ''
-          )+
-          ' onchange="toggleProgress(\''+
-          esc(x.id)+
-          '\',this.checked)">'+
-
-        '<span>'+
-
-          '<b>'+
-            esc(
-              x.title||
-              x.item_key
+          '<input '+
+            'type="checkbox" '+
+            (
+              x.completed
+                ? 'checked'
+                : ''
             )+
-          '</b>'+
+            ' onchange="toggleProgress(\''+
+            esc(x.id)+
+            '\',this.checked)">'+
 
-          '<br>'+
+          '<span>'+
 
-          '<span class="meta">'+
-            esc(x.item_key)+
+            '<b>'+
+              esc(
+                x.title||
+                x.item_key
+              )+
+            '</b>'+
+
+            '<br>'+
+
+            '<span class="meta">'+
+              esc(x.item_key)+
+            '</span>'+
+
           '</span>'+
 
-        '</span>'+
-
-      '</label>'
+        '</label>'
 
     ).join('');
 
@@ -1541,6 +1764,74 @@ async function toggleProgress(
    MIJN HIJRAH PLAN
 ========================= */
 
+function getCountryName(id){
+
+  return countries.find(
+    x=>x.id===id
+  )?.name||'Nog niet ingevuld';
+
+}
+
+function getCityName(id){
+
+  return cities.find(
+    x=>x.id===id
+  )?.name||'Nog niet ingevuld';
+
+}
+
+function renderPlanSummary(){
+
+  if(!plan){
+
+    $('summaryCountry').textContent=
+      'Nog niet ingevuld';
+
+    $('summaryCity').textContent=
+      'Nog niet ingevuld';
+
+    $('summaryDate').textContent=
+      'Nog niet ingevuld';
+
+    $('summaryNotes').textContent=
+      'Nog geen notities.';
+
+    $('summaryPlanData').textContent=
+      'Nog geen plan ingevuld.';
+
+    return;
+  }
+
+  $('summaryCountry').textContent=
+    getCountryName(
+      plan.target_country_id
+    );
+
+  $('summaryCity').textContent=
+    getCityName(
+      plan.target_city_id
+    );
+
+  $('summaryDate').textContent=
+    plan.target_date
+      ? new Date(
+          plan.target_date+
+          'T00:00:00'
+        ).toLocaleDateString(
+          'nl-NL'
+        )
+      : 'Nog niet ingevuld';
+
+  $('summaryNotes').textContent=
+    plan.notes||
+    'Nog geen notities.';
+
+  $('summaryPlanData').textContent=
+    plan.plan_data?.text||
+    'Nog geen plan ingevuld.';
+
+}
+
 async function loadPlan(){
 
   const {data,error}=await db()
@@ -1569,6 +1860,8 @@ async function loadPlan(){
     $('planStatus').textContent=
       'Nieuw';
 
+    renderPlanSummary();
+
     return;
   }
 
@@ -1592,9 +1885,13 @@ async function loadPlan(){
 
   $('planData').value=
     (
-      data.plan_data &&
-      data.plan_data.text
+      data.plan_data&&
+      typeof data.plan_data==='object'
+        ? data.plan_data.text
+        : data.plan_data
     )||'';
+
+  renderPlanSummary();
 
 }
 
@@ -1603,26 +1900,34 @@ async e=>{
 
   e.preventDefault();
 
+  const planText=
+    $('planData').value.trim();
+
+  const notes=
+    $('planNotes').value.trim();
+
   const payload={
 
     user_id:user.id,
 
     target_country_id:
-      $('planCountry').value||null,
+      $('planCountry').value||
+      null,
 
     target_city_id:
-      $('planCity').value||null,
+      $('planCity').value||
+      null,
 
     target_date:
-      $('planDate').value||null,
+      $('planDate').value||
+      null,
 
     notes:
-      $('planNotes').value.trim()||
+      notes||
       null,
 
     plan_data:{
-      text:
-        $('planData').value
+      text:planText
     }
 
   };
@@ -1638,6 +1943,11 @@ async e=>{
 
   if(error){
 
+    console.error(
+      'HIJRAH PLAN OPSLAAN FOUT:',
+      error
+    );
+
     message(
       error.message,
       'error'
@@ -1646,32 +1956,44 @@ async e=>{
     return;
   }
 
+  plan=payload;
+
   $('planStatus').textContent=
     'Opgeslagen';
 
-  await logUserActivity(
-    'plan_updated',
-    'Mijn Hijrah Plan aangepast',
-    {
-      target_country_id:
-        payload.target_country_id,
+  renderPlanSummary();
 
-      target_city_id:
-        payload.target_city_id,
+  const activitySaved=
+    await logUserActivity(
+      'plan_updated',
+      'Mijn Hijrah Plan aangepast',
+      {
+        target_country_id:
+          payload.target_country_id,
 
-      target_date:
-        payload.target_date,
+        target_city_id:
+          payload.target_city_id,
 
-      has_notes:
-        !!payload.notes,
+        target_date:
+          payload.target_date,
 
-      has_plan_data:
-        !!payload.plan_data?.text
-    }
+        has_notes:
+          !!payload.notes,
+
+        has_plan_data:
+          !!payload.plan_data?.text
+      }
+    );
+
+  console.log(
+    'Plan opgeslagen. Activity logging:',
+    activitySaved
   );
 
   message(
-    'Je Hijrah Plan is opgeslagen.'
+    activitySaved
+      ? 'Je Hijrah Plan is opgeslagen.'
+      : 'Je Hijrah Plan is opgeslagen. De wijziging kon nog niet in Activiteiten worden geregistreerd.'
   );
 
 };
@@ -1727,10 +2049,12 @@ async e=>{
     user_id:user.id,
 
     preferred_country_id:
-      $('prefCountry').value||null,
+      $('prefCountry').value||
+      null,
 
     preferred_city_id:
-      $('prefCity').value||null,
+      $('prefCity').value||
+      null,
 
     updated_at:
       new Date().toISOString()
@@ -1821,25 +2145,15 @@ async function init(){
     return;
   }
 
-  /*
-    Eerst aanwezigheid starten.
-    Hierdoor moet de gebruiker direct
-    als online zichtbaar worden in de admin.
-  */
-
   const presenceStarted=
     await startPresence();
-
-  /*
-    Testbare activiteit bij ieder nieuw
-    dashboardbezoek.
-  */
 
   await logUserActivity(
     'dashboard_opened',
     'Gebruiker heeft het dashboard geopend',
     {
-      presence_started:presenceStarted
+      presence_started:
+        presenceStarted
     }
   );
 
