@@ -207,6 +207,9 @@ declare
   experience_count bigint := 0;
   correction_count bigint := 0;
   referral_count bigint := 0;
+  points bigint := 0;
+  level integer := 1;
+  display_role text := 'Communitylid';
   stamp_json jsonb := '[]'::jsonb;
 begin
   select *
@@ -259,15 +262,28 @@ begin
       or (s.code='contributor' and total_count >= 50)
     );
 
+  points := (total_count*10) + (review_count*10) + (experience_count*8) + (correction_count*12) + (referral_count*20);
+  level := 1 + floor(points / 250)::integer;
+
+  display_role :=
+    case
+      when p.community_role is not null and p.community_role <> 'Communitylid' then p.community_role
+      when review_count > 0 then 'Reviewer'
+      when total_count > 0 then 'Contributor'
+      else 'Communitylid'
+    end;
+
   return jsonb_build_object(
     'public_name', p.public_name,
     'public_code', p.public_code,
-    'community_role', p.community_role,
+    'community_role', display_role,
     'joined_year', extract(year from coalesce(p.approved_at,p.created_at))::integer,
     'reviews_count', review_count,
     'experiences_count', experience_count,
     'approved_contributions_count', total_count,
     'referrals_count', referral_count,
+    'points', points,
+    'level', level,
     'stamps', stamp_json
   );
 end;
@@ -342,15 +358,28 @@ begin
   into stamp_json
   from public.hn_stamps s;
 
+  points := (total_count*10) + (review_count*10) + (experience_count*8) + (correction_count*12) + (referral_count*20);
+  level := 1 + floor(points / 250)::integer;
+
+  display_role :=
+    case
+      when p.community_role is not null and p.community_role <> 'Communitylid' then p.community_role
+      when review_count > 0 then 'Reviewer'
+      when total_count > 0 then 'Contributor'
+      else 'Communitylid'
+    end;
+
   return jsonb_build_object(
     'public_name', p.public_name,
     'public_code', p.public_code,
-    'community_role', p.community_role,
+    'community_role', display_role,
     'joined_year', extract(year from coalesce(p.approved_at,p.created_at))::integer,
     'reviews_count', review_count,
     'experiences_count', experience_count,
     'approved_contributions_count', total_count,
     'referrals_count', referral_count,
+    'points', points,
+    'level', level,
     'stamps', stamp_json
   );
 end;
