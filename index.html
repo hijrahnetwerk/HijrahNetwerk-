@@ -1322,7 +1322,6 @@ footer{
       <p>Vergelijk landen en ontdek hoe het dagelijks leven er werkelijk uitziet.</p>
     </div>
 
-    <!-- LANDEN WORDEN HIER AUTOMATISCH UIT SUPABASE GELADEN -->
     <div class="countries-grid" data-source="countries" id="countriesGrid">
 
       <article class="card country-card" id="countriesLoading">
@@ -1863,14 +1862,17 @@ footer{
 
 <!-- SUPABASE -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<!-- config.js staat in assets -->
 <script src="assets/config.js"></script>
-<script src="assets/supabase-client.js"></script>
-<script src="assets/auth.js"></script>
-<script src="assets/nav-auth.js"></script>
 
-<!-- BESTAANDE DYNAMISCHE WEBSITELOGICA -->
-<script src="assets/site-app.js"></script>
+<!-- Deze bestanden staan in de hoofdmap -->
+<script src="supabase-client.js"></script>
+<script src="auth.js"></script>
+<script src="nav-auth.js"></script>
+<script src="site-app.js"></script>
 
+<!-- Vercel scripts staan in assets -->
 <script type="module" src="assets/speed-insights-init.js"></script>
 <script type="module" src="assets/analytics-init.js"></script>
 
