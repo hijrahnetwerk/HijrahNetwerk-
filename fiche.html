@@ -543,15 +543,12 @@ async function init(){
   if(!d.phone&&!d.email&&!d.website)html+='<p class="empty-note">Nog geen contactgegevens beschikbaar.</p>';
   html+='</section>';
 
-  html+='<section class="card"><h2>HN-status</h2><div class="meta-box">';
+  html+='<section class="card"><h2>HN-status & bron</h2><div class="meta-box">';
   html+='<div class="meta-row"><div class="meta-label">Informatietype</div><div class="meta-value">'+esc(infoType)+'</div></div>';
-  html+='</div></section>';
-
-  html+='<section class="card"><h2>Bron & controle</h2>';
-  if(x.source)html+='<div class="source-row"><span><strong>Bron:</strong> '+esc(x.source)+'</span></div>';
-  if(x.source_url)html+='<div class="source-row">'+icon.web+'<a href="'+esc(x.source_url)+'" target="_blank" rel="noopener">Officiële bron bekijken</a></div>';
-  if(verified)html+='<div class="source-row"><span><strong>Laatst gecontroleerd:</strong> '+new Date(verified).toLocaleDateString('nl-NL')+'</span></div>';
-  html+='<p class="note">HN maakt onderscheid tussen bevestigde informatie en community-ervaringen. Controleer belangrijke gegevens bij de bron voordat je vertrekt.</p></section>';
+  if(x.source)html+='<div class="meta-row"><div class="meta-label">Bron</div><div class="meta-value">'+esc(x.source)+'</div></div>';
+  if(x.source_url)html+='<div class="meta-row"><div class="meta-label">Officiële bron</div><div class="meta-value"><a href="'+esc(x.source_url)+'" target="_blank" rel="noopener">Officiële bron bekijken</a></div></div>';
+  if(verified)html+='<div class="meta-row"><div class="meta-label">Laatst gecontroleerd</div><div class="meta-value">'+new Date(verified).toLocaleDateString('nl-NL')+'</div></div>';
+  html+='</div><p class="note">HN maakt onderscheid tussen bevestigde informatie en community-ervaringen. Controleer belangrijke gegevens bij de bron voordat je vertrekt.</p></section>';
 
   html+='</aside></div>';
 
