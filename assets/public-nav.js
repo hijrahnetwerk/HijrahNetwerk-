@@ -174,13 +174,11 @@
     document.addEventListener("keydown",function(e){if(e.key==="Escape")setOpen(false)});
   }
 
+  mountLoader();
+
   if(document.readyState==="loading"){
-    document.addEventListener("DOMContentLoaded",function(){
-      mountLoader();
-      mount();
-    });
+    document.addEventListener("DOMContentLoaded",mount);
   }else{
-    mountLoader();
     mount();
   }
 })();
