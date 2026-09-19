@@ -362,7 +362,7 @@ function telHref(value){
 
 function mapsHref(d,pageTitle,loc){
   if(d.maps_url)return d.maps_url;
-  const query=[d.address||'',pageTitle||'',loc||''].filter(Boolean).join(', ');
+  const query=[d.address||'',loc||''].filter(Boolean).join(', ');
   return query?'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(query):'';
 }
 
@@ -529,6 +529,13 @@ async function init(){
 
   html+='<aside class="side">';
 
+  if(d.address||mapsUrl){
+    html+='<section class="card"><h2>Locatie</h2>';
+    if(d.address)html+='<div class="source-row">'+icon.pin+'<span>'+esc(d.address)+'</span></div>';
+    if(mapsUrl)html+='<div class="hero-actions"><a class="button secondary" target="_blank" rel="noopener" href="'+esc(mapsUrl)+'">'+icon.map+'Google Maps</a></div>';
+    html+='</section>';
+  }
+
   html+='<section class="card contact-card"><h2>Contact</h2>';
   if(d.phone)html+='<div class="contact-row"><div class="contact-label">Telefoon</div><div class="contact-value"><a href="'+esc(telHref(d.phone))+'">'+esc(d.phone)+'</a></div></div>';
   if(d.email)html+='<div class="contact-row"><div class="contact-label">E-mail</div><div class="contact-value"><a href="mailto:'+esc(d.email)+'">'+esc(d.email)+'</a></div></div>';
@@ -538,15 +545,7 @@ async function init(){
 
   html+='<section class="card"><h2>HN-status</h2><div class="meta-box">';
   html+='<div class="meta-row"><div class="meta-label">Informatietype</div><div class="meta-value">'+esc(infoType)+'</div></div>';
-  if(verified)html+='<div class="meta-row"><div class="meta-label">Laatst gecontroleerd</div><div class="meta-value">'+new Date(verified).toLocaleDateString('nl-NL')+'</div></div>';
   html+='</div></section>';
-
-  if(d.address||mapsUrl){
-    html+='<section class="card"><h2>Locatie</h2>';
-    if(d.address)html+='<div class="source-row">'+icon.pin+'<span>'+esc(d.address)+'</span></div>';
-    if(mapsUrl)html+='<div class="hero-actions"><a class="button secondary" target="_blank" rel="noopener" href="'+esc(mapsUrl)+'">'+icon.map+'Google Maps</a></div>';
-    html+='</section>';
-  }
 
   html+='<section class="card"><h2>Bron & controle</h2>';
   if(x.source)html+='<div class="source-row"><span><strong>Bron:</strong> '+esc(x.source)+'</span></div>';
