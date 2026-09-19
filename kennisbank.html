@@ -56,11 +56,11 @@
       font: inherit;
     }
 
-    .wrap {
-      width: min(1240px, calc(100% - 72px));
-      max-width: 1240px;
-      margin: 0 auto;
-      padding: 0;
+    main.wrap {
+      width: min(1120px, calc(100% - 80px)) !important;
+      max-width: 1120px !important;
+      margin: 0 auto !important;
+      padding: 0 0 60px !important;
     }
 
     .topbar {
@@ -352,8 +352,11 @@
     }
 
     @media (max-width: 650px) {
-      .wrap {
-        width: calc(100% - 40px);
+      main.wrap {
+        width: calc(100% - 48px) !important;
+        max-width: none !important;
+        margin: 0 auto !important;
+        padding-bottom: 40px !important;
       }
 
       .nav {
