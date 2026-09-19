@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Hijrah Navigatie — Hijrah Netwerk</title>
+<script src="assets/config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-client.js"></script>
+<script src="auth.js"></script>
+<style>
+:root{--brown:#684a25;--orange:#df842c;--gold:#e9a74b;--cream:#faf7f2;--text:#29231d;--muted:#756d63;--border:#e8e0d6}
+*{box-sizing:border-box}body{margin:0;background:var(--cream);color:var(--text);font-family:Arial,sans-serif}.top{background:var(--brown);color:#fff}.nav{max-width:1180px;margin:auto;padding:18px 22px;display:flex;justify-content:space-between;align-items:center}.brand{font-weight:700;font-size:20px}.nav a{color:#fff;text-decoration:none;margin-left:10px}.wrap{max-width:1180px;margin:auto;padding:34px 22px 60px}.intro h1{margin:0 0 8px;font-size:32px}.intro p{color:var(--muted)}.filters{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:10px;margin:24px 0}input,select,textarea{font:inherit;border:1px solid var(--border);border-radius:9px;padding:11px;background:#fff}.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.card{background:#fff;border:1px solid var(--border);border-radius:14px;padding:18px;display:flex;flex-direction:column;min-height:230px}.badge{display:inline-block;background:#f1ece5;color:var(--brown);border-radius:20px;padding:5px 9px;font-size:11px;margin-right:5px}.card h2{font-size:19px;margin:12px 0 7px}.card p{color:var(--muted);line-height:1.5}.meta{font-size:12px;color:var(--muted);margin-top:auto;padding-top:12px}.source{font-size:12px;color:var(--muted);margin-top:10px}.empty{padding:30px;text-align:center;color:var(--muted);background:#fff;border:1px solid var(--border);border-radius:12px}.actions{margin-top:12px;display:flex;gap:8px;flex-wrap:wrap}.button{border:0;border-radius:8px;padding:9px 12px;text-decoration:none;cursor:pointer}.primary{background:var(--orange);color:#fff}.secondary{background:#f1ece5;color:var(--brown)}@media(max-width:900px){.cards{grid-template-columns:repeat(2,1fr)}.filters{grid-template-columns:1fr 1fr}}@media(max-width:600px){.cards{grid-template-columns:1fr}.filters{grid-template-columns:1fr}.nav{display:block}.nav a{display:inline-block;margin:12px 8px 0 0}}
+</style>
+</head>
+<body>
+<header class="top"><div class="nav"><div class="brand">Hijrah Netwerk</div><div><a href="/">Website</a><a href="dashboard.html">Mijn Hijrah</a><a href="bijdragen.html">Informatie insturen</a></div></div></header>
+<main class="wrap">
+<div class="intro"><h1>Hijrah Navigatie</h1><p>Vind praktische informatie per land, stad en onderwerp. Geen lange artikelen, maar duidelijke fiches.</p></div>
+<div class="filters">
+<input id="q" placeholder="Zoek een naam, onderwerp of plaats...">
+<select id="country"><option value="">Alle landen</option></select>
+<select id="city"><option value="">Alle steden</option></select>
+<select id="category"><option value="">Alle categorieën</option></select>
+</div>
+<div id="cards" class="cards"><div class="empty">Laden...</div></div>
+</main>
+<script>
+const db=()=>window.hijrahSupabase;
+const esc=v=>v==null?'':String(v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+let rows=[],countries=[],cities=[],categories=[];
+function fill(id,items,label){const e=document.getElementById(id);e.innerHTML='<option value="">'+label+'</option>'+items.map(x=>'<option value="'+x.id+'">'+esc(x.name)+'</option>').join('');}
+function cardData(x){return x.card_data&&typeof x.card_data==='object'?x.card_data:{}}
+function render(){
+ const q=document.getElementById('q').value.toLowerCase().trim(),co=document.getElementById('country').value,ci=document.getElementById('city').value,ca=document.getElementById('category').value;
+ const filtered=rows.filter(x=>{
+   const d=cardData(x), text=[x.title,x.summary,x.content,d.address,d.neighborhood,d.service_type,d.languages,d.warning].join(' ').toLowerCase();
+   return (!q||text.includes(q))&&(!co||x.country_id===co)&&(!ci||x.city_id===ci)&&(!ca||x.category_id===ca);
+ });
+ const box=document.getElementById('cards');
+ if(!filtered.length){box.innerHTML='<div class="empty">Geen fiches gevonden.</div>';return}
+ box.innerHTML=filtered.map(x=>{
+   const d=cardData(x), country=countries.find(y=>y.id===x.country_id)?.name||'', city=cities.find(y=>y.id===x.city_id)?.name||'', cat=categories.find(y=>y.id===x.category_id)?.name||'';
+   return '<article class="card">'+
+    '<div><span class="badge">'+esc(cat||'Hijrah Navigatie')+'</span>'+(x.information_type?'<span class="badge">'+esc(x.information_type)+'</span>':'')+'</div>'+
+    '<h2>'+esc(x.title||'Zonder titel')+'</h2>'+
+    '<p>'+esc(x.summary||d.short_description||'Praktische informatie voor emigranten.')+'</p>'+
+    (d.address?'<div><strong>📍</strong> '+esc(d.address)+'</div>':'')+
+    (d.phone?'<div class="meta">📞 '+esc(d.phone)+'</div>':'')+
+    (d.website?'<div class="meta">🌐 '+esc(d.website)+'</div>':'')+
+    (d.warning?'<div class="source">⚠️ '+esc(d.warning)+'</div>':'')+
+    '<div class="meta">'+esc(city||country||'')+(city&&country?' · ':'')+(city?'':esc(country))+'</div>'+
+    '<div class="actions">'+
+    (d.website?'<a class="button secondary" target="_blank" rel="noopener" href="'+esc(d.website)+'">Website</a>':'')+
+    (d.maps_url?'<a class="button secondary" target="_blank" rel="noopener" href="'+esc(d.maps_url)+'">Route</a>':'')+
+    '</div></article>';
+ }).join('');
+}
+async function init(){
+ const [t,c,ci,ca]=await Promise.all([
+  db().from('topic').select('id,title,summary,content,information_type,country_id,city_id,category_id,published,visibility,card_data,updated_at').eq('published',true).order('updated_at',{ascending:false}),
+  db().from('countries').select('id,name').order('name'),
+  db().from('cities').select('id,name,country_id').order('name'),
+  db().from('categories').select('id,name').order('name')
+ ]);
+ if(t.error){document.getElementById('cards').innerHTML='<div class="empty">De navigatie kon niet worden geladen.</div>';console.error(t.error);return}
+ rows=t.data||[];countries=c.data||[];cities=ci.data||[];categories=ca.data||[];
+ fill('country',countries,'Alle landen');fill('city',cities,'Alle steden');fill('category',categories,'Alle categorieën');render();
+}
+['q','country','city','category'].forEach(id=>document.getElementById(id).addEventListener(id==='q'?'input':'change',render));
+init();
+</script>
+</body></html>
