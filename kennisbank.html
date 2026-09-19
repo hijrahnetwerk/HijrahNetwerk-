@@ -1908,7 +1908,7 @@
           <p>Heb jij hier zelf ervaring mee?</p>
           <a
             class="btn btn-primary"
-            href="bijdragen.html?type=experience&title=${encodeURIComponent(topic.title)}"
+            href="bijdragen.html?type=experience&title=${encodeURIComponent(topic.title)}&country=${encodeURIComponent(topic.country_id || "")}&city=${encodeURIComponent(topic.city_id || "")}&category=${encodeURIComponent(topic.category_id || "")}&subcategory=${encodeURIComponent(topic.subcategory_id || "")}"
           >
             Ervaring insturen →
           </a>
