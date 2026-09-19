@@ -45,13 +45,14 @@
         </div>
 
         <div class="form-group">
-          <label for="referral_code">HN-refercode <span style="font-weight:400">(optioneel)</span></label>
+          <label for="referral_code">HN-refercode</label>
           <input
             type="text"
             id="referral_code"
             name="referral_code"
             autocomplete="off"
             placeholder="Bijvoorbeeld HN-K7P4M"
+            required
           >
           <small style="display:block;margin-top:5px;color:#756d63">
             Heb je via een HN-lid van de community gehoord? Vul haar/zijn HN-code hier in.
@@ -116,6 +117,12 @@
       const whatsapp_number = document.getElementById('whatsapp_number').value.trim();
       const referral_code = document.getElementById('referral_code').value.trim().toUpperCase();
       const email = document.getElementById('email').value.trim();
+
+      if (!referral_code) {
+        message.textContent = 'Vul de HN-refercode in van het lid dat je heeft uitgenodigd.';
+        message.className = 'auth-message error';
+        return;
+      }
       const password = document.getElementById('password').value;
 
       message.textContent = 'Bezig met account aanmaken...';
