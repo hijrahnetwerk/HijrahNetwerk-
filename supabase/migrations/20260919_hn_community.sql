@@ -291,6 +291,23 @@ $$;
 
 grant execute on function public.get_public_member_profile(text) to anon, authenticated;
 
+create or replace function public.is_valid_hn_referral(p_code text)
+returns boolean
+language sql
+security definer
+stable
+set search_path = public
+as $
+  select exists(
+    select 1
+    from public.profiles
+    where public_code = upper(trim(p_code))
+      and application_status = 'approved'
+  );
+$;
+
+grant execute on function public.is_valid_hn_referral(text) to anon, authenticated;
+
 -- Eigen paspoort: alle stempels + behaald/nog niet behaald.
 create or replace function public.get_my_hn_passport()
 returns jsonb
