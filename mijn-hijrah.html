@@ -64,7 +64,7 @@ async function init(){
 
   if(!session){
     status.innerHTML='<strong>Nog geen HN-account?</strong> Je kunt de openbare uitleg bekijken en daarna een account aanvragen.';
-    actions.innerHTML='<a class="button primary" href="register.html">Account aanvragen</a><a class="button secondary" href="login.html">Inloggen</a>';
+    actions.innerHTML='<a class="button primary" href="/register">Account aanvragen</a><a class="button secondary" href="/login">Inloggen</a>';
     return;
   }
 
@@ -77,16 +77,16 @@ async function init(){
 
   if(p?.application_status!=='approved'){
     status.innerHTML='<strong>Je registratie is nog in behandeling.</strong> Mijn Hijrah wordt beschikbaar na goedkeuring en eventuele activatie door HN.';
-    actions.innerHTML='<a class="button secondary" href="login.html">Naar inloggen</a>';
+    actions.innerHTML='<a class="button secondary" href="/login">Naar inloggen</a>';
     return;
   }
 
   if(p?.my_hijrah_enabled){
     status.innerHTML='<strong>Mijn Hijrah is geactiveerd.</strong> Je kunt nu naar je persoonlijke omgeving.';
-    actions.innerHTML='<a class="button primary" href="dashboard.html">Mijn Hijrah openen</a><a class="button secondary" href="paspoort.html">Mijn Paspoort</a>';
+    actions.innerHTML='<a class="button primary" href="/dashboard">Mijn Hijrah openen</a><a class="button secondary" href="/paspoort">Mijn Paspoort</a>';
   }else{
     status.innerHTML='<strong>Je bent goedgekeurd als HN-communitylid.</strong> Mijn Hijrah is nog niet geactiveerd voor dit account.';
-    actions.innerHTML='<a class="button secondary" href="paspoort.html">Mijn Paspoort bekijken</a>';
+    actions.innerHTML='<a class="button secondary" href="/paspoort">Mijn Paspoort bekijken</a>';
   }
 }
 init();
