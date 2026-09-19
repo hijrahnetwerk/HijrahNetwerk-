@@ -123,6 +123,17 @@
         message.className = 'auth-message error';
         return;
       }
+
+      const referralCheck = await window.hijrahSupabase.rpc(
+        'is_valid_hn_referral',
+        { p_code: referral_code }
+      );
+
+      if (referralCheck.error || referralCheck.data !== true) {
+        message.textContent = 'Deze HN-refercode bestaat niet of is nog niet actief.';
+        message.className = 'auth-message error';
+        return;
+      }
       const password = document.getElementById('password').value;
 
       message.textContent = 'Bezig met account aanmaken...';
