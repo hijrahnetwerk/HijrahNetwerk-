@@ -68,6 +68,10 @@
     {
       "source": "/lid/:code",
       "destination": "/public-member.html?code=:code"
+    },
+    {
+      "source": "/lid/:code",
+      "destination": "/public-member.html?code=:code"
     }
   ]
 }
