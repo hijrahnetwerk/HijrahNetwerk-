@@ -163,11 +163,7 @@
           country.summary ||
           'Praktische HN-informatie en kennis over dit land.';
 
-        const slug =
-          country.slug ||
-          country.code ||
-          country.country_code ||
-          country.id;
+        const countryFilterId = country.id;
 
         return `
           <article class="card country-card">
@@ -191,7 +187,7 @@
                 </span>
 
                 <a
-                  href="kennisbank.html?country=${encodeURIComponent(slug)}"
+                  href="kennisbank.html?country=${encodeURIComponent(countryFilterId)}"
                   class="country-link"
                 >
                   Bekijk land →
@@ -454,18 +450,10 @@
   }
 
   function setupNewsletter() {
-    const newsletter = document.querySelector(
-      '[data-integration="email-service-placeholder"]'
-    );
-
-    if (!newsletter) return;
-
-    newsletter.onsubmit = function (event) {
-      event.preventDefault();
-
-      window.location.href =
-        '/ontdek-de-nieuwe-hijrah-navigatie/';
-    };
+    /*
+     * Nog geen echte e-mailprovider gekoppeld.
+     * De bestaande homepage-handler informeert de bezoeker.
+     */
   }
 
   async function load() {
