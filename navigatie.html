@@ -197,48 +197,39 @@ function render(){
  }).join('');
 }
 async function init(){
-  const topicFields='id,title,summary,content,information_type,country_id,city_id,category_id,published,visibility,card_data,updated_at';
+  const coreTopics = 'id,title,summary,content,information_type,country_id,city_id,category_id,published,updated_at';
 
-  const [t,c,ci,ca]=await Promise.all([
-    db().from('topic').select(topicFields).eq('published',true).order('updated_at',{ascending:false}),
+  let topicResult = await db()
+    .from('topic')
+    .select(coreTopics)
+    .eq('published',true)
+    .order('updated_at',{ascending:false});
+
+  if(topicResult.error){
+    console.error('HN Navigatie topics:',topicResult.error);
+    document.getElementById('cards').innerHTML =
+      '<div class="empty"><strong>De navigatie kon momenteel niet worden geladen.</strong><br><br>Probeer de pagina opnieuw te openen. De fout zit bij het laden van de fiches, niet bij je mobiele navigatie.</div>';
+    document.getElementById('resultCount').textContent='Tijdelijk niet beschikbaar';
+    return;
+  }
+
+  rows=topicResult.data||[];
+
+  const results=await Promise.allSettled([
     db().from('countries').select('id,name').order('name'),
     db().from('cities').select('id,name,country_id').order('name'),
     db().from('categories').select('id,name').order('name')
   ]);
 
-  let topicResult=t;
+  countries=results[0].status==='fulfilled' && !results[0].value.error ? (results[0].value.data||[]) : [];
+  cities=results[1].status==='fulfilled' && !results[1].value.error ? (results[1].value.data||[]) : [];
+  categories=results[2].status==='fulfilled' && !results[2].value.error ? (results[2].value.data||[]) : [];
 
-  if(t.error){
-    console.warn('HN Navigatie uitgebreide topic-query mislukt, probeer basisquery:',t.error);
-
-    topicResult=await db()
-      .from('topic')
-      .select('id,title,summary,content,information_type,country_id,city_id,category_id,published,card_data,updated_at')
-      .eq('published',true)
-      .order('updated_at',{ascending:false});
-  }
-
-  if(topicResult.error){
-    console.error('HN Navigatie topics:',topicResult.error);
-    document.getElementById('cards').innerHTML=
-      '<div class="empty">De fiches konden momenteel niet worden geladen. Vernieuw de pagina of probeer het later opnieuw.</div>';
-    document.getElementById('resultCount').textContent='Tijdelijk niet beschikbaar';
-  }else{
-    rows=topicResult.data||[];
-    countries=c.data||[];
-    cities=ci.data||[];
-    categories=ca.data||[];
-
-    fill('country',countries,'Alle landen');
-    fill('city',cities,'Alle steden');
-    fill('category',categories,'Alle categorieën');
-    catButtons();
-    render();
-  }
-
-  if(c.error)console.warn('HN Navigatie landen konden niet worden geladen:',c.error);
-  if(ci.error)console.warn('HN Navigatie steden konden niet worden geladen:',ci.error);
-  if(ca.error)console.warn('HN Navigatie categorieën konden niet worden geladen:',ca.error);
+  fill('country',countries,'Alle landen');
+  fill('city',cities,'Alle steden');
+  fill('category',categories,'Alle categorieën');
+  catButtons();
+  render();
 }
 ['q','country','city','category'].forEach(id=>document.getElementById(id).addEventListener(id==='q'?'input':'change',render));
 init();
