@@ -161,6 +161,12 @@ function telHref(value){
   return value?'tel:'+String(value).replace(/[^+\d]/g,''):'';
 }
 
+function mapsHref(d,pageTitle,loc){
+  if(d.maps_url)return d.maps_url;
+  const query=[d.address||'',pageTitle||'',loc||''].filter(Boolean).join(', ');
+  return query?'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(query):'';
+}
+
 async function init(){
   if(!id){
     document.getElementById('app').innerHTML='<div class="error">Geen fiche geselecteerd.</div>';
@@ -203,8 +209,10 @@ async function init(){
   if(loc)html+='<div class="location">'+icon.pin+esc(loc)+'</div>';
   html+='<div class="hero-actions">';
   if(d.phone)html+='<a class="button primary" href="'+esc(telHref(d.phone))+'">'+icon.phone+'Bel</a>';
-  if(d.maps_url)html+='<a class="button secondary" target="_blank" rel="noopener" href="'+esc(d.maps_url)+'">'+icon.map+'Ga daarheen</a>';
+  const mapsUrl=mapsHref(d,pageTitle,loc);
+  if(mapsUrl)html+='<a class="button secondary" target="_blank" rel="noopener" href="'+esc(mapsUrl)+'">'+icon.map+'Google Maps</a>';
   if(d.website)html+='<a class="button outline" target="_blank" rel="noopener" href="'+esc(d.website)+'">'+icon.web+'Website</a>';
+  html+='<a class="button primary" href="bijdragen.html?type=experience&title='+encodeURIComponent(pageTitle)+'">Ervaring delen</a>';
   html+='</div>';
   html+='</div></div></section>';
 
@@ -266,10 +274,11 @@ async function init(){
   if(verified)html+='<div class="meta-row"><div class="meta-label">Laatst gecontroleerd</div><div class="meta-value">'+new Date(verified).toLocaleDateString('nl-NL')+'</div></div>';
   html+='</div></section>';
 
-  if(d.address||d.maps_url){
+  const mapsUrl=mapsHref(d,pageTitle,loc);
+  if(d.address||mapsUrl){
     html+='<section class="card"><h2>Locatie</h2>';
     if(d.address)html+='<div class="source-row">'+icon.pin+'<span>'+esc(d.address)+'</span></div>';
-    if(d.maps_url)html+='<div class="hero-actions"><a class="button secondary" target="_blank" rel="noopener" href="'+esc(d.maps_url)+'">'+icon.map+'Google Maps</a></div>';
+    if(mapsUrl)html+='<div class="hero-actions"><a class="button secondary" target="_blank" rel="noopener" href="'+esc(mapsUrl)+'">'+icon.map+'Google Maps</a></div>';
     html+='</section>';
   }
 
