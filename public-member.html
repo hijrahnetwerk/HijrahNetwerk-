@@ -47,7 +47,7 @@ async function init(){
       '<div class="avatar">HN</div>'+
       '<div>'+
         '<div class="name">'+esc(data.public_name)+'</div>'+
-        '<div class="code">'+esc(data.public_code)+'</div>'+
+        '<div class="code">'+esc(data.public_code)+' · jouw HN-refercode</div>'+
         '<span class="role">'+esc(data.community_role||'Communitylid')+'</span>'+
       '</div>'+
     '</div>'+
@@ -56,6 +56,7 @@ async function init(){
       '<div class="stat"><strong>'+Number(data.reviews_count||0)+'</strong><span>Reviews</span></div>'+
       '<div class="stat"><strong>'+Number(data.experiences_count||0)+'</strong><span>Ervaringen</span></div>'+
       '<div class="stat"><strong>'+Number(data.approved_contributions_count||0)+'</strong><span>Bijdragen</span></div>'+
+      '<div class="stat"><strong>'+Number(data.referrals_count||0)+'</strong><span>Referrals</span></div>'+
       '<div class="stat"><strong>'+stamps.length+'</strong><span>Stempels</span></div>'+
     '</div>'+
     '<div class="section"><h2>Behaalde HN-stempels</h2>'+
