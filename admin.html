@@ -107,7 +107,7 @@ button,input,textarea,select{font:inherit}
 
 .content{
   padding:30px;
-  max-width:1400px
+  max-width:1500px
 }
 
 .page{
@@ -300,6 +300,16 @@ th{
   color:var(--muted)
 }
 
+.status-online{
+  background:#e6f2e9;
+  color:var(--success)
+}
+
+.status-offline{
+  background:#f0ece8;
+  color:var(--muted)
+}
+
 .actions{
   display:flex;
   gap:6px;
@@ -438,7 +448,108 @@ th{
   margin-top:4px
 }
 
+.activity-list{
+  display:flex;
+  flex-direction:column
+}
+
+.activity-item{
+  padding:14px 0;
+  border-bottom:1px solid var(--border)
+}
+
+.activity-item:last-child{
+  border-bottom:0
+}
+
+.activity-main{
+  display:flex;
+  justify-content:space-between;
+  gap:15px
+}
+
+.activity-user{
+  font-weight:600
+}
+
+.activity-description{
+  margin-top:4px;
+  font-size:14px
+}
+
+.activity-time{
+  color:var(--muted);
+  font-size:12px;
+  white-space:nowrap
+}
+
+.activity-details{
+  margin-top:5px;
+  color:var(--muted);
+  font-size:12px
+}
+
+.online-dot{
+  display:inline-block;
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:var(--success);
+  margin-right:6px
+}
+
+.offline-dot{
+  display:inline-block;
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:#aaa;
+  margin-right:6px
+}
+
+.monitor-summary{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:15px;
+  margin-bottom:18px
+}
+
+.monitor-box{
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:15px;
+  background:#fff
+}
+
+.monitor-box-label{
+  color:var(--muted);
+  font-size:12px;
+  margin-bottom:6px
+}
+
+.monitor-box-value{
+  font-size:23px;
+  font-weight:700;
+  color:var(--brown)
+}
+
+.notification-badge{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:20px;
+  height:20px;
+  padding:0 6px;
+  margin-left:5px;
+  border-radius:20px;
+  background:var(--orange);
+  color:#fff;
+  font-size:11px;
+  font-weight:700
+}
+
 @media(max-width:950px){
+
   .cards{
     grid-template-columns:repeat(2,1fr)
   }
@@ -447,9 +558,14 @@ th{
   .plan-summary{
     grid-template-columns:1fr
   }
+
+  .monitor-summary{
+    grid-template-columns:1fr
+  }
 }
 
 @media(max-width:650px){
+
   .layout{
     display:block
   }
@@ -481,6 +597,15 @@ th{
   .cards{
     grid-template-columns:1fr
   }
+
+  .activity-main{
+    display:block
+  }
+
+  .activity-time{
+    display:block;
+    margin-top:5px
+  }
 }
 </style>
 </head>
@@ -502,7 +627,10 @@ th{
     <button class="nav-button" data-page="subcategories">Subcategorieën</button>
     <button class="nav-button" data-page="topics">Kennisbank</button>
     <button class="nav-button" data-page="reviewers">Reviewers</button>
-    <button class="nav-button" data-page="users">Gebruikers</button>
+    <button class="nav-button" data-page="users">
+      Gebruikers
+      <span id="activityBadge" class="notification-badge" style="display:none;">0</span>
+    </button>
     <button class="nav-button" data-page="sync">Sync Queue</button>
   </nav>
 
@@ -1082,13 +1210,38 @@ th{
 
   <div class="intro">
     <h2>Gebruikers</h2>
-    <p>Bekijk geregistreerde gebruikers en hun Mijn Hijrah Plan.</p>
+    <p>Bekijk geregistreerde gebruikers, hun activiteit en hun Mijn Hijrah Plan.</p>
   </div>
+
+
+  <div class="panel">
+
+    <div class="monitor-summary">
+
+      <div class="monitor-box">
+        <div class="monitor-box-label">Totaal gebruikers</div>
+        <div class="monitor-box-value" id="totalUsersCount">—</div>
+      </div>
+
+      <div class="monitor-box">
+        <div class="monitor-box-label">Nu online</div>
+        <div class="monitor-box-value" id="onlineUsersCount">—</div>
+      </div>
+
+      <div class="monitor-box">
+        <div class="monitor-box-label">Activiteiten</div>
+        <div class="monitor-box-value" id="activityCount">—</div>
+      </div>
+
+    </div>
+
+  </div>
+
 
   <div class="panel">
 
     <div class="panel-header">
-      <h3>Geregistreerde gebruikers</h3>
+      <h3>Gebruikers</h3>
       <input class="wide" id="userFilter" placeholder="Zoek op e-mail...">
     </div>
 
@@ -1098,8 +1251,10 @@ th{
 
         <thead>
           <tr>
-            <th>E-mail</th>
-            <th>Geregistreerd</th>
+            <th>Gebruiker</th>
+            <th>Status</th>
+            <th>Laatste activiteit</th>
+            <th>Sessie</th>
             <th>Mijn Hijrah Plan</th>
             <th>Actie</th>
           </tr>
@@ -1109,6 +1264,25 @@ th{
 
       </table>
 
+    </div>
+
+  </div>
+
+
+  <div class="panel">
+
+    <div class="panel-header">
+      <h3>Recente activiteit</h3>
+
+      <button
+        class="button button-secondary"
+        id="clearActivityBadgeButton">
+        Meldingen gelezen
+      </button>
+    </div>
+
+    <div id="activityList" class="activity-list">
+      <div class="empty">Activiteiten worden geladen...</div>
     </div>
 
   </div>
@@ -1189,10 +1363,21 @@ let users=[];
 let userPlans=[];
 let hijrahSteps=[];
 
+let userPresence=[];
+let userActivities=[];
+
+let lastActivityId=null;
+let unreadActivityCount=0;
+
+let monitorInterval=null;
+
 const db=()=>window.hijrahSupabase;
+
+const ONLINE_THRESHOLD_SECONDS=90;
 
 
 function msg(t,type='success'){
+
   const e=document.getElementById('message');
 
   e.textContent=t;
@@ -1205,6 +1390,7 @@ function msg(t,type='success'){
 
 
 function slug(s){
+
   return String(s||'')
     .toLowerCase()
     .trim()
@@ -1216,6 +1402,7 @@ function slug(s){
 
 
 function esc(v){
+
   return v==null
     ? ''
     : String(v)
@@ -1228,6 +1415,7 @@ function esc(v){
 
 
 function options(el,items,placeholder='Kies...'){
+
   const old=el.value;
 
   el.innerHTML=
@@ -1270,6 +1458,10 @@ function showPage(p){
     users:'Gebruikers',
     sync:'Sync Queue'
   }[p]||'Admin';
+
+  if(p==='users'){
+    clearActivityBadge();
+  }
 }
 
 
@@ -2455,7 +2647,289 @@ function resetReviewer(){
 cancelReviewer.onclick=resetReviewer;
 
 
-/* GEBRUIKERS + MIJN HIJRAH PLAN */
+/* GEBRUIKERS + MONITORING */
+
+function isUserOnline(presence){
+
+  if(!presence?.last_seen_at)
+    return false;
+
+  const last=
+    new Date(presence.last_seen_at).getTime();
+
+  return(
+    (Date.now()-last)/
+    1000
+  ) <= ONLINE_THRESHOLD_SECONDS;
+}
+
+
+function formatRelativeTime(value){
+
+  if(!value)
+    return 'Nog niet actief';
+
+  const time=
+    new Date(value).getTime();
+
+  const seconds=
+    Math.max(
+      0,
+      Math.floor(
+        (Date.now()-time)/1000
+      )
+    );
+
+  if(seconds<10)
+    return 'zojuist';
+
+  if(seconds<60)
+    return `${seconds} sec geleden`;
+
+  const minutes=Math.floor(seconds/60);
+
+  if(minutes<60)
+    return `${minutes} min geleden`;
+
+  const hours=Math.floor(minutes/60);
+
+  if(hours<24)
+    return `${hours} uur geleden`;
+
+  const days=Math.floor(hours/24);
+
+  return `${days} dag${days===1?'':'en'} geleden`;
+}
+
+
+function formatSessionDuration(presence){
+
+  if(!presence)
+    return '—';
+
+  let seconds=
+    Number(presence.session_seconds)||0;
+
+  if(
+    isUserOnline(presence) &&
+    presence.session_started_at
+  ){
+
+    const started=
+      new Date(
+        presence.session_started_at
+      ).getTime();
+
+    const liveSeconds=
+      Math.floor(
+        (Date.now()-started)/1000
+      );
+
+    if(liveSeconds>seconds)
+      seconds=liveSeconds;
+  }
+
+  const hours=
+    Math.floor(seconds/3600);
+
+  const minutes=
+    Math.floor((seconds%3600)/60);
+
+  const secs=
+    seconds%60;
+
+  if(hours>0)
+    return `${hours}u ${minutes}m`;
+
+  if(minutes>0)
+    return `${minutes}m ${secs}s`;
+
+  return `${secs}s`;
+}
+
+
+function formatDateTime(value){
+
+  if(!value)
+    return '—';
+
+  return new Date(value)
+    .toLocaleString(
+      'nl-NL',
+      {
+        day:'2-digit',
+        month:'2-digit',
+        year:'numeric',
+        hour:'2-digit',
+        minute:'2-digit'
+      }
+    );
+}
+
+
+async function loadPresence(){
+
+  const {
+    data,
+    error
+  }=await db()
+    .from('user_presence')
+    .select(
+      'user_id,session_started_at,last_seen_at,session_seconds,updated_at'
+    );
+
+  if(error){
+
+    console.warn(
+      'Aanwezigheid kon niet worden geladen:',
+      error.message
+    );
+
+    userPresence=[];
+
+    return false;
+  }
+
+  userPresence=data||[];
+
+  return true;
+}
+
+
+async function loadActivities(){
+
+  const {
+    data,
+    error
+  }=await db()
+    .from('user_activity')
+    .select(
+      'id,user_id,activity_type,description,details,created_at'
+    )
+    .order(
+      'created_at',
+      {ascending:false}
+    )
+    .limit(50);
+
+  if(error){
+
+    console.warn(
+      'Activiteiten konden niet worden geladen:',
+      error.message
+    );
+
+    userActivities=[];
+
+    return false;
+  }
+
+  const previousLatest=
+    userActivities.length
+      ? userActivities[0]?.id
+      : null;
+
+  userActivities=data||[];
+
+  const newestId=
+    userActivities.length
+      ? userActivities[0]?.id
+      : null;
+
+  if(
+    previousLatest!==null &&
+    newestId!==null &&
+    Number(newestId)>Number(previousLatest)
+  ){
+
+    const newItems=
+      userActivities.filter(
+        x=>Number(x.id)>Number(previousLatest)
+      );
+
+    unreadActivityCount+=newItems.length;
+
+    updateActivityBadge();
+
+    if(newItems.length){
+
+      const first=newItems[0];
+
+      const user=users.find(
+        x=>x.id===first.user_id
+      );
+
+      msg(
+        `${user?.email||'Gebruiker'}: ${first.description}`,
+        'success'
+      );
+    }
+  }
+
+  if(lastActivityId===null && newestId!==null)
+    lastActivityId=newestId;
+
+  return true;
+}
+
+
+function updateActivityBadge(){
+
+  const badge=
+    document.getElementById(
+      'activityBadge'
+    );
+
+  if(!badge)
+    return;
+
+  if(unreadActivityCount>0){
+
+    badge.textContent=
+      unreadActivityCount>99
+        ? '99+'
+        : unreadActivityCount;
+
+    badge.style.display='inline-flex';
+
+  }else{
+
+    badge.style.display='none';
+
+  }
+}
+
+
+function clearActivityBadge(){
+
+  unreadActivityCount=0;
+
+  updateActivityBadge();
+}
+
+
+document
+  .getElementById(
+    'clearActivityBadgeButton'
+  )
+  .onclick=clearActivityBadge;
+
+
+function getPresenceForUser(userId){
+
+  return userPresence.find(
+    x=>x.user_id===userId
+  );
+}
+
+
+function getLatestActivityForUser(userId){
+
+  return userActivities.find(
+    x=>x.user_id===userId
+  );
+}
+
 
 async function loadUsers(){
 
@@ -2465,10 +2939,16 @@ async function loadUsers(){
   }=await db()
     .from('profiles')
     .select('id,email,created_at,role')
-    .order('created_at',{ascending:false});
+    .order(
+      'created_at',
+      {ascending:false}
+    );
 
   if(error)
-    return msg('Gebruikers: '+error.message,'error');
+    return msg(
+      'Gebruikers: '+error.message,
+      'error'
+    );
 
   users=data||[];
 
@@ -2478,7 +2958,9 @@ async function loadUsers(){
     error:plansError
   }=await db()
     .from('hijrah_plans')
-    .select('user_id,target_country_id,target_city_id,target_date');
+    .select(
+      'user_id,target_country_id,target_city_id,target_date'
+    );
 
   if(plansError)
     return msg(
@@ -2494,7 +2976,9 @@ async function loadUsers(){
     error:stepsError
   }=await db()
     .from('hijrah_steps')
-    .select('id,step_key,title,description')
+    .select(
+      'id,step_key,title,description'
+    )
     .order('id');
 
   if(stepsError)
@@ -2506,62 +2990,201 @@ async function loadUsers(){
   hijrahSteps=steps||[];
 
 
+  await loadPresence();
+  await loadActivities();
+
   renderUsers();
+  renderActivity();
+  updateMonitorSummary();
+}
+
+
+function updateMonitorSummary(){
+
+  const onlineCount=
+    users.filter(user=>
+      isUserOnline(
+        getPresenceForUser(user.id)
+      )
+    ).length;
+
+  document.getElementById(
+    'totalUsersCount'
+  ).textContent=users.length;
+
+  document.getElementById(
+    'onlineUsersCount'
+  ).textContent=onlineCount;
+
+  document.getElementById(
+    'activityCount'
+  ).textContent=userActivities.length;
 }
 
 
 function renderUsers(){
 
   const q=
-    (document.getElementById('userFilter').value||'')
+    (
+      document.getElementById(
+        'userFilter'
+      ).value||''
+    )
       .toLowerCase()
       .trim();
 
-  const list=users.filter(user=>
-    (user.email||'')
-      .toLowerCase()
-      .includes(q)
-  );
+  const list=users
+    .filter(user=>
+      (user.email||'')
+        .toLowerCase()
+        .includes(q)
+    );
 
-  const table=document.getElementById('usersTable');
+  const table=
+    document.getElementById(
+      'usersTable'
+    );
 
   table.innerHTML=list.length
 
     ? list.map(user=>{
 
-        const plan=userPlans.find(
-          x=>x.user_id===user.id
-        );
+        const plan=
+          userPlans.find(
+            x=>x.user_id===user.id
+          );
+
+        const presence=
+          getPresenceForUser(
+            user.id
+          );
+
+        const latestActivity=
+          getLatestActivityForUser(
+            user.id
+          );
+
+        const online=
+          isUserOnline(
+            presence
+          );
 
         return `
           <tr>
 
             <td>
-              <b>${esc(user.email||'Geen e-mail')}</b>
+
+              <b>
+                ${esc(
+                  user.email||
+                  'Geen e-mail'
+                )}
+              </b>
 
               ${
                 user.role==='admin'
                   ? '<div class="hint">Admin</div>'
                   : ''
               }
+
             </td>
 
+
             <td>
+
+              <span class="status ${
+                online
+                  ? 'status-online'
+                  : 'status-offline'
+              }">
+
+                <span class="${
+                  online
+                    ? 'online-dot'
+                    : 'offline-dot'
+                }"></span>
+
+                ${
+                  online
+                    ? 'Online'
+                    : 'Offline'
+                }
+
+              </span>
+
+            </td>
+
+
+            <td>
+
               ${
-                user.created_at
-                  ? new Date(user.created_at)
-                      .toLocaleDateString('nl-NL')
-                  : '—'
+                latestActivity
+                  ? `
+                    <div>
+                      ${esc(
+                        latestActivity.description
+                      )}
+                    </div>
+
+                    <div class="hint">
+                      ${formatRelativeTime(
+                        latestActivity.created_at
+                      )}
+                    </div>
+                  `
+                  : (
+                    presence?.last_seen_at
+                      ? `
+                        <div>
+                          Laatst gezien
+                        </div>
+                        <div class="hint">
+                          ${formatRelativeTime(
+                            presence.last_seen_at
+                          )}
+                        </div>
+                      `
+                      : 'Nog geen activiteit'
+                  )
               }
+
             </td>
 
+
             <td>
+
+              <div>
+                ${formatSessionDuration(
+                  presence
+                )}
+              </div>
+
+              ${
+                presence?.session_started_at
+                  ? `
+                    <div class="hint">
+                      Gestart:
+                      ${formatDateTime(
+                        presence.session_started_at
+                      )}
+                    </div>
+                  `
+                  : ''
+              }
+
+            </td>
+
+
+            <td>
+
               ${
                 plan
                   ? '<span class="status status-active">Plan aanwezig</span>'
                   : '<span class="status status-inactive">Nog geen plan</span>'
               }
+
             </td>
+
 
             <td>
 
@@ -2582,13 +3205,121 @@ function renderUsers(){
 
       }).join('')
 
-    : '<tr><td colspan="4" class="empty">Geen gebruikers gevonden.</td></tr>';
+    : '<tr><td colspan="6" class="empty">Geen gebruikers gevonden.</td></tr>';
 }
 
 
 document
   .getElementById('userFilter')
-  .addEventListener('input',renderUsers);
+  .addEventListener(
+    'input',
+    renderUsers
+  );
+
+
+function renderActivity(){
+
+  const container=
+    document.getElementById(
+      'activityList'
+    );
+
+  if(!userActivities.length){
+
+    container.innerHTML=
+      '<div class="empty">Nog geen activiteiten.</div>';
+
+    return;
+  }
+
+
+  container.innerHTML=
+    userActivities.map(activity=>{
+
+      const user=
+        users.find(
+          x=>x.id===activity.user_id
+        );
+
+      let details='';
+
+      if(activity.details){
+
+        try{
+
+          if(
+            typeof activity.details==='string'
+          ){
+
+            details=
+              activity.details;
+
+          }else{
+
+            details=
+              Object.entries(
+                activity.details
+              )
+                .map(
+                  ([key,value])=>
+                    `${key}: ${value}`
+                )
+                .join(' · ');
+          }
+
+        }catch(e){
+
+          details='';
+
+        }
+      }
+
+
+      return `
+        <div class="activity-item">
+
+          <div class="activity-main">
+
+            <div>
+
+              <div class="activity-user">
+                ${esc(
+                  user?.email||
+                  'Onbekende gebruiker'
+                )}
+              </div>
+
+              <div class="activity-description">
+                ${esc(
+                  activity.description
+                )}
+              </div>
+
+              ${
+                details
+                  ? `
+                    <div class="activity-details">
+                      ${esc(details)}
+                    </div>
+                  `
+                  : ''
+              }
+
+            </div>
+
+            <div class="activity-time">
+              ${formatDateTime(
+                activity.created_at
+              )}
+            </div>
+
+          </div>
+
+        </div>
+      `;
+
+    }).join('');
+}
 
 
 async function viewUserPlan(userId){
@@ -2606,13 +3337,19 @@ async function viewUserPlan(userId){
 
 
   const panel=
-    document.getElementById('userPlanPanel');
+    document.getElementById(
+      'userPlanPanel'
+    );
 
   const title=
-    document.getElementById('selectedUserTitle');
+    document.getElementById(
+      'selectedUserTitle'
+    );
 
   const content=
-    document.getElementById('userPlanContent');
+    document.getElementById(
+      'userPlanContent'
+    );
 
 
   panel.style.display='block';
@@ -2653,8 +3390,13 @@ async function viewUserPlan(userId){
     error
   }=await db()
     .from('member_progress')
-    .select('id,user_id,topic_id,item_key')
-    .eq('user_id',userId);
+    .select(
+      'id,user_id,topic_id,item_key,completed,completed_at'
+    )
+    .eq(
+      'user_id',
+      userId
+    );
 
 
   if(error){
@@ -2677,31 +3419,59 @@ async function viewUserPlan(userId){
 
   const completedKeys=new Set(
     (progress||[])
-      .map(x=>x.item_key)
+      .filter(
+        x=>x.completed===true
+      )
+      .map(
+        x=>x.item_key
+      )
       .filter(Boolean)
   );
 
 
   const completedCount=
     hijrahSteps.filter(step=>
-      completedKeys.has(step.step_key)
+      completedKeys.has(
+        step.step_key
+      )
     ).length;
 
 
-  const totalCount=hijrahSteps.length;
+  const totalCount=
+    hijrahSteps.length;
 
 
-  const percentage=totalCount
-    ? Math.round(
-        (completedCount/totalCount)*100
-      )
-    : 0;
+  const percentage=
+    totalCount
+      ? Math.round(
+          (
+            completedCount/
+            totalCount
+          )*100
+        )
+      : 0;
 
 
-  const targetDate=plan.target_date
-    ? new Date(plan.target_date)
-        .toLocaleDateString('nl-NL')
-    : 'Nog niet gekozen';
+  const targetDate=
+    plan.target_date
+      ? new Date(
+          plan.target_date
+        ).toLocaleDateString(
+          'nl-NL'
+        )
+      : 'Nog niet gekozen';
+
+
+  const presence=
+    getPresenceForUser(
+      userId
+    );
+
+
+  const latestActivity=
+    getLatestActivityForUser(
+      userId
+    );
 
 
   content.innerHTML=`
@@ -2711,7 +3481,9 @@ async function viewUserPlan(userId){
       <div class="plan-box">
         <div class="plan-box-label">E-mail</div>
         <div class="plan-box-value">
-          ${esc(user.email||'—')}
+          ${esc(
+            user.email||'—'
+          )}
         </div>
       </div>
 
@@ -2721,9 +3493,56 @@ async function viewUserPlan(userId){
         <div class="plan-box-value">
           ${
             user.created_at
-              ? new Date(user.created_at)
-                  .toLocaleString('nl-NL')
+              ? new Date(
+                  user.created_at
+                ).toLocaleString(
+                  'nl-NL'
+                )
               : '—'
+          }
+        </div>
+      </div>
+
+
+      <div class="plan-box">
+        <div class="plan-box-label">Status</div>
+        <div class="plan-box-value">
+
+          ${
+            isUserOnline(presence)
+              ? `
+                <span class="status status-online">
+                  <span class="online-dot"></span>
+                  Online
+                </span>
+              `
+              : `
+                <span class="status status-offline">
+                  <span class="offline-dot"></span>
+                  Offline
+                </span>
+              `
+          }
+
+        </div>
+      </div>
+
+
+      <div class="plan-box">
+        <div class="plan-box-label">Laatste activiteit</div>
+        <div class="plan-box-value">
+          ${
+            latestActivity
+              ? formatDateTime(
+                  latestActivity.created_at
+                )
+              : (
+                presence?.last_seen_at
+                  ? formatDateTime(
+                      presence.last_seen_at
+                    )
+                  : '—'
+              )
           }
         </div>
       </div>
@@ -2732,7 +3551,10 @@ async function viewUserPlan(userId){
       <div class="plan-box">
         <div class="plan-box-label">Doelland</div>
         <div class="plan-box-value">
-          ${esc(country?.name||'Nog niet gekozen')}
+          ${esc(
+            country?.name||
+            'Nog niet gekozen'
+          )}
         </div>
       </div>
 
@@ -2740,7 +3562,10 @@ async function viewUserPlan(userId){
       <div class="plan-box">
         <div class="plan-box-label">Doelstad</div>
         <div class="plan-box-value">
-          ${esc(city?.name||'Nog niet gekozen')}
+          ${esc(
+            city?.name||
+            'Nog niet gekozen'
+          )}
         </div>
       </div>
 
@@ -2760,7 +3585,10 @@ async function viewUserPlan(userId){
         </div>
 
         <div class="plan-box-value">
-          ${completedCount} van ${totalCount} stappen
+          ${completedCount}
+          van
+          ${totalCount}
+          stappen
           (${percentage}%)
         </div>
 
@@ -2796,21 +3624,29 @@ async function viewUserPlan(userId){
 
                 <div class="step-row">
 
-                  <div class="step-check ${done?'done':''}">
+                  <div class="step-check ${
+                    done
+                      ? 'done'
+                      : ''
+                  }">
                     ${done?'✓':''}
                   </div>
 
                   <div>
 
                     <div class="step-title">
-                      ${esc(step.title)}
+                      ${esc(
+                        step.title
+                      )}
                     </div>
 
                     ${
                       step.description
                         ? `
                           <div class="step-description">
-                            ${esc(step.description)}
+                            ${esc(
+                              step.description
+                            )}
                           </div>
                         `
                         : ''
@@ -2844,7 +3680,9 @@ async function viewUserPlan(userId){
 
 
 document
-  .getElementById('closeUserPlanButton')
+  .getElementById(
+    'closeUserPlanButton'
+  )
   .onclick=()=>{
 
     document.getElementById(
@@ -2852,6 +3690,46 @@ document
     ).style.display='none';
 
   };
+
+
+/* MONITORING VERNIEUWEN */
+
+async function refreshUserMonitoring(){
+
+  if(
+    !document.getElementById(
+      'page-users'
+    )
+  )
+    return;
+
+  const ok=
+    await loadPresence();
+
+  if(!ok)
+    return;
+
+  await loadActivities();
+
+  renderUsers();
+  renderActivity();
+  updateMonitorSummary();
+}
+
+
+function startUserMonitoring(){
+
+  if(monitorInterval)
+    clearInterval(
+      monitorInterval
+    );
+
+  monitorInterval=
+    setInterval(
+      refreshUserMonitoring,
+      15000
+    );
+}
 
 
 /* SYNC */
@@ -2864,7 +3742,10 @@ async function loadSync(){
   }=await db()
     .from('sync_queue')
     .select('*')
-    .order('created_at',{ascending:false})
+    .order(
+      'created_at',
+      {ascending:false}
+    )
     .limit(100);
 
   if(error)
@@ -2879,25 +3760,47 @@ async function loadSync(){
       ? (data||[]).map(x=>`
           <tr>
 
-            <td>${esc(x.airtable_record_id)}</td>
+            <td>
+              ${esc(
+                x.airtable_record_id
+              )}
+            </td>
 
-            <td>${esc(x.entity_type)}</td>
+            <td>
+              ${esc(
+                x.entity_type
+              )}
+            </td>
 
-            <td>${esc(x.action)}</td>
+            <td>
+              ${esc(
+                x.action
+              )}
+            </td>
 
-            <td>${esc(x.status)}</td>
+            <td>
+              ${esc(
+                x.status
+              )}
+            </td>
 
             <td>
               ${
                 x.record_modified_at
                   ? new Date(
                       x.record_modified_at
-                    ).toLocaleString('nl-NL')
+                    ).toLocaleString(
+                      'nl-NL'
+                    )
                   : ''
               }
             </td>
 
-            <td>${esc(x.error_message)}</td>
+            <td>
+              ${esc(
+                x.error_message
+              )}
+            </td>
 
           </tr>
         `).join('')
@@ -2915,7 +3818,16 @@ async function loadSync(){
 /* UITLOGGEN */
 
 logoutButton.onclick=async()=>{
-  await db().auth.signOut();
+
+  if(monitorInterval)
+    clearInterval(
+      monitorInterval
+    );
+
+  await db()
+    .auth
+    .signOut();
+
   location.href='/login.html';
 };
 
@@ -2940,6 +3852,8 @@ async function init(){
   await loadUsers();
 
   await loadSync();
+
+  startUserMonitoring();
 }
 
 
