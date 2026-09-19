@@ -3,12 +3,12 @@
  * Alle functies gebruiken de officiële supabase-js client (window.hijrahSupabase).
  */
 
-async function hnSignUp(email, password) {
+async function hnSignUp(email, password, metadata = {}) {
   const { data, error } = await window.hijrahSupabase.auth.signUp({
     email,
     password,
     options: {
-      // Waar de gebruiker terechtkomt na het klikken op de bevestigingsmail
+      data: metadata,
       emailRedirectTo: window.location.origin + '/login.html'
     }
   });
@@ -20,7 +20,32 @@ async function hnSignIn(email, password) {
     email,
     password
   });
-  return { data, error };
+
+  if (error || !data?.user) return { data, error };
+
+  const profileResult = await window.hijrahSupabase
+    .from('profiles')
+    .select('role,application_status')
+    .eq('id', data.user.id)
+    .maybeSingle();
+
+  if (profileResult.error) return { data, error: profileResult.error };
+
+  const profile = profileResult.data;
+
+  if (profile?.role === 'admin') return { data, error: null };
+
+  if (profile?.application_status !== 'approved') {
+    await window.hijrahSupabase.auth.signOut();
+    return {
+      data: null,
+      error: {
+        message: 'Je registratie is nog niet goedgekeurd door HN. Je krijgt toegang zodra je aanvraag is gecontroleerd.'
+      }
+    };
+  }
+
+  return { data, error: null };
 }
 
 async function hnSignOut() {
