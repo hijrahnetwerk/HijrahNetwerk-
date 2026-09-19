@@ -772,7 +772,8 @@
         .selectAll('path')
         .data(countriesFeature.features)
         .join('path')
-        .attr('class','world-path');
+        .attr('class','world-path')
+        .attr('d',path);
 
       const mapData=[
         ...countriesFeature.features.map(f=>({feature:f,id:String(f.id)}))
