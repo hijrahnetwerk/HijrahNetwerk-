@@ -3327,6 +3327,22 @@ function renderUsers(){
                 )}
               </b>
 
+              <div class="hint">
+                ${esc(user.public_name||'Communityprofiel nog niet actief')}
+              </div>
+
+              ${
+                user.public_code
+                  ? '<div class="hint">'+esc(user.public_code)+'</div>'
+                  : ''
+              }
+
+              ${
+                user.community_role
+                  ? '<div class="hint">'+esc(user.community_role)+'</div>'
+                  : ''
+              }
+
               ${
                 user.role==='admin'
                   ? '<div class="hint">Admin</div>'
@@ -3423,32 +3439,21 @@ function renderUsers(){
 
             <td>
 
+              <span class="status ${user.my_hijrah_enabled?'status-active':'status-inactive'}">
+                ${user.my_hijrah_enabled?'Toegang actief':'Niet geactiveerd'}
+              </span>
+
               ${
                 plan
                   ? `
-                    <span class="status status-active">
-                      Plan aanwezig
-                    </span>
-
-                    ${
-                      plan.notes ||
-                      plan.plan_data
-                        ? `
-                          <div class="hint">
-                            Notities / plan ingevuld
-                          </div>
-                        `
-                        : `
-                          <div class="hint">
-                            Nog geen notities of plan ingevuld
-                          </div>
-                        `
-                    }
+                    <div class="hint">
+                      ${plan.notes || plan.plan_data ? 'Plan ingevuld' : 'Plan nog leeg'}
+                    </div>
                   `
                   : `
-                    <span class="status status-inactive">
+                    <div class="hint">
                       Nog geen plan
-                    </span>
+                    </div>
                   `
               }
 
@@ -3461,7 +3466,14 @@ function renderUsers(){
 
                 <button
                   class="button-secondary"
-                  onclick="viewUserPlan('${user.id}')">
+                  onclick="toggleMyHijrahAccess('${user.id}',${user.my_hijrah_enabled?'true':'false'})">
+                  ${user.my_hijrah_enabled?'Mijn Hijrah uit':'Mijn Hijrah aan'}
+                </button>
+
+                <button
+                  class="button-secondary"
+                  onclick="viewUserPlan('${user.id}')"
+                  ${user.my_hijrah_enabled?'':'disabled'}>
                   Bekijk plan
                 </button>
 
@@ -3475,6 +3487,33 @@ function renderUsers(){
       }).join('')
 
     : '<tr><td colspan="6" class="empty">Geen gebruikers gevonden.</td></tr>';
+}
+
+
+async function toggleMyHijrahAccess(id,enabled){
+
+  const next=!enabled;
+
+  const {error}=await db()
+    .from('profiles')
+    .update({
+      my_hijrah_enabled:next,
+      updated_at:new Date().toISOString()
+    })
+    .eq('id',id);
+
+  if(error){
+    message(error.message,'error');
+    return;
+  }
+
+  await loadUsers();
+
+  message(
+    next
+      ? 'Mijn Hijrah Plan geactiveerd.'
+      : 'Mijn Hijrah Plan gedeactiveerd.'
+  );
 }
 
 
