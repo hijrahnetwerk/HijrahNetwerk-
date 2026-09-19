@@ -302,30 +302,6 @@ textarea{
   color:var(--muted)
 }
 
-.presence-box{
-  margin-top:20px;
-  padding:14px 16px;
-  border:1px solid var(--border);
-  border-radius:10px;
-  background:#faf8f5
-}
-
-.presence-line{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  font-size:13px;
-  color:var(--muted)
-}
-
-.online-dot{
-  width:9px;
-  height:9px;
-  border-radius:50%;
-  background:var(--success);
-  display:inline-block
-}
-
 .summary-box{
   margin-top:20px;
   display:grid;
@@ -560,15 +536,6 @@ textarea{
   <p id="welcome">
     Je persoonlijke omgeving.
   </p>
-
-  <div class="presence-box">
-    <div class="presence-line">
-      <span class="online-dot"></span>
-      <span id="presenceText">
-        Je bent online.
-      </span>
-    </div>
-  </div>
 
 </section>
 
@@ -1304,16 +1271,14 @@ async function logUserActivity(
 
 /* =========================
    ONLINE / PRESENCE
+   Alleen voor admin-monitoring.
+   Niet zichtbaar voor leden.
 ========================= */
 
 function setPresenceText(text){
-
-  const el=$('presenceText');
-
-  if(el){
-    el.textContent=text;
-  }
-
+  // Presence wordt bewust niet aan leden getoond.
+  // De gegevens blijven wel op de achtergrond
+  // naar user_presence gaan voor admin-monitoring.
 }
 
 function getSessionStart(data){
@@ -1390,10 +1355,6 @@ async function startPresence(){
         error
       );
 
-      setPresenceText(
-        'Je bent ingelogd, maar aanwezigheid kon niet worden opgeslagen.'
-      );
-
       return false;
     }
 
@@ -1428,10 +1389,6 @@ async function startPresence(){
     console.error(
       'PRESENCE STARTEN FOUT:',
       error
-    );
-
-    setPresenceText(
-      'Je bent ingelogd, maar aanwezigheid kon niet worden opgeslagen.'
     );
 
     return false;
@@ -1499,23 +1456,8 @@ async function updatePresence(){
       error
     );
 
-    setPresenceText(
-      'Je bent ingelogd, maar aanwezigheid kon niet worden opgeslagen.'
-    );
-
     return false;
   }
-
-  setPresenceText(
-    'Je bent online · actief sinds '+
-    presenceSessionStarted.toLocaleTimeString(
-      'nl-NL',
-      {
-        hour:'2-digit',
-        minute:'2-digit'
-      }
-    )
-  );
 
   return true;
 
