@@ -1381,7 +1381,7 @@
       );
 
       showNotice(
-        "Artikel opgeslagen."
+        "Opgeslagen in Mijn Hijrah."
       );
 
     }
@@ -1416,6 +1416,65 @@
   /* =========================
      ARTIKEL OPENEN
   ========================= */
+
+  function getPlannedArticles(topic) {
+    const city = topic?.cities?.name || "deze stad";
+    const country = topic?.countries?.name || "dit land";
+    const category = normalize(topic?.categories?.name || "");
+
+    if (category.includes("gezondheid")) {
+      return [
+        "Huisartsen en medische praktijken in " + city,
+        "Ziekenhuizen en klinieken in " + city,
+        "Spoedzorg en medische hulp in " + city,
+        "Zorgverzekering en medische kosten in " + country,
+        "Apotheken en medicijnen in " + city
+      ];
+    }
+
+    if (category.includes("huisvesting")) {
+      return [
+        "Huren in " + city,
+        "Wijken en buurten in " + city,
+        "Huurcontracten en borg in " + country,
+        "Een woning kopen in " + city
+      ];
+    }
+
+    if (category.includes("onderwijs")) {
+      return [
+        "Scholen in " + city,
+        "Onderwijs voor kinderen in " + country,
+        "Islamitisch onderwijs in " + city,
+        "Taalonderwijs en taalscholen in " + city
+      ];
+    }
+
+    if (category.includes("juridisch") || category.includes("immigratie")) {
+      return [
+        "Verblijfsvergunning in " + country,
+        "Benodigde documenten voor " + country,
+        "Inschrijving en officiële procedures in " + country,
+        "Verblijven met kinderen in " + country
+      ];
+    }
+
+    if (category.includes("werk") || category.includes("ondernemen")) {
+      return [
+        "Werk vinden in " + city,
+        "Werken op afstand vanuit " + country,
+        "Ondernemen en registreren in " + country,
+        "Belastingen en administratie in " + country
+      ];
+    }
+
+    return [
+      "Dagelijks leven in " + city,
+      "Kosten van levensonderhoud in " + city,
+      "Praktische zaken na aankomst in " + country,
+      "Ervaringen van zusters in " + country
+    ];
+  }
 
   function openArticle(
     topicId,
@@ -1534,25 +1593,56 @@
       `
       : "";
 
-    const relatedBlock = fallbackRelated.length
-      ? `
-        <div class="article-bottom">
-          <h3>Andere artikelen</h3>
-          <div class="related-grid">
-            ${fallbackRelated.map(item => `
-              <a class="related-card" href="kennisbank.html?topic=${encodeURIComponent(item.id)}">
-                <div class="tags">
-                  ${item.cities?.name ? `<span class="tag">${esc(item.cities.name)}</span>` : ""}
-                  ${item.categories?.name ? `<span class="tag">${esc(item.categories.name)}</span>` : ""}
+    const plannedArticles = getPlannedArticles(topic);
+
+    const relatedBlock =
+      (fallbackRelated.length || plannedArticles.length)
+        ? `
+          <div class="article-bottom">
+
+            ${fallbackRelated.length
+              ? `
+                <h3>Andere artikelen</h3>
+                <div class="related-grid">
+                  ${fallbackRelated.map(item => `
+                    <a class="related-card" href="kennisbank.html?topic=${encodeURIComponent(item.id)}">
+                      <div class="tags">
+                        ${item.cities?.name ? `<span class="tag">${esc(item.cities.name)}</span>` : ""}
+                        ${item.categories?.name ? `<span class="tag">${esc(item.categories.name)}</span>` : ""}
+                      </div>
+                      <h4>${esc(item.title)}</h4>
+                      <p>${esc(item.summary || "Bekijk dit artikel in de HN-kennisbank.")}</p>
+                    </a>
+                  `).join("")}
                 </div>
-                <h4>${esc(item.title)}</h4>
-                <p>${esc(item.summary || "Bekijk dit artikel in de HN-kennisbank.")}</p>
-              </a>
-            `).join("")}
+              `
+              : ""
+            }
+
+            ${plannedArticles.length
+              ? `
+                <div style="margin-top:30px">
+                  <h3>Nog te maken voor dit onderwerp</h3>
+                  <p class="muted" style="margin:0 0 14px">
+                    Deze onderwerpen staan nog op de HN-planning. Ze zijn nog niet gepubliceerd.
+                  </p>
+                  <div class="related-grid">
+                    ${plannedArticles.slice(0,4).map(title => `
+                      <div class="related-card" style="background:#faf7f2">
+                        <span class="tag">Binnenkort</span>
+                        <h4>${esc(title)}</h4>
+                        <p>Nog in ontwikkeling binnen de HN-kennisbank.</p>
+                      </div>
+                    `).join("")}
+                  </div>
+                </div>
+              `
+              : ""
+            }
+
           </div>
-        </div>
-      `
-      : "";
+        `
+        : "";
 
     articleView.innerHTML = `
 
@@ -1616,6 +1706,10 @@
         }
 
       </div>
+
+      <p class="muted" style="margin:10px 0 0;font-size:13px">
+        Bewaar dit artikel in <strong>Mijn Hijrah</strong> zodat je het later snel kunt terugvinden.
+      </p>
 
       ${ficheBlock}
 
