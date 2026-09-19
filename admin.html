@@ -4381,7 +4381,7 @@ async function loadSubmissions(){
 
   const [subs,profiles,countriesList,citiesList]=await Promise.all([
     db().from('submissions').select('*').eq('status','pending').order('created_at',{ascending:false}),
-    db().from('profiles').select('id,email,first_name,last_name,whatsapp_number,application_status,verification_status,whatsapp_verified,admin_notes,current_country_id,current_city_id,access_code_used,approved_at,updated_at,created_at').eq('application_status','pending').order('created_at',{ascending:false}),
+    db().from('profiles').select('id,email,first_name,last_name,whatsapp_number,application_status,verification_status,whatsapp_verified,admin_notes,current_country_id,current_city_id,access_code_used,approved_at,updated_at,created_at,public_name,public_code,community_role,my_hijrah_enabled').eq('application_status','pending').order('created_at',{ascending:false}),
     db().from('countries').select('id,name').order('name'),
     db().from('cities').select('id,name,country_id').order('name')
   ]);
@@ -4484,6 +4484,21 @@ async function loadSubmissions(){
           <div>
             <strong>Gebruikte toegangscode</strong><br>
             <span class="hint">${esc(x.access_code_used||'Geen')}</span>
+          </div>
+
+          <div>
+            <strong>Openbare HN-identiteit</strong><br>
+            <span class="hint">${esc(x.public_name||'Wordt automatisch aangemaakt')} · ${esc(x.public_code||'HN-code')}</span>
+          </div>
+
+          <div>
+            <strong>Communityrol</strong><br>
+            <span class="hint">${esc(x.community_role||'Communitylid')}</span>
+          </div>
+
+          <div>
+            <strong>Mijn Hijrah Plan</strong><br>
+            <span class="hint">${x.my_hijrah_enabled?'Geactiveerd':'Nog niet geactiveerd'}</span>
           </div>
 
           <div>
