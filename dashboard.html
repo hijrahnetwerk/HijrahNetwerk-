@@ -676,7 +676,19 @@ async function requireUser(){
     .auth
     .getSession();
 
-  if(error || !data.session){
+  if(error){
+
+    console.error(
+      'Supabase sessiefout:',
+      error
+    );
+
+    location.href='/login.html';
+
+    return false;
+  }
+
+  if(!data.session){
 
     location.href='/login.html';
 
@@ -716,35 +728,61 @@ async function logUserActivity(
 ){
 
   if(!user){
-    return;
+
+    console.warn(
+      'Activiteit niet gelogd: gebruiker ontbreekt.'
+    );
+
+    return false;
   }
 
   try{
 
-    const {error}=await db()
+    const payload={
+      user_id:user.id,
+      activity_type:activityType,
+      description:description,
+      details:details
+    };
+
+    const {data,error}=await db()
       .from('user_activity')
-      .insert({
-        user_id:user.id,
-        activity_type:activityType,
-        description:description,
-        details:details
-      });
+      .insert(payload)
+      .select('id')
+      .single();
 
     if(error){
 
-      console.warn(
-        'Activiteit kon niet worden opgeslagen:',
-        error.message
+      console.error(
+        'ACTIVITEIT LOGGING FOUT:',
+        error
       );
+
+      console.error(
+        'Payload:',
+        payload
+      );
+
+      return false;
 
     }
 
+    console.log(
+      'HN activiteit opgeslagen:',
+      activityType,
+      data
+    );
+
+    return true;
+
   }catch(error){
 
-    console.warn(
-      'Activiteit logging mislukt:',
+    console.error(
+      'ACTIVITEIT LOGGING EXCEPTION:',
       error
     );
+
+    return false;
 
   }
 
@@ -805,7 +843,7 @@ function getSessionStart(data){
 async function startPresence(){
 
   if(!user){
-    return;
+    return false;
   }
 
   try{
@@ -825,16 +863,16 @@ async function startPresence(){
 
       presenceAvailable=false;
 
-      console.warn(
-        'Presence kon niet worden geladen:',
-        error.message
+      console.error(
+        'PRESENCE LADEN FOUT:',
+        error
       );
 
       setPresenceText(
-        'Je bent ingelogd.'
+        'Je bent ingelogd, maar aanwezigheid kon niet worden opgeslagen.'
       );
 
-      return;
+      return false;
 
     }
 
@@ -843,7 +881,12 @@ async function startPresence(){
     presenceSessionStarted=
       getSessionStart(data);
 
-    await updatePresence();
+    const updated=
+      await updatePresence();
+
+    if(!updated){
+      return false;
+    }
 
     clearInterval(
       presenceTimer
@@ -855,18 +898,22 @@ async function startPresence(){
         PRESENCE_INTERVAL
       );
 
+    return true;
+
   }catch(error){
 
     presenceAvailable=false;
 
-    console.warn(
-      'Presence starten mislukt:',
+    console.error(
+      'PRESENCE STARTEN FOUT:',
       error
     );
 
     setPresenceText(
-      'Je bent ingelogd.'
+      'Je bent ingelogd, maar aanwezigheid kon niet worden opgeslagen.'
     );
+
+    return false;
 
   }
 
@@ -879,7 +926,7 @@ async function updatePresence(){
     !presenceSessionStarted ||
     !presenceAvailable
   ){
-    return;
+    return false;
   }
 
   const now=new Date();
@@ -895,24 +942,28 @@ async function updatePresence(){
       )
     );
 
+  const payload={
+
+    user_id:user.id,
+
+    session_started_at:
+      presenceSessionStarted.toISOString(),
+
+    last_seen_at:
+      now.toISOString(),
+
+    session_seconds:
+      sessionSeconds,
+
+    updated_at:
+      now.toISOString()
+
+  };
+
   const {error}=await db()
     .from('user_presence')
     .upsert(
-      {
-        user_id:user.id,
-
-        session_started_at:
-          presenceSessionStarted.toISOString(),
-
-        last_seen_at:
-          now.toISOString(),
-
-        session_seconds:
-          sessionSeconds,
-
-        updated_at:
-          now.toISOString()
-      },
+      payload,
       {
         onConflict:'user_id'
       }
@@ -922,16 +973,21 @@ async function updatePresence(){
 
     presenceAvailable=false;
 
-    console.warn(
-      'Presence update mislukt:',
-      error.message
+    console.error(
+      'PRESENCE UPDATE FOUT:',
+      error
+    );
+
+    console.error(
+      'Presence payload:',
+      payload
     );
 
     setPresenceText(
-      'Je bent ingelogd.'
+      'Je bent ingelogd, maar aanwezigheid kon niet worden opgeslagen.'
     );
 
-    return;
+    return false;
 
   }
 
@@ -945,6 +1001,8 @@ async function updatePresence(){
       }
     )
   );
+
+  return true;
 
 }
 
@@ -968,12 +1026,6 @@ document.addEventListener(
       ){
 
         const now=new Date();
-
-        /*
-          Als de vorige heartbeat langer dan
-          PRESENCE_TIMEOUT geleden was,
-          start een nieuwe sessie.
-        */
 
         if(
           now.getTime()-
@@ -1289,11 +1341,6 @@ async function loadProgress(){
 
   steps=s.data||[];
 
-  /*
-    Zorg dat alle actieve stappen voor
-    deze gebruiker bestaan.
-  */
-
   for(const step of steps){
 
     const {error}=await db()
@@ -1322,11 +1369,6 @@ async function loadProgress(){
     }
 
   }
-
-  /*
-    Belangrijk:
-    alleen voortgang van de huidige gebruiker laden.
-  */
 
   const {data,error}=await db()
     .from('member_progress')
@@ -1742,11 +1784,6 @@ async()=>{
 
   if(user){
 
-    /*
-      Laat de laatste aanwezigheid eerst
-      correct opslaan.
-    */
-
     await updatePresence();
 
     await logUserActivity(
@@ -1784,6 +1821,28 @@ async function init(){
     return;
   }
 
+  /*
+    Eerst aanwezigheid starten.
+    Hierdoor moet de gebruiker direct
+    als online zichtbaar worden in de admin.
+  */
+
+  const presenceStarted=
+    await startPresence();
+
+  /*
+    Testbare activiteit bij ieder nieuw
+    dashboardbezoek.
+  */
+
+  await logUserActivity(
+    'dashboard_opened',
+    'Gebruiker heeft het dashboard geopend',
+    {
+      presence_started:presenceStarted
+    }
+  );
+
   await loadBase();
 
   await Promise.all([
@@ -1792,8 +1851,6 @@ async function init(){
     loadPlan(),
     loadPreferences()
   ]);
-
-  await startPresence();
 
 }
 
