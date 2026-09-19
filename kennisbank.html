@@ -1822,40 +1822,6 @@
         </button>
       </div>
 
-      <div class="article-toolbar">
-
-
-
-        ${hasFiche(topic)
-          ? `
-            <a
-              class="btn btn-primary"
-              href="fiche.html?id=${encodeURIComponent(topic.id)}"
-            >
-              Bekijk fiche →
-            </a>
-          `
-          : ""
-        }
-
-        ${topic.source_url
-          ? `
-            <a
-              class="btn btn-secondary"
-              href="${esc(topic.source_url)}"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Bron openen
-            </a>
-          `
-          : ""
-        }
-
-      </div>
-
-
-
       ${ficheBlock}
 
       <div class="article-content">
