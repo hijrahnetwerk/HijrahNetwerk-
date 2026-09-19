@@ -285,6 +285,7 @@ async function init(){
   const pageTitle=x.title||'Hijrah Netwerk';
 
   document.title=pageTitle;
+  const mapsUrl=mapsHref(d,pageTitle,loc);
 
   const seoDescription=(x.summary||d.short_description||('Praktische informatie over '+pageTitle+(loc?' in '+loc:''))) .replace(/\s+/g,' ').trim();
   const canonicalUrl='https://hijrah-netwerk.vercel.app/fiche.html?id='+encodeURIComponent(id);
@@ -306,7 +307,7 @@ async function init(){
     "@context":"https://schema.org",
     "@type":"Physician",
     "@id":canonicalUrl+"#physician",
-    "name":pageTitle.replace(/^Dr\.\s*/,''),
+    "name":String(d.doctor_name||d.full_name||pageTitle).replace(/\s*\|.*$/,"").replace(/^Dr\.\s*/,"").trim(),
     "url":canonicalUrl,
     "description":seoDescription,
     "medicalSpecialty":"GeneralPractice"
