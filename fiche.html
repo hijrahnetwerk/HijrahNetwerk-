@@ -254,23 +254,89 @@ const icon={
   map:'<span class="icon"><svg viewBox="0 0 24 24"><path d="m9 18-6 3V6l6-3 6 3 6-3v15l-6 3-6-3Z"/><path d="M9 3v15M15 6v15"/></svg></span>'
 };
 
-function formatContent(value){
-  const text=value==null?'':String(value).replace(/\r/g,'').replace(/\n/g,'\n').trim();
+function formatContent(value,summary){
+  const raw=value==null?'':String(value);
+  const text=raw
+    .replace(/\\r/g,'')
+    .replace(/\\n/g,'\n')
+    .replace(/\r/g,'')
+    .trim();
+
   if(!text)return '';
-  const lines=text.split(/\n+/).map(x=>x.trim()).filter(Boolean);
-  let out='',list=[];
-  const flush=()=>{
+
+  const duplicateSections=[
+    'Consultaties',
+    'Afspraken',
+    'Huisbezoeken',
+    'Teleconsultatie',
+    'Belangrijk'
+  ];
+
+  const summaryClean=String(summary||'')
+    .replace(/\\r/g,'')
+    .replace(/\\n/g,' ')
+    .replace(/\s+/g,' ')
+    .trim()
+    .toLowerCase();
+
+  const lines=text
+    .split(/\n+/)
+    .map(x=>x.trim())
+    .filter(Boolean);
+
+  let out='';
+  let list=[];
+  let currentHeading='';
+  let currentBody=[];
+
+  const flushList=()=>{
     if(!list.length)return;
     out+='<ul>'+list.map(x=>'<li>'+esc(x.replace(/^•\s*/,''))+'</li>').join('')+'</ul>';
     list=[];
   };
+
+  const flushSection=()=>{
+    if(!currentHeading && !currentBody.length)return;
+
+    const heading=currentHeading.trim();
+    const body=currentBody.join(' ').replace(/\s+/g,' ').trim();
+    const headingIsDuplicate=duplicateSections.some(
+      x=>x.toLowerCase()===heading.toLowerCase()
+    );
+
+    if(!headingIsDuplicate && body){
+      const bodyClean=body.toLowerCase();
+      if(!(summaryClean && bodyClean===summaryClean)){
+        if(heading)out+='<h3>'+esc(heading)+'</h3>';
+        out+='<p>'+esc(body)+'</p>';
+      }
+    }
+
+    currentHeading='';
+    currentBody=[];
+  };
+
   lines.forEach(line=>{
-    if(/^•\s*/.test(line)){list.push(line);return}
-    flush();
-    if(/^(Opleiding en professionele achtergrond|Over het cabinet|Consultaties|Afspraken|Huisbezoeken|Teleconsultatie|Belangrijk)$/i.test(line))out+='<h3>'+esc(line)+'</h3>';
-    else out+='<p>'+esc(line)+'</p>';
+    if(/^•\s*/.test(line)){
+      flushSection();
+      list.push(line);
+      return;
+    }
+
+    if(/^(Opleiding en professionele achtergrond|Over het cabinet|Consultaties|Afspraken|Huisbezoeken|Teleconsultatie|Belangrijk)$/i.test(line)){
+      flushList();
+      flushSection();
+      currentHeading=line;
+      return;
+    }
+
+    if(list.length)flushList();
+    currentBody.push(line);
   });
-  flush();
+
+  flushList();
+  flushSection();
+
   return out;
 }
 
@@ -384,7 +450,7 @@ async function init(){
   html+='<div class="main">';
 
   if(x.content){
-    html+='<section class="card"><h2>Over deze plek of dienst</h2><div class="content">'+formatContent(x.content)+'</div></section>';
+    html+='<section class="card"><h2>Over deze arts en praktijk</h2><div class="content">'+formatContent(x.content,x.summary||d.short_description||'')+'</div></section>';
   }
 
   const basis=[
