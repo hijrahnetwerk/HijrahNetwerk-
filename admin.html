@@ -1359,6 +1359,42 @@ th{
 </section>
 
 
+<!-- INZENDINGEN -->
+<section class="page" id="page-submissions">
+
+  <div class="intro">
+    <h2>Inzendingen & registraties</h2>
+    <p>Hier beheer je nieuwe registraties en informatie die door de community is ingestuurd.</p>
+  </div>
+
+  <div id="submissionsMessage" class="message"></div>
+
+  <div class="panel">
+    <div class="panel-header">
+      <h3>Nieuwe registraties</h3>
+      <button class="button button-secondary" id="refreshSubmissions">Vernieuwen</button>
+    </div>
+    <div id="registrationList">
+      <div class="loading">Registraties worden geladen...</div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-header">
+      <h3>Ingestuurde informatie</h3>
+    </div>
+    <div id="submissionsList">
+      <div class="loading">Inzendingen worden geladen...</div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h3 style="margin-top:0;">Wat gebeurt er na goedkeuring?</h3>
+    <p class="hint">Een goedgekeurde registratie krijgt toegang volgens de HN-instellingen. Een goedgekeurde informatie-inzending wordt als HN-fiche toegevoegd aan Hijrah Navigatie. Niets wordt automatisch openbaar gemaakt.</p>
+  </div>
+
+</section>
+
 <!-- SYNC -->
 
 <section class="page" id="page-sync">
@@ -4104,42 +4140,57 @@ logoutButton.onclick=async()=>{
 // =========================
 async function loadSubmissions(){
   const box=document.getElementById('submissionsList');
-  if(!box) return;
-  const [subs, profiles] = await Promise.all([
+  const regBox=document.getElementById('registrationList');
+  if(!box||!regBox)return;
+
+  const [subs,profiles]=await Promise.all([
     db().from('submissions').select('*').eq('status','pending').order('created_at',{ascending:false}),
-    db().from('profiles').select('id,email,first_name,last_name,whatsapp_number,application_status,verification_status,whatsapp_verified,admin_notes,created_at').in('application_status',['pending','rejected']).order('created_at',{ascending:false})
+    db().from('profiles').select('id,email,first_name,last_name,whatsapp_number,application_status,verification_status,whatsapp_verified,admin_notes,created_at').eq('application_status','pending').order('created_at',{ascending:false})
   ]);
-  if(subs.error || profiles.error){
-    box.innerHTML='<div class="empty">De inzendingen konden niet worden geladen.</div>';
-    console.error(subs.error||profiles.error); return;
+
+  if(subs.error||profiles.error){
+    const error=subs.error||profiles.error;
+    box.innerHTML='<div class="empty">Inzendingen konden niet worden geladen.<br><span class="hint">'+esc(error.message)+'</span></div>';
+    regBox.innerHTML='<div class="empty">Registraties konden niet worden geladen.</div>';
+    console.error(error);
+    return;
   }
+
   const s=subs.data||[], p=profiles.data||[];
-  const total=s.length+p.filter(x=>x.application_status==='pending').length;
+  const total=s.length+p.length;
   const badge=document.getElementById('submissionBadge');
   if(badge){badge.textContent=total;badge.style.display=total?'inline-flex':'none';}
-  if(!s.length&&!p.some(x=>x.application_status==='pending')){
-    box.innerHTML='<div class="empty">Geen openstaande inzendingen of registraties.</div>'; return;
-  }
-  box.innerHTML=p.filter(x=>x.application_status==='pending').map(x=>`
+
+  regBox.innerHTML=p.length?p.map(x=>`
     <div class="activity-item">
-      <div class="activity-main"><div><div class="activity-user">${esc(x.first_name||'Nieuwe gebruiker')} ${esc(x.last_name||'')}</div>
-      <div class="activity-description">${esc(x.email||'')} · WhatsApp: ${esc(x.whatsapp_number||'Niet ingevuld')}</div>
-      <div class="activity-details">Registratie: ${formatAdminDate(x.created_at)} · Verificatie: ${esc(x.verification_status||'unverified')}</div></div>
-      <div class="actions">
-        <button class="button button-primary" onclick="approveMember('${esc(x.id)}')">Goedkeuren</button>
-        <button class="button button-danger" onclick="rejectMember('${esc(x.id)}')">Afwijzen</button>
-      </div></div>
-    </div>`).join('')+
-    s.map(x=>`
+      <div class="activity-main">
+        <div>
+          <div class="activity-user">${esc([x.first_name,x.last_name].filter(Boolean).join(' ')||'Nieuwe gebruiker')}</div>
+          <div class="activity-description">${esc(x.email||'')} · WhatsApp: ${esc(x.whatsapp_number||'Niet ingevuld')}</div>
+          <div class="activity-details">Registratie: ${formatAdminDate(x.created_at)} · Verificatie: ${esc(x.verification_status||'unverified')} · WhatsApp bevestigd: ${x.whatsapp_verified?'Ja':'Nee'}</div>
+        </div>
+        <div class="actions">
+          <button class="button button-primary" onclick="approveMember('${esc(x.id)}')">Goedkeuren</button>
+          <button class="button button-danger" onclick="rejectMember('${esc(x.id)}')">Afwijzen</button>
+        </div>
+      </div>
+    </div>`).join(''):'<div class="empty">Geen openstaande registraties.</div>';
+
+  box.innerHTML=s.length?s.map(x=>`
     <div class="activity-item">
-      <div class="activity-main"><div><div class="activity-user">${esc(x.title||'Nieuwe inzending')}</div>
-      <div class="activity-description">${esc(x.submission_type)} · ${esc(x.content)}</div>
-      <div class="activity-details">${esc(x.submitter_name||'Anoniem')} · ${esc(x.submitter_whatsapp||'')} · ${formatAdminDate(x.created_at)}</div></div>
-      <div class="actions">
-        <button class="button button-primary" onclick="approveSubmission('${esc(x.id)}')">Goedkeuren</button>
-        <button class="button button-danger" onclick="rejectSubmission('${esc(x.id)}')">Afwijzen</button>
-      </div></div>
-    </div>`).join('');
+      <div class="activity-main">
+        <div>
+          <div class="activity-user">${esc(x.title||'Nieuwe inzending')}</div>
+          <div class="activity-description">${esc(x.submission_type)} · ${esc(x.content)}</div>
+          <div class="activity-details">${esc(x.submitter_name||'Anoniem')} · ${esc(x.submitter_email||'')} · ${esc(x.submitter_whatsapp||'')} · ${formatAdminDate(x.created_at)}</div>
+          <div class="activity-details">Locatie: ${esc([x.city_id||'',x.country_id||''].filter(Boolean).join(' / ')||'Niet gekozen')} · Aangevraagde zichtbaarheid: ${esc(x.requested_visibility||'public')}</div>
+        </div>
+        <div class="actions">
+          <button class="button button-primary" onclick="approveSubmission('${esc(x.id)}')">Goedkeuren & fiche maken</button>
+          <button class="button button-danger" onclick="rejectSubmission('${esc(x.id)}')">Afwijzen</button>
+        </div>
+      </div>
+    </div>`).join(''):'<div class="empty">Geen openstaande inzendingen.</div>';
 }
 function formatAdminDate(v){return v?new Date(v).toLocaleString('nl-NL'):'—'}
 async function approveMember(id){
