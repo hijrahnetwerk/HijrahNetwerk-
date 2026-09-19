@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Informatie insturen — Hijrah Netwerk</title><link rel="stylesheet" href="auth-style.css"><style>body{background:#faf7f2}.wrap{max-width:760px;margin:40px auto;padding:0 20px}.card{background:#fff;border:1px solid #e8e0d6;border-radius:14px;padding:25px}label{display:block;font-size:13px;font-weight:600;margin:14px 0 6px}input,select,textarea{width:100%;padding:11px;border:1px solid #e8e0d6;border-radius:8px;font:inherit}textarea{min-height:130px}.actions{margin-top:18px}.button{border:0;border-radius:8px;padding:11px 15px;background:#df842c;color:#fff;cursor:pointer}.hint{font-size:12px;color:#756d63}.message{display:none;padding:12px;border-radius:8px;margin:15px 0}.show{display:block}.success{background:#e7f3e9;color:#39734a}.error{background:#f8e5e5;color:#a63b3b}</style></head>
+<body><main class="wrap"><div class="card"><a href="navigatie.html">← Terug naar Hijrah Navigatie</a><h1>Informatie insturen</h1><p>Iedereen mag informatie, een correctie of een ervaring doorgeven. Niets wordt automatisch gepubliceerd. HN controleert elke inzending eerst.</p><div id="message" class="message"></div>
+<form id="form">
+<label>Wat wil je insturen?</label><select id="type"><option value="information">Nieuwe informatie</option><option value="correction">Correctie</option><option value="experience">Ervaring</option><option value="review">Review</option><option value="recommendation">Aanbeveling</option><option value="warning">Waarschuwing</option></select>
+<label>Titel</label><input id="title" placeholder="Bijvoorbeeld een school, arts, wijk of dienst" required>
+<label>Informatie</label><textarea id="content" required placeholder="Vertel zo concreet mogelijk wat je wilt doorgeven."></textarea>
+<label>Bron / website</label><input id="sourceName" placeholder="Naam van de bron"><label>Bron URL</label><input id="sourceUrl" type="url" placeholder="https://...">
+<label>Naam (optioneel)</label><input id="name"><label>E-mail (optioneel)</label><input id="email" type="email"><label>WhatsApp (optioneel)</label><input id="whatsapp"><p class="hint">Deze contactgegevens zijn alleen voor HN om de inzending eventueel te verifiëren. Ze worden niet openbaar gemaakt.</p>
+<div class="actions"><button class="button">Insturen</button></div></form></div></main>
+<script src="assets/config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-client.js"></script><script src="auth.js"></script>
+<script>
+const db=()=>window.hijrahSupabase;
+const form=document.getElementById('form'),msg=document.getElementById('message');
+form.addEventListener('submit',async e=>{
+ e.preventDefault();msg.className='message show';msg.textContent='Bezig met insturen...';
+ const {data:{session}}=await db().auth.getSession();
+ const u=session?.user||null;
+ const payload={submitted_by:u?.id||null,submitter_name:document.getElementById('name').value.trim()||null,submitter_email:document.getElementById('email').value.trim()||u?.email||null,submitter_whatsapp:document.getElementById('whatsapp').value.trim()||null,submission_type:document.getElementById('type').value,title:document.getElementById('title').value.trim(),content:document.getElementById('content').value.trim(),source_name:document.getElementById('sourceName').value.trim()||null,source_url:document.getElementById('sourceUrl').value.trim()||null,requested_visibility:'public',status:'pending'};
+ const {error}=await db().from('submissions').insert(payload);
+ if(error){console.error(error);msg.className='message show error';msg.textContent='De inzending kon niet worden opgeslagen. Probeer het later opnieuw.';return}
+ form.reset();msg.className='message show success';msg.textContent='Bedankt. Je inzending is ontvangen en wordt eerst door HN gecontroleerd.';
+});
+</script></body></html>
