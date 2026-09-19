@@ -196,10 +196,21 @@ function render(){
     '</div></article>';
  }).join('');
 }
+async function waitForDb(){
+  for(let i=0;i<60;i++){
+    if(window.hijrahSupabase && typeof window.hijrahSupabase.from==='function'){
+      return window.hijrahSupabase;
+    }
+    await new Promise(resolve=>setTimeout(resolve,100));
+  }
+  throw new Error('Supabase client is niet beschikbaar.');
+}
+
 async function init(){
+  const database=await waitForDb();
   const coreTopics = 'id,title,summary,content,information_type,country_id,city_id,category_id,published,updated_at';
 
-  let topicResult = await db()
+  let topicResult = await database
     .from('topic')
     .select(coreTopics)
     .eq('published',true)
@@ -216,9 +227,9 @@ async function init(){
   rows=topicResult.data||[];
 
   const results=await Promise.allSettled([
-    db().from('countries').select('id,name').order('name'),
-    db().from('cities').select('id,name,country_id').order('name'),
-    db().from('categories').select('id,name').order('name')
+    database.from('countries').select('id,name').order('name'),
+    database.from('cities').select('id,name,country_id').order('name'),
+    database.from('categories').select('id,name').order('name')
   ]);
 
   countries=results[0].status==='fulfilled' && !results[0].value.error ? (results[0].value.data||[]) : [];
@@ -232,28 +243,11 @@ async function init(){
   render();
 }
 ['q','country','city','category'].forEach(id=>document.getElementById(id).addEventListener(id==='q'?'input':'change',render));
-init();
-</script>
-  <script src="assets/scroll-reveal.js"></script>
-<script>
-function toggleMobileNav(open){
-  var nav=document.getElementById('mobileNav');
-  var button=document.querySelector('.mobile-menu-toggle');
-  if(!nav)return;
-  if(open){
-    nav.classList.add('open');
-    nav.setAttribute('aria-hidden','false');
-    if(button)button.setAttribute('aria-expanded','true');
-    document.body.style.overflow='hidden';
-  }else{
-    nav.classList.remove('open');
-    nav.setAttribute('aria-hidden','true');
-    if(button)button.setAttribute('aria-expanded','false');
-    document.body.style.overflow='';
-  }
-}
-document.addEventListener('keydown',function(e){
-  if(e.key==='Escape')toggleMobileNav(false);
+init().catch(error=>{
+  console.error('HN Navigatie:',error);
+  document.getElementById('cards').innerHTML =
+    '<div class="empty"><strong>De navigatie kon momenteel niet worden geladen.</strong><br><br><button class="button primary" type="button" onclick="location.reload()">Pagina vernieuwen</button></div>';
+  document.getElementById('resultCount').textContent='Tijdelijk niet beschikbaar';
 });
 </script>
 </body>
