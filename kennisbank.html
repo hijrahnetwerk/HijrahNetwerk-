@@ -433,6 +433,7 @@
 
     <div class="results-header">
       <h2>Artikelen</h2>
+
       <span id="resultCount" class="muted">
         Laden…
       </span>
@@ -452,6 +453,7 @@
 <script type="module" src="assets/analytics-init.js"></script>
 
 <script>
+
   const db = () => window.hijrahSupabase;
 
   let topics = [];
@@ -461,10 +463,21 @@
   let subcategories = [];
   let savedTopics = new Set();
 
-  const params = new URLSearchParams(window.location.search);
+  const params =
+    new URLSearchParams(
+      window.location.search
+    );
+
+
+  /* =========================
+     ALGEMENE FUNCTIES
+  ========================= */
 
   function esc(value) {
-    if (value == null) return "";
+
+    if (value == null) {
+      return "";
+    }
 
     return String(value)
       .replaceAll("&", "&amp;")
@@ -475,25 +488,45 @@
   }
 
   function normalize(value) {
+
     return String(value || "")
       .toLowerCase()
       .normalize("NFD")
       .replace(/[\u0300-\u036f]/g, "");
+
   }
 
   function showNotice(text) {
-    const element = document.getElementById("notice");
+
+    const element =
+      document.getElementById("notice");
 
     element.textContent = text;
     element.classList.add("show");
 
-    setTimeout(() => {
-      element.classList.remove("show");
-    }, 4000);
+    clearTimeout(
+      window.__noticeTimer
+    );
+
+    window.__noticeTimer =
+      setTimeout(() => {
+
+        element.classList.remove(
+          "show"
+        );
+
+      }, 4000);
+
   }
 
-  function fillSelect(id, items, label) {
-    const select = document.getElementById(id);
+  function fillSelect(
+    id,
+    items,
+    label
+  ) {
+
+    const select =
+      document.getElementById(id);
 
     select.innerHTML =
       `<option value="">${label}</option>` +
@@ -503,40 +536,134 @@
             `<option value="${esc(item.id)}">${esc(item.name)}</option>`
         )
         .join("");
+
   }
 
+
+  /* =========================
+     ACTIVITEIT LOGGEN
+  ========================= */
+
+  async function logUserActivity(
+    activityType,
+    description,
+    details = null
+  ) {
+
+    try {
+
+      const {
+        data: sessionData,
+        error: sessionError
+      } = await db()
+        .auth
+        .getSession();
+
+      if (
+        sessionError ||
+        !sessionData?.session
+      ) {
+        return;
+      }
+
+      const user =
+        sessionData.session.user;
+
+      if (!user) {
+        return;
+      }
+
+      const { error } =
+        await db()
+          .from("user_activity")
+          .insert({
+            user_id: user.id,
+            activity_type: activityType,
+            description: description,
+            details: details
+          });
+
+      if (error) {
+
+        console.warn(
+          "Activiteit kon niet worden opgeslagen:",
+          error.message
+        );
+
+      }
+
+    } catch (error) {
+
+      console.warn(
+        "Activiteit logging mislukt:",
+        error
+      );
+
+    }
+
+  }
+
+
+  /* =========================
+     FILTERS
+  ========================= */
+
   function getFilteredTopics() {
-    const query = normalize(
-      document.getElementById("searchInput").value
-    );
+
+    const query =
+      normalize(
+        document
+          .getElementById("searchInput")
+          .value
+      );
 
     const countryId =
-      document.getElementById("countryFilter").value;
+      document
+        .getElementById("countryFilter")
+        .value;
 
     const cityId =
-      document.getElementById("cityFilter").value;
+      document
+        .getElementById("cityFilter")
+        .value;
 
     const categoryId =
-      document.getElementById("categoryFilter").value;
+      document
+        .getElementById("categoryFilter")
+        .value;
 
     const subcategoryId =
-      document.getElementById("subcategoryFilter").value;
+      document
+        .getElementById("subcategoryFilter")
+        .value;
 
     return topics.filter(topic => {
 
-      if (countryId && topic.country_id !== countryId) {
+      if (
+        countryId &&
+        topic.country_id !== countryId
+      ) {
         return false;
       }
 
-      if (cityId && topic.city_id !== cityId) {
+      if (
+        cityId &&
+        topic.city_id !== cityId
+      ) {
         return false;
       }
 
-      if (categoryId && topic.category_id !== categoryId) {
+      if (
+        categoryId &&
+        topic.category_id !== categoryId
+      ) {
         return false;
       }
 
-      if (subcategoryId && topic.subcategory_id !== subcategoryId) {
+      if (
+        subcategoryId &&
+        topic.subcategory_id !== subcategoryId
+      ) {
         return false;
       }
 
@@ -544,33 +671,54 @@
         return true;
       }
 
-      const searchable = normalize([
-        topic.title,
-        topic.summary,
-        topic.content,
-        topic.information_type,
-        topic.countries?.name,
-        topic.cities?.name,
-        topic.categories?.name,
-        topic.subcategories?.name
-      ].join(" "));
+      const searchable =
+        normalize([
+          topic.title,
+          topic.summary,
+          topic.content,
+          topic.information_type,
+          topic.countries?.name,
+          topic.cities?.name,
+          topic.categories?.name,
+          topic.subcategories?.name
+        ].join(" "));
 
       return query
         .split(/\s+/)
         .filter(Boolean)
-        .every(word => searchable.includes(word));
+        .every(
+          word =>
+            searchable.includes(word)
+        );
+
     });
+
   }
 
+
+  /* =========================
+     RESULTATEN
+  ========================= */
+
   function renderResults() {
-    const list = getFilteredTopics();
 
-    document.getElementById("resultCount").textContent =
-      `${list.length} artikel${list.length === 1 ? "" : "en"}`;
+    const list =
+      getFilteredTopics();
 
-    const results = document.getElementById("results");
+    document
+      .getElementById("resultCount")
+      .textContent =
+      `${list.length} artikel${
+        list.length === 1
+          ? ""
+          : "en"
+      }`;
+
+    const results =
+      document.getElementById("results");
 
     if (!list.length) {
+
       results.innerHTML = `
         <div class="empty">
           Geen passende informatie gevonden.
@@ -581,169 +729,315 @@
       return;
     }
 
-    results.innerHTML = list
-      .map(topic => {
+    results.innerHTML =
+      list
+        .map(topic => {
 
-        const isSaved = savedTopics.has(topic.id);
+          const isSaved =
+            savedTopics.has(
+              topic.id
+            );
 
-        return `
-          <article class="article-card">
+          return `
+            <article class="article-card">
 
-            <div class="tags">
+              <div class="tags">
 
-              ${
-                topic.countries?.name
-                  ? `<span class="tag">${esc(topic.countries.name)}</span>`
-                  : ""
-              }
+                ${
+                  topic.countries?.name
+                    ? `<span class="tag">${esc(topic.countries.name)}</span>`
+                    : ""
+                }
 
-              ${
-                topic.cities?.name
-                  ? `<span class="tag">${esc(topic.cities.name)}</span>`
-                  : ""
-              }
+                ${
+                  topic.cities?.name
+                    ? `<span class="tag">${esc(topic.cities.name)}</span>`
+                    : ""
+                }
 
-              ${
-                topic.categories?.name
-                  ? `<span class="tag">${esc(topic.categories.name)}</span>`
-                  : ""
-              }
+                ${
+                  topic.categories?.name
+                    ? `<span class="tag">${esc(topic.categories.name)}</span>`
+                    : ""
+                }
 
-              ${
-                topic.information_type
-                  ? `<span class="tag">${esc(topic.information_type)}</span>`
-                  : ""
-              }
+                ${
+                  topic.information_type
+                    ? `<span class="tag">${esc(topic.information_type)}</span>`
+                    : ""
+                }
 
-            </div>
+              </div>
 
-            <h3>${esc(topic.title)}</h3>
+              <h3>
+                ${esc(topic.title)}
+              </h3>
 
-            <p>
-              ${esc(
-                topic.summary ||
-                "Bekijk de volledige informatie in dit artikel."
-              )}
-            </p>
+              <p>
+                ${esc(
+                  topic.summary ||
+                  "Bekijk de volledige informatie in dit artikel."
+                )}
+              </p>
 
-            <div class="card-actions">
+              <div class="card-actions">
 
-              <button
-                class="btn btn-secondary"
-                onclick="openArticle('${topic.id}')"
-              >
-                Lees artikel
-              </button>
+                <button
+                  class="btn btn-secondary"
+                  onclick="openArticle('${esc(topic.id)}')"
+                >
+                  Lees artikel
+                </button>
 
-              <button
-                class="btn ${isSaved ? "btn-saved" : "btn-secondary"}"
-                onclick="toggleSaved('${topic.id}')"
-              >
-                ${isSaved ? "Opgeslagen" : "Opslaan"}
-              </button>
+                <button
+                  class="btn ${
+                    isSaved
+                      ? "btn-saved"
+                      : "btn-secondary"
+                  }"
+                  onclick="toggleSaved('${esc(topic.id)}')"
+                >
+                  ${
+                    isSaved
+                      ? "Opgeslagen"
+                      : "Opslaan"
+                  }
+                </button>
 
-            </div>
+              </div>
 
-          </article>
-        `;
-      })
-      .join("");
+            </article>
+          `;
+
+        })
+        .join("");
+
   }
+
+
+  /* =========================
+     OPGESLAGEN ARTIKELEN
+  ========================= */
 
   async function loadSavedArticles() {
 
-    const { data: sessionData } =
-      await db().auth.getSession();
+    const {
+      data: sessionData
+    } = await db()
+      .auth
+      .getSession();
 
-    const session = sessionData?.session;
+    const session =
+      sessionData?.session;
 
     if (!session) {
       return;
     }
 
-    const { data, error } =
-      await db()
-        .from("saved_articles")
-        .select("topic_id")
-        .eq("user_id", session.user.id);
+    const {
+      data,
+      error
+    } = await db()
+      .from("saved_articles")
+      .select("topic_id")
+      .eq(
+        "user_id",
+        session.user.id
+      );
 
     if (error) {
-      console.warn("saved_articles:", error);
+
+      console.warn(
+        "saved_articles:",
+        error
+      );
+
       return;
     }
 
-    savedTopics = new Set(
-      (data || []).map(row => row.topic_id)
-    );
+    savedTopics =
+      new Set(
+        (data || [])
+          .map(row => row.topic_id)
+      );
+
   }
 
-  async function toggleSaved(topicId) {
 
-    const { data: sessionData } =
-      await db().auth.getSession();
+  async function toggleSaved(
+    topicId
+  ) {
 
-    const session = sessionData?.session;
+    const {
+      data: sessionData
+    } = await db()
+      .auth
+      .getSession();
+
+    const session =
+      sessionData?.session;
 
     if (!session) {
-      window.location.href = "login.html";
+
+      window.location.href =
+        "login.html";
+
       return;
     }
 
-    if (savedTopics.has(topicId)) {
+    const topic =
+      topics.find(
+        item =>
+          item.id === topicId
+      );
 
-      const { error } =
-        await db()
-          .from("saved_articles")
-          .delete()
-          .eq("user_id", session.user.id)
-          .eq("topic_id", topicId);
+    if (
+      savedTopics.has(topicId)
+    ) {
+
+      const {
+        error
+      } = await db()
+        .from("saved_articles")
+        .delete()
+        .eq(
+          "user_id",
+          session.user.id
+        )
+        .eq(
+          "topic_id",
+          topicId
+        );
 
       if (error) {
-        showNotice(error.message);
+
+        showNotice(
+          error.message
+        );
+
         return;
       }
 
-      savedTopics.delete(topicId);
+      savedTopics.delete(
+        topicId
+      );
+
+      await logUserActivity(
+        "saved_article_removed",
+        "Kennisbankartikel verwijderd uit opgeslagen informatie",
+        {
+          topic_id: topicId,
+          title:
+            topic?.title || null
+        }
+      );
+
+      showNotice(
+        "Artikel verwijderd uit je opgeslagen informatie."
+      );
 
     } else {
 
-      const { error } =
-        await db()
-          .from("saved_articles")
-          .insert({
-            user_id: session.user.id,
-            topic_id: topicId
-          });
+      const {
+        error
+      } = await db()
+        .from("saved_articles")
+        .insert({
+          user_id:
+            session.user.id,
+          topic_id:
+            topicId
+        });
 
       if (error) {
-        showNotice(error.message);
+
+        showNotice(
+          error.message
+        );
+
         return;
       }
 
-      savedTopics.add(topicId);
+      savedTopics.add(
+        topicId
+      );
+
+      await logUserActivity(
+        "saved_article_added",
+        "Kennisbankartikel opgeslagen",
+        {
+          topic_id: topicId,
+          title:
+            topic?.title || null
+        }
+      );
+
+      showNotice(
+        "Artikel opgeslagen."
+      );
+
     }
 
     renderResults();
+
+    /*
+      Wanneer iemand het artikel al open heeft,
+      moet de knop daar ook meteen veranderen.
+    */
+
+    const articleView =
+      document.getElementById(
+        "articleView"
+      );
+
+    if (
+      articleView.style.display ===
+        "block"
+    ) {
+
+      openArticle(
+        topicId,
+        false
+      );
+
+    }
+
   }
 
-  function openArticle(topicId) {
+
+  /* =========================
+     ARTIKEL OPENEN
+  ========================= */
+
+  function openArticle(
+    topicId,
+    updateUrl = true
+  ) {
 
     const topic =
-      topics.find(item => item.id === topicId);
+      topics.find(
+        item =>
+          item.id === topicId
+      );
 
     if (!topic) {
       return;
     }
 
     const articleView =
-      document.getElementById("articleView");
+      document.getElementById(
+        "articleView"
+      );
 
-    document.getElementById("listView")
-      .style.display = "none";
+    document.getElementById(
+      "listView"
+    ).style.display = "none";
 
-    articleView.style.display = "block";
+    articleView.style.display =
+      "block";
 
     articleView.innerHTML = `
+
       <button
         class="btn btn-secondary"
         onclick="closeArticle()"
@@ -751,7 +1045,10 @@
         ← Terug naar kennisbank
       </button>
 
-      <div class="tags" style="margin-top:20px">
+      <div
+        class="tags"
+        style="margin-top:20px"
+      >
 
         ${
           topic.countries?.name
@@ -785,7 +1082,9 @@
 
       </div>
 
-      <h2>${esc(topic.title)}</h2>
+      <h2>
+        ${esc(topic.title)}
+      </h2>
 
       ${
         topic.summary
@@ -804,7 +1103,7 @@
               ? "btn-saved"
               : "btn-secondary"
           }"
-          onclick="toggleSaved('${topic.id}')"
+          onclick="toggleSaved('${esc(topic.id)}')"
         >
           ${
             savedTopics.has(topic.id)
@@ -831,15 +1130,24 @@
       </div>
 
       <div class="article-content">
-        ${esc(topic.content || "Geen inhoud beschikbaar.")}
+        ${esc(
+          topic.content ||
+          "Geen inhoud beschikbaar."
+        )}
       </div>
 
       ${
-        topic.source || topic.source_url
+        topic.source ||
+        topic.source_url
           ? `
             <div class="article-source">
+
               <strong>Bron:</strong>
-              ${esc(topic.source || "")}
+
+              ${esc(
+                topic.source || ""
+              )}
+
               ${
                 topic.source_url
                   ? `
@@ -854,10 +1162,12 @@
                   `
                   : ""
               }
+
             </div>
           `
           : ""
       }
+
     `;
 
     window.scrollTo({
@@ -865,27 +1175,80 @@
       behavior: "smooth"
     });
 
-    history.replaceState(
-      {},
-      "",
-      `kennisbank.html?topic=${encodeURIComponent(topicId)}`
-    );
+    if (updateUrl) {
+
+      history.replaceState(
+        {},
+        "",
+        `kennisbank.html?topic=${
+          encodeURIComponent(topicId)
+        }`
+      );
+
+    }
+
   }
+
+
+  /* =========================
+     ARTIKEL SLUITEN
+  ========================= */
 
   function closeArticle() {
 
-    document.getElementById("articleView")
-      .style.display = "none";
+    document.getElementById(
+      "articleView"
+    ).style.display = "none";
 
-    document.getElementById("listView")
-      .style.display = "block";
+    document.getElementById(
+      "listView"
+    ).style.display = "block";
+
+    const query =
+      document
+        .getElementById("searchInput")
+        .value
+        .trim();
+
+    const country =
+      document
+        .getElementById("countryFilter")
+        .value;
+
+    const queryParams =
+      new URLSearchParams();
+
+    if (query) {
+      queryParams.set(
+        "q",
+        query
+      );
+    }
+
+    if (country) {
+      queryParams.set(
+        "country",
+        country
+      );
+    }
+
+    const queryString =
+      queryParams.toString();
 
     history.replaceState(
       {},
       "",
-      "kennisbank.html"
+      queryString
+        ? `kennisbank.html?${queryString}`
+        : "kennisbank.html"
     );
+
   }
+
+
+  /* =========================
+     DATA LADEN
+  ========================= */
 
   async function loadData() {
 
@@ -899,27 +1262,47 @@
 
       db()
         .from("countries")
-        .select("id,name,slug,is_active")
-        .eq("is_active", true)
+        .select(
+          "id,name,slug,is_active"
+        )
+        .eq(
+          "is_active",
+          true
+        )
         .order("name"),
 
       db()
         .from("cities")
-        .select("id,name,slug,country_id,is_active")
-        .eq("is_active", true)
+        .select(
+          "id,name,slug,country_id,is_active"
+        )
+        .eq(
+          "is_active",
+          true
+        )
         .order("name"),
 
       db()
         .from("categories")
-        .select("id,name,slug,is_active")
-        .eq("is_active", true)
+        .select(
+          "id,name,slug,is_active"
+        )
+        .eq(
+          "is_active",
+          true
+        )
         .order("sort_order")
         .order("name"),
 
       db()
         .from("subcategories")
-        .select("id,name,category_id,is_active")
-        .eq("is_active", true)
+        .select(
+          "id,name,category_id,is_active"
+        )
+        .eq(
+          "is_active",
+          true
+        )
         .order("sort_order")
         .order("name"),
 
@@ -932,10 +1315,17 @@
           categories(name),
           subcategories(name)
         `)
-        .eq("published", true)
-        .order("updated_at", {
-          ascending: false
-        })
+        .eq(
+          "published",
+          true
+        )
+        .order(
+          "updated_at",
+          {
+            ascending: false
+          }
+        )
+
     ]);
 
     const results = [
@@ -947,17 +1337,29 @@
     ];
 
     const firstError =
-      results.find(result => result.error);
+      results.find(
+        result =>
+          result.error
+      );
 
     if (firstError) {
       throw firstError.error;
     }
 
-    countries = countriesResult.data || [];
-    cities = citiesResult.data || [];
-    categories = categoriesResult.data || [];
-    subcategories = subcategoriesResult.data || [];
-    topics = topicsResult.data || [];
+    countries =
+      countriesResult.data || [];
+
+    cities =
+      citiesResult.data || [];
+
+    categories =
+      categoriesResult.data || [];
+
+    subcategories =
+      subcategoriesResult.data || [];
+
+    topics =
+      topicsResult.data || [];
 
     fillSelect(
       "countryFilter",
@@ -986,42 +1388,104 @@
     await loadSavedArticles();
 
     if (params.get("q")) {
-      document.getElementById("searchInput").value =
+
+      document.getElementById(
+        "searchInput"
+      ).value =
         params.get("q");
+
     }
 
     if (params.get("country")) {
-      document.getElementById("countryFilter").value =
+
+      document.getElementById(
+        "countryFilter"
+      ).value =
         params.get("country");
+
     }
 
     renderResults();
 
     if (params.get("topic")) {
-      openArticle(params.get("topic"));
+
+      openArticle(
+        params.get("topic")
+      );
+
     }
+
   }
+
+
+  /* =========================
+     ZOEKEN
+  ========================= */
 
   document
     .getElementById("searchForm")
-    .addEventListener("submit", event => {
+    .addEventListener(
+      "submit",
+      event => {
 
-      event.preventDefault();
+        event.preventDefault();
 
-      const query =
-        document
-          .getElementById("searchInput")
-          .value
-          .trim();
+        const query =
+          document
+            .getElementById(
+              "searchInput"
+            )
+            .value
+            .trim();
 
-      history.replaceState(
-        {},
-        "",
-        `kennisbank.html?q=${encodeURIComponent(query)}`
-      );
+        const country =
+          document
+            .getElementById(
+              "countryFilter"
+            )
+            .value;
 
-      renderResults();
-    });
+        const queryParams =
+          new URLSearchParams();
+
+        if (query) {
+
+          queryParams.set(
+            "q",
+            query
+          );
+
+        }
+
+        if (country) {
+
+          queryParams.set(
+            "country",
+            country
+          );
+
+        }
+
+        const queryString =
+          queryParams.toString();
+
+        history.replaceState(
+          {},
+          "",
+          queryString
+            ? `kennisbank.html?${queryString}`
+            : "kennisbank.html"
+        );
+
+        renderResults();
+
+      }
+    );
+
+
+  /* =========================
+     FILTERS
+  ========================= */
 
   [
     "searchInput",
@@ -1033,29 +1497,51 @@
 
     document
       .getElementById(id)
-      .addEventListener("input", renderResults);
+      .addEventListener(
+        "input",
+        renderResults
+      );
 
     document
       .getElementById(id)
-      .addEventListener("change", renderResults);
+      .addEventListener(
+        "change",
+        renderResults
+      );
+
   });
 
-  loadData().catch(error => {
 
-    console.error("HN Kennisbank:", error);
+  /* =========================
+     START
+  ========================= */
 
-    showNotice(
-      "De kennisbank kon niet worden geladen: " +
-      error.message
-    );
+  loadData()
+    .catch(error => {
 
-    document.getElementById("results").innerHTML = `
-      <div class="empty">
-        De kennisbank kon momenteel niet worden geladen.
-      </div>
-    `;
-  });
+      console.error(
+        "HN Kennisbank:",
+        error
+      );
+
+      showNotice(
+        "De kennisbank kon niet worden geladen: " +
+        error.message
+      );
+
+      document.getElementById(
+        "results"
+      ).innerHTML = `
+        <div class="empty">
+          De kennisbank kon momenteel niet worden geladen.
+        </div>
+      `;
+
+    });
+
 </script>
+
 <script src="copy-protection.js"></script>
+
 </body>
 </html>
