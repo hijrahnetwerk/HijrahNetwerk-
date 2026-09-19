@@ -217,6 +217,25 @@ textarea{
   color:var(--danger)
 }
 
+.saved-actions{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  flex-wrap:wrap;
+}
+
+.saved-actions .button{
+  text-decoration:none;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.saved-view{
+  background:#f1ece5;
+  color:var(--brown);
+}
+
 .list{
   display:grid;
   gap:10px
@@ -1700,13 +1719,19 @@ function renderSaved(){
 
             '</div>'+
 
-            '<button '+
-              'class="button danger" '+
-              'onclick="removeSaved(\''+
-              esc(x.id)+
-              '\')">'+
-              'Verwijderen'+
-            '</button>'+
+            '<div class="saved-actions">'+
+              '<a class="button saved-view" '+
+                'href="kennisbank.html?topic='+encodeURIComponent(x.topic_id||'')+'">'+
+                'Bekijken'+
+              '</a>'+
+              '<button '+
+                'class="button danger" '+
+                'onclick="removeSaved(\''+
+                esc(x.id)+
+                '\')">'+
+                'Verwijderen'+
+              '</button>'+
+            '</div>'+
 
           '</div>'+
 
