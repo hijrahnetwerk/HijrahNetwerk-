@@ -493,7 +493,13 @@ async function init(){
   if(exps.length){
     html+=exps.map(e=>{
       const rating=Math.min(5,Math.max(0,Number(e.rating)||0));
-      return '<div class="experience"><div class="stars">'+('★'.repeat(rating)+('☆'.repeat(5-rating)))+'</div><div class="exp-text">'+esc(e.text||e.content||'')+'</div><div class="exp-meta">Ingediend door: '+esc(e.name||'Anoniem')+(e.date?' · '+esc(e.date):'')+'</div></div>';
+      const reviewerName=e.profile_name||e.name||'Anoniem';
+      const reviewerCode=e.profile_code||'';
+      const reviewerRole=e.profile_role||'Communitylid';
+      const reviewerLink=reviewerCode
+        ? '<a href="public-member.html?code='+encodeURIComponent(reviewerCode)+'" class="exp-profile-link">Profiel bekijken →</a>'
+        : '';
+      return '<div class="experience"><div class="stars">'+('★'.repeat(rating)+('☆'.repeat(5-rating)))+'</div><div class="exp-text">'+esc(e.text||e.content||'')+'</div><div class="exp-meta">Ingediend door: '+esc(reviewerName)+' · '+esc(reviewerRole)+(reviewerCode?' · '+esc(reviewerCode):'')+(e.date?' · '+esc(e.date):'')+'</div>'+reviewerLink+'</div>';
     }).join('');
   }else{
     html+='<p class="empty-note">Er zijn nog geen ervaringen uit de HN-community toegevoegd.</p>';
