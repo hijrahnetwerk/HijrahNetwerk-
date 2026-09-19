@@ -660,13 +660,50 @@
   }
 
   function isoCode(country){
-    return String(
+    const direct=String(
       country.code||
       country.country_code||
       country.iso2||
       country.iso_code||
       ''
     ).trim().toLowerCase();
+
+    const alpha2={
+      ma:'ma',mar:'ma',maroc:'ma',morocco:'ma',marokko:'ma',
+      eg:'eg',egy:'eg',egypt:'eg',egypte:'eg',
+      tr:'tr',tur:'tr',turkey:'tr',türkiye:'tr',turkiye:'tr',turkije:'tr',
+      sa:'sa',sau:'sa',sau:'sa',saudi:'sa',saudiarabia:'sa','saudi-arabia':'sa','saudi-arabië':'sa',
+      ae:'ae',are:'ae',uae:'ae','united-arab-emirates':'ae','verenigde-arabische-emiraten':'ae',
+      qa:'qa',qat:'qa',qatar:'qa',
+      om:'om',omn:'om',oman:'om',
+      my:'my',mys:'my',malaysia:'my',maleisië:'my',
+      id:'id',idn:'id',indonesia:'id',indonesië:'id',
+      tn:'tn',tun:'tn',tunisia:'tn',tunisie:'tn',tunesia:'tn',
+      dz:'dz,dz',dza:'dz',algeria:'dz',algerije:'dz',algérie:'dz',
+      jo:'jo',jor:'jo',jordan:'jo',
+      ps:'ps',pse:'ps',palestine:'ps',palestina:'ps',
+      ba:'ba',bih:'ba',bosnia:'ba','bosnia-and-herzegovina':'ba',bosnië:'ba',
+      al:'al',alb:'al',albania:'al',albanië:'al',
+      xk:'xk',kos:'xk',kosovo:'xk',
+      pk:'pk',pak:'pk',pakistan:'pk'
+    };
+
+    const fromDirect=alpha2[direct];
+    if(fromDirect){
+      return fromDirect.split(',')[0];
+    }
+
+    const name=String(
+      country.slug||
+      country.name||
+      ''
+    ).trim().toLowerCase();
+
+    if(alpha2[name]){
+      return alpha2[name].split(',')[0];
+    }
+
+    return direct;
   }
 
   function countryCities(countryId){
