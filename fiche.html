@@ -351,7 +351,6 @@ async function init(){
   if(verified)html+='<div class="meta-row"><div class="meta-label">Laatst gecontroleerd</div><div class="meta-value">'+new Date(verified).toLocaleDateString('nl-NL')+'</div></div>';
   html+='</div></section>';
 
-  const mapsUrl=mapsHref(d,pageTitle,loc);
   if(d.address||mapsUrl){
     html+='<section class="card"><h2>Locatie</h2>';
     if(d.address)html+='<div class="source-row">'+icon.pin+'<span>'+esc(d.address)+'</span></div>';
