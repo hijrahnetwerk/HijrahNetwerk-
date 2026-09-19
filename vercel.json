@@ -64,6 +64,10 @@
     {
       "source": "/register",
       "destination": "/register.html"
+    },
+    {
+      "source": "/lid/:code",
+      "destination": "/public-member.html?code=:code"
     }
   ]
 }
