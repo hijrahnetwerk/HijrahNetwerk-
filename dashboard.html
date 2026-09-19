@@ -1234,14 +1234,14 @@ async function requireUser(){
       error
     );
 
-    location.href='/login.html';
+    location.href='/login';
 
     return false;
   }
 
   if(!data.session){
 
-    location.href='/login.html';
+    location.href='/login';
 
     return false;
   }
@@ -1265,7 +1265,7 @@ async function requireUser(){
     profile?.role!=='admin'
   ){
     await db().auth.signOut();
-    location.href='/login.html';
+    location.href='/login';
     return false;
   }
 
@@ -3082,7 +3082,7 @@ async()=>{
     .auth
     .signOut();
 
-  location.href='/login.html';
+  location.href='/login';
 
 };
 
@@ -3090,7 +3090,7 @@ $('homeBtn').onclick=
 ()=>location.href='/';
 
 $('passportBtn').onclick=
-()=>location.href='/paspoort.html';
+()=>location.href='/paspoort';
 
 
 /* =========================
