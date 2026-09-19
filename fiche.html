@@ -516,7 +516,7 @@ async function init(){
       const reviewerCode=e.profile_code||'';
       const reviewerRole=e.profile_role||'Communitylid';
       const reviewerLink=reviewerCode
-        ? '<a href="public-member.html?code='+encodeURIComponent(reviewerCode)+'" class="exp-profile-link">Profiel bekijken →</a>'
+        ? '<a href="/lid/'+encodeURIComponent(reviewerCode)+'" class="exp-profile-link">Profiel bekijken →</a>'
         : '';
       return '<div class="experience"><div class="stars">'+('★'.repeat(rating)+('☆'.repeat(5-rating)))+'</div><div class="exp-text">'+esc(e.text||e.content||'')+'</div><div class="exp-meta">Ingediend door: '+esc(reviewerName)+' · '+esc(reviewerRole)+(reviewerCode?' · '+esc(reviewerCode):'')+(e.date?' · '+esc(e.date):'')+'</div>'+reviewerLink+'</div>';
     }).join('');
