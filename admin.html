@@ -394,7 +394,22 @@ th{
 
 .plan-box-value{
   font-weight:600;
-  color:var(--text)
+  color:var(--text);
+  white-space:pre-wrap
+}
+
+.plan-box-large{
+  grid-column:1/-1
+}
+
+.plan-text{
+  margin-top:8px;
+  padding:12px;
+  background:#faf7f2;
+  border-radius:8px;
+  white-space:pre-wrap;
+  line-height:1.55;
+  font-weight:400
 }
 
 .progress-bar{
@@ -533,6 +548,22 @@ th{
   color:var(--brown)
 }
 
+.monitor-error{
+  display:none;
+  background:#fff4e8;
+  border:1px solid #efd1ad;
+  color:#79501f;
+  padding:12px 14px;
+  border-radius:8px;
+  margin-bottom:18px;
+  font-size:13px;
+  line-height:1.5
+}
+
+.monitor-error.show{
+  display:block
+}
+
 .notification-badge{
   display:inline-flex;
   align-items:center;
@@ -561,6 +592,10 @@ th{
 
   .monitor-summary{
     grid-template-columns:1fr
+  }
+
+  .plan-box-large{
+    grid-column:auto
   }
 }
 
@@ -1213,6 +1248,7 @@ th{
     <p>Bekijk geregistreerde gebruikers, hun activiteit en hun Mijn Hijrah Plan.</p>
   </div>
 
+  <div id="monitorError" class="monitor-error"></div>
 
   <div class="panel">
 
@@ -1371,6 +1407,9 @@ let unreadActivityCount=0;
 
 let monitorInterval=null;
 
+let presenceLoadError=null;
+let activityLoadError=null;
+
 const db=()=>window.hijrahSupabase;
 
 const ONLINE_THRESHOLD_SECONDS=90;
@@ -1460,7 +1499,7 @@ function showPage(p){
   }[p]||'Admin';
 
   if(p==='users'){
-    clearActivityBadge();
+    renderMonitoringError();
   }
 }
 
@@ -2767,6 +2806,42 @@ function formatDateTime(value){
 }
 
 
+function renderMonitoringError(){
+
+  const box=
+    document.getElementById('monitorError');
+
+  if(!box)
+    return;
+
+  const errors=[];
+
+  if(presenceLoadError)
+    errors.push(
+      'Online-status: '+presenceLoadError
+    );
+
+  if(activityLoadError)
+    errors.push(
+      'Activiteiten: '+activityLoadError
+    );
+
+  if(!errors.length){
+
+    box.classList.remove('show');
+    box.innerHTML='';
+
+    return;
+  }
+
+  box.innerHTML=
+    '<b>Monitoring kan niet volledig worden geladen.</b><br>'+
+    errors.map(esc).join('<br>');
+
+  box.classList.add('show');
+}
+
+
 async function loadPresence(){
 
   const {
@@ -2780,6 +2855,8 @@ async function loadPresence(){
 
   if(error){
 
+    presenceLoadError=error.message;
+
     console.warn(
       'Aanwezigheid kon niet worden geladen:',
       error.message
@@ -2787,10 +2864,16 @@ async function loadPresence(){
 
     userPresence=[];
 
+    renderMonitoringError();
+
     return false;
   }
 
+  presenceLoadError=null;
+
   userPresence=data||[];
+
+  renderMonitoringError();
 
   return true;
 }
@@ -2814,6 +2897,8 @@ async function loadActivities(){
 
   if(error){
 
+    activityLoadError=error.message;
+
     console.warn(
       'Activiteiten konden niet worden geladen:',
       error.message
@@ -2821,8 +2906,12 @@ async function loadActivities(){
 
     userActivities=[];
 
+    renderMonitoringError();
+
     return false;
   }
+
+  activityLoadError=null;
 
   const previousLatest=
     userActivities.length
@@ -2868,6 +2957,8 @@ async function loadActivities(){
 
   if(lastActivityId===null && newestId!==null)
     lastActivityId=newestId;
+
+  renderMonitoringError();
 
   return true;
 }
@@ -2959,7 +3050,7 @@ async function loadUsers(){
   }=await db()
     .from('hijrah_plans')
     .select(
-      'user_id,target_country_id,target_city_id,target_date'
+      'user_id,target_country_id,target_city_id,target_date,notes,plan_data'
     );
 
   if(plansError)
@@ -2996,6 +3087,7 @@ async function loadUsers(){
   renderUsers();
   renderActivity();
   updateMonitorSummary();
+  renderMonitoringError();
 }
 
 
@@ -3179,8 +3271,31 @@ function renderUsers(){
 
               ${
                 plan
-                  ? '<span class="status status-active">Plan aanwezig</span>'
-                  : '<span class="status status-inactive">Nog geen plan</span>'
+                  ? `
+                    <span class="status status-active">
+                      Plan aanwezig
+                    </span>
+
+                    ${
+                      plan.notes ||
+                      plan.plan_data
+                        ? `
+                          <div class="hint">
+                            Notities / plan ingevuld
+                          </div>
+                        `
+                        : `
+                          <div class="hint">
+                            Nog geen notities of plan ingevuld
+                          </div>
+                        `
+                    }
+                  `
+                  : `
+                    <span class="status status-inactive">
+                      Nog geen plan
+                    </span>
+                  `
               }
 
             </td>
@@ -3226,8 +3341,21 @@ function renderActivity(){
 
   if(!userActivities.length){
 
-    container.innerHTML=
-      '<div class="empty">Nog geen activiteiten.</div>';
+    if(activityLoadError){
+
+      container.innerHTML=`
+        <div class="empty">
+          Activiteiten konden niet worden geladen.<br>
+          <span class="hint">${esc(activityLoadError)}</span>
+        </div>
+      `;
+
+    }else{
+
+      container.innerHTML=
+        '<div class="empty">Nog geen activiteiten.</div>';
+
+    }
 
     return;
   }
@@ -3319,6 +3447,40 @@ function renderActivity(){
       `;
 
     }).join('');
+}
+
+
+function getPlanText(plan){
+
+  if(!plan?.plan_data)
+    return '';
+
+  if(
+    typeof plan.plan_data==='string'
+  )
+    return plan.plan_data;
+
+  if(
+    typeof plan.plan_data==='object'
+  ){
+
+    if(
+      typeof plan.plan_data.text==='string'
+    )
+      return plan.plan_data.text;
+
+    try{
+      return JSON.stringify(
+        plan.plan_data,
+        null,
+        2
+      );
+    }catch(e){
+      return '';
+    }
+  }
+
+  return '';
 }
 
 
@@ -3474,6 +3636,14 @@ async function viewUserPlan(userId){
     );
 
 
+  const planText=getPlanText(plan);
+
+  const notes=
+    typeof plan.notes==='string'
+      ? plan.notes
+      : '';
+
+
   content.innerHTML=`
 
     <div class="plan-summary">
@@ -3573,7 +3743,7 @@ async function viewUserPlan(userId){
       <div class="plan-box">
         <div class="plan-box-label">Streefdatum</div>
         <div class="plan-box-value">
-          ${targetDate}
+          ${esc(targetDate)}
         </div>
       </div>
 
@@ -3598,6 +3768,52 @@ async function viewUserPlan(userId){
             style="width:${percentage}%">
           </div>
         </div>
+
+      </div>
+
+
+      <div class="plan-box plan-box-large">
+
+        <div class="plan-box-label">
+          Notities
+        </div>
+
+        ${
+          notes
+            ? `
+              <div class="plan-text">
+                ${esc(notes)}
+              </div>
+            `
+            : `
+              <div class="hint">
+                Geen notities ingevuld.
+              </div>
+            `
+        }
+
+      </div>
+
+
+      <div class="plan-box plan-box-large">
+
+        <div class="plan-box-label">
+          Mijn plan / aandachtspunten
+        </div>
+
+        ${
+          planText
+            ? `
+              <div class="plan-text">
+                ${esc(planText)}
+              </div>
+            `
+            : `
+              <div class="hint">
+                Geen eigen plan of aandachtspunten ingevuld.
+              </div>
+            `
+        }
 
       </div>
 
@@ -3703,17 +3919,13 @@ async function refreshUserMonitoring(){
   )
     return;
 
-  const ok=
-    await loadPresence();
-
-  if(!ok)
-    return;
-
+  await loadPresence();
   await loadActivities();
 
   renderUsers();
   renderActivity();
   updateMonitorSummary();
+  renderMonitoringError();
 }
 
 
