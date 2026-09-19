@@ -1499,6 +1499,7 @@ function showPage(p){
     topics:'Kennisbank',
     reviewers:'Reviewers',
     users:'Gebruikers',
+    submissions:'Inzendingen',
     sync:'Sync Queue'
   }[p]||'Admin';
 
@@ -3454,6 +3455,26 @@ function renderActivity(){
 }
 
 
+
+function normalizeAdminPlanData(data){
+  let d=data;
+  if(typeof d==='string'){try{d=JSON.parse(d);}catch(e){return {text:d,tasks:[],budget:{one_time:'',monthly:''},documents:[],questions:[],departure:[]};}}
+  if(!d||typeof d!=='object') d={};
+  return {text:typeof d.text==='string'?d.text:'',tasks:Array.isArray(d.tasks)?d.tasks:[],budget:d.budget&&typeof d.budget==='object'?d.budget:{one_time:'',monthly:''},documents:Array.isArray(d.documents)?d.documents:[],questions:Array.isArray(d.questions)?d.questions:[],departure:Array.isArray(d.departure)?d.departure:[]};
+}
+function adminItemLabel(item){
+  if(typeof item==='string') return item;
+  if(!item||typeof item!=='object') return '';
+  return item.label||item.title||item.name||item.text||item.question||'';
+}
+function renderAdminPlanList(items,emptyText){
+  if(!items.length) return '<div class="hint">'+esc(emptyText)+'</div>';
+  return '<div class="list">'+items.map(item=>{
+    const done=item&&typeof item==='object'&&item.completed===true;
+    return '<div class="step-row"><div class="step-check '+(done?'done':'')+'">'+(done?'✓':'')+'</div><div class="'+(done?'muted':'')+'">'+esc(adminItemLabel(item))+'</div></div>';
+  }).join('')+'</div>';
+}
+
 function getPlanText(plan){
 
   if(!plan?.plan_data)
@@ -3641,6 +3662,7 @@ async function viewUserPlan(userId){
 
 
   const planText=getPlanText(plan);
+  const structuredPlan=normalizeAdminPlanData(plan.plan_data);
 
   const notes=
     typeof plan.notes==='string'
@@ -3823,6 +3845,20 @@ async function viewUserPlan(userId){
 
     </div>
 
+
+
+    <div class="panel" style="margin:20px 0;">
+      <h3 style="margin-bottom:15px;">Persoonlijke planning</h3>
+      <div class="plan-summary">
+        <div class="plan-box"><div class="plan-box-label">Persoonlijke taken</div><div class="plan-box-value">${structuredPlan.tasks.length} ${structuredPlan.tasks.length===1?'taak':'taken'}</div></div>
+        <div class="plan-box"><div class="plan-box-label">Eenmalige kosten</div><div class="plan-box-value">${esc(structuredPlan.budget.one_time||'Niet ingevuld')}</div></div>
+        <div class="plan-box"><div class="plan-box-label">Maandelijkse kosten</div><div class="plan-box-value">${esc(structuredPlan.budget.monthly||'Niet ingevuld')}</div></div>
+      </div>
+      <div class="plan-section"><h3>Persoonlijke taken</h3>${renderAdminPlanList(structuredPlan.tasks,'Geen persoonlijke taken.')}</div>
+      <div class="plan-section"><h3>Documenten</h3>${renderAdminPlanList(structuredPlan.documents,'Geen documentenlijst.')}</div>
+      <div class="plan-section"><h3>Vragen</h3>${renderAdminPlanList(structuredPlan.questions,'Geen openstaande vragen.')}</div>
+      <div class="plan-section"><h3>Vertrekchecklist</h3>${renderAdminPlanList(structuredPlan.departure,'Geen vertrekchecklist.')}</div>
+    </div>
 
     <div class="panel" style="margin:0;">
 
@@ -4103,7 +4139,7 @@ async function rejectMember(id){
  if(error){message(error.message,'error');return} await loadSubmissions(); await loadUsers(); message('Registratie afgewezen.');
 }
 async function approveSubmission(id){
- const {error}=await db().from('submissions').update({status:'approved',reviewed_at:new Date().toISOString(),reviewed_by:currentUser?.id||null,updated_at:new Date().toISOString()}).eq('id',id);
+ const {error}=await db().from('submissions').update({status:'approved',reviewed_at:new Date().toISOString(),reviewed_by:(await db().auth.getUser()).data.user?.id||null,updated_at:new Date().toISOString()}).eq('id',id);
  if(error){message(error.message,'error');return} await loadSubmissions(); message('Inzending goedgekeurd.'); 
 }
 async function rejectSubmission(id){
