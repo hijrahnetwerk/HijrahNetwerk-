@@ -1,3 +1,4 @@
+```js
 /* HN public-site
    Live Supabase data voor de publieke website.
    Behoudt het bestaande design en voorkomt eindeloos "laden".
@@ -16,6 +17,20 @@
       .replace(/"/g, '&quot;')
       .replace(/'/g, '&#039;');
   };
+
+  function getCountryFlag(country) {
+    const code = String(
+      country.code ||
+      country.country_code ||
+      ''
+    ).trim().toUpperCase();
+
+    if (!/^[A-Z]{2}$/.test(code)) return '🌍';
+
+    return String.fromCodePoint(
+      ...[...code].map(char => 127397 + char.charCodeAt(0))
+    );
+  }
 
   function getDb() {
     return window.hijrahSupabase || null;
@@ -62,12 +77,6 @@
     if (!grid) return [];
 
     try {
-      /*
-       * We halen alle landen op.
-       * Daarna bepalen we zelf welke zichtbaar zijn.
-       * Hierdoor zijn we niet afhankelijk van één specifieke
-       * statuskolom.
-       */
       const result = await db
         .from('countries')
         .select('*')
@@ -80,7 +89,6 @@
       const rows = result.data || [];
 
       const countries = rows.filter(country => {
-        // Als is_active bestaat, respecteren we die.
         if (
           Object.prototype.hasOwnProperty.call(country, 'is_active') &&
           country.is_active === false
@@ -88,7 +96,6 @@
           return false;
         }
 
-        // Als status bestaat, verberg alleen duidelijke inactieve statussen.
         if (country.status != null) {
           const status = String(country.status).toLowerCase().trim();
 
@@ -121,10 +128,6 @@
         return [];
       }
 
-      /*
-       * Steden worden apart opgehaald.
-       * Als steden niet werken, kunnen de landen nog steeds verschijnen.
-       */
       let cities = [];
 
       try {
@@ -172,7 +175,8 @@
         return `
           <article class="card country-card">
             <div class="country-media">
-              <span class="flag-emoji">✈</span>
+              <span class="flag-emoji">${getCountryFlag(country)}</span>
+
               <span class="city-count">
                 ${count} ${count === 1 ? 'stad' : 'steden'}
               </span>
@@ -334,216 +338,5 @@
       );
     });
 
-    kb.innerHTML = categories.slice(0, 6).map(category => `
-      <div class="card kb-card">
-        <div class="kb-icon">✓</div>
-
-        <div>
-          <h4>${esc(category.name)}</h4>
-
-          <p>
-            ${esc(
-              category.description ||
-              'Praktische HN-informatie per onderwerp.'
-            )}
-          </p>
-
-          <span class="count">
-            ${categoryCounts.get(category.id) || 0} artikelen
-          </span>
-        </div>
-      </div>
-    `).join('') || `
-      <p class="demo-note">
-        Nog geen actieve categorieën.
-      </p>
-    `;
-  }
-
-  function updateKnowledgePreview(topics) {
-    const preview = document.querySelector('.kb-article-preview');
-
-    if (!preview || !topics.length) return;
-
-    const topic = topics[0];
-
-    const tags = preview.querySelector('.tag-row');
-
-    if (tags) {
-      tags.innerHTML = `
-        <span class="badge">
-          ${esc(topic.categories?.name || 'Kennisbank')}
-        </span>
-
-        <span class="badge">
-          ${esc(
-            topic.cities?.name ||
-            topic.countries?.name ||
-            'HN'
-          )}
-        </span>
-      `;
-    }
-
-    const heading = preview.querySelector('h4');
-
-    if (heading) {
-      heading.textContent = topic.title || '';
-    }
-
-    const paragraph = preview.querySelector('p');
-
-    if (paragraph) {
-      paragraph.textContent = topic.summary || '';
-    }
-
-    const link = preview.querySelector('a');
-
-    if (link) {
-      link.href =
-        'kennisbank.html?topic=' +
-        encodeURIComponent(topic.id);
-    }
-  }
-
-  function setupSearch() {
-    const search = document.querySelector(
-      '[data-search-source="global"]'
-    );
-
-    if (search) {
-      const form = search.closest('form');
-
-      if (form) {
-        form.onsubmit = function (event) {
-          event.preventDefault();
-
-          const value = search.value.trim();
-
-          if (!value) return;
-
-          window.location.href =
-            'kennisbank.html?q=' +
-            encodeURIComponent(value);
-        };
-      }
-    }
-
-    document.querySelectorAll('.search-chips .chip').forEach(button => {
-      button.onclick = function () {
-        const value = button.textContent.trim();
-
-        if (!value) return;
-
-        window.location.href =
-          'kennisbank.html?q=' +
-          encodeURIComponent(value);
-      };
-    });
-  }
-
-  function setupSmartSearch() {
-    document.querySelectorAll('a').forEach(link => {
-      if (
-        link.textContent.trim() ===
-        'Start de Smart Search'
-      ) {
-        link.href = 'smart-search.html';
-      }
-    });
-  }
-
-  function setupNewsletter() {
-    const newsletter = document.querySelector(
-      '[data-integration="email-service-placeholder"]'
-    );
-
-    if (!newsletter) return;
-
-    newsletter.onsubmit = function (event) {
-      event.preventDefault();
-
-      window.location.href =
-        '/ontdek-de-nieuwe-hijrah-navigatie/';
-    };
-  }
-
-  async function load() {
-    const db = await waitForSupabase();
-
-    /*
-     * Eerst landen laden.
-     * Dit is onafhankelijk van topics/categorieën.
-     */
-    const countries = await loadCountries(db);
-
-    /*
-     * De overige data mag nooit verhinderen dat landen zichtbaar worden.
-     */
-    const [cities, categories, topics] = await Promise.all([
-      loadCities(db),
-      loadCategories(db),
-      loadTopics(db)
-    ]);
-
-    updateHeroCounts(
-      countries,
-      cities,
-      categories,
-      topics
-    );
-
-    updateKnowledgeCategories(
-      categories,
-      topics
-    );
-
-    updateKnowledgePreview(topics);
-
-    setupSearch();
-    setupSmartSearch();
-    setupNewsletter();
-
-    console.log(
-      'HN geladen:',
-      countries.length,
-      'landen |',
-      cities.length,
-      'steden |',
-      categories.length,
-      'categorieën |',
-      topics.length,
-      'topics'
-    );
-  }
-
-  document.addEventListener(
-    'DOMContentLoaded',
-    function () {
-      load().catch(function (error) {
-        console.error('HN public site:', error);
-
-        /*
-         * Alleen tonen als de landen zelf nog op "laden" staan.
-         */
-        const grid = document.querySelector(
-          '[data-source="countries"]'
-        );
-
-        if (grid) {
-          const loading = grid.querySelector(
-            '#countriesLoading'
-          );
-
-          if (loading) {
-            showCountriesError(
-              error.message ||
-              'Er is een probleem met de databaseverbinding.'
-            );
-          }
-        }
-      });
-    }
-  );
-
-})();
+    kb.innerHTML = categories.slice(0, 6).map(category
+```
