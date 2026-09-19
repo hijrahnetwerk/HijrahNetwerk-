@@ -375,6 +375,183 @@
       }
     }
   
+    .article-toolbar{
+      display:flex;
+      flex-wrap:wrap;
+      gap:9px;
+      margin-top:22px;
+    }
+
+    .heart-btn{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      border:1px solid var(--line);
+      background:#fff;
+      color:var(--brown-dark);
+      border-radius:999px;
+      padding:10px 15px;
+      font-weight:700;
+      cursor:pointer;
+    }
+
+    .heart-btn .heart{
+      font-size:19px;
+      line-height:1;
+    }
+
+    .heart-btn.saved{
+      background:var(--success-bg);
+      border-color:#cfe2d2;
+      color:var(--success);
+    }
+
+    .fiche-cta{
+      margin-top:24px;
+      padding:19px 20px;
+      border:1px solid #eadcca;
+      background:#fff8ef;
+      border-radius:16px;
+    }
+
+    .fiche-cta strong{
+      display:block;
+      margin-bottom:5px;
+      color:var(--brown-dark);
+    }
+
+    .article-bottom{
+      margin-top:34px;
+      padding-top:28px;
+      border-top:1px solid var(--line);
+    }
+
+    .article-bottom h3{
+      margin:0 0 14px;
+      color:var(--brown-dark);
+      font-size:20px;
+    }
+
+    .share-row,
+    .article-nav,
+    .related-grid{
+      display:grid;
+      gap:10px;
+    }
+
+    .share-row{
+      grid-template-columns:repeat(4,auto);
+      justify-content:start;
+    }
+
+    .share-btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-height:40px;
+      padding:9px 13px;
+      border:1px solid var(--line);
+      border-radius:999px;
+      background:#fff;
+      color:var(--brown-dark);
+      font-size:13px;
+      font-weight:700;
+    }
+
+    .share-btn:hover{
+      border-color:var(--orange);
+      color:var(--orange-dark);
+    }
+
+    .submission-cta{
+      margin-top:28px;
+      padding:22px;
+      border-radius:18px;
+      background:var(--brown-dark);
+      color:#fff;
+    }
+
+    .submission-cta h3{
+      color:#fff;
+      margin-bottom:7px;
+    }
+
+    .submission-cta p{
+      color:#eadfce;
+      margin:0 0 15px;
+    }
+
+    .article-nav{
+      grid-template-columns:1fr 1fr;
+      margin-top:28px;
+    }
+
+    .article-nav-link{
+      display:block;
+      padding:16px;
+      border:1px solid var(--line);
+      border-radius:14px;
+      background:#fff;
+    }
+
+    .article-nav-link.next{
+      text-align:right;
+    }
+
+    .article-nav-label{
+      display:block;
+      color:var(--muted);
+      font-size:12px;
+      margin-bottom:5px;
+    }
+
+    .article-nav-title{
+      color:var(--brown-dark);
+      font-weight:750;
+    }
+
+    .related-grid{
+      grid-template-columns:repeat(3,1fr);
+      margin-top:12px;
+    }
+
+    .related-card{
+      display:block;
+      padding:17px;
+      border:1px solid var(--line);
+      border-radius:14px;
+      background:#fff;
+    }
+
+    .related-card:hover{
+      border-color:#dfc9ac;
+      box-shadow:var(--shadow);
+    }
+
+    .related-card h4{
+      margin:7px 0 6px;
+      color:var(--brown-dark);
+      line-height:1.35;
+    }
+
+    .related-card p{
+      margin:0;
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    @media(max-width:850px){
+      .related-grid{grid-template-columns:1fr 1fr}
+    }
+
+    @media(max-width:650px){
+      .share-row{grid-template-columns:1fr 1fr}
+      .article-nav{grid-template-columns:1fr}
+      .article-nav-link.next{text-align:left}
+      .related-grid{grid-template-columns:1fr}
+    }
+
+
 .mobile-menu-toggle{display:none;align-items:center;justify-content:center;flex-direction:column;gap:4px;width:42px;height:42px;border:1px solid var(--line,#e8e1d8);border-radius:10px;background:#fff;cursor:pointer}
 .mobile-menu-toggle span{display:block;width:18px;height:2px;border-radius:2px;background:var(--brown,#684a25)}
 .desktop-only{display:flex}
@@ -745,6 +922,178 @@
      RESULTATEN
   ========================= */
 
+
+  function hasFiche(topic) {
+    const card = topic?.card_data;
+    return !!(
+      card &&
+      typeof card === "object" &&
+      (
+        card.doctor_name ||
+        card.full_name ||
+        card.service_type ||
+        card.address ||
+        card.phone
+      )
+    );
+  }
+
+  function articleUrl(topicId) {
+    return window.location.origin +
+      "/kennisbank.html?topic=" +
+      encodeURIComponent(topicId);
+  }
+
+  function setMeta(name, content) {
+    let element = document.querySelector(
+      'meta[name="' + name + '"]'
+    );
+
+    if (!element) {
+      element = document.createElement("meta");
+      element.setAttribute("name", name);
+      document.head.appendChild(element);
+    }
+
+    element.setAttribute("content", content);
+  }
+
+  function setProperty(property, content) {
+    let element = document.querySelector(
+      'meta[property="' + property + '"]'
+    );
+
+    if (!element) {
+      element = document.createElement("meta");
+      element.setAttribute("property", property);
+      document.head.appendChild(element);
+    }
+
+    element.setAttribute("content", content);
+  }
+
+  function setCanonical(url) {
+    let link = document.querySelector('link[rel="canonical"]');
+
+    if (!link) {
+      link = document.createElement("link");
+      link.setAttribute("rel", "canonical");
+      document.head.appendChild(link);
+    }
+
+    link.setAttribute("href", url);
+  }
+
+  function updateArticleSeo(topic) {
+    const title = topic?.title
+      ? topic.title + " — Hijrah Netwerk"
+      : "Kennisbank — Hijrah Netwerk";
+
+    const description = (
+      topic?.summary ||
+      "Praktische informatie uit de Hijrah Netwerk kennisbank."
+    )
+      .replace(/\\n/g, " ")
+      .replace(/\s+/g, " ")
+      .trim()
+      .slice(0, 155);
+
+    const url = articleUrl(topic.id);
+
+    document.title = title;
+    setMeta("description", description);
+    setMeta("robots", "index,follow");
+    setProperty("og:title", title);
+    setProperty("og:description", description);
+    setProperty("og:url", url);
+    setProperty("og:type", "article");
+    setMeta("twitter:card", "summary");
+    setMeta("twitter:title", title);
+    setMeta("twitter:description", description);
+    setCanonical(url);
+
+    const existing = document.getElementById("hnArticleJsonLd");
+    if (existing) existing.remove();
+
+    const script = document.createElement("script");
+    script.id = "hnArticleJsonLd";
+    script.type = "application/ld+json";
+
+    script.textContent = JSON.stringify({
+      "@context":"https://schema.org",
+      "@type":"Article",
+      "headline":String(topic.title || "").slice(0,180),
+      "description":description,
+      "url":url,
+      "dateModified":topic.updated_at || topic.last_checked_at || undefined,
+      "publisher":{
+        "@type":"Organization",
+        "name":"Hijrah Netwerk",
+        "url":window.location.origin
+      }
+    });
+
+    document.head.appendChild(script);
+  }
+
+  function clearArticleSeo() {
+    document.title = "Kennisbank — Hijrah Netwerk";
+    setMeta(
+      "description",
+      "Doorzoek de Hijrah Netwerk kennisbank op land, stad en onderwerp."
+    );
+    setMeta("robots", "index,follow");
+
+    document
+      .querySelectorAll(
+        'meta[property^="og:"], meta[name^="twitter:"]'
+      )
+      .forEach(element => element.remove());
+
+    const canonical = document.querySelector('link[rel="canonical"]');
+    if (canonical) {
+      canonical.remove();
+    }
+
+    const jsonLd = document.getElementById("hnArticleJsonLd");
+    if (jsonLd) jsonLd.remove();
+  }
+
+  function shareArticle(topic, channel) {
+    const url = articleUrl(topic.id);
+    const title = String(topic.title || "Hijrah Netwerk");
+    const text = title + " — Hijrah Netwerk";
+
+    if (channel === "copy") {
+      navigator.clipboard?.writeText(url)
+        .then(() => showNotice("Link gekopieerd."))
+        .catch(() => showNotice("De link kon niet automatisch worden gekopieerd."));
+      return;
+    }
+
+    const links = {
+      whatsapp:
+        "https://wa.me/?text=" +
+        encodeURIComponent(text + " " + url),
+      facebook:
+        "https://www.facebook.com/sharer/sharer.php?u=" +
+        encodeURIComponent(url),
+      x:
+        "https://twitter.com/intent/tweet?text=" +
+        encodeURIComponent(text) +
+        "&url=" +
+        encodeURIComponent(url)
+    };
+
+    if (links[channel]) {
+      window.open(
+        links[channel],
+        "_blank",
+        "noopener,noreferrer,width=720,height=650"
+      );
+    }
+  }
+
   function formatArticleContent(value) {
     const raw = value == null ? "" : String(value);
     const text = raw
@@ -811,107 +1160,63 @@
     document
       .getElementById("resultCount")
       .textContent =
-      `${list.length} artikel${
-        list.length === 1
-          ? ""
-          : "en"
-      }`;
+      `${list.length} artikel${list.length === 1 ? "" : "en"}`;
 
     const results =
       document.getElementById("results");
 
     if (!list.length) {
-
       results.innerHTML = `
         <div class="empty">
           Geen passende informatie gevonden.
           Probeer een andere zoekterm of filter.
         </div>
       `;
-
       return;
     }
 
     results.innerHTML =
       list
         .map(topic => {
-
-          const isSaved =
-            savedTopics.has(
-              topic.id
-            );
+          const isSaved = savedTopics.has(topic.id);
 
           return `
             <article class="article-card">
 
               <div class="tags">
-
-                ${
-                  topic.countries?.name
-                    ? `<span class="tag">${esc(topic.countries.name)}</span>`
-                    : ""
-                }
-
-                ${
-                  topic.cities?.name
-                    ? `<span class="tag">${esc(topic.cities.name)}</span>`
-                    : ""
-                }
-
-                ${
-                  topic.categories?.name
-                    ? `<span class="tag">${esc(topic.categories.name)}</span>`
-                    : ""
-                }
-
-                ${
-                  topic.information_type
-                    ? `<span class="tag">${esc(topic.information_type)}</span>`
-                    : ""
-                }
-
+                ${topic.countries?.name ? `<span class="tag">${esc(topic.countries.name)}</span>` : ""}
+                ${topic.cities?.name ? `<span class="tag">${esc(topic.cities.name)}</span>` : ""}
+                ${topic.categories?.name ? `<span class="tag">${esc(topic.categories.name)}</span>` : ""}
+                ${topic.information_type ? `<span class="tag">${esc(topic.information_type)}</span>` : ""}
               </div>
 
-              <h3>
-                ${esc(topic.title)}
-              </h3>
+              <h3>${esc(topic.title)}</h3>
 
-              <p>
-                ${esc(
-                  topic.summary ||
-                  "Bekijk de volledige informatie in dit artikel."
-                )}
-              </p>
+              <p>${esc(
+                topic.summary ||
+                "Bekijk de volledige informatie in dit artikel."
+              )}</p>
 
               <div class="card-actions">
-
                 <button
-                  class="btn btn-secondary"
+                  class="btn btn-primary"
                   onclick="openArticle('${esc(topic.id)}')"
                 >
                   Lees artikel
                 </button>
 
                 <button
-                  class="btn ${
-                    isSaved
-                      ? "btn-saved"
-                      : "btn-secondary"
-                  }"
+                  class="heart-btn ${isSaved ? "saved" : ""}"
+                  aria-label="${isSaved ? "Artikel verwijderen uit opgeslagen informatie" : "Artikel opslaan"}"
                   onclick="toggleSaved('${esc(topic.id)}')"
                 >
-                  ${
-                    isSaved
-                      ? "Opgeslagen"
-                      : "Opslaan"
-                  }
+                  <span class="heart">${isSaved ? "♥" : "♡"}</span>
+                  <span>${isSaved ? "Opgeslagen" : "Opslaan"}</span>
                 </button>
-
               </div>
 
             </article>
           `;
-
         })
         .join("");
 
@@ -1119,8 +1424,7 @@
 
     const topic =
       topics.find(
-        item =>
-          item.id === topicId
+        item => item.id === topicId
       );
 
     if (!topic) {
@@ -1128,16 +1432,127 @@
     }
 
     const articleView =
-      document.getElementById(
-        "articleView"
-      );
+      document.getElementById("articleView");
 
-    document.getElementById(
-      "listView"
-    ).style.display = "none";
+    document.getElementById("listView").style.display = "none";
+    articleView.style.display = "block";
 
-    articleView.style.display =
-      "block";
+    updateArticleSeo(topic);
+
+    const currentIndex = topics.findIndex(
+      item => item.id === topic.id
+    );
+
+    const previous =
+      currentIndex > 0
+        ? topics[currentIndex - 1]
+        : null;
+
+    const next =
+      currentIndex < topics.length - 1
+        ? topics[currentIndex + 1]
+        : null;
+
+    const related = topics
+      .filter(item => item.id !== topic.id)
+      .map(item => {
+        let score = 0;
+
+        if (
+          topic.category_id &&
+          item.category_id === topic.category_id
+        ) score += 4;
+
+        if (
+          topic.city_id &&
+          item.city_id === topic.city_id
+        ) score += 3;
+
+        if (
+          topic.country_id &&
+          item.country_id === topic.country_id
+        ) score += 2;
+
+        return {item,score};
+      })
+      .filter(x => x.score > 0)
+      .sort((a,b) => b.score - a.score)
+      .slice(0,3)
+      .map(x => x.item);
+
+    const fallbackRelated = related.length
+      ? related
+      : topics
+          .filter(item => item.id !== topic.id)
+          .slice(0,3);
+
+    const saved = savedTopics.has(topic.id);
+    const publicArticleUrl = articleUrl(topic.id);
+
+    const ficheBlock = hasFiche(topic)
+      ? `
+        <div class="fiche-cta">
+          <strong>Deze informatie heeft een aparte fiche</strong>
+          <div class="muted">
+            Bekijk de praktische gegevens, contactinformatie, locatie en HN-status op één plek.
+          </div>
+          <div class="article-toolbar">
+            <a
+              class="btn btn-primary"
+              href="fiche.html?id=${encodeURIComponent(topic.id)}"
+            >
+              Bekijk volledige fiche →
+            </a>
+          </div>
+        </div>
+      `
+      : "";
+
+    const articleNavigation = previous || next
+      ? `
+        <div class="article-nav">
+          ${previous
+            ? `
+              <a class="article-nav-link" href="kennisbank.html?topic=${encodeURIComponent(previous.id)}">
+                <span class="article-nav-label">← Vorige</span>
+                <span class="article-nav-title">${esc(previous.title)}</span>
+              </a>
+            `
+            : "<div></div>"
+          }
+
+          ${next
+            ? `
+              <a class="article-nav-link next" href="kennisbank.html?topic=${encodeURIComponent(next.id)}">
+                <span class="article-nav-label">Volgende →</span>
+                <span class="article-nav-title">${esc(next.title)}</span>
+              </a>
+            `
+            : "<div></div>"
+          }
+        </div>
+      `
+      : "";
+
+    const relatedBlock = fallbackRelated.length
+      ? `
+        <div class="article-bottom">
+          <h3>Andere artikelen</h3>
+          <div class="related-grid">
+            ${fallbackRelated.map(item => `
+              <a class="related-card" href="kennisbank.html?topic=${encodeURIComponent(item.id)}">
+                <div class="tags">
+                  ${item.cities?.name ? `<span class="tag">${esc(item.cities.name)}</span>` : ""}
+                  ${item.categories?.name ? `<span class="tag">${esc(item.categories.name)}</span>` : ""}
+                </div>
+                <h4>${esc(item.title)}</h4>
+                <p>${esc(item.summary || "Bekijk dit artikel in de HN-kennisbank.")}</p>
+              </a>
+            `).join("")}
+          </div>
+        </div>
+      `
+      : "";
 
     articleView.innerHTML = `
 
@@ -1148,125 +1563,134 @@
         ← Terug naar kennisbank
       </button>
 
-      <div
-        class="tags"
-        style="margin-top:20px"
-      >
-
-        ${
-          topic.countries?.name
-            ? `<span class="tag">${esc(topic.countries.name)}</span>`
-            : ""
-        }
-
-        ${
-          topic.cities?.name
-            ? `<span class="tag">${esc(topic.cities.name)}</span>`
-            : ""
-        }
-
-        ${
-          topic.categories?.name
-            ? `<span class="tag">${esc(topic.categories.name)}</span>`
-            : ""
-        }
-
-        ${
-          topic.subcategories?.name
-            ? `<span class="tag">${esc(topic.subcategories.name)}</span>`
-            : ""
-        }
-
-        ${
-          topic.information_type
-            ? `<span class="tag">${esc(topic.information_type)}</span>`
-            : ""
-        }
-
+      <div class="tags" style="margin-top:20px">
+        ${topic.countries?.name ? `<span class="tag">${esc(topic.countries.name)}</span>` : ""}
+        ${topic.cities?.name ? `<span class="tag">${esc(topic.cities.name)}</span>` : ""}
+        ${topic.categories?.name ? `<span class="tag">${esc(topic.categories.name)}</span>` : ""}
+        ${topic.subcategories?.name ? `<span class="tag">${esc(topic.subcategories.name)}</span>` : ""}
+        ${topic.information_type ? `<span class="tag">${esc(topic.information_type)}</span>` : ""}
       </div>
 
-      <h2>
-        ${esc(topic.title)}
-      </h2>
+      <h2>${esc(topic.title)}</h2>
 
-      ${
-        topic.summary
-          ? `<p class="muted">${esc(topic.summary)}</p>`
-          : ""
+      ${topic.summary
+        ? `<p class="muted">${esc(topic.summary)}</p>`
+        : ""
       }
 
-      <div
-        class="card-actions"
-        style="margin-top:20px"
-      >
+      <div class="article-toolbar">
 
         <button
-          class="btn ${
-            savedTopics.has(topic.id)
-              ? "btn-saved"
-              : "btn-secondary"
-          }"
+          class="heart-btn ${saved ? "saved" : ""}"
+          aria-label="${saved ? "Artikel verwijderen uit opgeslagen informatie" : "Artikel opslaan"}"
           onclick="toggleSaved('${esc(topic.id)}')"
         >
-          ${
-            savedTopics.has(topic.id)
-              ? "Opgeslagen"
-              : "Opslaan"
-          }
+          <span class="heart">${saved ? "♥" : "♡"}</span>
+          <span>${saved ? "Opgeslagen" : "Opslaan"}</span>
         </button>
 
-        ${
-          topic.source_url
-            ? `
-              <a
-                class="btn btn-secondary"
-                href="${esc(topic.source_url)}"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Bron openen
-              </a>
-            `
-            : ""
+        ${hasFiche(topic)
+          ? `
+            <a
+              class="btn btn-primary"
+              href="fiche.html?id=${encodeURIComponent(topic.id)}"
+            >
+              Bekijk fiche →
+            </a>
+          `
+          : ""
+        }
+
+        ${topic.source_url
+          ? `
+            <a
+              class="btn btn-secondary"
+              href="${esc(topic.source_url)}"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Bron openen
+            </a>
+          `
+          : ""
         }
 
       </div>
+
+      ${ficheBlock}
 
       <div class="article-content">
         ${formatArticleContent(topic.content)}
       </div>
 
-      ${
-        topic.source ||
-        topic.source_url
-          ? `
-            <div class="article-source">
-
-              <strong>Bron:</strong>
-
-              ${esc(
-                topic.source || ""
-              )}
-
-              ${
-                topic.source_url
-                  ? `
-                    —
-                    <a
-                      href="${esc(topic.source_url)}"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      website
-                    </a>
-                  `
-                  : ""
-              }
-
-            </div>
-          `
-          : ""
+      ${topic.source || topic.source_url
+        ? `
+          <div class="article-source">
+            <strong>Bron:</strong>
+            ${esc(topic.source || "")}
+            ${topic.source_url
+              ? `
+                <span> · </span>
+                <a
+                  href="${esc(topic.source_url)}"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Officiële bron bekijken
+                </a>
+              `
+              : ""
+            }
+          </div>
+        `
+        : ""
       }
+
+      <div class="article-bottom">
+
+        <h3>Deel dit artikel</h3>
+
+        <div class="share-row">
+          <a
+            class="share-btn"
+            href="https://wa.me/?text=${encodeURIComponent(String(topic.title || "Hijrah Netwerk") + " — " + publicArticleUrl)}"
+            target="_blank"
+            rel="noopener noreferrer"
+          >WhatsApp</a>
+
+          <a
+            class="share-btn"
+            href="https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(publicArticleUrl)}"
+            target="_blank"
+            rel="noopener noreferrer"
+          >Facebook</a>
+
+          <a
+            class="share-btn"
+            href="https://twitter.com/intent/tweet?text=${encodeURIComponent(String(topic.title || "Hijrah Netwerk"))}&url=${encodeURIComponent(publicArticleUrl)}"
+            target="_blank"
+            rel="noopener noreferrer"
+          >X</a>
+
+          <button
+            class="share-btn"
+            type="button"
+            onclick="shareArticle(topics.find(x => x.id === '${esc(topic.id)}'),'copy')"
+          >Link kopiëren</button>
+        </div>
+
+        <div class="submission-cta">
+          <h3>Klopt iets niet of heb je iets toe te voegen?</h3>
+          <p>Stuur een correctie, ervaring, review, aanbeveling of andere praktische informatie naar HN.</p>
+          <a class="btn btn-primary" href="bijdragen.html?title=${encodeURIComponent(topic.title)}">
+            Informatie insturen →
+          </a>
+        </div>
+
+        ${articleNavigation}
+      </div>
+
+      ${relatedBlock}
 
     `;
 
@@ -1276,15 +1700,11 @@
     });
 
     if (updateUrl) {
-
       history.replaceState(
         {},
         "",
-        `kennisbank.html?topic=${
-          encodeURIComponent(topicId)
-        }`
+        `kennisbank.html?topic=${encodeURIComponent(topicId)}`
       );
-
     }
 
   }
@@ -1299,6 +1719,8 @@
     document.getElementById(
       "articleView"
     ).style.display = "none";
+
+    clearArticleSeo();
 
     document.getElementById(
       "listView"
