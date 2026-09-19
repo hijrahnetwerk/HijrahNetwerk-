@@ -587,8 +587,17 @@
       .related-grid{grid-template-columns:1fr 1fr}
     }
 
-    @media(max-width:650px){
-      .save-action{
+      .community-submit{
+        align-items:stretch;
+        flex-direction:column;
+      }
+
+      .community-submit .btn{
+        width:100%;
+        text-align:center;
+      }
+
+    @media(max-width:650px){      .save-action{
         flex-direction:column;
         align-items:stretch;
       }
@@ -771,6 +780,16 @@
 
   }
 
+  function formatArticleDate(value) {
+    if (!value) return "";
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return "";
+    return date.toLocaleDateString("nl-NL", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric"
+    });
+  }
   function showNotice(text) {
 
     const element =
@@ -1470,6 +1489,72 @@
      ARTIKEL OPENEN
   ========================= */
 
+  function getCommunityItemText(item) {
+    const experiences = item?.card_data && Array.isArray(item.card_data.experiences)
+      ? item.card_data.experiences
+      : [];
+    return experiences[0]?.text || item.content || item.summary || "";
+  }
+
+  function getCommunityItemName(item) {
+    const experiences = item?.card_data && Array.isArray(item.card_data.experiences)
+      ? item.card_data.experiences
+      : [];
+    return experiences[0]?.name || "Anoniem";
+  }
+
+  async function loadCommunityExperiences(topic) {
+    const box = document.getElementById("communityExperiences");
+    if (!box) return;
+
+    box.innerHTML = `<div class="community-empty">Community-ervaringen laden…</div>`;
+
+    try {
+      const { data, error } = await db()
+        .from("topic")
+        .select("id,title,summary,content,information_type,card_data,created_at,city_id,country_id,category_id,published,source_type")
+        .eq("published", true)
+        .eq("source_type", "community")
+        .in("information_type", ["Ervaring", "Review"])
+        .order("created_at", { ascending: false })
+        .limit(50);
+
+      if (error) {
+        console.warn("Community-ervaringen konden niet worden geladen:", error.message);
+        box.innerHTML = `<div class="community-empty">Community-ervaringen konden momenteel niet worden geladen.</div>`;
+        return;
+      }
+
+      const matches = (data || [])
+        .filter(item => item.id !== topic.id)
+        .filter(item => {
+          const cityMatch = topic.city_id && item.city_id === topic.city_id;
+          const countryMatch = topic.country_id && item.country_id === topic.country_id;
+          const categoryMatch = topic.category_id && item.category_id === topic.category_id;
+          return cityMatch || countryMatch || categoryMatch;
+        })
+        .slice(0, 5);
+
+      if (!matches.length) {
+        box.innerHTML = `<div class="community-empty">Er zijn nog geen goedgekeurde community-ervaringen voor deze informatie.</div>`;
+        return;
+      }
+
+      box.innerHTML = matches.map(item => `
+        <article class="community-item">
+          <p class="community-item-text">${esc(getCommunityItemText(item))}</p>
+          <div class="community-item-meta">
+            ${esc(getCommunityItemName(item))}
+            ${item.information_type === "Review" ? " · Review" : " · Ervaring"}
+            ${item.created_at ? " · " + esc(formatArticleDate(item.created_at)) : ""}
+          </div>
+        </article>
+      `).join("");
+    } catch (error) {
+      console.warn("Community-ervaringen laden mislukt:", error);
+      box.innerHTML = `<div class="community-empty">Community-ervaringen konden momenteel niet worden geladen.</div>`;
+    }
+  }
   function getPlannedArticles(topic) {
     const city = topic?.cities?.name || "deze stad";
     const country = topic?.countries?.name || "dit land";
@@ -1777,29 +1862,58 @@
         ${formatArticleContent(topic.content)}
       </div>
 
-      ${topic.source || topic.source_url
+      ${topic.source || topic.source_url || topic.updated_at || topic.last_checked_at
         ? `
           <div class="article-source">
-            <strong>Bron:</strong>
-            ${esc(topic.source || "")}
-            ${topic.source_url
-              ? `
-                <span> · </span>
-                <a
-                  href="${esc(topic.source_url)}"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Officiële bron bekijken
-                </a>
-              `
-              : ""
-            }
+            <div class="source-meta">
+              <div class="source-meta-copy">
+                <span class="source-meta-title">
+                  ${topic.source ? `Bron: ${esc(topic.source)}` : "Broninformatie"}
+                </span>
+                ${topic.updated_at || topic.last_checked_at
+                  ? `<span class="source-meta-updated">Laatst bijgewerkt: ${esc(formatArticleDate(topic.updated_at || topic.last_checked_at))}</span>`
+                  : ""
+                }
+              </div>
+
+              ${topic.source_url
+                ? `
+                  <a
+                    class="btn btn-secondary"
+                    href="${esc(topic.source_url)}"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Bron openen →
+                  </a>
+                `
+                : ""
+              }
+            </div>
           </div>
         `
         : ""
       }
+      <div class="community-section">
+        <h3>Community-ervaringen</h3>
+        <p class="community-intro">
+          Ervaringen van zusters die deze plek of dienst zelf hebben meegemaakt. Nieuwe inzendingen verschijnen hier na controle door HN.
+        </p>
 
+        <div id="communityExperiences" class="community-list">
+          <div class="community-empty">Community-ervaringen laden…</div>
+        </div>
+
+        <div class="community-submit">
+          <p>Heb jij hier zelf ervaring mee?</p>
+          <a
+            class="btn btn-primary"
+            href="bijdragen.html?type=experience&title=${encodeURIComponent(topic.title)}"
+          >
+            Ervaring insturen →
+          </a>
+        </div>
+      </div>
       <div class="article-bottom">
 
         <h3>Deel dit artikel</h3>
@@ -1847,6 +1961,8 @@
       ${relatedBlock}
 
     `;
+
+    loadCommunityExperiences(topic);
 
     window.scrollTo({
       top: 0,
