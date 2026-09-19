@@ -1,1 +1,18 @@
-<!DOCTYPE html><html lang="nl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Vertrek — Hijrah Netwerk</title><link rel="stylesheet" href="assets/platform-pages.css"></head><body><main class="hero"><div class="container hero-inner"><span class="eyebrow">Fase 3 · Vertrek</span><h1>De laatste fase vóór je vertrekt.</h1><p>Werk je laatste praktische punten bewust af en gebruik je persoonlijke checklist.</p></div></main><section class="section"><div class="container"><div class="grid two"><div class="card"><h3>Documenten</h3><p>Identiteitsdocumenten, akten, diploma's, medische en schooldocumenten.</p></div><div class="card"><h3>Reis & geld</h3><p>Tickets, bagage, betaalmiddelen, verzekeringen en belangrijke nummers.</p></div><div class="card"><h3>Woning & aankomst</h3><p>Weet waar je slaapt, hoe je er komt en welke adressen je nodig hebt.</p></div><div class="card"><h3>Laatste afspraken</h3><p>School, zorg, verhuurder, vervoer en andere zaken voor na aankomst.</p></div></div><div class="note">Mijn Hijrah bevat al een vertrekchecklist die je persoonlijk kunt afvinken.</div></div></section></body></html>
+<!DOCTYPE html><html lang="nl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Vertrek — Hijrah Netwerk</title><link rel="stylesheet" href="assets/platform-pages.css"></head><body><main class="hero"><div class="container hero-inner"><span class="eyebrow">Fase 3 · Vertrek</span><h1>De laatste fase vóór je vertrekt.</h1><p>Werk je laatste praktische punten bewust af en gebruik je persoonlijke checklist.</p></div></main><section class="section"><div class="container"><div class="grid two"><div class="card"><h3>Documenten</h3><p>Identiteitsdocumenten, akten, diploma's, medische en schooldocumenten.</p></div><div class="card"><h3>Reis & geld</h3><p>Tickets, bagage, betaalmiddelen, verzekeringen en belangrijke nummers.</p></div><div class="card"><h3>Woning & aankomst</h3><p>Weet waar je slaapt, hoe je er komt en welke adressen je nodig hebt.</p></div><div class="card"><h3>Laatste afspraken</h3><p>School, zorg, verhuurder, vervoer en andere zaken voor na aankomst.</p></div></div><div class="note">Mijn Hijrah bevat al een vertrekchecklist die je persoonlijk kunt afvinken.</div></div></section><script>
+function toggleMobileNav(open){
+  const nav=document.getElementById('mobileNav');
+  const button=document.querySelector('.menu-toggle');
+  if(!nav)return;
+  nav.classList.toggle('open',open);
+  nav.setAttribute('aria-hidden',open?'false':'true');
+  if(button)button.setAttribute('aria-expanded',open?'true':'false');
+  document.body.style.overflow=open?'hidden':'';
+}
+document.getElementById('mobileNav')?.addEventListener('click',function(e){
+  if(e.target===this)toggleMobileNav(false);
+});
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape')toggleMobileNav(false);
+});
+</script>
+</body></html>
