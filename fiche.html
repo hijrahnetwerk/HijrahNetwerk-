@@ -264,13 +264,13 @@ function formatContent(value,summary){
 
   if(!text)return '';
 
-  const duplicateSections=[
-    'Consultaties',
-    'Afspraken',
-    'Huisbezoeken',
-    'Teleconsultatie',
-    'Belangrijk'
-  ];
+  const duplicateSections=new Set([
+    'consultaties',
+    'afspraken',
+    'huisbezoeken',
+    'teleconsultatie',
+    'belangrijk'
+  ]);
 
   const summaryClean=String(summary||'')
     .replace(/\\r/g,'')
@@ -279,63 +279,74 @@ function formatContent(value,summary){
     .trim()
     .toLowerCase();
 
-  const lines=text
-    .split(/\n+/)
-    .map(x=>x.trim())
-    .filter(Boolean);
+  const headingPattern=/^(Opleiding en professionele achtergrond|Over het cabinet|Consultaties|Afspraken|Huisbezoeken|Teleconsultatie|Belangrijk)$/i;
+  const lines=text.split(/\n+/).map(x=>x.trim()).filter(Boolean);
 
-  let out='';
-  let list=[];
-  let currentHeading='';
-  let currentBody=[];
+  const sections=[];
+  let heading='';
+  let body=[];
 
-  const flushList=()=>{
-    if(!list.length)return;
-    out+='<ul>'+list.map(x=>'<li>'+esc(x.replace(/^•\s*/,''))+'</li>').join('')+'</ul>';
-    list=[];
-  };
-
-  const flushSection=()=>{
-    if(!currentHeading && !currentBody.length)return;
-
-    const heading=currentHeading.trim();
-    const body=currentBody.join(' ').replace(/\s+/g,' ').trim();
-    const headingIsDuplicate=duplicateSections.some(
-      x=>x.toLowerCase()===heading.toLowerCase()
-    );
-
-    if(!headingIsDuplicate && body){
-      const bodyClean=body.toLowerCase();
-      if(!(summaryClean && bodyClean===summaryClean)){
-        if(heading)out+='<h3>'+esc(heading)+'</h3>';
-        out+='<p>'+esc(body)+'</p>';
-      }
+  const pushSection=()=>{
+    if(heading||body.length){
+      sections.push({heading,body:[...body]});
     }
-
-    currentHeading='';
-    currentBody=[];
+    heading='';
+    body=[];
   };
 
   lines.forEach(line=>{
-    if(/^•\s*/.test(line)){
-      flushSection();
-      list.push(line);
-      return;
+    if(headingPattern.test(line)){
+      pushSection();
+      heading=line;
+    }else{
+      body.push(line);
     }
-
-    if(/^(Opleiding en professionele achtergrond|Over het cabinet|Consultaties|Afspraken|Huisbezoeken|Teleconsultatie|Belangrijk)$/i.test(line)){
-      flushList();
-      flushSection();
-      currentHeading=line;
-      return;
-    }
-
-    if(list.length)flushList();
-    currentBody.push(line);
   });
+  pushSection();
 
-  flushList();
-  flushSection();
+  let out='';
+
+  sections.forEach(section=>{
+    const headingClean=section.heading.trim().toLowerCase();
+    if(duplicateSections.has(headingClean))return;
+
+    const parts=[];
+    let bullets=[];
+
+    const flushBullets=()=>{
+      if(!bullets.length)return;
+      parts.push('<ul>'+bullets.map(x=>'<li>'+esc(x.replace(/^•\s*/,''))+'</li>').join('')+'</ul>');
+      bullets=[];
+    };
+
+    section.body.forEach(line=>{
+      if(/^•\s*/.test(line)){
+        bullets.push(line);
+      }else{
+        flushBullets();
+        const clean=line.replace(/\s+/g,' ').trim();
+        if(clean)parts.push('<p>'+esc(clean)+'</p>');
+      }
+    });
+    flushBullets();
+
+    const combinedText=section.body
+      .filter(x=>!/^•\s*/.test(x))
+      .join(' ')
+      .replace(/\s+/g,' ')
+      .trim()
+      .toLowerCase();
+
+    const onlySummary=summaryClean && combinedText===summaryClean && !section.heading;
+    if(onlySummary)return;
+
+    if(!parts.length)return;
+
+    if(section.heading){
+      out+='<h3>'+esc(section.heading)+'</h3>';
+    }
+    out+=parts.join('');
+  });
 
   return out;
 }
