@@ -1464,6 +1464,7 @@ let lastActivityId=null;
 let unreadActivityCount=0;
 
 let monitorInterval=null;
+let presenceRetryAt=0;
 
 let presenceLoadError=null;
 let activityLoadError=null;
@@ -2905,6 +2906,10 @@ function renderMonitoringError(){
 
 async function loadPresence(){
 
+  if(Date.now()<presenceRetryAt){
+    return false;
+  }
+
   const {
     data,
     error
@@ -2916,21 +2921,16 @@ async function loadPresence(){
 
   if(error){
 
-    presenceLoadError=error.message;
-
-    console.warn(
-      'Aanwezigheid kon niet worden geladen:',
-      error.message
-    );
-
+    presenceLoadError='Online-status tijdelijk niet beschikbaar.';
+    presenceRetryAt=Date.now()+300000;
     userPresence=[];
-
     renderMonitoringError();
 
     return false;
   }
 
   presenceLoadError=null;
+  presenceRetryAt=0;
 
   userPresence=data||[];
 
@@ -4035,7 +4035,7 @@ function startUserMonitoring(){
   monitorInterval=
     setInterval(
       refreshUserMonitoring,
-      15000
+      30000
     );
 }
 
