@@ -4151,8 +4151,62 @@ async function rejectMember(id){
  if(error){message(error.message,'error');return} await loadSubmissions(); await loadUsers(); message('Registratie afgewezen.');
 }
 async function approveSubmission(id){
- const {error}=await db().from('submissions').update({status:'approved',reviewed_at:new Date().toISOString(),reviewed_by:(await db().auth.getUser()).data.user?.id||null,updated_at:new Date().toISOString()}).eq('id',id);
- if(error){message(error.message,'error');return} await loadSubmissions(); message('Inzending goedgekeurd.'); 
+  const {data:submission,error:loadError}=await db().from('submissions').select('*').eq('id',id).maybeSingle();
+  if(loadError||!submission){message(loadError?.message||'Inzending niet gevonden.','error');return}
+
+  const user=(await db().auth.getUser()).data.user;
+  const typeMap={
+    information:'Algemene informatie',
+    correction:'Algemene informatie',
+    experience:'Ervaring',
+    review:'Review',
+    recommendation:'Aanbeveling',
+    warning:'Waarschuwing'
+  };
+  const summary=(submission.content||'').replace(/\\s+/g,' ').trim().slice(0,220);
+  const cardData={
+    ...(submission.submission_type==='experience'||submission.submission_type==='review'
+      ? {experiences:[{text:submission.content,name:submission.submitter_name||'Anoniem',date:new Date().toLocaleDateString('nl-NL')}]} : {}),
+    warning:submission.submission_type==='warning'?submission.content:'',
+    source_type:'community'
+  };
+
+  const topicPayload={
+    title:submission.title||'Nieuwe HN-informatie',
+    slug:slug(submission.title||'Nieuwe HN-informatie')+'-'+Date.now().toString().slice(-6),
+    country_id:submission.country_id||null,
+    city_id:submission.city_id||null,
+    category_id:submission.category_id||null,
+    subcategory_id:submission.subcategory_id||null,
+    information_type:typeMap[submission.submission_type]||'Algemene informatie',
+    visibility:submission.requested_visibility||'public',
+    status:'published',
+    source:submission.source_name||'HN-community',
+    source_url:submission.source_url||null,
+    summary:summary||null,
+    content:submission.content||'',
+    published:true,
+    submitted_by:submission.submitted_by||null,
+    source_type:'community',
+    verified_at:new Date().toISOString(),
+    last_checked_at:new Date().toISOString(),
+    card_data:cardData
+  };
+
+  const {error:topicError}=await db().from('topic').insert(topicPayload);
+  if(topicError){message('Inzending niet gepubliceerd: '+topicError.message,'error');return}
+
+  const {error}=await db().from('submissions').update({
+    status:'approved',
+    reviewed_at:new Date().toISOString(),
+    reviewed_by:user?.id||null,
+    updated_at:new Date().toISOString()
+  }).eq('id',id);
+
+  if(error){message(error.message,'error');return}
+  await loadSubmissions();
+  await loadTopics();
+  message('Inzending goedgekeurd en als fiche toegevoegd aan Hijrah Navigatie.');
 }
 async function rejectSubmission(id){
  const {error}=await db().from('submissions').update({status:'rejected',reviewed_at:new Date().toISOString(),reviewed_by:currentUser?.id||null,updated_at:new Date().toISOString()}).eq('id',id);
