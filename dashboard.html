@@ -568,6 +568,7 @@ textarea{
     <div class="brand">Hijrah Netwerk</div>
 
     <div class="nav-actions">
+      <button id="passportBtn">Mijn Paspoort</button>
       <button id="homeBtn">Website</button>
       <button id="logoutBtn">Uitloggen</button>
     </div>
@@ -595,12 +596,12 @@ textarea{
     <div class="value" id="savedCount">0</div>
   </div>
 
-  <div class="card">
+  <div class="card" id="progressSummaryCard">
     <div class="label">Voortgang</div>
     <div class="value" id="progressCount">0%</div>
   </div>
 
-  <div class="card">
+  <div class="card" id="planSummaryCard">
     <div class="label">Plan</div>
     <div class="value" id="planStatus">Nieuw</div>
   </div>
@@ -624,11 +625,11 @@ textarea{
       Opgeslagen
     </button>
 
-    <button class="tab" data-tab="progress">
+    <button class="tab" data-tab="progress" id="progressTab">
       Voortgang
     </button>
 
-    <button class="tab" data-tab="plan">
+    <button class="tab" data-tab="plan" id="planTab">
       Mijn Hijrah Plan
     </button>
 
@@ -1057,6 +1058,8 @@ textarea{
 const db=()=>window.hijrahSupabase;
 
 let user=null;
+let profile=null;
+let hasMyHijrahAccess=false;
 let countries=[];
 let cities=[];
 let saved=[];
@@ -1194,6 +1197,14 @@ function tabs(){
 
 function openPlanTab(){
 
+  if(!hasMyHijrahAccess){
+    message(
+      'Mijn Hijrah Plan is nog niet geactiveerd voor dit account.',
+      'error'
+    );
+    return;
+  }
+
   const button=
     document.querySelector(
       '.tab[data-tab="plan"]'
@@ -1237,23 +1248,56 @@ async function requireUser(){
 
   user=data.session.user;
 
-  $('welcome').textContent=
-    'Ingelogd als '+
-    (
-      user.email||
-      'lid'
-    )+
-    '.';
+  const profileResult=await db()
+    .from('profiles')
+    .select('role,application_status,public_name,public_code,community_role,my_hijrah_enabled')
+    .eq('id',user.id)
+    .maybeSingle();
 
-  $('profileEmail').value=
-    user.email||'';
+  if(profileResult.error){
+    console.error('Profiel kon niet worden geladen:',profileResult.error);
+  }
+
+  profile=profileResult.data||null;
+
+  if(
+    profile?.application_status!=='approved' &&
+    profile?.role!=='admin'
+  ){
+    await db().auth.signOut();
+    location.href='/login.html';
+    return false;
+  }
+
+  hasMyHijrahAccess=
+    profile?.role==='admin'||
+    profile?.my_hijrah_enabled===true;
+
+  $('welcome').textContent=
+    profile?.public_name
+      ? profile.public_name+' · '+(profile.community_role||'Communitylid')
+      : 'Ingelogd als '+(user.email||'lid')+'.';
+
+  $('profileEmail').value=user.email||'';
 
   $('profileCreated').value=
     user.created_at
-      ? new Date(
-          user.created_at
-        ).toLocaleString('nl-NL')
+      ? new Date(user.created_at).toLocaleString('nl-NL')
       : '';
+
+  const planTab=$('planTab');
+  const progressTab=$('progressTab');
+  const planCard=$('planSummaryCard');
+  const progressCard=$('progressSummaryCard');
+
+  if(!hasMyHijrahAccess){
+    if(planTab)planTab.style.display='none';
+    if(progressTab)progressTab.style.display='none';
+    if(planCard)planCard.style.display='none';
+    if(progressCard)progressCard.style.display='none';
+  }
+
+  return true;
 
   return true;
 
@@ -3047,6 +3091,9 @@ async()=>{
 $('homeBtn').onclick=
 ()=>location.href='/';
 
+$('passportBtn').onclick=
+()=>location.href='/paspoort.html';
+
 
 /* =========================
    INIT
@@ -3074,15 +3121,24 @@ async function init(){
 
   await loadBase();
 
-  await Promise.all([
+  const jobs=[
     loadSaved(),
-    loadProgress(),
-    loadPlan(),
     loadPreferences()
-  ]);
+  ];
 
-  renderNextStep();
-  renderPlanSummary();
+  if(hasMyHijrahAccess){
+    jobs.push(
+      loadProgress(),
+      loadPlan()
+    );
+  }
+
+  await Promise.all(jobs);
+
+  if(hasMyHijrahAccess){
+    renderNextStep();
+    renderPlanSummary();
+  }
 
 }
 
