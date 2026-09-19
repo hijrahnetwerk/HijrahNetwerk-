@@ -30,6 +30,22 @@
       <form id="register-form">
 
         <div class="form-group">
+          <label for="first_name">Voornaam</label>
+          <input type="text" id="first_name" name="first_name" autocomplete="given-name" required>
+        </div>
+
+        <div class="form-group">
+          <label for="last_name">Achternaam <span style="font-weight:400">(optioneel)</span></label>
+          <input type="text" id="last_name" name="last_name" autocomplete="family-name">
+        </div>
+
+        <div class="form-group">
+          <label for="whatsapp_number">WhatsApp-nummer</label>
+          <input type="tel" id="whatsapp_number" name="whatsapp_number" autocomplete="tel" required>
+          <small style="display:block;margin-top:5px;color:#756d63">Alleen zichtbaar voor HN Admin voor verificatie. Wordt niet openbaar gemaakt.</small>
+        </div>
+
+        <div class="form-group">
           <label for="email">E-mailadres</label>
           <input
             type="email"
@@ -82,6 +98,9 @@
     form.addEventListener('submit', async (event) => {
       event.preventDefault();
 
+      const first_name = document.getElementById('first_name').value.trim();
+      const last_name = document.getElementById('last_name').value.trim();
+      const whatsapp_number = document.getElementById('whatsapp_number').value.trim();
       const email = document.getElementById('email').value.trim();
       const password = document.getElementById('password').value;
 
@@ -89,7 +108,11 @@
       message.className = 'auth-message';
 
       try {
-        const { data, error } = await hnSignUp(email, password);
+        const { data, error } = await hnSignUp(email, password, {
+          first_name,
+          last_name,
+          whatsapp_number
+        });
 
         if (error) {
           message.textContent = error.message || 'Er ging iets mis bij het aanmaken van je account.';
