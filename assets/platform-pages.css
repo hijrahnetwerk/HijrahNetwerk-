@@ -166,4 +166,4 @@ th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--mute
   min-height:44px;padding:10px 13px;border:1px solid var(--line);border-radius:12px;background:#fff;
 }
 .search-empty{text-align:center;padding:30px;color:var(--muted)}
-@media(max-width:650px){.container{width:min(100% - 28px,var(--container))}.hero{padding:55px 0 40px}.section{padding:55px 0}.cta{padding:26px}}
+@media(max-width:650px){.container{width:min(100% - 40px,var(--container))}.hero{padding:55px 0 40px}.section{padding:55px 0}.cta{padding:26px}}
