@@ -1601,6 +1601,25 @@
     const saved = savedTopics.has(topic.id);
     const publicArticleUrl = articleUrl(topic.id);
 
+    const ficheBlock = hasFiche(topic)
+      ? `
+        <div class="fiche-cta">
+          <strong>Deze informatie heeft een aparte fiche</strong>
+          <div class="muted">
+            Bekijk de praktische gegevens, contactinformatie, locatie en HN-status op één plek.
+          </div>
+          <div class="article-toolbar">
+            <a
+              class="btn btn-primary"
+              href="fiche.html?id=${encodeURIComponent(topic.id)}"
+            >
+              Bekijk volledige fiche →
+            </a>
+          </div>
+        </div>
+      `
+      : "";
+
     const articleNavigation = previous || next
       ? `
         <div class="article-nav">
@@ -1751,6 +1770,8 @@
       </div>
 
 
+
+      ${ficheBlock}
 
       <div class="article-content">
         ${formatArticleContent(topic.content)}
