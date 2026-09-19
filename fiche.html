@@ -340,7 +340,6 @@ async function init(){
   if(loc)html+='<div class="location">'+icon.pin+esc(loc)+'</div>';
   html+='<div class="hero-actions">';
   if(d.phone)html+='<a class="button primary" href="'+esc(telHref(d.phone))+'">'+icon.phone+'Bel</a>';
-  const mapsUrl=mapsHref(d,pageTitle,loc);
   if(mapsUrl)html+='<a class="button secondary" target="_blank" rel="noopener" href="'+esc(mapsUrl)+'">'+icon.map+'Google Maps</a>';
   if(d.website)html+='<a class="button outline" target="_blank" rel="noopener" href="'+esc(d.website)+'">'+icon.web+'Website</a>';
   html+='<a class="button primary" href="bijdragen.html?type=experience&title='+encodeURIComponent(pageTitle)+'">Ervaring delen</a>';
