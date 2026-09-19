@@ -1354,7 +1354,7 @@
     if (!session) {
 
       window.location.href =
-        "login.html";
+        "/login";
 
       return;
     }
@@ -1868,7 +1868,7 @@
           <p>Heb jij hier zelf ervaring mee?</p>
           <a
             class="btn btn-primary"
-            href="bijdragen.html?type=experience&title=${encodeURIComponent(topic.title)}&country=${encodeURIComponent(topic.country_id || "")}&city=${encodeURIComponent(topic.city_id || "")}&category=${encodeURIComponent(topic.category_id || "")}&subcategory=${encodeURIComponent(topic.subcategory_id || "")}"
+            href="/bijdragen?type=experience&title=${encodeURIComponent(topic.title)}&country=${encodeURIComponent(topic.country_id || "")}&city=${encodeURIComponent(topic.city_id || "")}&category=${encodeURIComponent(topic.category_id || "")}&subcategory=${encodeURIComponent(topic.subcategory_id || "")}"
           >
             Ervaring insturen →
           </a>
@@ -1910,7 +1910,7 @@
         <div class="submission-cta">
           <h3>Klopt iets niet of heb je iets toe te voegen?</h3>
           <p>Stuur een correctie, ervaring, review, aanbeveling of andere praktische informatie naar HN.</p>
-          <a class="btn btn-primary" href="bijdragen.html?title=${encodeURIComponent(topic.title)}">
+          <a class="btn btn-primary" href="/bijdragen?title=${encodeURIComponent(topic.title)}">
             Informatie insturen →
           </a>
         </div>
@@ -1991,8 +1991,8 @@
       {},
       "",
       queryString
-        ? `kennisbank.html?${queryString}`
-        : "kennisbank.html"
+        ? `/kennisbank?${queryString}`
+        : "/kennisbank"
     );
 
   }
@@ -2224,8 +2224,8 @@
           {},
           "",
           queryString
-            ? `kennisbank.html?${queryString}`
-            : "kennisbank.html"
+            ? `/kennisbank?${queryString}`
+            : "/kennisbank"
         );
 
         renderResults();
