@@ -303,9 +303,21 @@
 
     .article-content {
       margin-top: 25px;
-      white-space: pre-wrap;
       color: #3f382f;
+      line-height: 1.75;
     }
+
+    .article-content h3 {
+      margin: 30px 0 10px;
+      color: var(--brown-dark);
+      font-size: 19px;
+      line-height: 1.3;
+    }
+
+    .article-content h3:first-child { margin-top: 0; }
+    .article-content p { margin: 0 0 16px; }
+    .article-content ul { margin: 0 0 18px 20px; padding: 0; }
+    .article-content li { margin: 7px 0; }
 
     .article-source {
       margin-top: 24px;
@@ -732,6 +744,64 @@
   /* =========================
      RESULTATEN
   ========================= */
+
+  function formatArticleContent(value) {
+    const raw = value == null ? "" : String(value);
+    const text = raw
+      .replace(/\\r/g, "")
+      .replace(/\\n/g, "\n")
+      .replace(/\r/g, "")
+      .trim();
+    if (!text) return "<p>Geen inhoud beschikbaar.</p>";
+
+    const headingPattern = /^(Opleiding en professionele achtergrond|Over het cabinet|Consultaties|Afspraken|Huisbezoeken|Teleconsultatie|Belangrijk)$/i;
+    const lines = text.split(/\n+/).map(line => line.trim()).filter(Boolean);
+    const sections = [];
+    let heading = "";
+    let body = [];
+
+    const pushSection = () => {
+      if (heading || body.length) sections.push({heading, body:[...body]});
+      heading = "";
+      body = [];
+    };
+
+    lines.forEach(line => {
+      if (headingPattern.test(line)) {
+        pushSection();
+        heading = line;
+      } else {
+        body.push(line);
+      }
+    });
+    pushSection();
+
+    return sections.map(section => {
+      const parts = [];
+      let bullets = [];
+
+      const flushBullets = () => {
+        if (!bullets.length) return;
+        parts.push("<ul>" + bullets.map(item => "<li>" + esc(item.replace(/^•\\s*/, "")) + "</li>").join("") + "</ul>");
+        bullets = [];
+      };
+
+      section.body.forEach(line => {
+        if (/^•\\s*/.test(line)) {
+          bullets.push(line);
+          return;
+        }
+        flushBullets();
+        const clean = line.replace(/\s+/g, " ").trim();
+        if (clean) parts.push("<p>" + esc(clean) + "</p>");
+      });
+
+      flushBullets();
+      if (!parts.length) return "";
+      const headingHtml = section.heading ? "<h3>" + esc(section.heading) + "</h3>" : "";
+      return headingHtml + parts.join("");
+    }).join("");
+  }
 
   function renderResults() {
 
@@ -1163,10 +1233,7 @@
       </div>
 
       <div class="article-content">
-        ${esc(
-          topic.content ||
-          "Geen inhoud beschikbaar."
-        )}
+        ${formatArticleContent(topic.content)}
       </div>
 
       ${
