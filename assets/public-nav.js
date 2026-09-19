@@ -122,7 +122,7 @@
           </nav>
 
           <div class="hn-actions">
-            <a class="hn-action secondary" href="dashboard.html">Mijn Hijrah</a>
+            <a class="hn-action secondary" href="mijn-hijrah.html">Mijn Hijrah</a>
             <a class="hn-action secondary" href="bijdragen.html">Bijdragen</a>
             <a class="hn-action primary" href="register.html">Aanmelden</a>
           </div>
@@ -148,7 +148,7 @@
           <a class="hn-mobile-link" href="index.html#over-ons">Over ons</a>
           <a class="hn-mobile-link" href="bijdragen.html">Bijdragen</a>
           <div class="hn-mobile-divider"></div>
-          <a class="hn-mobile-link" href="dashboard.html">Mijn Hijrah</a>
+          <a class="hn-mobile-link" href="mijn-hijrah.html">Mijn Hijrah</a>
           <a class="hn-mobile-link" href="login.html">Inloggen</a>
           <a class="hn-mobile-primary" href="register.html">Aanmelden voor de lancering</a>
         </div>
