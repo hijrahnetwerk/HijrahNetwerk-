@@ -7,6 +7,14 @@
 <meta name="description" content="Dr. Yohan Guazzi, huisarts in Tanger. Praktische informatie over Cabinet Médical Ibn Zuhr, adres, telefoon, openingstijden en afspraken.">
 <meta name="robots" content="index,follow">
 <link rel="canonical" href="https://hijrah-netwerk.vercel.app/fiche.html?id=8b023d28-599b-483a-bca8-5f88e721cb89">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Dr. Yohan Guazzi | Huisarts in Tanger">
+<meta property="og:description" content="Praktische informatie over Dr. Yohan Guazzi en Cabinet Médical Ibn Zuhr in Tanger.">
+<meta property="og:url" content="https://hijrah-netwerk.vercel.app/fiche.html?id=8b023d28-599b-483a-bca8-5f88e721cb89">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Dr. Yohan Guazzi | Huisarts in Tanger">
+<meta name="twitter:description" content="Praktische informatie over Dr. Yohan Guazzi en Cabinet Médical Ibn Zuhr in Tanger.">
+<script id="structured-data" type="application/ld+json">{}</script>
 <script src="assets/config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase-client.js"></script>
@@ -56,8 +64,14 @@ h1{font-size:clamp(30px,4vw,42px);line-height:1.1;color:var(--brown-dark);margin
 .content h3:first-child{margin-top:0}
 .content ul{margin:7px 0 15px;padding-left:22px}
 .content li{margin:5px 0}
-.info-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px;width:100%}
-.info-item{border:1px solid var(--border);border-radius:11px;padding:13px;background:#fff;min-width:0}
+.practical-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.practical-block{border:1px solid var(--border);border-radius:13px;padding:15px;background:#fff;min-width:0}
+.practical-block.full{grid-column:1/-1}
+.practical-title{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:800;color:var(--brown-dark);margin:0 0 11px}
+.practical-title .mini-icon{width:17px;height:17px;display:inline-flex;color:var(--orange)}
+.practical-title .mini-icon svg{width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.info-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:8px;width:100%}
+.info-item{border:1px solid var(--border);border-radius:9px;padding:11px;background:#fbfaf8;min-width:0}
 .info-label{font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:4px}
 .info-value{font-size:14px;word-break:break-word;white-space:pre-wrap}
 .info-value a,.source a,.contact-value a{color:var(--orange);font-weight:700}
@@ -148,11 +162,9 @@ h1{font-size:clamp(30px,4vw,42px);line-height:1.1;color:var(--brown-dark);margin
   .card+.card{margin-top:13px}
   .card h2{font-size:18px;margin-bottom:11px}
   .card-sub{font-size:12px;margin:-3px 0 13px}
-  .info-grid{
-    grid-template-columns:repeat(2,minmax(0,1fr));
-    gap:8px;
-    width:100%
-  }
+  .practical-grid{grid-template-columns:1fr;gap:9px}
+  .practical-block.full{grid-column:auto}
+  .info-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;width:100%}
   .info-item{padding:11px 10px;border-radius:9px}
   .info-label{font-size:9px}
   .info-value{font-size:13px;line-height:1.45}
@@ -274,6 +286,47 @@ async function init(){
 
   document.title=pageTitle;
 
+  const seoDescription=(x.summary||d.short_description||('Praktische informatie over '+pageTitle+(loc?' in '+loc:''))) .replace(/\s+/g,' ').trim();
+  const canonicalUrl='https://hijrah-netwerk.vercel.app/fiche.html?id='+encodeURIComponent(id);
+  const setMeta=(selector,attribute,value)=>{
+    const el=document.querySelector(selector);
+    if(el)el.setAttribute(attribute,value);
+  };
+  setMeta('meta[name="description"]','content',seoDescription);
+  setMeta('meta[property="og:title"]','content',pageTitle);
+  setMeta('meta[property="og:description"]','content',seoDescription);
+  setMeta('meta[property="og:url"]','content',canonicalUrl);
+  setMeta('meta[name="twitter:title"]','content',pageTitle);
+  setMeta('meta[name="twitter:description"]','content',seoDescription);
+
+  const canonical=document.querySelector('link[rel="canonical"]');
+  if(canonical)canonical.href=canonicalUrl;
+
+  const structuredData={
+    "@context":"https://schema.org",
+    "@type":"Physician",
+    "@id":canonicalUrl+"#physician",
+    "name":pageTitle.replace(/^Dr\.\s*/,''),
+    "url":canonicalUrl,
+    "description":seoDescription,
+    "medicalSpecialty":"GeneralPractice"
+  };
+  if(d.phone)structuredData.telephone=d.phone;
+  if(d.email)structuredData.email=d.email;
+  if(d.website)structuredData.sameAs=[d.website];
+  if(d.address){
+    structuredData.address={
+      "@type":"PostalAddress",
+      "streetAddress":d.address,
+      ...(loc?{"addressLocality":city||loc}:{}),
+      ...(country?{"addressCountry":country}:{})
+    };
+  }
+  if(mapsUrl)structuredData.hasMap=mapsUrl;
+  if(d.for_children)structuredData.description=seoDescription+' '+String(d.for_children);
+  const schemaEl=document.getElementById('structured-data');
+  if(schemaEl)schemaEl.textContent=JSON.stringify(structuredData);
+
   let html='';
 
   html+='<section class="hero">';
@@ -301,16 +354,25 @@ async function init(){
     html+='<section class="card"><h2>Over deze plek of dienst</h2><div class="content">'+formatContent(x.content)+'</div></section>';
   }
 
-  const info=[
+  const basis=[
     item('Type',d.service_type),
-    item('Adres',d.address),
-    item('Wijk',d.neighborhood),
-    item('Talen',d.languages),
+    item('Voor kinderen',d.for_children),
+    item('Talen',d.languages)
+  ];
+  const contact=[
     item('Telefoon',d.phone,'<a href="'+esc(telHref(d.phone))+'">'+esc(d.phone)+'</a>'),
     item('E-mail',d.email,'<a href="mailto:'+esc(d.email)+'">'+esc(d.email)+'</a>'),
+    item('Website',d.website,'<a href="'+esc(d.website)+'" target="_blank" rel="noopener">Officiële website</a>')
+  ];
+  const locatie=[
+    item('Adres',d.address),
+    item('Wijk',d.neighborhood)
+  ];
+  const afspraken=[
     item('Openingstijden',d.opening_hours),
-    item('Voor kinderen',d.for_children),
-    item('Afspraak nodig',d.appointment),
+    item('Afspraak nodig',d.appointment)
+  ];
+  const extra=[
     item('Huisbezoeken',d.home_visits),
     item('Teleconsultatie',d.teleconsultation),
     item('Verzekering / CNSS',d.insurance),
@@ -318,8 +380,26 @@ async function init(){
     item('Spoed',d.emergency)
   ];
 
-  if(info.some(Boolean)){
-    html+='<section class="card"><h2>Praktische gegevens</h2><p class="card-sub">De informatie die voor deze vermelding beschikbaar is.</p><div class="info-grid">'+info.join('')+'</div>';
+  const block=(title,iconMarkup,items,full=false)=>{
+    if(!items.some(Boolean))return '';
+    return '<div class="practical-block'+(full?' full':'')+'"><h3 class="practical-title">'+iconMarkup+esc(title)+'</h3><div class="info-grid">'+items.join('')+'</div></div>';
+  };
+
+  const pinIcon='<span class="mini-icon">'+icon.pin+'</span>';
+  const phoneIcon='<span class="mini-icon">'+icon.phone+'</span>';
+  const webIcon='<span class="mini-icon">'+icon.web+'</span>';
+  const clockIcon='<span class="mini-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>';
+  const extraIcon='<span class="mini-icon"><svg viewBox="0 0 24 24"><path d="M12 3v18M3 12h18"/></svg></span>';
+
+  const practicalBlocks=
+    block('Basisinformatie',webIcon,basis)+
+    block('Contactgegevens',phoneIcon,contact)+
+    block('Locatie',pinIcon,locatie)+
+    block('Openingstijden & afspraken',clockIcon,afspraken)+
+    block('Extra informatie',extraIcon,extra,true);
+
+  if(practicalBlocks){
+    html+='<section class="card"><h2>Praktische gegevens</h2><p class="card-sub">Snel de belangrijkste informatie per onderdeel bekijken.</p><div class="practical-grid">'+practicalBlocks+'</div>';
     if(d.warning)html+='<div class="warning">⚠️ '+esc(d.warning)+'</div>';
     html+='</section>';
   }
