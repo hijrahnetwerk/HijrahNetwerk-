@@ -1,32 +1,39 @@
 /**
- * Minimale build-stap voor een statische site (geen Vite/webpack nodig).
+ * HN build script
+ * Werkt met Vercel én Netlify.
  *
- * Netlify voert dit uit vóór elke deploy (zie netlify.toml: build.command).
- * Het script leest de environment variables die je in Netlify instelt
- * (Site settings → Environment variables) en schrijft ze naar assets/config.js,
- * zodat de statische HTML-pagina's ze kunnen gebruiken.
+ * Leest:
+ * VITE_SUPABASE_URL
+ * VITE_SUPABASE_ANON_KEY
  *
- * Belangrijk: de Supabase ANON key is publiek/veilig om in de browser te staan
- * (bescherming gebeurt via Row Level Security in Supabase). Er wordt hier dus
- * NOOIT een service-role key of ander geheim gebruikt.
+ * en maakt:
+ * assets/config.js
  */
+
 const fs = require('fs');
 const path = require('path');
 
 const SUPABASE_URL = process.env.VITE_SUPABASE_URL;
 const SUPABASE_ANON_KEY = process.env.VITE_SUPABASE_ANON_KEY;
 
-if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
-  console.error(
-    '\n[build.js] FOUT: VITE_SUPABASE_URL en/of VITE_SUPABASE_ANON_KEY ontbreken.\n' +
-    'Stel ze in via Netlify → Site settings → Environment variables, en trigger opnieuw een deploy.\n'
-  );
+console.log('\n[HN build] Supabase configuratie controleren...');
+
+if (!SUPABASE_URL) {
+  console.error('[HN build] FOUT: VITE_SUPABASE_URL ontbreekt.');
   process.exit(1);
 }
 
-const configContent = `// AUTOMATISCH GEGENEREERD DOOR build.js — NIET HANDMATIG BEWERKEN.
-// Wordt bij elke Netlify-deploy opnieuw geschreven op basis van de
-// environment variables VITE_SUPABASE_URL en VITE_SUPABASE_ANON_KEY.
+if (!SUPABASE_ANON_KEY) {
+  console.error('[HN build] FOUT: VITE_SUPABASE_ANON_KEY ontbreekt.');
+  process.exit(1);
+}
+
+console.log('[HN build] SUPABASE_URL: aanwezig');
+console.log('[HN build] SUPABASE_ANON_KEY: aanwezig');
+
+const configContent = `// AUTOMATISCH GEGENEREERD DOOR build.js.
+// NIET HANDMATIG BEWERKEN.
+
 window.__ENV = {
   SUPABASE_URL: ${JSON.stringify(SUPABASE_URL)},
   SUPABASE_ANON_KEY: ${JSON.stringify(SUPABASE_ANON_KEY)}
@@ -34,9 +41,22 @@ window.__ENV = {
 `;
 
 const assetsDir = path.join(__dirname, 'assets');
-fs.mkdirSync(assetsDir, { recursive: true });
 
-const outPath = path.join(assetsDir, 'config.js');
-fs.writeFileSync(outPath, configContent, 'utf8');
+fs.mkdirSync(assetsDir, {
+  recursive: true
+});
 
-console.log('[build.js] assets/config.js succesvol gegenereerd met Supabase-configuratie.');
+const outPath = path.join(
+  assetsDir,
+  'config.js'
+);
+
+fs.writeFileSync(
+  outPath,
+  configContent,
+  'utf8'
+);
+
+console.log(
+  '[HN build] assets/config.js succesvol aangemaakt.'
+);
