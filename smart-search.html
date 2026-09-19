@@ -336,6 +336,8 @@
       .replaceAll("'", "&#039;");
   };
 
+  function slugify(value){return String(value||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');}
+
   const normalize = value => {
 
     return String(value || "")
@@ -473,7 +475,7 @@
             <a
               class="btn"
               style="background:#efe7dc;color:#684a25;"
-              href="/kennisbank/${encodeURIComponent(topic.title)}"
+              href="/kennisbank/${slugify(topic.title)}"
             >
               Bekijk informatie →
             </a>
