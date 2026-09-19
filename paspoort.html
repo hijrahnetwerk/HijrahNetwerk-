@@ -36,7 +36,7 @@ function esc(v){return v==null?'':String(v).replace(/&/g,'&amp;').replace(/</g,'
 async function init(){
   const {data}=await db().auth.getSession();
   if(!data?.session){
-    location.href='/login.html';
+    location.href='/login';
     return;
   }
 
