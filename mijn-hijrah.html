@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mijn Hijrah | Hijrah Netwerk</title>
+<link rel="stylesheet" href="assets/public-nav.css">
+<style>
+:root{--brown:#684a25;--brown-dark:#4d3819;--orange:#df842c;--gold:#e9a74b;--cream:#fbf8f4;--soft:#f5efe7;--line:#e3d8ca;--text:#302820;--muted:#756c61}
+*{box-sizing:border-box}body{margin:0;background:var(--cream);color:var(--text);font-family:Arial,sans-serif}.wrap{width:min(1050px,calc(100% - 32px));margin:auto;padding:55px 0 80px}.hero{text-align:center;max-width:760px;margin:0 auto 40px}.hero span{display:block;color:#a55e16;font-size:10px;font-weight:800;letter-spacing:.15em;text-transform:uppercase}.hero h1{margin:8px 0 12px;color:var(--brown-dark);font-size:clamp(32px,5vw,48px)}.hero p{margin:0;color:var(--muted);font-size:16px;line-height:1.7}.box{padding:24px;border:1px solid var(--line);border-radius:20px;background:#fff;box-shadow:0 14px 38px rgba(104,74,37,.05)}.box h2{margin:0 0 9px;color:var(--brown-dark);font-size:21px}.box p{margin:0;color:var(--muted);line-height:1.65;font-size:13px}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;margin-top:20px}.feature{padding:20px;border:1px solid var(--line);border-radius:16px;background:#fff}.icon{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:var(--soft);color:var(--brown);font-weight:900;margin-bottom:13px}.feature strong{display:block;color:var(--brown-dark);font-size:14px}.feature p{margin-top:6px;font-size:12px}.action{margin-top:24px;display:flex;justify-content:center;gap:10px;flex-wrap:wrap}.button{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:10px 17px;border-radius:10px;text-decoration:none;font-size:12px;font-weight:800}.primary{background:var(--orange);color:#fff}.secondary{background:#fff;color:var(--brown-dark);border:1px solid var(--line)}.status{margin-top:22px;padding:15px;border-radius:13px;background:#faf7f2;border:1px solid var(--line);text-align:center;color:var(--muted);font-size:12px}.status strong{color:var(--brown-dark)}@media(max-width:700px){.wrap{width:min(100% - 24px,1050px);padding:35px 0 55px}.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<script src="assets/public-nav.js"></script>
+<main class="wrap">
+  <section class="hero">
+    <span>Mijn Hijrah</span>
+    <h1>Een persoonlijke plek voor jouw hijrah</h1>
+    <p>
+      Gebruik Mijn Hijrah om je eigen traject te plannen, voortgang bij te houden,
+      taken te bewaren en je voorbereiding stap voor stap te organiseren.
+    </p>
+  </section>
+
+  <section class="box">
+    <h2>Voor wie is Mijn Hijrah?</h2>
+    <p>
+      Mijn Hijrah is een aparte HN-functie. Een goedgekeurd communitylid krijgt
+      niet automatisch toegang tot het persoonlijke plan. HN kan deze toegang
+      later activeren wanneer dat passend is.
+    </p>
+    <div id="status" class="status">Toegang controleren...</div>
+    <div id="actions" class="action"></div>
+  </section>
+
+  <section class="grid">
+    <article class="feature">
+      <div class="icon">01</div>
+      <strong>Mijn Hijrah Plan</strong>
+      <p>Bewaar je doel, bestemming, vertrekdatum, taken en persoonlijke notities.</p>
+    </article>
+    <article class="feature">
+      <div class="icon">02</div>
+      <strong>Mijn voortgang</strong>
+      <p>Houd bij welke stappen je al hebt afgerond en wat je volgende stap is.</p>
+    </article>
+    <article class="feature">
+      <div class="icon">03</div>
+      <strong>Mijn voorbereiding</strong>
+      <p>Werk met checklists voor documenten, vertrek, budget en openstaande vragen.</p>
+    </article>
+  </section>
+</main>
+
+<script src="assets/config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-client.js"></script>
+<script>
+async function init(){
+  const status=document.getElementById('status');
+  const actions=document.getElementById('actions');
+  const {data}=await db().auth.getSession();
+  const session=data?.session||null;
+
+  if(!session){
+    status.innerHTML='<strong>Nog geen HN-account?</strong> Je kunt de openbare uitleg bekijken en daarna een account aanvragen.';
+    actions.innerHTML='<a class="button primary" href="register.html">Account aanvragen</a><a class="button secondary" href="login.html">Inloggen</a>';
+    return;
+  }
+
+  const result=await db().from('profiles')
+    .select('application_status,my_hijrah_enabled')
+    .eq('id',session.user.id)
+    .maybeSingle();
+
+  const p=result.data;
+
+  if(p?.application_status!=='approved'){
+    status.innerHTML='<strong>Je registratie is nog in behandeling.</strong> Mijn Hijrah wordt beschikbaar na goedkeuring en eventuele activatie door HN.';
+    actions.innerHTML='<a class="button secondary" href="login.html">Naar inloggen</a>';
+    return;
+  }
+
+  if(p?.my_hijrah_enabled){
+    status.innerHTML='<strong>Mijn Hijrah is geactiveerd.</strong> Je kunt nu naar je persoonlijke omgeving.';
+    actions.innerHTML='<a class="button primary" href="dashboard.html">Mijn Hijrah openen</a><a class="button secondary" href="paspoort.html">Mijn Paspoort</a>';
+  }else{
+    status.innerHTML='<strong>Je bent goedgekeurd als HN-communitylid.</strong> Mijn Hijrah is nog niet geactiveerd voor dit account.';
+    actions.innerHTML='<a class="button secondary" href="paspoort.html">Mijn Paspoort bekijken</a>';
+  }
+}
+init();
+</script>
+</body>
+</html>
