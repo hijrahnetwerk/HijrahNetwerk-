@@ -23,7 +23,7 @@
       <h1>Maak je account aan</h1>
 
       <p class="auth-intro">
-        Maak een account aan om toegang te krijgen tot jouw persoonlijke omgeving.
+        Vraag een HN-account aan. Na controle en goedkeuring krijg je toegang tot de communityfuncties.
       </p>
 
       <form id="register-form">
@@ -42,6 +42,20 @@
           <label for="whatsapp_number">WhatsApp-nummer</label>
           <input type="tel" id="whatsapp_number" name="whatsapp_number" autocomplete="tel" required>
           <small style="display:block;margin-top:5px;color:#756d63">Alleen zichtbaar voor HN Admin voor verificatie. Wordt niet openbaar gemaakt.</small>
+        </div>
+
+        <div class="form-group">
+          <label for="referral_code">HN-refercode <span style="font-weight:400">(optioneel)</span></label>
+          <input
+            type="text"
+            id="referral_code"
+            name="referral_code"
+            autocomplete="off"
+            placeholder="Bijvoorbeeld HN-K7P4M"
+          >
+          <small style="display:block;margin-top:5px;color:#756d63">
+            Heb je via een HN-lid van de community gehoord? Vul haar/zijn HN-code hier in.
+          </small>
         </div>
 
         <div class="form-group">
@@ -100,6 +114,7 @@
       const first_name = document.getElementById('first_name').value.trim();
       const last_name = document.getElementById('last_name').value.trim();
       const whatsapp_number = document.getElementById('whatsapp_number').value.trim();
+      const referral_code = document.getElementById('referral_code').value.trim().toUpperCase();
       const email = document.getElementById('email').value.trim();
       const password = document.getElementById('password').value;
 
@@ -110,7 +125,8 @@
         const { data, error } = await hnSignUp(email, password, {
           first_name,
           last_name,
-          whatsapp_number
+          whatsapp_number,
+          referral_code
         });
 
         if (error) {
@@ -120,7 +136,7 @@
         }
 
         message.textContent =
-          'Account aangemaakt. Controleer eventueel je e-mail om je account te bevestigen.';
+          'Je aanvraag is ontvangen. HN controleert je registratie eerst. Na goedkeuring krijg je toegang tot de HN-community.';
         message.className = 'auth-message success';
 
         form.reset();
