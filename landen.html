@@ -830,12 +830,10 @@
 
     const [c,ci]=await Promise.all([
       db().from('countries')
-        .select('id,name,description,slug,code,is_active')
-        .eq('is_active',true)
+        .select('*')
         .order('name'),
       db().from('cities')
-        .select('id,name,country_id,is_active')
-        .eq('is_active',true)
+        .select('*')
         .order('name')
     ]);
 
@@ -845,8 +843,19 @@
       return;
     }
 
-    countries=c.data||[];
-    cities=ci.data||[];
+    countries=(c.data||[]).filter(country=>{
+      if(Object.prototype.hasOwnProperty.call(country,'is_active') && country.is_active===false){
+        return false;
+      }
+      return true;
+    });
+
+    cities=(ci.data||[]).filter(city=>{
+      if(Object.prototype.hasOwnProperty.call(city,'is_active') && city.is_active===false){
+        return false;
+      }
+      return true;
+    });
 
     document.getElementById('mapCountryCount').textContent=
       countries.length+' HN-land'+(countries.length===1?'':'en');
