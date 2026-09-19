@@ -698,9 +698,9 @@ th{
   <div class="panel" style="margin-bottom:24px;">
     <div class="panel-header">
       <h3>HN voorbeelddata</h3>
-      <button class="button button-primary" onclick="seedYohanGuazzi()">Dr. Yohan Guazzi toevoegen</button>
+      <button id="yohanSeedButton" class="button button-primary" onclick="seedYohanGuazzi()">Dr. Yohan Guazzi toevoegen</button>
     </div>
-    <p class="hint">Voegt een gecontroleerde voorbeeldfiche toe aan de kennisbank en Hijrah Navigatie. Alleen gebruiken als deze voorbeeldfiche nog niet bestaat.</p>
+    <p id="yohanSeedHint" class="hint">Voegt een gecontroleerde voorbeeldfiche toe aan de kennisbank en Hijrah Navigatie.</p>
   </div>
 
   <div class="cards">
@@ -4146,16 +4146,85 @@ logoutButton.onclick=async()=>{
 // =========================
 // INZENDINGEN & REGISTRATIES
 // =========================
+async function updateYohanSeedButton(){
+  const button=document.getElementById('yohanSeedButton');
+  const hint=document.getElementById('yohanSeedHint');
+  if(!button||!hint)return;
+
+  button.disabled=true;
+  button.textContent='Controleren...';
+
+  const existing=await db()
+    .from('topic')
+    .select('id,title,card_data')
+    .ilike('title','%Yohan Guazzi%')
+    .limit(1);
+
+  if(existing.error){
+    button.disabled=false;
+    button.textContent='Dr. Yohan Guazzi toevoegen';
+    hint.textContent='De voorbeeldstatus kon niet worden gecontroleerd.';
+    return;
+  }
+
+  const topic=existing.data&&existing.data[0]||null;
+
+  if(topic){
+    const cardData=topic.card_data&&typeof topic.card_data==='object'?topic.card_data:{};
+
+    if(cardData.maps_url!=='https://maps.app.goo.gl/rApDJVfsvFuSYmib6'){
+      const updatedCardData={
+        ...cardData,
+        maps_url:'https://maps.app.goo.gl/rApDJVfsvFuSYmib6'
+      };
+
+      const updateResult=await db()
+        .from('topic')
+        .update({card_data:updatedCardData})
+        .eq('id',topic.id);
+
+      if(updateResult.error){
+        console.warn('HN voorbeeldfiche: Maps-link kon niet worden bijgewerkt.',updateResult.error);
+      }
+    }
+
+    button.disabled=true;
+    button.textContent='✓ Dr. Yohan Guazzi is al toegevoegd';
+    button.style.opacity='.7';
+    button.style.cursor='default';
+    hint.textContent='Deze voorbeeldfiche staat al in de kennisbank en Hijrah Navigatie.';
+    return;
+  }
+
+  button.disabled=false;
+  button.textContent='Dr. Yohan Guazzi toevoegen';
+  button.style.opacity='';
+  button.style.cursor='';
+  hint.textContent='Voegt een gecontroleerde voorbeeldfiche toe aan de kennisbank en Hijrah Navigatie.';
+}
+
 async function seedYohanGuazzi(){
+  const button=document.getElementById('yohanSeedButton');
+  if(button&&button.disabled)return;
   if(!confirm('Dr. Yohan Guazzi als voorbeeldfiche toevoegen aan de kennisbank?')) return;
+
   const existing=await db().from('topic').select('id,title').ilike('title','%Yohan Guazzi%').limit(1);
-  if(existing.data && existing.data.length){ msg('De fiche van Dr. Yohan Guazzi bestaat al.','error'); return; }
+  if(existing.error){
+    msg('De voorbeeldfiche kon niet worden gecontroleerd: '+existing.error.message,'error');
+    return;
+  }
+  if(existing.data && existing.data.length){
+    await updateYohanSeedButton();
+    msg('De fiche van Dr. Yohan Guazzi bestaat al.','error');
+    return;
+  }
 
   const results=await Promise.all([
     db().from('countries').select('id,name').ilike('name','Morocco').limit(1),
     db().from('cities').select('id,name').ilike('name','Tanger').limit(1),
     db().from('categories').select('id,name').ilike('name','%gezondheid%').limit(1)
   ]);
+
   const country=results[0].data && results[0].data[0] || null;
   const city=results[1].data && results[1].data[0] || null;
   const category=results[2].data && results[2].data[0] || null;
@@ -4186,6 +4255,7 @@ async function seedYohanGuazzi(){
       phone:'+212 5 39 42 77 77',
       email:'y.guazzi@cabmed-iz.ma',
       website:'https://www.cabmed-iz.ma/',
+      maps_url:'https://maps.app.goo.gl/rApDJVfsvFuSYmib6',
       appointment:'Ja, via telefoon of online contactformulier',
       for_children:'Ja, algemene geneeskunde voor volwassenen en kinderen',
       home_visits:'Op afspraak',
@@ -4201,8 +4271,13 @@ async function seedYohanGuazzi(){
   };
 
   const result=await db().from('topic').insert(payload);
-  if(result.error){ msg('Fiche kon niet worden toegevoegd: '+result.error.message,'error'); return; }
+  if(result.error){
+    msg('Fiche kon niet worden toegevoegd: '+result.error.message,'error');
+    return;
+  }
+
   await loadTopics();
+  await updateYohanSeedButton();
   msg('Dr. Yohan Guazzi is toegevoegd aan de kennisbank en Hijrah Navigatie.');
 }
 
@@ -4347,6 +4422,7 @@ async function init(){
   refreshTopicSelects();
 
   await loadTopics();
+  await updateYohanSeedButton();
 
   await loadUsers();
   await loadSubmissions();
