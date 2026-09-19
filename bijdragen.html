@@ -40,6 +40,29 @@ async function init(){
  fill('country',co.data,'Kies eventueel een land');fill('city',ci.data,'Kies eventueel een stad');fill('category',ca.data,'Kies eventueel een categorie');fill('subcategory',sc.data,'Kies eventueel een subcategorie');
  document.getElementById('country').addEventListener('change',()=>{const v=document.getElementById('country').value;fill('city',(ci.data||[]).filter(x=>!v||x.country_id===v),'Kies eventueel een stad')});
  document.getElementById('category').addEventListener('change',()=>{const v=document.getElementById('category').value;fill('subcategory',(sc.data||[]).filter(x=>!v||x.category_id===v),'Kies eventueel een subcategorie')});
+
+ const countryParam=q.get('country');
+ const cityParam=q.get('city');
+ const categoryParam=q.get('category');
+ const subcategoryParam=q.get('subcategory');
+
+ if(countryParam){
+   document.getElementById('country').value=countryParam;
+   fill('city',(ci.data||[]).filter(x=>!countryParam||x.country_id===countryParam),'Kies eventueel een stad');
+ }
+
+ if(cityParam){
+   document.getElementById('city').value=cityParam;
+ }
+
+ if(categoryParam){
+   document.getElementById('category').value=categoryParam;
+   fill('subcategory',(sc.data||[]).filter(x=>!categoryParam||x.category_id===categoryParam),'Kies eventueel een subcategorie');
+ }
+
+ if(subcategoryParam){
+   document.getElementById('subcategory').value=subcategoryParam;
+ }
 }
 form.addEventListener('submit',async e=>{
  e.preventDefault();msg.className='message show';msg.textContent='Bezig met insturen...';
