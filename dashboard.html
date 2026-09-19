@@ -236,6 +236,36 @@ textarea{
   color:var(--brown);
 }
 
+.saved-open{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  margin-top:12px;
+  color:var(--brown);
+  font-weight:700;
+  font-size:13px;
+  text-decoration:none;
+}
+
+.saved-open:hover{
+  color:var(--orange);
+  text-decoration:underline;
+}
+
+@media(max-width:650px){
+  .item-head{
+    flex-direction:column;
+  }
+
+  .saved-actions{
+    width:100%;
+  }
+
+  .saved-actions .button{
+    flex:1;
+  }
+}
+
 .list{
   display:grid;
   gap:10px
@@ -1722,7 +1752,7 @@ function renderSaved(){
             '<div class="saved-actions">'+
               '<a class="button saved-view" '+
                 'href="kennisbank.html?topic='+encodeURIComponent(x.topic_id||'')+'">'+
-                'Bekijken'+
+                'Artikel bekijken'+
               '</a>'+
               '<button '+
                 'class="button danger" '+
@@ -1740,6 +1770,10 @@ function renderSaved(){
               x.topic?.summary||''
             )+
           '</p>'+
+          '<a class="saved-open" '+
+            'href="kennisbank.html?topic='+encodeURIComponent(x.topic_id||'')+'">'+
+            'Artikel bekijken →'+
+          '</a>'+
 
         '</div>'
 
