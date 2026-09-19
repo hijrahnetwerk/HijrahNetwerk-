@@ -54,7 +54,7 @@ async function init(){
   app.innerHTML=
     '<div class="passport-top">'+
       '<div><div class="label">Hijrah Netwerk</div><div class="name">'+esc(d.public_name)+'</div><div style="margin-top:4px;color:rgba(255,255,255,.52);font-size:10px;">'+esc(d.public_code)+' · '+esc(d.community_role||'Communitylid')+'</div></div>'+
-      '<div class="level">Stempels '+earned+' / '+stamps.length+'</div>'+
+      '<div class="level">Level '+Number(d.level||1)+' · '+Number(d.points||0)+' punten</div>'+
     '</div>'+
     '<div class="stats">'+
       '<div class="stat"><strong>'+Number(d.reviews_count||0)+'</strong><span>Reviews</span></div>'+
