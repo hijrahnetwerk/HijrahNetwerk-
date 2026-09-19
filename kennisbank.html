@@ -57,9 +57,10 @@
     }
 
     .wrap {
-      max-width: 1180px;
+      width: min(1240px, calc(100% - 72px));
+      max-width: 1240px;
       margin: 0 auto;
-      padding: 0 20px;
+      padding: 0;
     }
 
     .topbar {
@@ -290,7 +291,7 @@
       border: 1px solid var(--line);
       border-radius: var(--radius);
       box-shadow: var(--shadow);
-      padding: 30px;
+      padding: 38px;
       margin: 25px 0 50px;
     }
 
@@ -351,6 +352,10 @@
     }
 
     @media (max-width: 650px) {
+      .wrap {
+        width: calc(100% - 40px);
+      }
+
       .nav {
         align-items: flex-start;
         flex-direction: column;
@@ -371,7 +376,7 @@
       }
 
       .article-view {
-        padding: 21px;
+        padding: 24px 20px;
       }
     }
   
