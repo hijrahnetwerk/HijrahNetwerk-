@@ -830,7 +830,7 @@
 
     const [c,ci]=await Promise.all([
       db().from('countries')
-        .select('id,name,description,slug,code,country_code,iso2,is_active')
+        .select('id,name,description,slug,code,is_active')
         .eq('is_active',true)
         .order('name'),
       db().from('cities')
