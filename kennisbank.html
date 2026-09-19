@@ -382,6 +382,49 @@
       margin-top:22px;
     }
 
+    .save-action{
+      margin-top:22px;
+      padding:16px 18px;
+      border:1px solid var(--line);
+      border-radius:16px;
+      background:#fff;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:18px;
+    }
+
+    .save-action-copy{
+      min-width:0;
+    }
+
+    .save-action-copy strong{
+      display:block;
+      color:var(--brown-dark);
+      margin-bottom:3px;
+      font-size:15px;
+    }
+
+    .save-action-copy span{
+      display:block;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.45;
+    }
+
+    .save-action .heart-btn{
+      flex:0 0 auto;
+      min-height:44px;
+      padding:11px 17px;
+      background:#f7f1e8;
+      border-color:#dfd1bd;
+    }
+
+    .save-action .heart-btn.saved{
+      background:var(--success-bg);
+      border-color:#cfe2d2;
+    }
+
     .heart-btn{
       display:inline-flex;
       align-items:center;
@@ -545,6 +588,16 @@
     }
 
     @media(max-width:650px){
+      .save-action{
+        flex-direction:column;
+        align-items:stretch;
+      }
+
+      .save-action .heart-btn{
+        width:100%;
+        justify-content:center;
+      }
+
       .share-row{grid-template-columns:1fr 1fr}
       .article-nav{grid-template-columns:1fr}
       .article-nav-link.next{text-align:left}
@@ -1548,25 +1601,6 @@
     const saved = savedTopics.has(topic.id);
     const publicArticleUrl = articleUrl(topic.id);
 
-    const ficheBlock = hasFiche(topic)
-      ? `
-        <div class="fiche-cta">
-          <strong>Deze informatie heeft een aparte fiche</strong>
-          <div class="muted">
-            Bekijk de praktische gegevens, contactinformatie, locatie en HN-status op één plek.
-          </div>
-          <div class="article-toolbar">
-            <a
-              class="btn btn-primary"
-              href="fiche.html?id=${encodeURIComponent(topic.id)}"
-            >
-              Bekijk volledige fiche →
-            </a>
-          </div>
-        </div>
-      `
-      : "";
-
     const articleNavigation = previous || next
       ? `
         <div class="article-nav">
@@ -1668,7 +1702,11 @@
         : ""
       }
 
-      <div class="article-toolbar">
+      <div class="save-action">
+        <div class="save-action-copy">
+          <strong>Artikel opslaan</strong>
+          <span>Bewaar dit artikel in Mijn Hijrah zodat je het later snel kunt terugvinden.</span>
+        </div>
 
         <button
           class="heart-btn ${saved ? "saved" : ""}"
@@ -1678,6 +1716,11 @@
           <span class="heart">${saved ? "♥" : "♡"}</span>
           <span>${saved ? "Opgeslagen" : "Opslaan"}</span>
         </button>
+      </div>
+
+      <div class="article-toolbar">
+
+
 
         ${hasFiche(topic)
           ? `
@@ -1707,11 +1750,7 @@
 
       </div>
 
-      <p class="muted" style="margin:10px 0 0;font-size:13px">
-        Bewaar dit artikel in <strong>Mijn Hijrah</strong> zodat je het later snel kunt terugvinden.
-      </p>
 
-      ${ficheBlock}
 
       <div class="article-content">
         ${formatArticleContent(topic.content)}
