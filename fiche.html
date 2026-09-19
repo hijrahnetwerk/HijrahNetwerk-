@@ -12,109 +12,111 @@
 <script src="supabase-client.js"></script>
 <style>
 :root{
- --brown:#684a25;--brown-dark:#4d3819;--orange:#df842c;--gold:#e9a74b;
- --cream:#f7f4ef;--text:#27221d;--muted:#756d63;--border:#e7dfd5;
- --white:#fff;--green:#2f7d55;--green-bg:#edf7f1;--soft:#f4eee6;--shadow:0 8px 28px rgba(76,55,30,.06)
+  --brown:#684a25;--brown-dark:#4d3819;--orange:#df842c;--gold:#e9a74b;
+  --cream:#faf8f5;--text:#2c2722;--muted:#786f66;--border:#e8e1d8;
+  --soft:#f5efe8;--white:#fff;--green:#2f7650;--green-bg:#edf6f0;
+  --shadow:0 4px 18px rgba(77,56,25,.06);
 }
 *{box-sizing:border-box}
+html{scroll-behavior:smooth}
 body{margin:0;background:var(--cream);color:var(--text);font-family:Arial,sans-serif;line-height:1.55}
 a{text-decoration:none;color:inherit}
-.top{background:#fff;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10}
-.nav{max-width:1180px;margin:auto;padding:14px 22px;display:flex;justify-content:space-between;align-items:center;gap:20px}
+.top{background:#fff;border-bottom:1px solid var(--border)}
+.nav{max-width:1160px;margin:auto;padding:14px 22px;display:flex;justify-content:space-between;align-items:center;gap:18px}
 .brand{font-weight:800;font-size:20px;color:var(--brown-dark)}
-.navlinks{display:flex;gap:4px;flex-wrap:wrap}
-.navlinks a{color:var(--brown);padding:8px 10px;border-radius:8px;font-size:14px}
+.navlinks{display:flex;flex-wrap:wrap;gap:4px}
+.navlinks a{padding:8px 10px;border-radius:8px;color:var(--brown);font-size:14px}
 .navlinks a:hover{background:var(--soft)}
-.wrap{max-width:1180px;margin:auto;padding:26px 22px 70px}
-.back{display:inline-block;color:var(--brown);font-weight:700;font-size:14px;margin-bottom:16px}
-.shell{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:18px;align-items:start}
-.hero,.card{background:#fff;border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow)}
-.hero{padding:28px}
-.hero-top{display:flex;justify-content:space-between;gap:18px;align-items:flex-start}
-.hero-main{min-width:0}
-.badges{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px}
-.badge{display:inline-flex;align-items:center;gap:6px;background:#f3e5d4;color:var(--brown);font-size:12px;font-weight:700;padding:6px 10px;border-radius:20px}
+.wrap{max-width:1160px;margin:auto;padding:28px 22px 72px}
+.back{display:inline-block;margin-bottom:15px;color:var(--brown);font-weight:700;font-size:14px}
+.hero{background:#fff;border:1px solid var(--border);border-radius:18px;padding:28px;box-shadow:var(--shadow)}
+.badges{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:11px}
+.badge{display:inline-flex;align-items:center;padding:6px 10px;border-radius:999px;background:#f2e7da;color:var(--brown);font-size:12px;font-weight:700}
 .badge.green{background:var(--green-bg);color:var(--green)}
-.badge.neutral{background:#f2f0ed;color:#665e55}
-h1{font-size:38px;line-height:1.1;color:var(--brown-dark);margin:0 0 10px}
-.summary{color:var(--muted);font-size:16px;margin:0;max-width:790px}
-.location{display:flex;align-items:center;gap:7px;margin-top:14px;color:var(--muted);font-size:14px}
-.hero-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:20px}
-.button{display:inline-flex;align-items:center;justify-content:center;gap:7px;border-radius:9px;padding:11px 14px;font-size:13px;font-weight:700}
+.badge.gray{background:#f1efec;color:#666}
+.hero-grid{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:22px;align-items:end}
+h1{font-size:clamp(30px,4vw,42px);line-height:1.1;color:var(--brown-dark);margin:0 0 9px}
+.summary{font-size:17px;color:var(--muted);max-width:820px;margin:0}
+.location{display:flex;align-items:center;gap:7px;color:var(--muted);font-size:14px;margin-top:14px}
+.hero-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.button{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:42px;padding:10px 14px;border-radius:9px;font-size:13px;font-weight:700;border:1px solid transparent}
 .primary{background:var(--orange);color:#fff}
 .secondary{background:var(--soft);color:var(--brown)}
-.outline{background:#fff;border:1px solid var(--border);color:var(--brown)}
-.card{padding:21px}
-.card h2{font-size:18px;color:var(--brown-dark);margin:0 0 15px}
-.sidebar .card+.card{margin-top:18px}
-.contact-card .contact-row{padding:13px 0;border-top:1px solid var(--border)}
-.contact-card .contact-row:first-child{border-top:0;padding-top:0}
-.contact-label{font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);margin-bottom:3px}
-.contact-value{font-size:14px;font-weight:700}
-.contact-value a{color:var(--orange)}
-.status-box{background:#fbf8f4;border:1px solid var(--border);border-radius:12px;padding:13px}
-.status-title{font-size:12px;color:var(--muted);margin-bottom:4px}
-.status-value{font-size:14px;font-weight:700;color:var(--brown-dark)}
-.layout{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(280px,.8fr);gap:18px;margin-top:18px}
+.outline{background:#fff;color:var(--brown);border-color:var(--border)}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 310px;gap:18px;align-items:start;margin-top:18px}
+.main,.side{min-width:0}
+.card{background:#fff;border:1px solid var(--border);border-radius:16px;padding:23px;box-shadow:var(--shadow)}
 .card+.card{margin-top:18px}
+.card h2{margin:0 0 14px;font-size:19px;color:var(--brown-dark)}
+.card-sub{margin:-5px 0 16px;color:var(--muted);font-size:13px}
+.content{font-size:15px}
+.content p{margin:0 0 14px}
+.content p:last-child{margin-bottom:0}
+.content h3{font-size:16px;color:var(--brown-dark);margin:21px 0 8px}
+.content h3:first-child{margin-top:0}
+.content ul{margin:7px 0 15px;padding-left:22px}
+.content li{margin:5px 0}
 .info-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 .info-item{border:1px solid var(--border);border-radius:11px;padding:13px;background:#fff;min-width:0}
-.info-label{font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);margin-bottom:4px}
-.info-value{font-size:14px;white-space:pre-wrap;word-break:break-word}
-.info-value a{color:var(--orange);font-weight:700}
-.content{color:var(--text)}
-.content p{margin:0 0 14px}
-.content h3{font-size:16px;color:var(--brown-dark);margin:22px 0 8px}
-.content ul{margin:7px 0 16px;padding-left:22px}
-.content li{margin:5px 0}
-.warning{background:#fff6e8;border:1px solid #f0d8ad;border-radius:11px;padding:13px;margin-top:15px}
-.section-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:15px}
-.section-head p{margin:3px 0 0;color:var(--muted);font-size:13px}
-.experience{border-top:1px solid var(--border);padding:16px 0}
-.experience:first-child{border-top:0;padding-top:0}
-.stars{letter-spacing:2px;color:var(--gold)}
+.info-label{font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:4px}
+.info-value{font-size:14px;word-break:break-word;white-space:pre-wrap}
+.info-value a,.source a,.contact-value a{color:var(--orange);font-weight:700}
+.warning{margin-top:15px;background:#fff7e9;border:1px solid #f1d6a7;border-radius:11px;padding:13px;font-size:13px}
+.contact-card{display:grid;gap:10px}
+.contact-row{border:1px solid var(--border);border-radius:11px;padding:12px 13px;background:#fff}
+.contact-label{font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:3px}
+.contact-value{font-size:14px;font-weight:700}
+.meta-box{display:grid;gap:10px}
+.meta-row{padding:11px 12px;border-radius:11px;background:#fbf9f6;border:1px solid var(--border)}
+.meta-label{font-size:11px;color:var(--muted);margin-bottom:2px}
+.meta-value{font-size:13px;font-weight:700;color:var(--brown-dark)}
+.experience{padding:16px 0;border-top:1px solid var(--border)}
+.experience:first-child{padding-top:0;border-top:0}
+.stars{color:var(--gold);letter-spacing:2px}
+.exp-text{font-size:14px;margin-top:7px}
 .exp-meta{font-size:12px;color:var(--muted);margin-top:7px}
-.empty-note{font-size:13px;color:var(--muted)}
-.source-row{font-size:13px;color:var(--muted);margin:0 0 9px}
-.source-row a{color:var(--orange);font-weight:700}
-.note{font-size:12px;color:var(--muted);margin-top:16px}
-.icon{width:16px;height:16px;display:inline-block;flex:0 0 16px}
+.empty-note{font-size:13px;color:var(--muted);margin:0}
+.source-row{display:flex;gap:7px;align-items:flex-start;font-size:13px;color:var(--muted);margin-bottom:9px}
+.note{font-size:12px;color:var(--muted);margin:14px 0 0}
+.icon{display:inline-flex;width:16px;height:16px;flex:0 0 16px}
 .icon svg{width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.error,.empty{text-align:center;padding:30px;color:var(--muted);background:#fff;border:1px solid var(--border);border-radius:14px}
+.error,.empty{text-align:center;padding:30px;background:#fff;border:1px solid var(--border);border-radius:14px;color:var(--muted)}
 @media(max-width:900px){
- .shell,.layout{grid-template-columns:1fr}
- .sidebar{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
- .sidebar .card+.card{margin-top:0}
+  .layout{grid-template-columns:1fr}
+  .side{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+  .side .card+.card{margin-top:0}
 }
 @media(max-width:680px){
- .nav{display:block}
- .navlinks{margin-top:9px}
- .hero-top{display:block}
- h1{font-size:30px}
- .wrap{padding:22px 15px 55px}
- .hero{padding:22px}
- .card{padding:19px}
- .info-grid,.sidebar{grid-template-columns:1fr}
+  .nav{display:block;padding:12px 15px}
+  .navlinks{margin-top:8px}
+  .wrap{padding:21px 15px 52px}
+  .hero{padding:21px}
+  .hero-grid{grid-template-columns:1fr}
+  .info-grid{grid-template-columns:1fr}
+  .side{display:block}
+  .side .card+.card{margin-top:18px}
+  .card{padding:19px}
+  .hero-actions .button{flex:1 1 145px}
 }
 </style>
 </head>
 <body>
 <header class="top">
-<div class="nav">
-<div class="brand">Hijrah Netwerk</div>
-<div class="navlinks">
-<a href="/">Website</a>
-<a href="navigatie.html">Hijrah Navigatie</a>
-<a href="kennisbank.html">Kennisbank</a>
-<a href="dashboard.html">Mijn Hijrah</a>
-<a href="bijdragen.html">Informatie insturen</a>
-</div>
-</div>
+  <div class="nav">
+    <div class="brand">Hijrah Netwerk</div>
+    <nav class="navlinks" aria-label="Hoofdnavigatie">
+      <a href="/">Website</a>
+      <a href="navigatie.html">Hijrah Navigatie</a>
+      <a href="kennisbank.html">Kennisbank</a>
+      <a href="dashboard.html">Mijn Hijrah</a>
+      <a href="bijdragen.html">Informatie insturen</a>
+    </nav>
+  </div>
 </header>
 
 <main class="wrap">
-<a class="back" href="navigatie.html">← Terug naar Hijrah Navigatie</a>
-<div id="app"><div class="empty">Fiche wordt geladen...</div></div>
+  <a class="back" href="navigatie.html">← Terug naar Hijrah Navigatie</a>
+  <div id="app"><div class="empty">Fiche wordt geladen...</div></div>
 </main>
 
 <script>
@@ -124,143 +126,164 @@ const data=x=>x&&x.card_data&&typeof x.card_data==='object'?x.card_data:{};
 const params=new URLSearchParams(location.search),id=params.get('id');
 
 const icon={
- pin:'<span class="icon"><svg viewBox="0 0 24 24"><path d="M12 21s7-6.2 7-12A7 7 0 1 0 5 9c0 5.8 7 12 7 12Z"/><circle cx="12" cy="9" r="2.3"/></svg></span>',
- phone:'<span class="icon"><svg viewBox="0 0 24 24"><path d="M6.6 3.5 9.1 7 7.3 9.2c1.1 2.3 2.9 4.1 5.2 5.2l2.2-1.8 3.5 2.5c.6.4.8 1.2.5 1.8l-.9 1.7c-.3.6-1 .9-1.7.8C9.6 18.3 5.7 14.4 4.6 8c-.1-.7.2-1.4.8-1.7l1.7-.9c.3-.2.6-.2.9.1Z"/></svg></span>',
- mail:'<span class="icon"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/></svg></span>',
- web:'<span class="icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.2 3 14.8 0 18M12 3c-3 3.2-3 14.8 0 18"/></svg></span>',
- map:'<span class="icon"><svg viewBox="0 0 24 24"><path d="m9 18-6 3V6l6-3 6 3 6-3v15l-6 3-6-3Z"/><path d="M9 3v15M15 6v15"/></svg></span>'
+  pin:'<span class="icon"><svg viewBox="0 0 24 24"><path d="M12 21s7-6.2 7-12A7 7 0 1 0 5 9c0 5.8 7 12 7 12Z"/><circle cx="12" cy="9" r="2.3"/></svg></span>',
+  phone:'<span class="icon"><svg viewBox="0 0 24 24"><path d="M6.6 3.5 9.1 7 7.3 9.2c1.1 2.3 2.9 4.1 5.2 5.2l2.2-1.8 3.5 2.5c.6.4.8 1.2.5 1.8l-.9 1.7c-.3.6-1 .9-1.7.8C9.6 18.3 5.7 14.4 4.6 8c-.1-.7.2-1.4.8-1.7l1.7-.9c.3-.2.6-.2.9.1Z"/></svg></span>',
+  web:'<span class="icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.2 3 14.8 0 18M12 3c-3 3.2-3 14.8 0 18"/></svg></span>',
+  map:'<span class="icon"><svg viewBox="0 0 24 24"><path d="m9 18-6 3V6l6-3 6 3 6-3v15l-6 3-6-3Z"/><path d="M9 3v15M15 6v15"/></svg></span>'
 };
 
 function formatContent(value){
- const text=value==null?'':String(value).replace(/\\r/g,'').replace(/\\n/g,'\n').trim();
- if(!text)return '';
- const lines=text.split(/\n+/).map(x=>x.trim()).filter(Boolean);
- let out='',list=[];
- const flush=()=>{if(!list.length)return;out+='<ul>'+list.map(x=>'<li>'+esc(x.replace(/^•\s*/,''))+'</li>').join('')+'</ul>';list=[]};
- lines.forEach(line=>{
-  if(/^•\s*/.test(line)){list.push(line);return}
+  const text=value==null?'':String(value).replace(/\r/g,'').replace(/\n/g,'\n').trim();
+  if(!text)return '';
+  const lines=text.split(/\n+/).map(x=>x.trim()).filter(Boolean);
+  let out='',list=[];
+  const flush=()=>{
+    if(!list.length)return;
+    out+='<ul>'+list.map(x=>'<li>'+esc(x.replace(/^•\s*/,''))+'</li>').join('')+'</ul>';
+    list=[];
+  };
+  lines.forEach(line=>{
+    if(/^•\s*/.test(line)){list.push(line);return}
+    flush();
+    if(/^(Opleiding en professionele achtergrond|Over het cabinet|Consultaties|Afspraken|Huisbezoeken|Teleconsultatie|Belangrijk)$/i.test(line))out+='<h3>'+esc(line)+'</h3>';
+    else out+='<p>'+esc(line)+'</p>';
+  });
   flush();
-  if(/^(Opleiding en professionele achtergrond|Over het cabinet|Consultaties|Afspraken|Huisbezoeken|Teleconsultatie|Belangrijk)$/i.test(line))out+='<h3>'+esc(line)+'</h3>';
-  else out+='<p>'+esc(line)+'</p>';
- });
- flush();
- return out;
+  return out;
 }
 
-function item(label,value,html=''){
- if(!value)return '';
- return '<div class="info-item"><div class="info-label">'+esc(label)+'</div><div class="info-value">'+(html||esc(value))+'</div></div>';
+function item(label,value,html){
+  if(value==null || String(value).trim()==='')return '';
+  return '<div class="info-item"><div class="info-label">'+esc(label)+'</div><div class="info-value">'+(html||esc(value))+'</div></div>';
 }
 
-function telHref(value){return value?'tel:'+String(value).replace(/[^+\d]/g,''):''}
+function telHref(value){
+  return value?'tel:'+String(value).replace(/[^+\d]/g,''):'';
+}
 
 async function init(){
- if(!id){document.getElementById('app').innerHTML='<div class="error">Geen fiche geselecteerd.</div>';return}
- const [r,c,ci,ca]=await Promise.all([
-  db().from('topic').select('id,title,summary,content,information_type,country_id,city_id,category_id,published,visibility,card_data,source,source_url,updated_at,last_checked_at,next_review_at,verified_at,submitted_by').eq('id',id).eq('published',true).maybeSingle(),
-  db().from('countries').select('id,name').order('name'),
-  db().from('cities').select('id,name').order('name'),
-  db().from('categories').select('id,name').order('name')
- ]);
- if(r.error||!r.data){document.getElementById('app').innerHTML='<div class="error">Deze fiche is niet beschikbaar of kon niet worden geladen.</div>';return}
+  if(!id){
+    document.getElementById('app').innerHTML='<div class="error">Geen fiche geselecteerd.</div>';
+    return;
+  }
 
- const x=r.data,d=data(x);
- const country=(c.data||[]).find(y=>y.id===x.country_id)?.name||'';
- const city=(ci.data||[]).find(y=>y.id===x.city_id)?.name||'';
- const cat=(ca.data||[]).find(y=>y.id===x.category_id)?.name||'';
- const loc=[city,country].filter(Boolean).join(', ');
- const exps=Array.isArray(d.experiences)?d.experiences:[];
- const infoType=x.information_type||'Praktische informatie';
- const verified=x.verified_at||x.last_checked_at;
- const pageTitle=x.title||'Hijrah Netwerk';
- document.title=pageTitle;
+  const [r,c,ci,ca]=await Promise.all([
+    db().from('topic').select('id,title,summary,content,information_type,country_id,city_id,category_id,published,visibility,card_data,source,source_url,updated_at,last_checked_at,next_review_at,verified_at,submitted_by').eq('id',id).eq('published',true).maybeSingle(),
+    db().from('countries').select('id,name').order('name'),
+    db().from('cities').select('id,name').order('name'),
+    db().from('categories').select('id,name').order('name')
+  ]);
 
- let html='<div class="shell">';
+  if(r.error||!r.data){
+    document.getElementById('app').innerHTML='<div class="error">Deze fiche is niet beschikbaar of kon niet worden geladen.</div>';
+    return;
+  }
 
- html+='<section class="hero"><div class="hero-top"><div class="hero-main">';
- html+='<div class="badges">';
- html+='<span class="badge">'+esc(cat||'Hijrah Navigatie')+'</span>';
- if(verified)html+='<span class="badge green">✓ Geverifieerde informatie</span>';else html+='<span class="badge neutral">Niet geverifieerd</span>';
- html+='</div>';
- html+='<h1>'+esc(pageTitle)+'</h1>';
- html+='<p class="summary">'+esc(x.summary||d.short_description||'')+'</p>';
- if(loc)html+='<div class="location">'+icon.pin+esc(loc)+'</div>';
- html+='<div class="hero-actions">';
- if(d.phone)html+='<a class="button primary" href="'+esc(telHref(d.phone))+'">'+icon.phone+'Bel / toon nummer</a>';
- if(d.maps_url)html+='<a class="button secondary" target="_blank" rel="noopener" href="'+esc(d.maps_url)+'">'+icon.map+'Ga daarheen</a>';
- if(d.website)html+='<a class="button outline" target="_blank" rel="noopener" href="'+esc(d.website)+'">'+icon.web+'Website</a>';
- html+='</div></div></div></section>';
+  const x=r.data,d=data(x);
+  const country=(c.data||[]).find(y=>y.id===x.country_id)?.name||'';
+  const city=(ci.data||[]).find(y=>y.id===x.city_id)?.name||'';
+  const cat=(ca.data||[]).find(y=>y.id===x.category_id)?.name||'';
+  const loc=[city,country].filter(Boolean).join(', ');
+  const exps=Array.isArray(d.experiences)?d.experiences:[];
+  const infoType=x.information_type||'Praktische informatie';
+  const verified=x.verified_at||x.last_checked_at;
+  const pageTitle=x.title||'Hijrah Netwerk';
 
- html+='<aside class="sidebar">';
- html+='<section class="card contact-card"><h2>Contact</h2>';
- if(d.phone)html+='<div class="contact-row"><div class="contact-label">Telefoon</div><div class="contact-value"><a href="'+esc(telHref(d.phone))+'">'+esc(d.phone)+'</a></div></div>';
- if(d.email)html+='<div class="contact-row"><div class="contact-label">E-mail</div><div class="contact-value"><a href="mailto:'+esc(d.email)+'">'+esc(d.email)+'</a></div></div>';
- if(d.website)html+='<div class="contact-row"><div class="contact-label">Website</div><div class="contact-value"><a target="_blank" rel="noopener" href="'+esc(d.website)+'">Officiële website</a></div></div>';
- if(!d.phone&&!d.email&&!d.website)html+='<p class="empty-note">Er zijn nog geen contactgegevens toegevoegd.</p>';
- html+='</section>';
+  document.title=pageTitle;
 
- html+='<section class="card"><h2>HN-status</h2><div class="status-box"><div class="status-title">Informatietype</div><div class="status-value">'+esc(infoType)+'</div>';
- if(verified)html+='<div style="margin-top:11px"><div class="status-title">Laatst gecontroleerd</div><div class="status-value">'+new Date(verified).toLocaleDateString('nl-NL')+'</div></div>';
- html+='</div></section>';
- html+='</aside></div>';
+  let html='';
 
- html+='<div class="layout"><div>';
+  html+='<section class="hero">';
+  html+='<div class="badges"><span class="badge">'+esc(cat||'Hijrah Navigatie')+'</span>';
+  html+=verified?'<span class="badge green">✓ Geverifieerde informatie</span>':'<span class="badge gray">Niet geverifieerd</span>';
+  html+='</div>';
+  html+='<div class="hero-grid"><div>';
+  html+='<h1>'+esc(pageTitle)+'</h1>';
+  if(x.summary||d.short_description)html+='<p class="summary">'+esc(x.summary||d.short_description)+'</p>';
+  if(loc)html+='<div class="location">'+icon.pin+esc(loc)+'</div>';
+  html+='<div class="hero-actions">';
+  if(d.phone)html+='<a class="button primary" href="'+esc(telHref(d.phone))+'">'+icon.phone+'Bel</a>';
+  if(d.maps_url)html+='<a class="button secondary" target="_blank" rel="noopener" href="'+esc(d.maps_url)+'">'+icon.map+'Ga daarheen</a>';
+  if(d.website)html+='<a class="button outline" target="_blank" rel="noopener" href="'+esc(d.website)+'">'+icon.web+'Website</a>';
+  html+='</div>';
+  html+='</div></div></section>';
 
- if(x.content)html+='<section class="card"><div class="section-head"><div><h2>Over deze plek of dienst</h2><p>Belangrijke informatie die HN over deze vermelding heeft verzameld.</p></div></div><div class="content">'+formatContent(x.content)+'</div></section>';
+  html+='<div class="layout">';
 
- const info=[
-  item('Type',d.service_type),
-  item('Adres',d.address),
-  item('Wijk',d.neighborhood),
-  item('Talen',d.languages),
-  item('Openingstijden',d.opening_hours),
-  item('Voor kinderen',d.for_children),
-  item('Afspraak nodig',d.appointment),
-  item('Huisbezoeken',d.home_visits),
-  item('Teleconsultatie',d.teleconsultation),
-  item('Verzekering / CNSS',d.insurance),
-  item('Prijs / kosten',d.price),
-  item('Spoed',d.emergency)
- ];
- if(info.some(Boolean)){
-  html+='<section class="card"><div class="section-head"><div><h2>Praktische gegevens</h2><p>Snel bekijken zonder door een lang artikel te moeten zoeken.</p></div></div><div class="info-grid">'+info.join('')+'</div>';
-  if(d.warning)html+='<div class="warning">⚠️ '+esc(d.warning)+'</div>';
+  html+='<div class="main">';
+
+  if(x.content){
+    html+='<section class="card"><h2>Over deze plek of dienst</h2><div class="content">'+formatContent(x.content)+'</div></section>';
+  }
+
+  const info=[
+    item('Type',d.service_type),
+    item('Adres',d.address),
+    item('Wijk',d.neighborhood),
+    item('Talen',d.languages),
+    item('Telefoon',d.phone,'<a href="'+esc(telHref(d.phone))+'">'+esc(d.phone)+'</a>'),
+    item('E-mail',d.email,'<a href="mailto:'+esc(d.email)+'">'+esc(d.email)+'</a>'),
+    item('Openingstijden',d.opening_hours),
+    item('Voor kinderen',d.for_children),
+    item('Afspraak nodig',d.appointment),
+    item('Huisbezoeken',d.home_visits),
+    item('Teleconsultatie',d.teleconsultation),
+    item('Verzekering / CNSS',d.insurance),
+    item('Prijs / kosten',d.price),
+    item('Spoed',d.emergency)
+  ];
+
+  if(info.some(Boolean)){
+    html+='<section class="card"><h2>Praktische gegevens</h2><p class="card-sub">De informatie die voor deze vermelding beschikbaar is.</p><div class="info-grid">'+info.join('')+'</div>';
+    if(d.warning)html+='<div class="warning">⚠️ '+esc(d.warning)+'</div>';
+    html+='</section>';
+  }
+
+  html+='<section class="card"><h2>Ervaringen uit de HN-community</h2>';
+  if(exps.length){
+    html+=exps.map(e=>{
+      const rating=Math.min(5,Math.max(0,Number(e.rating)||0));
+      return '<div class="experience"><div class="stars">'+('★'.repeat(rating)+('☆'.repeat(5-rating)))+'</div><div class="exp-text">'+esc(e.text||e.content||'')+'</div><div class="exp-meta">Ingediend door: '+esc(e.name||'Anoniem')+(e.date?' · '+esc(e.date):'')+'</div></div>';
+    }).join('');
+  }else{
+    html+='<p class="empty-note">Er zijn nog geen ervaringen uit de HN-community toegevoegd.</p>';
+  }
+  html+='<div class="hero-actions"><a class="button primary" href="bijdragen.html?type=experience&title='+encodeURIComponent(pageTitle)+'">Ervaring delen</a></div></section>';
+
+  html+='</div>';
+
+  html+='<aside class="side">';
+
+  html+='<section class="card contact-card"><h2>Contact</h2>';
+  if(d.phone)html+='<div class="contact-row"><div class="contact-label">Telefoon</div><div class="contact-value"><a href="'+esc(telHref(d.phone))+'">'+esc(d.phone)+'</a></div></div>';
+  if(d.email)html+='<div class="contact-row"><div class="contact-label">E-mail</div><div class="contact-value"><a href="mailto:'+esc(d.email)+'">'+esc(d.email)+'</a></div></div>';
+  if(d.website)html+='<div class="contact-row"><div class="contact-label">Website</div><div class="contact-value"><a href="'+esc(d.website)+'" target="_blank" rel="noopener">Officiële website</a></div></div>';
+  if(!d.phone&&!d.email&&!d.website)html+='<p class="empty-note">Nog geen contactgegevens beschikbaar.</p>';
   html+='</section>';
- }
 
- html+='<section class="card"><div class="section-head"><div><h2>Ervaringen uit de HN-community</h2><p>Ervaringen worden door HN gecontroleerd voordat ze zichtbaar worden.</p></div></div>';
- if(exps.length){
-  html+=exps.map(e=>{
-   const rating=Math.min(5,Math.max(0,Number(e.rating)||0));
-   return '<div class="experience"><div class="stars">'+('★'.repeat(rating)+('☆'.repeat(5-rating)))+'</div><div class="content" style="margin-top:8px">'+esc(e.text||e.content||'')+'</div><div class="exp-meta">Ingediend door: '+esc(e.name||'Anoniem')+(e.date?' · '+esc(e.date):'')+'</div></div>';
-  }).join('');
- }else html+='<p class="empty-note">Er zijn nog geen ervaringen uit de HN-community toegevoegd.</p>';
- html+='<div class="hero-actions"><a class="button primary" href="bijdragen.html?type=experience&title='+encodeURIComponent(pageTitle)+'">Ervaring delen</a></div></section>';
+  html+='<section class="card"><h2>HN-status</h2><div class="meta-box">';
+  html+='<div class="meta-row"><div class="meta-label">Informatietype</div><div class="meta-value">'+esc(infoType)+'</div></div>';
+  if(verified)html+='<div class="meta-row"><div class="meta-label">Laatst gecontroleerd</div><div class="meta-value">'+new Date(verified).toLocaleDateString('nl-NL')+'</div></div>';
+  html+='</div></section>';
 
- html+='</div><aside>';
+  if(d.address||d.maps_url){
+    html+='<section class="card"><h2>Locatie</h2>';
+    if(d.address)html+='<div class="source-row">'+icon.pin+'<span>'+esc(d.address)+'</span></div>';
+    if(d.maps_url)html+='<div class="hero-actions"><a class="button secondary" target="_blank" rel="noopener" href="'+esc(d.maps_url)+'">'+icon.map+'Google Maps</a></div>';
+    html+='</section>';
+  }
 
- if(d.address||d.maps_url){
-  html+='<section class="card"><h2>Locatie</h2>';
-  if(d.address)html+='<div class="source-row">'+icon.pin+' '+esc(d.address)+'</div>';
-  if(d.maps_url)html+='<div class="hero-actions" style="margin-top:13px"><a class="button secondary" target="_blank" rel="noopener" href="'+esc(d.maps_url)+'">'+icon.map+'Google Maps</a></div>';
-  html+='</section>';
- }
+  html+='<section class="card"><h2>Bron & controle</h2>';
+  if(x.source)html+='<div class="source-row"><span><strong>Bron:</strong> '+esc(x.source)+'</span></div>';
+  if(x.source_url)html+='<div class="source-row">'+icon.web+'<a href="'+esc(x.source_url)+'" target="_blank" rel="noopener">Officiële bron bekijken</a></div>';
+  if(verified)html+='<div class="source-row"><span><strong>Laatst gecontroleerd:</strong> '+new Date(verified).toLocaleDateString('nl-NL')+'</span></div>';
+  html+='<p class="note">HN maakt onderscheid tussen bevestigde informatie en community-ervaringen. Controleer belangrijke gegevens bij de bron voordat je vertrekt.</p></section>';
 
- html+='<section class="card"><h2>Bron & controle</h2>';
- if(x.source)html+='<div class="source-row"><strong>Bron:</strong> '+esc(x.source)+'</div>';
- if(x.source_url)html+='<div class="source-row">'+linkSource(x.source_url,'Officiële bron bekijken')+'</div>';
- if(verified)html+='<div class="source-row"><strong>Laatst gecontroleerd:</strong> '+new Date(verified).toLocaleDateString('nl-NL')+'</div>';
- html+='<p class="note">HN maakt onderscheid tussen bevestigde informatie en community-ervaringen. Controleer belangrijke gegevens bij de bron voordat je vertrekt.</p></section>';
+  html+='</aside></div>';
 
- html+='<section class="card"><h2>Informatie bijwerken</h2><p class="empty-note">Zie je iets dat niet klopt of verouderd is?</p><div class="hero-actions"><a class="button secondary" href="bijdragen.html?type=correction&title='+encodeURIComponent(pageTitle)+'">Correctie insturen</a></div></section>';
+  html+='<section class="card" style="margin-top:18px"><h2>Informatie corrigeren</h2><p class="empty-note">Zie je iets dat niet klopt of verouderd is? Stuur de correctie naar HN. Niets wordt automatisch aangepast.</p><div class="hero-actions"><a class="button secondary" href="bijdragen.html?type=correction&title='+encodeURIComponent(pageTitle)+'">Correctie insturen</a></div></section>';
 
- html+='</aside></div>';
-
- document.getElementById('app').innerHTML=html;
-}
-
-function linkSource(v,label){
- return '<a href="'+esc(v)+'" target="_blank" rel="noopener">'+esc(label||v)+'</a>';
+  document.getElementById('app').innerHTML=html;
 }
 
 init();
