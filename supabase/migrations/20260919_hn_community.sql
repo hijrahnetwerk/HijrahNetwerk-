@@ -129,12 +129,20 @@ begin
   v_number := 1000 + floor(random() * 9000)::integer;
   v_name := 'Communitylid ' || lpad(v_number::text,4,'0');
 
+  if trim(coalesce(new.raw_user_meta_data ->> 'referral_code','')) = '' then
+    raise exception 'Een HN-refercode is verplicht om een account aan te maken.';
+  end if;
+
   select p.id
   into v_referrer
   from public.profiles p
   where p.public_code = upper(trim(new.raw_user_meta_data ->> 'referral_code'))
     and p.application_status = 'approved'
   limit 1;
+
+  if v_referrer is null then
+    raise exception 'Deze HN-refercode bestaat niet of is nog niet actief.';
+  end if;
 
   insert into public.profiles (
     id,
