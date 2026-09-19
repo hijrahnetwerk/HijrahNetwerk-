@@ -579,12 +579,20 @@ let plan=null;
 
 let presenceTimer=null;
 let presenceSessionStarted=null;
+let presenceAvailable=true;
 
 const PRESENCE_TIMEOUT=90000;
+const PRESENCE_INTERVAL=30000;
 
 const $=id=>document.getElementById(id);
 
+
+/* =========================
+   ALGEMEEN
+========================= */
+
 function message(text,type='success'){
+
   const e=$('message');
 
   e.textContent=text;
@@ -595,9 +603,11 @@ function message(text,type='success'){
   window.__mt=setTimeout(()=>{
     e.className='message';
   },4500);
+
 }
 
 function esc(v){
+
   return v==null
     ? ''
     : String(v)
@@ -606,6 +616,7 @@ function esc(v){
         .replace(/>/g,'&gt;')
         .replace(/"/g,'&quot;')
         .replace(/'/g,'&#039;');
+
 }
 
 function options(el,items,placeholder){
@@ -616,12 +627,17 @@ function options(el,items,placeholder){
     '<option value="">'+placeholder+'</option>'+
     items
       .filter(x=>x.is_active!==false)
-      .map(x=>'<option value="'+x.id+'">'+esc(x.name)+'</option>')
+      .map(x=>
+        '<option value="'+x.id+'">'+
+        esc(x.name)+
+        '</option>'
+      )
       .join('');
 
   if(current){
     el.value=current;
   }
+
 }
 
 function tabs(){
@@ -640,16 +656,25 @@ function tabs(){
 
       b.classList.add('active');
 
-      $('tab-'+b.dataset.tab).classList.add('active');
+      $('tab-'+b.dataset.tab)
+        .classList.add('active');
+
     };
 
   });
 
 }
 
+
+/* =========================
+   ACCOUNT
+========================= */
+
 async function requireUser(){
 
-  const {data,error}=await db().auth.getSession();
+  const {data,error}=await db()
+    .auth
+    .getSession();
 
   if(error || !data.session){
 
@@ -661,16 +686,22 @@ async function requireUser(){
   user=data.session.user;
 
   $('welcome').textContent=
-    'Ingelogd als '+(user.email||'lid')+'.';
+    'Ingelogd als '+
+    (user.email||'lid')+
+    '.';
 
-  $('profileEmail').value=user.email||'';
+  $('profileEmail').value=
+    user.email||'';
 
   $('profileCreated').value=
     user.created_at
-      ? new Date(user.created_at).toLocaleString('nl-NL')
+      ? new Date(
+          user.created_at
+        ).toLocaleString('nl-NL')
       : '';
 
   return true;
+
 }
 
 
@@ -700,10 +731,12 @@ async function logUserActivity(
       });
 
     if(error){
+
       console.warn(
         'Activiteit kon niet worden opgeslagen:',
         error.message
       );
+
     }
 
   }catch(error){
@@ -714,12 +747,60 @@ async function logUserActivity(
     );
 
   }
+
 }
 
 
 /* =========================
    ONLINE / PRESENCE
 ========================= */
+
+function setPresenceText(text){
+
+  const el=$('presenceText');
+
+  if(el){
+    el.textContent=text;
+  }
+
+}
+
+function getSessionStart(data){
+
+  const now=new Date();
+
+  if(
+    !data ||
+    !data.last_seen_at
+  ){
+    return now;
+  }
+
+  const lastSeen=
+    new Date(data.last_seen_at);
+
+  if(
+    Number.isNaN(lastSeen.getTime()) ||
+    now.getTime()-lastSeen.getTime() >
+    PRESENCE_TIMEOUT
+  ){
+    return now;
+  }
+
+  if(data.session_started_at){
+
+    const start=
+      new Date(data.session_started_at);
+
+    if(!Number.isNaN(start.getTime())){
+      return start;
+    }
+
+  }
+
+  return now;
+
+}
 
 async function startPresence(){
 
@@ -731,58 +812,60 @@ async function startPresence(){
 
     const {data,error}=await db()
       .from('user_presence')
-      .select('session_started_at,last_seen_at')
-      .eq('user_id',user.id)
+      .select(
+        'session_started_at,last_seen_at,session_seconds'
+      )
+      .eq(
+        'user_id',
+        user.id
+      )
       .maybeSingle();
 
     if(error){
+
+      presenceAvailable=false;
 
       console.warn(
         'Presence kon niet worden geladen:',
         error.message
       );
 
+      setPresenceText(
+        'Je bent ingelogd.'
+      );
+
       return;
-    }
-
-    const now=new Date();
-
-    if(
-      !data ||
-      !data.last_seen_at ||
-      (
-        now.getTime() -
-        new Date(data.last_seen_at).getTime()
-      ) > PRESENCE_TIMEOUT
-    ){
-
-      presenceSessionStarted=now;
-
-    }else if(data.session_started_at){
-
-      presenceSessionStarted=
-        new Date(data.session_started_at);
-
-    }else{
-
-      presenceSessionStarted=now;
 
     }
+
+    presenceAvailable=true;
+
+    presenceSessionStarted=
+      getSessionStart(data);
 
     await updatePresence();
 
-    clearInterval(presenceTimer);
-
-    presenceTimer=setInterval(
-      updatePresence,
-      30000
+    clearInterval(
+      presenceTimer
     );
 
+    presenceTimer=
+      setInterval(
+        updatePresence,
+        PRESENCE_INTERVAL
+      );
+
   }catch(error){
+
+    presenceAvailable=false;
 
     console.warn(
       'Presence starten mislukt:',
       error
+    );
+
+    setPresenceText(
+      'Je bent ingelogd.'
     );
 
   }
@@ -791,7 +874,11 @@ async function startPresence(){
 
 async function updatePresence(){
 
-  if(!user || !presenceSessionStarted){
+  if(
+    !user ||
+    !presenceSessionStarted ||
+    !presenceAvailable
+  ){
     return;
   }
 
@@ -801,9 +888,10 @@ async function updatePresence(){
     Math.max(
       0,
       Math.floor(
-        (now.getTime() -
-        presenceSessionStarted.getTime()) /
-        1000
+        (
+          now.getTime()-
+          presenceSessionStarted.getTime()
+        )/1000
       )
     );
 
@@ -812,12 +900,16 @@ async function updatePresence(){
     .upsert(
       {
         user_id:user.id,
+
         session_started_at:
           presenceSessionStarted.toISOString(),
+
         last_seen_at:
           now.toISOString(),
+
         session_seconds:
           sessionSeconds,
+
         updated_at:
           now.toISOString()
       },
@@ -828,15 +920,22 @@ async function updatePresence(){
 
   if(error){
 
+    presenceAvailable=false;
+
     console.warn(
       'Presence update mislukt:',
       error.message
     );
 
+    setPresenceText(
+      'Je bent ingelogd.'
+    );
+
     return;
+
   }
 
-  $('presenceText').textContent=
+  setPresenceText(
     'Je bent online · actief sinds '+
     presenceSessionStarted.toLocaleTimeString(
       'nl-NL',
@@ -844,9 +943,56 @@ async function updatePresence(){
         hour:'2-digit',
         minute:'2-digit'
       }
-    );
+    )
+  );
 
 }
+
+
+/*
+  Wanneer de gebruiker terugkomt naar het tabblad,
+  wordt de aanwezigheid direct bijgewerkt.
+*/
+
+document.addEventListener(
+  'visibilitychange',
+  async()=>{
+
+    if(
+      document.visibilityState==='visible' &&
+      user
+    ){
+
+      if(
+        presenceSessionStarted
+      ){
+
+        const now=new Date();
+
+        /*
+          Als de vorige heartbeat langer dan
+          PRESENCE_TIMEOUT geleden was,
+          start een nieuwe sessie.
+        */
+
+        if(
+          now.getTime()-
+          presenceSessionStarted.getTime()
+          > 24*60*60*1000
+        ){
+
+          presenceSessionStarted=now;
+
+        }
+
+      }
+
+      await updatePresence();
+
+    }
+
+  }
+);
 
 
 /* =========================
@@ -864,7 +1010,9 @@ async function loadBase(){
 
     db()
       .from('cities')
-      .select('id,name,country_id,is_active')
+      .select(
+        'id,name,country_id,is_active'
+      )
       .order('name')
 
   ]);
@@ -927,14 +1075,19 @@ function fillCity(
   const list=
     cities.filter(c=>
       c.is_active!==false &&
-      (!countryId || c.country_id===countryId)
+      (
+        !countryId ||
+        c.country_id===countryId
+      )
     );
 
   el.innerHTML=
     '<option value="">Kies stad</option>'+
     list
       .map(x=>
-        '<option value="'+x.id+'">'+
+        '<option value="'+
+        x.id+
+        '">'+
         esc(x.name)+
         '</option>'
       )
@@ -947,17 +1100,21 @@ function fillCity(
 }
 
 $('planCountry').onchange=()=>{
+
   fillCity(
     'planCity',
     $('planCountry').value
   );
+
 };
 
 $('prefCountry').onchange=()=>{
+
   fillCity(
     'prefCity',
     $('prefCountry').value
   );
+
 };
 
 
@@ -1030,11 +1187,15 @@ function renderSaved(){
             '</h3>'+
 
             '<div class="meta">'+
-              esc(x.topic?.cities?.name||'')+
+              esc(
+                x.topic?.cities?.name||''
+              )+
               (
                 x.topic?.countries?.name
                 ? ' · '+
-                  esc(x.topic.countries.name)
+                  esc(
+                    x.topic.countries.name
+                  )
                 : ''
               )+
             '</div>'+
@@ -1044,7 +1205,7 @@ function renderSaved(){
           '<button '+
             'class="button danger" '+
             'onclick="removeSaved(\''+
-            x.id+
+            esc(x.id)+
             '\')">'+
             'Verwijderen'+
           '</button>'+
@@ -1052,7 +1213,9 @@ function renderSaved(){
         '</div>'+
 
         '<p class="muted">'+
-          esc(x.topic?.summary||'')+
+          esc(
+            x.topic?.summary||''
+          )+
         '</p>'+
 
       '</div>'
@@ -1086,8 +1249,10 @@ async function removeSaved(id){
     'Opgeslagen informatie verwijderd',
     {
       saved_article_id:id,
-      topic_id:item?.topic_id||null,
-      title:item?.topic?.title||null
+      topic_id:
+        item?.topic_id||null,
+      title:
+        item?.topic?.title||null
     }
   );
 
@@ -1124,9 +1289,14 @@ async function loadProgress(){
 
   steps=s.data||[];
 
+  /*
+    Zorg dat alle actieve stappen voor
+    deze gebruiker bestaan.
+  */
+
   for(const step of steps){
 
-    await db()
+    const {error}=await db()
       .from('member_progress')
       .upsert(
         {
@@ -1142,11 +1312,31 @@ async function loadProgress(){
         }
       );
 
+    if(error){
+
+      console.warn(
+        'Voortgangsitem kon niet worden aangemaakt:',
+        error.message
+      );
+
+    }
+
   }
+
+  /*
+    Belangrijk:
+    alleen voortgang van de huidige gebruiker laden.
+  */
 
   const {data,error}=await db()
     .from('member_progress')
-    .select('*')
+    .select(
+      'id,user_id,topic_id,item_key,title,completed,completed_at,created_at'
+    )
+    .eq(
+      'user_id',
+      user.id
+    )
     .order('created_at');
 
   if(error){
@@ -1212,9 +1402,13 @@ function renderProgress(){
 
         '<input '+
           'type="checkbox" '+
-          (x.completed?'checked':'')+
+          (
+            x.completed
+              ? 'checked'
+              : ''
+          )+
           ' onchange="toggleProgress(\''+
-          x.id+
+          esc(x.id)+
           '\',this.checked)">'+
 
         '<span>'+
@@ -1255,14 +1449,21 @@ async function toggleProgress(
     .update(
       {
         completed:completed,
+
         completed_at:
           completed
             ? new Date().toISOString()
             : null
       }
     )
-    .eq('id',id)
-    .eq('user_id',user.id);
+    .eq(
+      'id',
+      id
+    )
+    .eq(
+      'user_id',
+      user.id
+    );
 
   if(error){
 
@@ -1281,8 +1482,10 @@ async function toggleProgress(
       : 'Voortgangsitem opnieuw geopend',
     {
       progress_id:id,
-      item_key:item?.item_key||null,
-      title:item?.title||null,
+      item_key:
+        item?.item_key||null,
+      title:
+        item?.title||null,
       completed:completed
     }
   );
@@ -1301,7 +1504,10 @@ async function loadPlan(){
   const {data,error}=await db()
     .from('hijrah_plans')
     .select('*')
-    .eq('user_id',user.id)
+    .eq(
+      'user_id',
+      user.id
+    )
     .maybeSingle();
 
   if(error){
@@ -1369,7 +1575,8 @@ async e=>{
       $('planDate').value||null,
 
     notes:
-      $('planNotes').value.trim()||null,
+      $('planNotes').value.trim()||
+      null,
 
     plan_data:{
       text:
@@ -1437,7 +1644,10 @@ async function loadPreferences(){
   const {data,error}=await db()
     .from('member_preferences')
     .select('*')
-    .eq('user_id',user.id)
+    .eq(
+      'user_id',
+      user.id
+    )
     .maybeSingle();
 
   if(error){
@@ -1532,6 +1742,11 @@ async()=>{
 
   if(user){
 
+    /*
+      Laat de laatste aanwezigheid eerst
+      correct opslaan.
+    */
+
     await updatePresence();
 
     await logUserActivity(
@@ -1545,7 +1760,9 @@ async()=>{
     presenceTimer
   );
 
-  await db().auth.signOut();
+  await db()
+    .auth
+    .signOut();
 
   location.href='/login.html';
 
