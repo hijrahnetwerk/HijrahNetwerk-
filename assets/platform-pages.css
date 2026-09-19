@@ -27,7 +27,7 @@ body{
 }
 a{color:inherit;text-decoration:none}
 button,input,select,textarea{font:inherit}
-.container{width:min(var(--container),calc(100% - 40px));margin:auto}
+.container{width:min(var(--container),calc(100% - 48px));margin:auto}
 .site-header{
   position:sticky;top:0;z-index:50;
   background:rgba(255,255,255,.95);
