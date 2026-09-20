@@ -117,13 +117,14 @@
     if(!query || !db())return;
     try{
       const normalizedQuery=normalize(query).slice(0,240);
-      await db().rpc('log_hn_search_event',{
+      const response=const response=await db().rpc('log_hn_search_event',{
         p_query:String(query).trim().slice(0,240),
         p_normalized_query:normalizedQuery,
         p_result_count:Math.max(0,Math.min(10000,resultCount||0)),
         p_clicked_topic_id:null,
         p_event_type:'search'
       });
+      if(response.error) console.error('HN search analytics RPC error:', response.error);
     }catch(e){
       console.debug('HN search analytics unavailable',e);
     }
@@ -139,6 +140,7 @@
         p_clicked_topic_id:topicId,
         p_event_type:'click'
       });
+      if(response.error) console.error('HN click analytics RPC error:', response.error);
     }catch(e){
       console.debug('HN click analytics unavailable',e);
     }
