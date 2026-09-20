@@ -136,7 +136,7 @@ immutable
 as $$
   select trim(regexp_replace(
     regexp_replace(
-      lower(unaccent(coalesce(p_value,''))),
+      lower(coalesce(p_value,'')),
       '[^a-z0-9]+',
       ' ',
       'g'
@@ -203,24 +203,4 @@ $$;
 
 grant execute on function public.get_hn_search_overview() to authenticated;
 
--- Eerste basis-set voor herkenning. Dit is aanvullende zoeklogica, geen inhoudelijke bron.
-insert into public.topic_search_terms (topic_id, term, normalized_term, language, term_type)
-select t.id, v.term, public.hn_normalize_search(v.term), v.language, 'synonym'
-from public.topic t
-cross join lateral (
-  values
-    ('huisarts','nl'),
-    ('dokter','nl'),
-    ('arts','nl'),
-    ('médecin','fr'),
-    ('medecin','fr'),
-    ('generaliste','fr'),
-    ('school','nl'),
-    ('école','fr'),
-    ('ecole','fr'),
-    ('zorg','nl'),
-    ('santé','fr'),
-    ('sante','fr')
-) v(term, language)
-where false
-on conflict (topic_id, normalized_term, language) do nothing;
+-- Zoektermen worden bewust per Topic beheerd. De globale herkenning zit in de zoeklaag;\n-- inhoudelijke synoniemen worden niet automatisch aan willekeurige Topics gekoppeld.\n
