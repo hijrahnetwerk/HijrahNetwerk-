@@ -2026,6 +2026,15 @@ async function toggleProgress(
     return;
   }
 
+  const moduleKey=item?.item_key;
+  if(moduleKey && getModuleByKey(moduleKey)){
+    const data=getPlanData();
+    const md=getModuleData(moduleKey);
+    md.completed=completed;
+    data.modules[moduleKey]=md;
+    await savePlan(true);
+  }
+
   await logUserActivity(
     'progress_updated',
     completed
