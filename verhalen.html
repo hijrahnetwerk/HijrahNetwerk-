@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Verhalen & ervaringen — Hijrah Netwerk</title>
+<meta name="description" content="Gepubliceerde ervaringen van emigranten binnen Hijrah Netwerk.">
+<link rel="stylesheet" href="assets/platform-pages.css">
+<style>.stories{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.story{background:#fff;border:1px solid var(--border);border-radius:15px;padding:20px}.story-meta{font-size:12px;color:var(--muted);margin-bottom:10px}.story p{color:var(--muted)}@media(max-width:700px){.stories{grid-template-columns:1fr}}</style>
+</head>
+<body>
+<link rel="stylesheet" href="assets/public-nav.css"><script src="assets/public-nav.js"></script>
+<main class="hero"><div class="container hero-inner"><span class="eyebrow">Verhalen & ervaringen</span><h1>Ervaringen van zuster tot zuster.</h1><p>Hier verzamelen we gepubliceerde ervaringen uit de HN-community. Een ervaring is persoonlijk en is geen vervanging voor officiële informatie.</p></div></main>
+<section class="section"><div class="container"><div id="stories" class="stories"><div class="search-empty">Ervaringen laden...</div></div><div style="margin-top:22px"><a class="button primary" href="/bijdragen?type=experience">Deel jouw ervaring</a></div></div></section>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="assets/config.js"></script><script src="supabase-client.js"></script>
+<script>
+const db=()=>window.hijrahSupabase,esc=v=>String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+async function init(){
+ for(let i=0;i<60&&!db();i++)await new Promise(r=>setTimeout(r,100));
+ const box=document.getElementById('stories'); if(!db()){box.innerHTML='<div class="search-empty">De ervaringen konden niet worden geladen.</div>';return}
+ const {data,error}=await db().from('topic').select('id,title,summary,content,information_type,country_id,city_id,countries(name),cities(name)').eq('published',true).eq('information_type','Ervaring').order('updated_at',{ascending:false});
+ if(error){box.innerHTML='<div class="search-empty">De ervaringen konden momenteel niet worden geladen.</div>';return}
+ if(!data?.length){box.innerHTML='<div class="search-empty">Er zijn nog geen gepubliceerde ervaringen. Je kunt wel alvast jouw ervaring insturen.</div>';return}
+ box.innerHTML=data.map(x=>'<article class="story"><div class="story-meta">'+esc([x.cities?.name,x.countries?.name].filter(Boolean).join(', ')||'Ervaring')+'</div><h2>'+esc(x.title||'Ervaring')+'</h2><p>'+esc(x.summary||x.content||'')+'</p><a class="button secondary" href="/fiche?id='+encodeURIComponent(x.id)+'">Lees meer</a></article>').join('');
+}
+init();
+</script></body></html>
