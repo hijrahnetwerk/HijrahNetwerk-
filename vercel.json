@@ -105,6 +105,11 @@
       "source": "/fiche.html",
       "destination": "/fiche",
       "permanent": true
+    },
+    {
+      "source": "/stappenplan.html",
+      "destination": "/stappenplan",
+      "permanent": true
     }
   ],
   "rewrites": [
@@ -191,6 +196,10 @@
     {
       "source": "/fiche",
       "destination": "/fiche.html"
+    },
+    {
+      "source": "/stappenplan",
+      "destination": "/stappenplan.html"
     }
   ]
 }
