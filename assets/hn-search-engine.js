@@ -117,11 +117,12 @@
     if(!query || !db())return;
     try{
       const normalizedQuery=normalize(query).slice(0,240);
-      await db().from('hn_search_events').insert({
-        query:String(query).trim().slice(0,240),
-        normalized_query:normalizedQuery,
-        result_count:Math.max(0,Math.min(10000,resultCount||0)),
-        event_type:'search'
+      await db().rpc('log_hn_search_event',{
+        p_query:String(query).trim().slice(0,240),
+        p_normalized_query:normalizedQuery,
+        p_result_count:Math.max(0,Math.min(10000,resultCount||0)),
+        p_clicked_topic_id:null,
+        p_event_type:'search'
       });
     }catch(e){
       console.debug('HN search analytics unavailable',e);
@@ -131,12 +132,12 @@
   async function logClick(db,query,topicId){
     if(!query || !topicId || !db())return;
     try{
-      await db().from('hn_search_events').insert({
-        query:String(query).trim().slice(0,240),
-        normalized_query:normalize(query).slice(0,240),
-        result_count:0,
-        clicked_topic_id:topicId,
-        event_type:'click'
+      await db().rpc('log_hn_search_event',{
+        p_query:String(query).trim().slice(0,240),
+        p_normalized_query:normalize(query).slice(0,240),
+        p_result_count:0,
+        p_clicked_topic_id:topicId,
+        p_event_type:'click'
       });
     }catch(e){
       console.debug('HN click analytics unavailable',e);
