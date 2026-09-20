@@ -17,10 +17,16 @@
 const db=()=>window.hijrahSupabase,esc=v=>String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');let cities=[],topics=[];
 async function init(){
  for(let i=0;i<60&&!db();i++)await new Promise(r=>setTimeout(r,100));
- const [c,t]=await Promise.all([db().from('cities').select('id,name,country_id,is_active,countries(name)').eq('is_active',true).order('name'),db().from('topic').select('id,city_id').eq('published',true)]);
- if(c.error||t.error){document.getElementById('cities').innerHTML='<div class="search-empty">De stedengidsen konden niet worden geladen.</div>';return}
- cities=c.data||[];topics=t.data||[];render();
+ const [c,t]=await Promise.all([db().from('cities').select('id,name,country_id,is_active').eq('is_active',true).order('name'),db().from('topic').select('id,city_id').eq('published',true)]);
+ if(c.error||t.error){console.error('HN Stedengidsen laadfout:',c.error||t.error);document.getElementById('cities').innerHTML='<div class="search-empty">De stedengidsen konden niet worden geladen.</div>';return}
+ cities=c.data||[];topics=t.data||[];
+ let countryRows=[];
+ const countryIds=[...new Set(cities.map(x=>x.country_id).filter(Boolean))];
+ if(countryIds.length){const cr=await db().from('countries').select('id,name').in('id',countryIds);if(!cr.error)countryRows=cr.data||[];}
+ const countryMap=new Map(countryRows.map(x=>[String(x.id),x.name]));
+ cities=cities.map(x=>({...x,country_name:countryMap.get(String(x.country_id))||''}));
+ render();
 }
-function render(){const q=document.getElementById('q').value.toLowerCase().trim();const list=cities.filter(x=>!q||x.name.toLowerCase().includes(q)||String(x.countries?.name||'').toLowerCase().includes(q));document.getElementById('cities').innerHTML=list.length?list.map(x=>{const n=topics.filter(t=>t.city_id===x.id).length;return '<article class="city"><h2>'+esc(x.name)+'</h2><div class="meta">'+esc(x.countries?.name||'')+' · '+n+' gepubliceerde fiches</div><a class="button primary" href="/navigatie?city='+encodeURIComponent(x.id)">Bekijk informatie</a> <a class="button secondary" href="/vergelijken?city='+encodeURIComponent(x.id)+'">Vergelijk</a></article>'}).join(''):'<div class="search-empty">Geen stad gevonden.</div>'}
+function render(){const q=document.getElementById('q').value.toLowerCase().trim();const list=cities.filter(x=>!q||x.name.toLowerCase().includes(q)||String(x.country_name||'').toLowerCase().includes(q));document.getElementById('cities').innerHTML=list.length?list.map(x=>{const n=topics.filter(t=>t.city_id===x.id).length;return '<article class="city"><h2>'+esc(x.name)+'</h2><div class="meta">'+esc(x.countries?.name||'')+' · '+n+' gepubliceerde fiches</div><a class="button primary" href="/navigatie?city='+encodeURIComponent(x.id)">Bekijk informatie</a> <a class="button secondary" href="/vergelijken?city='+encodeURIComponent(x.id)+'">Vergelijk</a></article>'}).join(''):'<div class="search-empty">Geen stad gevonden.</div>'}
 document.getElementById('q').addEventListener('input',render);init();
 </script></body></html>
