@@ -607,8 +607,8 @@
             </div>
 
             <div class="destination-actions">
-              <a id="selectedNavigation" class="destination-primary" href="navigatie.html">Bekijk steden &amp; informatie →</a>
-              <a id="selectedKnowledge" class="destination-secondary" href="kennisbank.html">Naar Kennisbank</a>
+              <a id="selectedNavigation" class="destination-primary" href="/navigatie">Bekijk steden &amp; informatie →</a>
+              <a id="selectedKnowledge" class="destination-secondary" href="/kennisbank">Naar Kennisbank</a>
             </div>
           </aside>
 
@@ -763,7 +763,7 @@
     grid.innerHTML=list.map(c=>{
       const cs=countryCities(c.id);
       const code=isoCode(c);
-      return `<a class="country-card${String(c.id)===String(selectedId)?' active':''}" data-id="${esc(c.id)}" href="navigatie.html?country=${encodeURIComponent(c.id)}" onclick="event.preventDefault();window.__hnSelectCountry('${String(c.id).replace(/'/g,"\\'")}');">
+      return `<a class="country-card${String(c.id)===String(selectedId)?' active':''}" data-id="${esc(c.id)}" href="/navigatie?country=${encodeURIComponent(c.id)}" onclick="event.preventDefault();window.__hnSelectCountry('${String(c.id).replace(/'/g,"\\'")}');">
         <div class="country-top">
           <div class="country-title-row">
             <div class="country-flag">${flagEmoji(code)}</div>
