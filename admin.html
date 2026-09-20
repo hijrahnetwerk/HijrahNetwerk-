@@ -4730,5 +4730,47 @@ init();
 
 </script>
 
+
+<section id="searchAnalytics" style="margin:24px 0;padding:22px;background:#fff;border:1px solid var(--border);border-radius:16px;">
+  <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;">
+    <div>
+      <h2 style="margin:0 0 5px;color:var(--brown);font-size:20px;">Zoekgedrag</h2>
+      <p style="margin:0;color:var(--muted);font-size:13px;">Welke vragen komen binnen, en waar ontbreekt nog HN-informatie?</p>
+    </div>
+    <button id="loadSearchAnalytics" type="button" style="border:0;border-radius:999px;padding:10px 15px;background:var(--orange);color:#fff;font-weight:700;cursor:pointer;">Vernieuwen</button>
+  </div>
+  <div id="searchAnalyticsState" style="margin-top:18px;color:var(--muted);font-size:14px;">Klik op Vernieuwen om de zoekanalyse te laden.</div>
+  <div id="searchAnalyticsGrid" style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-top:18px;">
+    <div><h3 style="margin:0 0 8px;color:var(--brown);font-size:15px;">Meest gezocht</h3><div id="topSearchQueries"></div></div>
+    <div><h3 style="margin:0 0 8px;color:var(--brown);font-size:15px;">Geen resultaat</h3><div id="noResultQueries"></div></div>
+  </div>
+</section>
+<script>
+(function(){
+  const db=()=>window.hijrahSupabase;
+  const esc=v=>String(v==null?'':v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+  const button=document.getElementById('loadSearchAnalytics');
+  const state=document.getElementById('searchAnalyticsState');
+  function list(target,items){
+    const box=document.getElementById(target);
+    if(!items||!items.length){box.innerHTML='<div style="padding:12px;border:1px dashed var(--border);border-radius:10px;color:var(--muted);font-size:13px;">Nog geen gegevens.</div>';return;}
+    box.innerHTML=items.slice(0,15).map(x=>'<div style="display:flex;justify-content:space-between;gap:10px;padding:9px 11px;border-bottom:1px solid #eee7de;font-size:13px;"><span>'+esc(x.query)+'</span><strong>'+esc(x.count)+'</strong></div>').join('');
+  }
+  async function load(){
+    if(!db()){state.textContent='Supabase is nog niet beschikbaar.';return;}
+    state.textContent='Zoekanalyse wordt geladen...';
+    const r=await db().rpc('get_hn_search_overview');
+    if(r.error){console.error(r.error);state.textContent='Zoekanalyse is nog niet beschikbaar. Controleer of de HN zoekmigratie in Supabase is uitgevoerd.';return;}
+    const data=r.data||{};
+    state.textContent='Totaal geregistreerde zoekopdrachten: '+(data.total_searches||0);
+    list('topSearchQueries',data.top_queries||[]);
+    list('noResultQueries',data.no_result_queries||[]);
+  }
+  button?.addEventListener('click',load);
+  const style=document.createElement('style');
+  style.textContent='@media(max-width:700px){#searchAnalyticsGrid{grid-template-columns:1fr!important;}}';
+  document.head.appendChild(style);
+})();
+</script>
 </body>
 </html>
