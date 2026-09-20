@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Hijrah Stappenplan — Hijrah Netwerk</title>
+<meta name="description" content="Het Hijrah Stappenplan van Hijrah Netwerk: modules van oriëntatie tot integratie.">
+<link rel="stylesheet" href="assets/platform-pages.css">
+<link rel="stylesheet" href="assets/public-nav.css">
+<script src="assets/hijrah-stappenplan.js"></script>
+</head>
+<body>
+<script src="assets/public-nav.js"></script>
+
+<main class="hero">
+  <div class="container hero-inner">
+    <span class="eyebrow">Hijrah Stappenplan</span>
+    <h1>Van eerste idee tot je nieuwe dagelijks leven.</h1>
+    <p>Het Stappenplan is opgebouwd uit duidelijke modules. Je kunt een module rustig doorlopen, vragen beantwoorden en informatie verzamelen. Je persoonlijke antwoorden, notities en afvinkpunten horen bij Mijn Hijrah.</p>
+  </div>
+</main>
+
+<section class="section">
+  <div class="container">
+    <div id="moduleView"></div>
+  </div>
+</section>
+
+<style>
+.module-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.module-card{display:block;text-decoration:none;color:inherit;background:#fff;border:1px solid var(--border,#e8e0d6);border-radius:14px;padding:20px;transition:.15s}
+.module-card:hover{transform:translateY(-2px);border-color:var(--orange,#df842c)}
+.module-number{font-size:12px;color:var(--orange,#df842c);font-weight:700;margin-bottom:7px}
+.module-card h3{margin:0 0 8px;color:var(--brown,#684a25)}
+.module-card p{margin:0;color:var(--muted,#756d63);line-height:1.55}
+.phase-title{margin:30px 0 12px;color:var(--brown,#684a25)}
+.phase-title:first-child{margin-top:0}
+.detail{max-width:900px}
+.detail .back{display:inline-block;margin-bottom:18px;color:var(--brown,#684a25);text-decoration:none;font-weight:700}
+.detail h1{margin-bottom:10px;color:var(--brown,#684a25)}
+.detail-intro{font-size:17px;line-height:1.65;color:var(--muted,#756d63)}
+.detail-section{background:#fff;border:1px solid var(--border,#e8e0d6);border-radius:14px;padding:20px;margin-top:14px}
+.detail-section h3{margin:0 0 8px;color:var(--brown,#684a25)}
+.detail-section p{margin:0;line-height:1.65;color:var(--text,#29231d)}
+.question-box{margin-top:22px;padding:20px;background:#faf7f2;border-radius:14px}
+.question-box h2{margin-top:0;color:var(--brown,#684a25)}
+.question{padding:12px 0;border-bottom:1px solid #e8e0d6}
+.question:last-child{border-bottom:0}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:24px}
+.button-link{display:inline-flex;padding:11px 15px;border-radius:8px;text-decoration:none;font-weight:700}
+.button-link.primary{background:#df842c;color:#fff}.button-link.secondary{background:#f1ece5;color:#684a25}
+@media(max-width:700px){.module-grid{grid-template-columns:1fr}}
+</style>
+
+<script>
+(function(){
+  const modules=window.HN_STAPPENPLAN_MODULES||[];
+  const root=document.getElementById('moduleView');
+  const params=new URLSearchParams(location.search);
+  const key=params.get('module');
+
+  function esc(v){
+    return String(v??'').replace(/[&<>"']/g,function(c){
+      return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c];
+    });
+  }
+
+  function renderOverview(){
+    const phases=[];
+    modules.forEach(m=>{if(!phases.includes(m.phase)) phases.push(m.phase);});
+    root.innerHTML=phases.map(phase=>{
+      const items=modules.filter(m=>m.phase===phase);
+      return '<h2 class="phase-title">'+esc(phase)+'</h2><div class="module-grid">'+
+        items.map((m,i)=>{
+          const nr=String(modules.indexOf(m)+1).padStart(2,'0');
+          return '<a class="module-card" href="/stappenplan?module='+encodeURIComponent(m.key)+'">'+
+            '<div class="module-number">MODULE '+nr+'</div>'+
+            '<h3>'+esc(m.title)+'</h3>'+
+            '<p>'+esc(m.intro)+'</p>'+
+          '</a>';
+        }).join('')+'</div>';
+    }).join('');
+  }
+
+  function renderDetail(m){
+    const nr=String(modules.indexOf(m)+1).padStart(2,'0');
+    root.innerHTML='<div class="detail">'+
+      '<a class="back" href="/stappenplan">← Alle modules</a>'+
+      '<div class="module-number">MODULE '+nr+' · '+esc(m.phase)+'</div>'+
+      '<h1>'+esc(m.title)+'</h1>'+
+      '<p class="detail-intro">'+esc(m.intro)+'</p>'+
+      m.sections.map(s=>'<div class="detail-section"><h3>'+esc(s[0])+'</h3><p>'+esc(s[1])+'</p></div>').join('')+
+      '<div class="question-box"><h2>Vragen om voor jezelf te beantwoorden</h2>'+
+      m.questions.map(q=>'<div class="question">'+esc(q)+'</div>').join('')+
+      '</div>'+
+      '<div class="detail-section"><h3>Wat wil je aan het einde van deze module hebben?</h3>'+
+      '<div>'+m.checklist.map(x=>'<div style="padding:7px 0">✓ '+esc(x)+'</div>').join('')+'</div></div>'+
+      '<div class="actions">'+
+        '<a class="button-link primary" href="/dashboard?module='+encodeURIComponent(m.key)+'">Deze module uitwerken in Mijn Hijrah</a>'+
+        '<a class="button-link secondary" href="/vergelijken">Steden vergelijken</a>'+
+      '</div>'+
+    '</div>';
+  }
+
+  const selected=modules.find(m=>m.key===key);
+  selected?renderDetail(selected):renderOverview();
+})();
+</script>
+</body>
+</html>
