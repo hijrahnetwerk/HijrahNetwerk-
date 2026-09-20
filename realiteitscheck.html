@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Hijrah Realiteitscheck — Hijrah Netwerk</title>
+<meta name="description" content="Een praktische realiteitscheck om te kijken welke onderdelen van je hijrah al duidelijk zijn en waar nog onderzoek nodig is.">
+<link rel="stylesheet" href="assets/platform-pages.css">
+<style>
+.check-grid{display:grid;gap:10px}.check-row{display:flex;gap:12px;align-items:flex-start;padding:15px;border:1px solid var(--border);border-radius:12px;background:#fff}.check-row input{margin-top:4px}.score{padding:20px;border-radius:14px;background:#f6eadb;margin-top:18px}.score strong{font-size:28px;color:var(--brown)}
+</style>
+</head>
+<body>
+<link rel="stylesheet" href="assets/public-nav.css">
+<script src="assets/public-nav.js"></script>
+
+<main class="hero">
+  <div class="container hero-inner">
+    <span class="eyebrow">Realiteitscheck</span>
+    <h1>Hoe concreet is je hijrah op dit moment?</h1>
+    <p>Deze check geeft geen oordeel over of je wel of niet moet vertrekken. Hij helpt je alleen zien welke praktische onderdelen al duidelijk zijn en welke nog onderzoek vragen.</p>
+  </div>
+</main>
+
+<section class="section">
+  <div class="container">
+    <div class="section-head">
+      <h2>Loop deze punten langs</h2>
+      <p>Vink alleen iets aan als je het echt hebt uitgezocht of geregeld.</p>
+    </div>
+    <div class="check-grid" id="checks"></div>
+    <div class="score">
+      <div>Jouw voortgang</div>
+      <strong id="score">0%</strong>
+      <p id="scoreText" style="margin:6px 0 0;color:var(--muted)">Begin met de checklist.</p>
+    </div>
+    <div style="margin-top:18px;display:flex;gap:10px;flex-wrap:wrap">
+      <a class="button primary" href="/dashboard">Verder in Mijn Hijrah</a>
+      <button class="button secondary" id="reset" type="button">Opnieuw beginnen</button>
+    </div>
+  </div>
+</section>
+
+<script>
+const items=[
+['Doel en reden','Ik kan uitleggen waarom ik wil emigreren en wat ik van mijn nieuwe leven verwacht.'],
+['Land','Ik heb mijn mogelijke landen onderzocht en weet waarom ze bij mijn situatie passen.'],
+['Stad','Ik heb minstens één of twee concrete steden onderzocht.'],
+['Verblijfsrecht','Ik heb de officiële informatie over verblijf en benodigde documenten gecontroleerd.'],
+['Huisvesting','Ik weet welk type woning en welke wijken binnen mijn budget passen.'],
+['Inkomen','Ik weet hoe ik mijn inkomen tijdens de eerste periode regel.'],
+['Budget','Ik heb een overzicht van eenmalige en maandelijkse kosten.'],
+['Gezin','Ik heb nagedacht over school, opvang, zorg en de overgang voor mijn kinderen.'],
+['Zorg','Ik weet hoe ik toegang krijg tot de zorg die ik nodig heb.'],
+['Taal','Ik weet welke taalvaardigheden ik nodig heb voor mijn dagelijks leven.'],
+['Netwerk','Ik heb een idee hoe ik na aankomst contacten en een sociaal netwerk kan opbouwen.'],
+['Vertrekplanning','Ik heb een realistische planning voor de belangrijkste stappen vóór vertrek.']
+];
+const key='hn_realiteitscheck_v1';
+const saved=JSON.parse(localStorage.getItem(key)||'{}');
+const box=document.getElementById('checks');
+box.innerHTML=items.map((x,i)=>'<label class="check-row"><input type="checkbox" data-i="'+i+'" '+(saved[i]?'checked':'')+'><span><strong>'+x[0]+'</strong><br><span style="color:var(--muted)">'+x[1]+'</span></span></label>').join('');
+function update(){
+ const done=[...box.querySelectorAll('input')].filter(x=>x.checked).length;
+ const pct=Math.round(done/items.length*100);
+ document.getElementById('score').textContent=pct+'%';
+ document.getElementById('scoreText').textContent=done===items.length?'Alle punten zijn afgevinkt. Controleer belangrijke informatie nog steeds bij officiële bronnen.':done?'Je hebt '+done+' van de '+items.length+' punten afgevinkt. De overige punten zijn een goede lijst voor verder onderzoek.':'Begin met de punten die voor jouw situatie het belangrijkst zijn.';
+ const state={};box.querySelectorAll('input').forEach(x=>{state[x.dataset.i]=x.checked});localStorage.setItem(key,JSON.stringify(state));
+}
+box.addEventListener('change',update);
+document.getElementById('reset').addEventListener('click',()=>{localStorage.removeItem(key);box.querySelectorAll('input').forEach(x=>x.checked=false);update()});
+update();
+</script>
+</body>
+</html>
