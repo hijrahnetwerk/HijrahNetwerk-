@@ -9,6 +9,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase-client.js"></script>
 <script src="auth.js"></script>
+<script src="assets/hijrah-stappenplan.js"></script>
 <script type="module" src="assets/speed-insights-init.js"></script>
 <script type="module" src="assets/analytics-init.js"></script>
 
@@ -820,6 +821,18 @@ textarea{
         </div>
 
       </div>
+
+    </div>
+
+    <div class="plan-section" id="moduleWorkspaceSection">
+
+      <div class="section-head">
+        <h3>Mijn Stappenplan-modules</h3>
+      </div>
+
+      <p class="muted">Hier werk je de modules uit. Je antwoorden, notities en afvinkpunten blijven bij jouw Mijn Hijrah Plan. In je algemene voortgang zie je alleen hoeveel modules je hebt afgerond.</p>
+
+      <div id="moduleWorkspace"></div>
 
     </div>
 
@@ -1830,26 +1843,7 @@ async function removeSaved(id){
 
 async function loadProgress(){
 
-  const s=await db()
-    .from('hijrah_steps')
-    .select('*')
-    .eq(
-      'is_active',
-      true
-    )
-    .order('sort_order');
-
-  if(s.error){
-
-    message(
-      s.error.message,
-      'error'
-    );
-
-    return;
-  }
-
-  steps=s.data||[];
+  steps=window.HN_STAPPENPLAN_MODULES||[];
 
   for(const step of steps){
 
@@ -1901,7 +1895,9 @@ async function loadProgress(){
     return;
   }
 
-  progress=data||[];
+  progress=(data||[]).filter(x=>
+    steps.some(step=>step.key===x.item_key)
+  );
 
   const total=progress.length;
 
@@ -2059,6 +2055,7 @@ function defaultPlanData(){
   return {
     text:'',
     tasks:[],
+    modules:{},
     budget:{
       one_time:'',
       monthly:''
@@ -2103,6 +2100,10 @@ function normalizePlanData(data){
 
     if(!Array.isArray(base.tasks)){
       base.tasks=[];
+    }
+
+    if(!base.modules || typeof base.modules!=='object' || Array.isArray(base.modules)){
+      base.modules={};
     }
 
     if(!Array.isArray(base.questions)){
@@ -2373,6 +2374,7 @@ function renderPlanDataUI(data){
     data.budget?.monthly||'';
 
   renderTasks(data.tasks);
+  renderModuleWorkspace();
   renderDocuments(data.documents);
   renderQuestions(data.questions);
   renderDeparture(data.departure);
@@ -2550,6 +2552,95 @@ function updateBudget(){
 
 }
 
+function getModuleByKey(key){
+  return (window.HN_STAPPENPLAN_MODULES||[]).find(x=>x.key===key)||null;
+}
+
+function getActiveModuleKey(){
+  return new URLSearchParams(location.search).get('module')||null;
+}
+
+function getModuleData(key){
+  const data=getPlanData();
+  if(!data.modules[key]){
+    const module=getModuleByKey(key);
+    data.modules[key]={
+      completed:false,
+      notes:'',
+      answers:{},
+      checklist:module?module.checklist.map(()=>false):[]
+    };
+  }
+  return data.modules[key];
+}
+
+function renderModuleWorkspace(){
+  const box=$('moduleWorkspace');
+  if(!box) return;
+  const modules=window.HN_STAPPENPLAN_MODULES||[];
+  const active=getActiveModuleKey();
+
+  if(!active){
+    box.innerHTML=modules.map((m,i)=>{
+      const md=getModuleData(m.key);
+      const done=progress.find(x=>x.item_key===m.key)?.completed===true || md.completed===true;
+      return '<div class="item" style="margin-bottom:8px">'+
+        '<div class="item-head"><div><h3>Module '+String(i+1).padStart(2,'0')+' · '+esc(m.title)+'</h3><div class="meta">'+esc(m.phase)+'</div></div>'+
+        '<div class="saved-actions"><span class="priority">'+(done?'Afgerond':'Nog open')+'</span><a class="button saved-view" href="/dashboard?module='+encodeURIComponent(m.key)+'">Openen</a></div></div></div>';
+    }).join('');
+    return;
+  }
+
+  const m=getModuleByKey(active);
+  if(!m){
+    box.innerHTML='<div class="empty">Deze module bestaat niet.</div>';
+    return;
+  }
+
+  const md=getModuleData(m.key);
+  box.innerHTML='<div class="next-step">'+
+    '<div class="next-step-title">'+esc(m.title)+'</div>'+
+    '<div class="muted" style="margin-bottom:16px">'+esc(m.intro)+'</div>'+
+    m.sections.map(s=>'<div style="margin:16px 0"><strong>'+esc(s[0])+'</strong><div class="muted" style="margin-top:5px;line-height:1.6">'+esc(s[1])+'</div></div>').join('')+
+    '<div class="row" style="margin-top:20px">'+
+      '<div class="field full"><label>Mijn notities</label><textarea id="moduleNotes" placeholder="Wat heb je uit deze module gehaald? Welke informatie heb je gevonden? Wat wil je onthouden?">'+esc(md.notes||'')+'</textarea></div>'+ 
+    '</div>'+ 
+    '<h3 style="margin-top:24px">Mijn antwoorden</h3>'+ 
+    m.questions.map((q,i)=>'<div class="field"><label>'+esc(q)+'</label><textarea id="moduleAnswer_'+i+'" data-question-index="'+i+'" placeholder="Schrijf hier jouw antwoord...">'+esc(md.answers?.[i]||'')+'</textarea></div>').join('')+
+    '<h3 style="margin-top:24px">Module afronden</h3>'+ 
+    m.checklist.map((item,i)=>'<label class="checklist-row"><input type="checkbox" id="moduleCheck_'+i+'" '+(md.checklist?.[i]?'checked':'')+'><span>'+esc(item)+'</span></label>').join('')+
+    '<div class="actions" style="margin-top:18px"><button class="button primary" type="button" onclick="saveActiveModule()">Opslaan</button><button class="button secondary" type="button" onclick="completeActiveModule()">'+(md.completed?'Module opnieuw openen':'Module als afgerond markeren')+'</button><a class="button secondary" href="/dashboard">Terug naar Mijn Hijrah</a></div>'+ 
+    '<div class="save-status" id="moduleSaveStatus" style="margin-top:10px"></div>'+ 
+    '</div>';
+}
+
+async function saveActiveModule(markCompleted=null){
+  const key=getActiveModuleKey();
+  const m=getModuleByKey(key);
+  if(!key||!m) return false;
+  const data=getPlanData();
+  const md=getModuleData(key);
+  md.notes=$('moduleNotes')?.value.trim()||'';
+  md.answers={};
+  m.questions.forEach((q,i)=>{ md.answers[i]=$('moduleAnswer_'+i)?.value.trim()||''; });
+  md.checklist=m.checklist.map((x,i)=>!!$('moduleCheck_'+i)?.checked);
+  if(markCompleted!==null) md.completed=markCompleted;
+  data.modules[key]=md;
+  await savePlan(true);
+  const {error}=await db().from('member_progress').upsert({user_id:user.id,item_key:key,title:m.title,completed:!!md.completed,completed_at:md.completed?new Date().toISOString():null},{onConflict:'user_id,item_key'});
+  if(error){ message(error.message,'error'); return false; }
+  await loadProgress();
+  renderModuleWorkspace();
+  if($('moduleSaveStatus')) $('moduleSaveStatus').textContent='✓ Opgeslagen';
+  return true;
+}
+
+async function completeActiveModule(){
+  const key=getActiveModuleKey();
+  const md=getModuleData(key);
+  await saveActiveModule(!md.completed);
+}
+
 async function savePlan(silent=true){
 
   if(!user){
@@ -2557,6 +2648,17 @@ async function savePlan(silent=true){
   }
 
   const data=getPlanData();
+
+  const activeModule=getActiveModuleKey();
+  if(activeModule && $('moduleNotes')){
+    const m=getModuleByKey(activeModule);
+    const md=getModuleData(activeModule);
+    md.notes=$('moduleNotes').value.trim()||'';
+    md.answers={};
+    (m?.questions||[]).forEach((q,i)=>{ md.answers[i]=$('moduleAnswer_'+i)?.value.trim()||''; });
+    md.checklist=(m?.checklist||[]).map((x,i)=>!!$('moduleCheck_'+i)?.checked);
+    data.modules[activeModule]=md;
+  }
 
   data.text=
     $('planDataText').value.trim();
@@ -3083,6 +3185,10 @@ async function init(){
 
   renderNextStep();
   renderPlanSummary();
+
+  if(getActiveModuleKey()){
+    openPlanTab();
+  }
 
 }
 
