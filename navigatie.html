@@ -213,6 +213,14 @@ async function init(){
   categories=results[2].status==='fulfilled' && !results[2].value.error ? (results[2].value.data||[]) : [];
 
   fill('country',countries,'Alle landen');
+  const params=new URLSearchParams(location.search);
+  const presetCountry=params.get('country');
+  const presetCity=params.get('city');
+  const presetCategory=params.get('category');
+  if(presetCountry) document.getElementById('country').value=presetCountry;
+  if(presetCity) document.getElementById('city').value=presetCity;
+  if(presetCategory) document.getElementById('category').value=presetCategory;
+  
   fill('city',cities,'Alle steden');
   fill('category',categories,'Alle categorieën');
   catButtons();
