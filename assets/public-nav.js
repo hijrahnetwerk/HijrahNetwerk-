@@ -50,6 +50,8 @@
           <a class="hn-mobile-link" href="/#over-ons">Over ons</a>
           <a class="hn-mobile-link" href="/bijdragen">Bijdragen</a>
           <a class="hn-mobile-link" href="/handboek">Hijrah Handboek</a>
+          <a class="hn-mobile-link" href="/stedengids">Stedengidsen</a>
+          <a class="hn-mobile-link" href="/verhalen">Verhalen &amp; ervaringen</a>
           <a class="hn-mobile-link" href="/realiteitscheck">Realiteitscheck</a>
           <div class="hn-mobile-divider"></div>
           <a class="hn-mobile-link" href="/dashboard">Mijn Hijrah</a>
