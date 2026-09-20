@@ -1,16 +1,27 @@
 {
   "buildCommand": "node build.js",
   "redirects": [
-    {
-      "source": "/community.html",
-      "destination": "/community",
-      "permanent": true
-    }
+    { "source": "/community.html", "destination": "/community", "permanent": true },
+    { "source": "/landen.html", "destination": "/landen", "permanent": true },
+    { "source": "/navigatie.html", "destination": "/navigatie", "permanent": true },
+    { "source": "/kennisbank.html", "destination": "/kennisbank", "permanent": true },
+    { "source": "/smart-search.html", "destination": "/smart-search", "permanent": true },
+    { "source": "/dashboard.html", "destination": "/dashboard", "permanent": true },
+    { "source": "/bijdragen.html", "destination": "/bijdragen", "permanent": true },
+    { "source": "/login.html", "destination": "/login", "permanent": true },
+    { "source": "/register.html", "destination": "/register", "permanent": true },
+    { "source": "/admin.html", "destination": "/admin", "permanent": true }
   ],
   "rewrites": [
-    {
-      "source": "/community",
-      "destination": "/community.html"
-    }
+    { "source": "/community", "destination": "/community.html" },
+    { "source": "/landen", "destination": "/landen.html" },
+    { "source": "/navigatie", "destination": "/navigatie.html" },
+    { "source": "/kennisbank", "destination": "/kennisbank.html" },
+    { "source": "/smart-search", "destination": "/smart-search.html" },
+    { "source": "/dashboard", "destination": "/dashboard.html" },
+    { "source": "/bijdragen", "destination": "/bijdragen.html" },
+    { "source": "/login", "destination": "/login.html" },
+    { "source": "/register", "destination": "/register.html" },
+    { "source": "/admin", "destination": "/admin.html" }
   ]
 }
