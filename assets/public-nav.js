@@ -15,6 +15,7 @@
           <nav class="hn-links" aria-label="Hoofdnavigatie">
             <a href="/">Home</a>
             <a href="/orientatietest">Oriëntatietest</a>
+            <a href="/stappenplan">Stappenplan</a>
             <a href="/landen">Landen &amp; Steden</a>
             <a href="/navigatie">Hijrah Navigatie</a>
             <a href="/kennisbank">Kennisbank</a>
