@@ -1,3 +1,16 @@
 {
-  "buildCommand": "node build.js"
+  "buildCommand": "node build.js",
+  "redirects": [
+    {
+      "source": "/community.html",
+      "destination": "/community",
+      "permanent": true
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/community",
+      "destination": "/community.html"
+    }
+  ]
 }
