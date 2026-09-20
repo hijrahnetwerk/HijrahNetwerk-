@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Stedengidsen — Hijrah Netwerk</title>
+<meta name="description" content="Bekijk steden en ontdek welke praktische HN-informatie per stad beschikbaar is.">
+<link rel="stylesheet" href="assets/platform-pages.css">
+<style>.cities{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.city{background:#fff;border:1px solid var(--border);border-radius:15px;padding:20px}.meta{color:var(--muted);font-size:13px;margin:7px 0 15px}@media(max-width:900px){.cities{grid-template-columns:repeat(2,1fr)}}@media(max-width:600px){.cities{grid-template-columns:1fr}}</style>
+</head>
+<body>
+<link rel="stylesheet" href="assets/public-nav.css"><script src="assets/public-nav.js"></script>
+<main class="hero"><div class="container hero-inner"><span class="eyebrow">Stedengidsen</span><h1>Bekijk wat er per stad al bekend is.</h1><p>De stedengidsen groeien mee met de HN-database. Je ziet per stad hoeveel gepubliceerde informatie beschikbaar is.</p></div></main>
+<section class="section"><div class="container"><div class="filter" style="margin-bottom:18px"><input id="q" placeholder="Zoek een stad..."></div><div id="cities" class="cities"><div class="search-empty">Steden laden...</div></div></div></section>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="assets/config.js"></script><script src="supabase-client.js"></script>
+<script>
+const db=()=>window.hijrahSupabase,esc=v=>String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');let cities=[],topics=[];
+async function init(){
+ for(let i=0;i<60&&!db();i++)await new Promise(r=>setTimeout(r,100));
+ const [c,t]=await Promise.all([db().from('cities').select('id,name,country_id,is_active,countries(name)').eq('is_active',true).order('name'),db().from('topic').select('id,city_id').eq('published',true)]);
+ if(c.error||t.error){document.getElementById('cities').innerHTML='<div class="search-empty">De stedengidsen konden niet worden geladen.</div>';return}
+ cities=c.data||[];topics=t.data||[];render();
+}
+function render(){const q=document.getElementById('q').value.toLowerCase().trim();const list=cities.filter(x=>!q||x.name.toLowerCase().includes(q)||String(x.countries?.name||'').toLowerCase().includes(q));document.getElementById('cities').innerHTML=list.length?list.map(x=>{const n=topics.filter(t=>t.city_id===x.id).length;return '<article class="city"><h2>'+esc(x.name)+'</h2><div class="meta">'+esc(x.countries?.name||'')+' · '+n+' gepubliceerde fiches</div><a class="button primary" href="/navigatie?city='+encodeURIComponent(x.id)">Bekijk informatie</a> <a class="button secondary" href="/vergelijken?city='+encodeURIComponent(x.id)+'">Vergelijk</a></article>'}).join(''):'<div class="search-empty">Geen stad gevonden.</div>'}
+document.getElementById('q').addEventListener('input',render);init();
+</script></body></html>
