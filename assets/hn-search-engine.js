@@ -10,7 +10,7 @@
   ]);
 
   const GROUPS = [
-    ['huisarts','dokter','arts','médecin','medecin','generaliste','generaliste'],
+    ['huisarts','dokter','arts','médecin','medecin','generaliste'],
     ['ziekenhuis','hospital','hôpital','hopital'],
     ['apotheek','pharmacie','pharmacy'],
     ['school','scholen','école','ecole'],
@@ -22,8 +22,7 @@
     ['zorg','gezondheidszorg','santé','sante'],
     ['moskee','moskeeën','mosque','mosquée','mosquee'],
     ['kinderen','kind','enfants','enfant'],
-    ['tandarts','dentist','dentiste'],
-    ['apotheek','pharmacie','pharmacy']
+    ['tandarts','dentist','dentiste']
   ];
 
   const normalize = value => String(value||'')
@@ -40,14 +39,10 @@
     group.forEach(term=>groupMap.set(normalize(term),id));
   });
 
-  function tokens(query){
-    return normalize(query).split(' ').filter(Boolean);
-  }
+  function tokens(query){ return normalize(query).split(' ').filter(Boolean); }
 
   function concepts(query){
-    return tokens(query)
-      .filter(t=>!STOP.has(t))
-      .map(t=>groupMap.get(t)||t);
+    return tokens(query).filter(t=>!STOP.has(t)).map(t=>groupMap.get(t)||t);
   }
 
   function fieldText(topic){
@@ -62,7 +57,6 @@
   }
 
   function score(topic,query,extraTerms){
-    const raw=normalize(query);
     const qs=tokens(query).filter(t=>!STOP.has(t));
     const cs=concepts(query);
     if(!qs.length)return 0;
@@ -71,7 +65,7 @@
       [topic.title,12],[topic.cities?.name,10],[topic.countries?.name,9],
       [topic.categories?.name,8],[topic.subcategories?.name,7],
       [topic.neighborhood,7],[topic.summary,5],[topic.information_type,3],
-      [topic.content,1], [fieldText(topic),1]
+      [topic.content,1],[fieldText(topic),1]
     ];
     let total=0;
 
@@ -110,39 +104,51 @@
         .select('topic_id,term,normalized_term')
         .limit(5000);
       return r.error ? [] : (r.data||[]);
-    }catch(e){return []}
+    }catch(e){ return []; }
   }
 
   async function logSearch(db,query,resultCount){
     if(!query || !db())return;
     try{
       const normalizedQuery=normalize(query).slice(0,240);
-      const response=const response=await db().rpc('log_hn_search_event',{
+      console.log('HN analytics: sending search event', {query, resultCount});
+      const response=await db().rpc('log_hn_search_event',{
         p_query:String(query).trim().slice(0,240),
         p_normalized_query:normalizedQuery,
         p_result_count:Math.max(0,Math.min(10000,resultCount||0)),
         p_clicked_topic_id:null,
         p_event_type:'search'
       });
-      if(response.error) console.error('HN search analytics RPC error:', response.error);
+
+      if(response.error){
+        console.error('HN search analytics RPC error:', response.error);
+      }else{
+        console.log('HN analytics: search event accepted', response.data);
+      }
     }catch(e){
-      console.debug('HN search analytics unavailable',e);
+      console.error('HN search analytics JS error:', e);
     }
   }
 
   async function logClick(db,query,topicId){
     if(!query || !topicId || !db())return;
     try{
-      await db().rpc('log_hn_search_event',{
+      console.log('HN analytics: sending click event', {query, topicId});
+      const response=await db().rpc('log_hn_search_event',{
         p_query:String(query).trim().slice(0,240),
         p_normalized_query:normalize(query).slice(0,240),
         p_result_count:0,
         p_clicked_topic_id:topicId,
         p_event_type:'click'
       });
-      if(response.error) console.error('HN click analytics RPC error:', response.error);
+
+      if(response.error){
+        console.error('HN click analytics RPC error:', response.error);
+      }else{
+        console.log('HN analytics: click event accepted', response.data);
+      }
     }catch(e){
-      console.debug('HN click analytics unavailable',e);
+      console.error('HN click analytics JS error:', e);
     }
   }
 
