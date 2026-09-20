@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Hijrah Oriëntatietest — Hijrah Netwerk</title>
+<meta name="description" content="Een praktische oriëntatietest om je eigen prioriteiten voor je hijrah helder te krijgen.">
+<link rel="stylesheet" href="assets/platform-pages.css">
+<style>
+.test{max-width:760px;margin:auto}.q{display:none}.q.active{display:block}.options{display:grid;gap:10px;margin-top:18px}.opt{padding:16px;border:1px solid var(--border);border-radius:12px;background:#fff;cursor:pointer}.opt.selected{border-color:var(--orange);background:#fff7ee}.progress{height:7px;background:#eee5db;border-radius:20px;overflow:hidden;margin:18px 0 28px}.bar{height:100%;background:var(--orange);width:0}.result{display:none}.result.show{display:block}
+</style>
+</head>
+<body>
+<link rel="stylesheet" href="assets/public-nav.css">
+<script src="assets/public-nav.js"></script>
+
+<main class="hero"><div class="container hero-inner"><span class="eyebrow">Hijrah Oriëntatietest</span><h1>Wat is voor jou echt belangrijk?</h1><p>Beantwoord een paar vragen. De test geeft je geen landadvies, maar helpt je eigen prioriteiten zichtbaar te maken.</p></div></main>
+
+<section class="section">
+<div class="container test">
+<div class="progress"><div class="bar" id="bar"></div></div>
+<div id="questions"></div>
+<div id="result" class="result card" style="padding:26px;margin-top:20px">
+<h2>Jouw oriëntatie</h2>
+<p id="resultText" style="color:var(--muted);margin:10px 0 18px"></p>
+<div style="display:flex;gap:10px;flex-wrap:wrap">
+<a class="button primary" href="/landen">Bekijk landen & steden</a>
+<a class="button secondary" href="/vergelijken">Vergelijk steden</a>
+<a class="button secondary" href="/realiteitscheck">Doe de realiteitscheck</a>
+</div>
+</div>
+</div>
+</section>
+
+<script>
+const qs=[
+['Wat wil je vooral beschermen of opbouwen?',['Rust en stabiliteit','Geloof en omgeving','Gezin en kinderen','Financiële ruimte']],
+['Wat weegt het zwaarst bij een stad?',['Betaalbare huisvesting','Onderwijs','Actief moslimleven','Werk en inkomen']],
+['Hoe belangrijk is toegang tot praktische voorzieningen?',['Heel belangrijk','Belangrijk','Redelijk belangrijk','Minder belangrijk']],
+['Hoeveel onderzoek heb je al gedaan?',['Ik begin net','Ik heb meerdere landen bekeken','Ik heb steden vergeleken','Ik ben al concreet aan het voorbereiden']],
+['Wat wil je nu vooral weten?',['Hoe het dagelijks leven is','Wat praktisch geregeld moet worden','Welke stad bij mij past','Wat ik vóór vertrek moet doen']]
+];
+let step=0,answers=JSON.parse(localStorage.getItem('hn_orientation_test')||'[]');
+const box=document.getElementById('questions');
+function render(){
+ box.innerHTML=qs.map((q,i)=>'<div class="q '+(i===step?'active':'')+'" data-q="'+i+'"><span class="eyebrow">Vraag '+(i+1)+' van '+qs.length+'</span><h2 style="margin-top:12px">'+q[0]+'</h2><div class="options">'+q[1].map((o,j)=>'<button type="button" class="opt '+(answers[i]===j?'selected':'')+'" data-j="'+j+'">'+o+'</button>').join('')+'</div></div>').join('');
+ box.querySelectorAll('.opt').forEach(b=>b.addEventListener('click',()=>{answers[step]=Number(b.dataset.j);localStorage.setItem('hn_orientation_test',JSON.stringify(answers));if(step<qs.length-1){step++;render()}else{showResult()}}));
+ document.getElementById('bar').style.width=((step+1)/qs.length*100)+'%';
+}
+function showResult(){
+ const labels=answers.map((a,i)=>qs[i][1][a]).filter(Boolean);
+ document.getElementById('resultText').textContent='Je belangrijkste antwoorden: '+labels.join(' · ')+'. Gebruik dit als uitgangspunt voor je verdere onderzoek. HN bepaalt op basis hiervan niet welk land je moet kiezen.';
+ document.getElementById('result').classList.add('show');
+ document.querySelectorAll('.q').forEach(x=>x.classList.remove('active'));
+ document.getElementById('bar').style.width='100%';
+}
+render();
+if(answers.length===qs.length)showResult();
+</script>
+</body>
+</html>
