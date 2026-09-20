@@ -55,6 +55,41 @@
       "source": "/vergelijken.html",
       "destination": "/vergelijken",
       "permanent": true
+    },
+    {
+      "source": "/orientatie.html",
+      "destination": "/orientatie",
+      "permanent": true
+    },
+    {
+      "source": "/voorbereiding.html",
+      "destination": "/voorbereiding",
+      "permanent": true
+    },
+    {
+      "source": "/vertrek.html",
+      "destination": "/vertrek",
+      "permanent": true
+    },
+    {
+      "source": "/integratie.html",
+      "destination": "/integratie",
+      "permanent": true
+    },
+    {
+      "source": "/orientatietest.html",
+      "destination": "/orientatietest",
+      "permanent": true
+    },
+    {
+      "source": "/handboek.html",
+      "destination": "/handboek",
+      "permanent": true
+    },
+    {
+      "source": "/realiteitscheck.html",
+      "destination": "/realiteitscheck",
+      "permanent": true
     }
   ],
   "rewrites": [
@@ -101,6 +136,34 @@
     {
       "source": "/vergelijken",
       "destination": "/vergelijken.html"
+    },
+    {
+      "source": "/orientatie",
+      "destination": "/orientatie.html"
+    },
+    {
+      "source": "/voorbereiding",
+      "destination": "/voorbereiding.html"
+    },
+    {
+      "source": "/vertrek",
+      "destination": "/vertrek.html"
+    },
+    {
+      "source": "/integratie",
+      "destination": "/integratie.html"
+    },
+    {
+      "source": "/orientatietest",
+      "destination": "/orientatietest.html"
+    },
+    {
+      "source": "/handboek",
+      "destination": "/handboek.html"
+    },
+    {
+      "source": "/realiteitscheck",
+      "destination": "/realiteitscheck.html"
     }
   ]
 }
