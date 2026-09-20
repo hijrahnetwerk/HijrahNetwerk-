@@ -90,6 +90,16 @@
       "source": "/realiteitscheck.html",
       "destination": "/realiteitscheck",
       "permanent": true
+    },
+    {
+      "source": "/verhalen.html",
+      "destination": "/verhalen",
+      "permanent": true
+    },
+    {
+      "source": "/stedengids.html",
+      "destination": "/stedengids",
+      "permanent": true
     }
   ],
   "rewrites": [
@@ -164,6 +174,14 @@
     {
       "source": "/realiteitscheck",
       "destination": "/realiteitscheck.html"
+    },
+    {
+      "source": "/verhalen",
+      "destination": "/verhalen.html"
+    },
+    {
+      "source": "/stedengids",
+      "destination": "/stedengids.html"
     }
   ]
 }
