@@ -614,6 +614,7 @@
             <div class="destination-actions">
               <a id="selectedNavigation" class="destination-primary" href="/navigatie">Bekijk steden &amp; informatie →</a>
               <a id="selectedKnowledge" class="destination-secondary" href="/kennisbank">Naar Kennisbank</a>
+              <a id="selectedCompare" class="destination-secondary" href="/vergelijken">Steden vergelijken</a>
             </div>
           </aside>
 
@@ -784,7 +785,7 @@
         </div>
         <div class="country-footer">
           <span class="country-more">Bekijk bestemming →</span>
-          <button type="button" class="compare-btn" data-compare-id="${esc(c.id)}" onclick="event.preventDefault();event.stopPropagation();window.__hnToggleCompare('${String(c.id).replace(/'/g,"\\'")}',this);">Vergelijken</button>
+          <button type="button" class="compare-btn" onclick="event.preventDefault();event.stopPropagation();location.href='/vergelijken?country='+encodeURIComponent('${String(c.id)}');">Steden vergelijken</button>
         </div>
       </a>`;
     }).join('');
@@ -905,35 +906,8 @@
       countries.length+' HN-land'+(countries.length===1?'':'en');
 
     renderCards();
-    updateCompareLink();
-
     if(countries.length){
       selectCountry(countries[0].id,false);
-    }
-
-    window.__hnToggleCompare=(id)=>{
-      const key='hn_compare_countries';
-      let selected=JSON.parse(localStorage.getItem(key)||'[]').map(String);
-      const sid=String(id);
-      if(selected.includes(sid)) selected=selected.filter(x=>x!==sid);
-      else if(selected.length<3) selected.push(sid);
-      else { alert('Je kunt maximaal 3 landen tegelijk vergelijken.'); return; }
-      localStorage.setItem(key,JSON.stringify(selected));
-      renderCards();
-      updateCompareLink();
-    };
-    function updateCompareLink(){
-      const selected=JSON.parse(localStorage.getItem('hn_compare_countries')||'[]');
-      let link=document.getElementById('compareTopLink');
-      if(!link){
-        link=document.createElement('a');
-        link.id='compareTopLink';
-        link.className='compare-btn compare-link';
-        link.href='/vergelijken';
-        link.textContent='Vergelijk geselecteerde landen';
-        document.querySelector('.explore-head').appendChild(link);
-      }
-      link.classList.toggle('show',selected.length>=2);
     }
 
     window.__hnSelectCountry=(id)=>{
