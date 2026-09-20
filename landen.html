@@ -530,6 +530,11 @@
       display:none;
     }
   }
+  .compare-wrap{display:flex;gap:9px;align-items:center;flex-wrap:wrap}
+  .compare-btn{display:inline-flex;align-items:center;justify-content:center;min-height:40px;padding:9px 14px;border-radius:999px;border:1px solid var(--mw-line);background:#fff;color:var(--mw-brown-dark);font-size:12px;font-weight:800;cursor:pointer}
+  .compare-btn:hover{border-color:var(--mw-orange);color:var(--mw-orange)}
+  .compare-btn.selected{background:var(--mw-orange);border-color:var(--mw-orange);color:#fff}
+  .compare-link{display:none}.compare-link.show{display:inline-flex}
 </style>
 </head>
 
@@ -779,6 +784,7 @@
         </div>
         <div class="country-footer">
           <span class="country-more">Bekijk bestemming →</span>
+          <button type="button" class="compare-btn" data-compare-id="${esc(c.id)}" onclick="event.preventDefault();event.stopPropagation();window.__hnToggleCompare('${String(c.id).replace(/'/g,"\\'")}',this);">Vergelijken</button>
         </div>
       </a>`;
     }).join('');
@@ -899,9 +905,35 @@
       countries.length+' HN-land'+(countries.length===1?'':'en');
 
     renderCards();
+    updateCompareLink();
 
     if(countries.length){
       selectCountry(countries[0].id,false);
+    }
+
+    window.__hnToggleCompare=(id)=>{
+      const key='hn_compare_countries';
+      let selected=JSON.parse(localStorage.getItem(key)||'[]').map(String);
+      const sid=String(id);
+      if(selected.includes(sid)) selected=selected.filter(x=>x!==sid);
+      else if(selected.length<3) selected.push(sid);
+      else { alert('Je kunt maximaal 3 landen tegelijk vergelijken.'); return; }
+      localStorage.setItem(key,JSON.stringify(selected));
+      renderCards();
+      updateCompareLink();
+    };
+    function updateCompareLink(){
+      const selected=JSON.parse(localStorage.getItem('hn_compare_countries')||'[]');
+      let link=document.getElementById('compareTopLink');
+      if(!link){
+        link=document.createElement('a');
+        link.id='compareTopLink';
+        link.className='compare-btn compare-link';
+        link.href='/vergelijken';
+        link.textContent='Vergelijk geselecteerde landen';
+        document.querySelector('.explore-head').appendChild(link);
+      }
+      link.classList.toggle('show',selected.length>=2);
     }
 
     window.__hnSelectCountry=(id)=>{
