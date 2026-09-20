@@ -312,6 +312,7 @@
 </main>
 
 <script src="assets/config.js"></script>
+<script src="assets/hn-search-engine.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase-client.js"></script>
 <script type="module" src="assets/speed-insights-init.js"></script>
@@ -321,6 +322,7 @@
   const db = () => window.hijrahSupabase;
 
   let topics = [];
+  let searchTerms = [];
 
   const esc = value => {
 
@@ -347,15 +349,12 @@
   };
 
   function scoreTopic(topic, query) {
-
-    const words =
-      normalize(query)
-        .split(/\s+/)
-        .filter(Boolean);
-
-    if (!words.length) {
-      return 0;
+    if (window.HNSearchEngine) {
+      return window.HNSearchEngine.score(topic, query, searchTerms);
     }
+
+    const words = normalize(query).split(/\s+/).filter(Boolean);
+    if (!words.length) return 0;
 
     const fields = [
       [topic.title || "", 8],
@@ -369,22 +368,13 @@
     ];
 
     let score = 0;
-
     for (const word of words) {
-
       for (const [text, weight] of fields) {
-
-        if (
-          normalize(text).includes(word)
-        ) {
-          score += weight;
-        }
+        if (normalize(text).includes(word)) score += weight;
       }
     }
-
     return score;
   }
-
   function renderResults(query) {
 
     const results =
@@ -474,6 +464,7 @@
 
             <a
               class="btn"
+              data-topic-id="${esc(topic.id)}"
               style="background:#efe7dc;color:#684a25;"
               href="/kennisbank/${slugify(topic.title)}"
             >
@@ -517,6 +508,7 @@
     }
 
     topics = data || [];
+    searchTerms = window.HNSearchEngine ? await window.HNSearchEngine.loadTerms(db) : [];
 
     const params =
       new URLSearchParams(
@@ -548,10 +540,12 @@
       history.replaceState(
         {},
         "",
-        `smart-search.html?q=${encodeURIComponent(query)}`
+        `/smart-search?q=${encodeURIComponent(query)}`
       );
 
       renderResults(query);
+      const resultCount = topics.map(topic => scoreTopic(topic, query)).filter(score => score > 0).length;
+      if (window.HNSearchEngine) window.HNSearchEngine.logSearch(db, query, resultCount);
     });
 
   document
@@ -575,6 +569,13 @@
         }
       );
     });
+
+  document.getElementById("results").addEventListener("click", event => {
+    const link = event.target.closest("a[data-topic-id]");
+    if (!link || !window.HNSearchEngine) return;
+    const query = document.getElementById("searchInput").value.trim();
+    window.HNSearchEngine.logClick(db, query, link.dataset.topicId);
+  });
 
   loadTopics();
 </script>
