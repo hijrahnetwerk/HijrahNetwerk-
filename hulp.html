@@ -29,16 +29,7 @@ footer{padding:30px 0;border-top:1px solid var(--line);color:var(--muted);font-s
 <div class="alert"><strong>Bij direct gevaar</strong><span>Bel altijd eerst de officiële hulpdienst van het land waar je bent. HN is geen vervanging voor medische, juridische of andere professionele hulp.</span></div>
 </div></section>
 <section class="wrap">
-<div class="grid">
-<div class="help" onclick="show('medisch')"><div class="icon">🚑</div><h3>Medische hulp</h3><p>Zorg, ziekenhuis, apotheek of huisarts zoeken.</p></div>
-<div class="help" onclick="show('veiligheid')"><div class="icon">👮</div><h3>Veiligheid</h3><p>Politie, gendarmerie en andere hulp bij veiligheid.</p></div>
-<div class="help" onclick="show('kind')"><div class="icon">👧</div><h3>Mijn kind heeft hulp nodig</h3><p>Kindgerichte zorg, school of een urgente situatie.</p></div>
-<div class="help" onclick="show('documenten')"><div class="icon">📄</div><h3>Documenten / verblijf</h3><p>Je bent een document kwijt of weet niet welke instantie je nodig hebt.</p></div>
-<div class="help" onclick="show('woning')"><div class="icon">🏠</div><h3>Huisvesting</h3><p>Problemen met woning, verhuurder of zoeken naar hulp.</p></div>
-<div class="help" onclick="show('onderweg')"><div class="icon">🚗</div><h3>Onderweg</h3><p>Auto, pech, vervoer of een probleem onderweg.</p></div>
-<div class="help" onclick="show('financien')"><div class="icon">💰</div><h3>Financiële problemen</h3><p>Je zoekt praktische hulp of weet niet waar je terechtkunt.</p></div>
-<div class="help" onclick="show('weetniet')"><div class="icon">🧭</div><h3>Ik weet niet wat ik nodig heb</h3><p>Beantwoord een paar vragen en begin bij de juiste route.</p></div>
-</div>
+<div class="grid" id="helpGrid"></div>
 <div id="panel" class="panel"></div>
 </section>
 <section class="section wrap">
@@ -55,32 +46,34 @@ footer{padding:30px 0;border-top:1px solid var(--line);color:var(--muted);font-s
 let helpRows=[];
 const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 function renderCategories(){
- const grid=document.querySelector('.grid'),cats=helpRows.filter(x=>x.card_data?.hn_record_type==='category');
- if(!cats.length)return;
- grid.innerHTML=cats.map(x=>{const c=x.card_data||{};return '<div class="help" onclick="showCat(\\''+x.id+'\\')"><div class="icon">'+esc(c.icon||'🧭')+'</div><h3>'+esc(x.title)+'</h3><p>'+esc(c.description||'Kies deze categorie om de beschikbare HN-hulp te bekijken.')+'</p></div>'}).join('');
+ const grid=document.getElementById('helpGrid');
+ const cats=helpRows.filter(x=>x.card_data?.hn_record_type==='category' && x.status==='published');
+ grid.innerHTML=cats.length?cats.map(x=>{
+   const c=x.card_data||{};
+   return '<div class="help" data-id="'+esc(x.id)+'"><div class="icon">'+esc(c.icon||'🧭')+'</div><h3>'+esc(x.title)+'</h3><p>'+esc(c.description||'Kies deze categorie om de beschikbare HN-hulp te bekijken.')+'</p></div>';
+ }).join(''):'<div class="result" style="grid-column:1/-1"><b>Hulpinformatie wordt voorbereid</b><small>De beheerder kan hier per land en stad gecontroleerde hulpbronnen toevoegen.</small></div>';
+ grid.querySelectorAll('.help').forEach(card=>card.addEventListener('click',()=>showCat(card.dataset.id)));
 }
 function showCat(id){
  const cat=helpRows.find(x=>x.id===id);if(!cat)return;
- const services=helpRows.filter(x=>x.card_data?.hn_record_type==='service'&&x.card_data?.hn_category_id===id);
+ const services=helpRows.filter(x=>x.card_data?.hn_record_type==='service'&&x.card_data?.hn_category_id===id&&x.status==='published');
  const p=document.getElementById('panel');
- p.innerHTML='<h2>'+esc(cat.title)+'</h2><p>'+esc(cat.content||'Hulpinformatie die door HN aan deze categorie is gekoppeld.')+'</p><div class="results">'+(services.length?services.map(x=>{const c=x.card_data||{};return '<div class="result"><b>'+esc(x.title)+'</b><small>'+esc(x.content||'')+'</small>'+(c.phone?'<div class="tag">📞 '+esc(c.phone)+'</div>':'')+(c.address?'<div class="tag">📍 '+esc(c.address)+'</div>':'')+(c.website?'<div><a class="tag" href="'+esc(c.website)+'" target="_blank" rel="noopener">Website</a></div>':'')+'</div>'}).join(''):'<div class="result"><b>Nog geen hulpbronnen beschikbaar</b><small>HN kan hier per land en stad gecontroleerde hulpbronnen toevoegen.</small></div>')+'</div>';
+ p.innerHTML='<h2>'+esc(cat.title)+'</h2><p>'+esc(cat.content||'Hulpinformatie die door HN aan deze categorie is gekoppeld.')+'</p><div class="results">'+(services.length?services.map(x=>{
+   const c=x.card_data||{};
+   const links=(c.phone?'<div class="tag">📞 '+esc(c.phone)+'</div>':'')+(c.address?'<div class="tag">📍 '+esc(c.address)+'</div>':'')+(c.website?'<div><a class="tag" href="'+esc(c.website)+'" target="_blank" rel="noopener">Website</a></div>':'');
+   return '<div class="result"><b>'+esc(x.title)+'</b><small>'+esc(x.content||'')+'</small>'+links+'</div>';
+ }).join(''):'<div class="result"><b>Nog geen hulpbronnen beschikbaar</b><small>HN kan hier per land en stad gecontroleerde hulpbronnen toevoegen.</small></div>')+'</div>';
  p.classList.add('show');p.scrollIntoView({behavior:'smooth',block:'center'});
 }
-function show(k){
- const d={
- medisch:['Medische hulp','Ziekenhuizen, apotheken en huisartsen.'],
- veiligheid:['Veiligheid','Politie, gendarmerie en officiële veiligheidsinformatie.'],
- kind:['Hulp voor mijn kind','Kindgerichte zorg, school en urgente hulp.'],
- documenten:['Documenten & verblijf','Praktische informatie over documenten en verblijf.'],
- woning:['Huisvesting','Informatie over woning, verhuurder en woonproblemen.'],
- onderweg:['Onderweg','Hulp bij vervoer, pech en problemen onderweg.'],
- financien:['Financiële problemen','Praktische lokale hulpbronnen.'],
- weetniet:['Waar moet ik beginnen?','Een route naar de juiste HN-informatie.']
- }[k]||['HN Hulpcentrum','Kies een categorie.'];
- const p=document.getElementById('panel');p.innerHTML='<h2>'+esc(d[0])+'</h2><p>'+esc(d[1])+'</p><div class="results"><div class="result"><b>HN-informatie</b><small>Deze categorie wordt verder gevuld met gecontroleerde informatie.</small></div></div>';p.classList.add('show');p.scrollIntoView({behavior:'smooth',block:'center'});
+async function loadHelp(){
+ const db=window.hijrahSupabase;
+ if(!db)return;
+ const r=await db.from('topic').select('*').eq('source_type','hn_help').eq('status','published').order('created_at',{ascending:true});
+ if(r.error){console.warn('HN Hulpcentrum:',r.error);return}
+ helpRows=r.data||[];
+ renderCategories();
 }
-async function loadHelp(){const db=window.hijrahSupabase;if(!db)return;const r=await db.from('topic').select('*').eq('source_type','hn_help').eq('status','published').order('created_at',{ascending:true});if(r.error){console.warn('HN Hulpcentrum:',r.error);return}helpRows=r.data||[];renderCategories()}
 loadHelp();
-</script>
+</script>>
 </body>
 </html>
