@@ -785,3 +785,144 @@ window.HN_STAPPENPLAN_VERSION='1';
   },15000);
 })();
 \n
+
+/* HN Mijn Hijrah: persoonlijke situatie + persoonlijke route */
+(function(){
+  const esc2=v=>String(v??'')
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+
+  function init(){
+    if(!document.getElementById('tab-plan')) return;
+    if(document.getElementById('hnSituationSection')) return;
+
+    const planTab=document.getElementById('tab-plan');
+    const firstSection=planTab.querySelector('.plan-section');
+    if(!firstSection) return;
+
+    const section=document.createElement('div');
+    section.id='hnSituationSection';
+    section.className='plan-section';
+    section.innerHTML=
+      '<div class="section-head"><h3>Mijn situatie</h3><span class="save-status" id="hnSituationStatus"></span></div>'+
+      '<p class="muted">Deze informatie is alleen voor jouw Mijn Hijrah. HN gebruikt dit om relevante informatie en volgende stappen beter op jouw situatie af te stemmen.</p>'+
+      '<div class="row">'+
+        '<div class="field"><label>Mijn gezinssituatie</label><select id="hnFamilyStatus">'+
+          '<option value="">Kies wat past</option><option>Alleenstaand</option><option>Getrouwd</option><option>Getrouwd met kinderen</option><option>Alleenstaande ouder</option><option>Anders</option>'+
+        '</select></div>'+
+        '<div class="field"><label>Aantal kinderen</label><input id="hnChildrenCount" type="number" min="0" max="30" placeholder="0"></div>'+
+        '<div class="field"><label>Leeftijden kinderen</label><input id="hnChildrenAges" placeholder="Bijvoorbeeld 3, 7 en 11"></div>'+
+        '<div class="field"><label>Mijn werk / inkomen</label><select id="hnIncomeType">'+
+          '<option value="">Kies wat past</option><option>In loondienst</option><option>Zelfstandig / onderneming</option><option>Online / remote werk</option><option>Studerend</option><option>Geen vast inkomen</option><option>Anders</option>'+
+        '</select></div>'+
+        '<div class="field"><label>Mijn financiële ruimte</label><select id="hnBudgetCategory">'+
+          '<option value="">Kies wat past</option><option>Beperkt budget</option><option>Gemiddeld budget</option><option>Ruim budget</option><option>Nog onbekend</option>'+
+        '</select></div>'+
+        '<div class="field"><label>Mijn verblijfsstatus</label><select id="hnResidenceStatus">'+
+          '<option value="">Kies wat past</option><option>Nog oriënterend</option><option>Verblijfsroute onderzoeken</option><option>Aanvraag voorbereiden</option><option>Aangevraagd</option><option>Al verblijvend in het land</option><option>Permanent / langdurig verblijf</option>'+
+        '</select></div>'+
+        '<div class="field"><label>Mijn huidige hijrahfase</label><select id="hnHijrahPhase">'+
+          '<option value="">Automatisch uit stappenplan</option><option>Oriëntatie</option><option>Voorbereiding</option><option>Vertrek</option><option>Aankomst & integratie</option>'+
+        '</select></div>'+
+        '<div class="field full"><label>Wat is voor mij het belangrijkst?</label><div id="hnPriorities" style="display:flex;flex-wrap:wrap;gap:8px"></div></div>'+
+      '</div>'+
+      '<div class="auto-note">Je kunt dit later altijd aanpassen. Deze gegevens zijn geen officiële aanvraag of advies.</div>';
+
+    planTab.insertBefore(section,firstSection.nextSibling);
+
+    const priorities=['Betaalbare huisvesting','Onderwijs voor kinderen','Actief moslimleven','Werk en inkomen','Verblijfsrecht','Zorg','Veiligheid','Taal','Gemeenschap','Rustige leefomgeving'];
+    document.getElementById('hnPriorities').innerHTML=priorities.map((p,i)=>
+      '<label style="display:flex;align-items:center;gap:6px;border:1px solid var(--border);border-radius:20px;padding:8px 10px;font-weight:400;background:#faf8f5">'+
+      '<input type="checkbox" class="hn-priority" value="'+esc2(p)+'"> '+esc2(p)+'</label>'
+    ).join('');
+
+    load();
+    ['hnFamilyStatus','hnChildrenCount','hnChildrenAges','hnIncomeType','hnBudgetCategory','hnResidenceStatus','hnHijrahPhase'].forEach(id=>{
+      const e=document.getElementById(id);
+      e.addEventListener('change',save);
+      e.addEventListener('input',save);
+    });
+    document.querySelectorAll('.hn-priority').forEach(e=>e.addEventListener('change',save));
+
+    renderLinks();
+  }
+
+  function getData(){
+    const d=(window.plan&&window.plan.plan_data)||{};
+    return d.situation&&typeof d.situation==='object'?d.situation:{};
+  }
+
+  function load(){
+    const s=getData();
+    const set=(id,v)=>{const e=document.getElementById(id);if(e)e.value=v||''};
+    set('hnFamilyStatus',s.family_status);
+    set('hnChildrenCount',s.children_count);
+    set('hnChildrenAges',s.children_ages);
+    set('hnIncomeType',s.income_type);
+    set('hnBudgetCategory',s.budget_category);
+    set('hnResidenceStatus',s.residence_status);
+    set('hnHijrahPhase',s.hijrah_phase);
+    document.querySelectorAll('.hn-priority').forEach(e=>e.checked=(s.priorities||[]).includes(e.value));
+  }
+
+  async function save(){
+    if(!window.plan||!window.user) return;
+    const d=typeof window.getPlanData==='function'?window.getPlanData():((window.plan.plan_data)||{});
+    d.situation={
+      family_status:document.getElementById('hnFamilyStatus')?.value||'',
+      children_count:document.getElementById('hnChildrenCount')?.value||'',
+      children_ages:document.getElementById('hnChildrenAges')?.value.trim()||'',
+      income_type:document.getElementById('hnIncomeType')?.value||'',
+      budget_category:document.getElementById('hnBudgetCategory')?.value||'',
+      residence_status:document.getElementById('hnResidenceStatus')?.value||'',
+      hijrah_phase:document.getElementById('hnHijrahPhase')?.value||'',
+      priorities:[...document.querySelectorAll('.hn-priority:checked')].map(e=>e.value)
+    };
+    window.plan.plan_data=d;
+    const status=document.getElementById('hnSituationStatus');
+    if(status) status.textContent='Wijziging wordt opgeslagen...';
+    clearTimeout(window.__hnSituationTimer);
+    window.__hnSituationTimer=setTimeout(async()=>{
+      if(typeof window.savePlan==='function'){
+        const ok=await window.savePlan(true);
+        if(status) status.textContent=ok?'✓ Automatisch opgeslagen':'Opslaan mislukt';
+        if(ok&&typeof window.HN_REFRESH_RELEVANCE==='function') window.HN_REFRESH_RELEVANCE();
+      }
+    },700);
+  }
+
+  function renderLinks(){
+    const home=document.getElementById('tab-home');
+    if(!home||document.getElementById('hnPersonalLayer')) return;
+    const p=document.createElement('div');
+    p.id='hnPersonalLayer';
+    p.className='panel';
+    p.style.marginTop='20px';
+    p.innerHTML=
+      '<h2>Mijn HN</h2>'+
+      '<p class="muted">Jouw persoonlijke laag bovenop de kennis van Hijrah Netwerk.</p>'+
+      '<div class="grid" style="margin-top:14px">'+
+        card('/mijn-kaart','Mijn HN-kaart','Bekijk relevante plekken, diensten, voorzieningen en informatie voor jouw bestemming.')+
+        card('/hulp','HN Hulpcentrum','Bewaar en bekijk praktische hulp voor jouw land en stad.')+
+        card('/verhalen','Mijn ervaringen','Lees ervaringen van anderen en ontdek wat zij eerder hadden willen weten.')+
+        card('/bijdragen','Mijn bijdrage','Deel later je eigen ervaring zodat een volgende zuster ervan kan leren.')+
+      '</div>';
+    home.appendChild(p);
+  }
+
+  function card(url,title,text){
+    return '<a href="'+url+'" style="text-decoration:none;color:inherit;border:1px solid var(--border);border-radius:12px;padding:16px;background:#faf8f5;display:block">'+
+      '<strong style="color:var(--brown);display:block;margin-bottom:6px">'+esc2(title)+'</strong>'+
+      '<span class="muted" style="line-height:1.45;font-size:13px">'+esc2(text)+'</span></a>';
+  }
+
+  function watch(){
+    if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',()=>setTimeout(init,400),{once:true});
+    else setTimeout(init,400);
+    const observer=new MutationObserver(()=>{if(window.plan) init()});
+    observer.observe(document.body,{childList:true,subtree:true});
+  }
+
+  watch();
+})();
+
