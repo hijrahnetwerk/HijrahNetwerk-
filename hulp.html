@@ -17,6 +17,7 @@ header{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0
 .section{padding:0 0 60px}.section h2{font-size:25px;color:var(--dark);margin:0 0 16px}.tools{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}@media(max-width:800px){.tools{grid-template-columns:1fr}}.tool{background:#fff;border:1px solid var(--line);border-radius:18px;padding:20px}.tool h3{margin:0 0 7px;color:var(--dark);font-size:16px}.tool p{margin:0;color:var(--muted);font-size:14px}.btn{display:inline-flex;margin-top:13px;padding:9px 14px;border-radius:999px;background:var(--orange);color:#fff;font-weight:700;font-size:13px}
 footer{padding:30px 0;border-top:1px solid var(--line);color:var(--muted);font-size:13px}
 </style>
+<script src="assets/config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-client.js"></script>
 </head>
 <body>
 <header><div class="wrap nav"><a class="brand" href="/"><span class="mark">HN</span>Hijrah Netwerk</a><a class="back" href="/dashboard">← Mijn Hijrah</a></div></header>
@@ -51,43 +52,21 @@ footer{padding:30px 0;border-top:1px solid var(--line);color:var(--muted);font-s
 </main>
 <footer><div class="wrap">HN Hulpcentrum · Informatie wordt per land en stad gekoppeld aan gecontroleerde bronnen.</div></footer>
 <script>
-const data={
-medisch:["Medische hulp","Ziekenhuizen, apotheken, huisartsen en andere zorgpunten voor jouw bestemming.","Ziekenhuis","Apotheek","Huisarts"],
-veiligheid:["Veiligheid","Officiële hulpdiensten en relevante veiligheidsinformatie voor jouw bestemming.","Politie / gendarmerie","Officiële noodinformatie","Veilige contactpersoon"],
-kind:["Hulp voor mijn kind","Kindgerichte zorg, onderwijs en hulpinformatie. Bij direct gevaar altijd de officiële hulpdienst bellen.","Kinderzorg","School / onderwijs","Kinderhulp"],
-documenten:["Documenten & verblijf","Praktische route naar de juiste officiële instantie voor documenten en verblijf.","Verblijfsinformatie","Paspoort / documenten","Consulaire informatie"],
-woning:["Huisvesting","Informatie en diensten rond woning, verhuurder en woonproblemen.","Huisvestingsinformatie","Lokale diensten","Ervaringen van HN-leden"],
-onderweg:["Onderweg","Hulp en praktische informatie voor vervoer en problemen onderweg.","Wegenhulp","Vervoer","Route / locatie"],
-financien:["Financiële problemen","Praktische informatie en lokale hulpbronnen. Geen financieel advies.","Lokale hulp","Bankinformatie","Ondersteuning"],
-weetniet:["Waar moet ik beginnen?","Je kunt later een korte beslisroute doorlopen die je naar de juiste HN-informatie brengt.","Ik weet niet wat ik moet doen","Mijn situatie uitleggen","Hulp zoeken"]
-};
 let helpRows=[];
-const icons={medisch:'🚑',veiligheid:'👮',kind:'👧',documenten:'📄',woning:'🏠',onderweg:'🚗',financien:'💰',weetniet:'🧭'};
-const slugType={medisch:'Medische hulp',veiligheid:'Veiligheid',kind:'Hulp voor mijn kind',documenten:'Documenten / verblijf',woning:'Huisvesting',onderweg:'Onderweg',financien:'Financiële problemen',weetniet:'Ik weet niet wat ik nodig heb'};
 const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 function renderCategories(){
- const grid=document.querySelector('.grid');
- const cats=helpRows.filter(x=>x.card_data?.hn_record_type==='category');
+ const grid=document.querySelector('.grid'),cats=helpRows.filter(x=>x.card_data?.hn_record_type==='category');
  if(!cats.length)return;
- grid.innerHTML=cats.map(x=>{
-   const c=x.card_data||{};
-   return '<div class="help" onclick="showCat(\''+x.id+'\')"><div class="icon">'+esc(c.icon||'🧭')+'</div><h3>'+esc(x.title)+'</h3><p>'+esc(c.description||'Kies deze categorie om de beschikbare HN-hulp te bekijken.')+'</p></div>';
- }).join('');
+ grid.innerHTML=cats.map(x=>{const c=x.card_data||{};return '<div class="help" onclick="showCat(\\''+x.id+'\\')"><div class="icon">'+esc(c.icon||'🧭')+'</div><h3>'+esc(x.title)+'</h3><p>'+esc(c.description||'Kies deze categorie om de beschikbare HN-hulp te bekijken.')+'</p></div>'}).join('');
 }
 function showCat(id){
- const cat=helpRows.find(x=>x.id===id); if(!cat)return;
- const services=helpRows.filter(x=>x.card_data?.hn_record_type==='service' && (!x.card_data?.hn_category_id || x.card_data.hn_category_id===id));
+ const cat=helpRows.find(x=>x.id===id);if(!cat)return;
+ const services=helpRows.filter(x=>x.card_data?.hn_record_type==='service'&&x.card_data?.hn_category_id===id);
  const p=document.getElementById('panel');
  p.innerHTML='<h2>'+esc(cat.title)+'</h2><p>'+esc(cat.content||'Hulpinformatie die door HN aan deze categorie is gekoppeld.')+'</p><div class="results">'+(services.length?services.map(x=>{const c=x.card_data||{};return '<div class="result"><b>'+esc(x.title)+'</b><small>'+esc(x.content||'')+'</small>'+(c.phone?'<div class="tag">📞 '+esc(c.phone)+'</div>':'')+(c.address?'<div class="tag">📍 '+esc(c.address)+'</div>':'')+(c.website?'<div><a class="tag" href="'+esc(c.website)+'" target="_blank" rel="noopener">Website</a></div>':'')+'</div>'}).join(''):'<div class="result"><b>Nog geen hulpbronnen beschikbaar</b><small>HN kan hier per land en stad gecontroleerde hulpbronnen toevoegen.</small></div>')+'</div>';
  p.classList.add('show');p.scrollIntoView({behavior:'smooth',block:'center'});
 }
-async function loadHelp(){
- const db=window.hijrahSupabase;
- if(!db)return;
- const r=await db.from('topic').select('*').eq('source_type','hn_help').eq('status','published').order('created_at',{ascending:true});
- if(r.error){console.warn('HN Hulpcentrum:',r.error);return}
- helpRows=r.data||[];renderCategories();
-}
+async function loadHelp(){const db=window.hijrahSupabase;if(!db)return;const r=await db.from('topic').select('*').eq('source_type','hn_help').eq('status','published').order('created_at',{ascending:true});if(r.error){console.warn('HN Hulpcentrum:',r.error);return}helpRows=r.data||[];renderCategories()}
 loadHelp();
 </script>
 </body>
