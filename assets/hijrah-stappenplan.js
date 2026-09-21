@@ -605,3 +605,183 @@ window.HN_STAPPENPLAN_MODULES=[
   }
 ];
 window.HN_STAPPENPLAN_VERSION='1';
+
+/* HN Relevantie-laag
+   Gebruikt bestaande Mijn Hijrah Plan-data en gepubliceerde HN-fiches.
+   Er worden geen nieuwe databasekolommen vereist. */
+(function(){
+  const esc=v=>String(v??'')
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#039;');
+
+  function waitForDashboard(){
+    if(document.readyState==='loading'){
+      document.addEventListener('DOMContentLoaded',()=>setTimeout(init,300),{once:true});
+    }else{
+      setTimeout(init,300);
+    }
+  }
+
+  function init(){
+    if(!document.getElementById('tab-home')) return;
+
+    const home=document.getElementById('tab-home');
+    if(document.getElementById('hnRelevancePanel')) return;
+
+    const panel=document.createElement('div');
+    panel.id='hnRelevancePanel';
+    panel.className='panel';
+    panel.style.marginTop='20px';
+    panel.innerHTML=
+      '<h2>HN Relevantie</h2>'+
+      '<p class="muted">Jouw Mijn Hijrah Plan bepaalt welke HN-informatie voor jou het meest relevant is.</p>'+
+      '<div id="hnRelevanceContent"><div class="empty">Je persoonlijke informatie wordt geladen...</div></div>';
+
+    home.appendChild(panel);
+    load();
+  }
+
+  async function load(){
+    const box=document.getElementById('hnRelevanceContent');
+    if(!box) return;
+
+    const currentPlan=window.plan;
+    const countryId=currentPlan?.country_id||currentPlan?.countryId||null;
+    const cityId=currentPlan?.city_id||currentPlan?.cityId||null;
+
+    const country=(window.countries||[]).find(x=>String(x.id)===String(countryId));
+    const city=(window.cities||[]).find(x=>String(x.id)===String(cityId));
+
+    if(!countryId && !cityId){
+      box.innerHTML=
+        '<div class="next-step">'+
+          '<div class="next-step-title">Begin met jouw bestemming</div>'+
+          '<div class="muted">Kies in Mijn Hijrah Plan een land en eventueel een stad. Daarna kan HN je informatie tonen die bij jouw bestemming past.</div>'+
+          '<button class="button primary" style="margin-top:12px" onclick="openPlanTab()">Mijn bestemming instellen</button>'+
+        '</div>';
+      return;
+    }
+
+    const db=window.hijrahSupabase;
+    if(!db){
+      box.innerHTML='<div class="empty">HN-informatie kon nu niet worden geladen.</div>';
+      return;
+    }
+
+    let query=db.from('topic')
+      .select('id,title,summary,information_type,country_id,city_id,updated_at,last_checked_at,source_type')
+      .eq('status','published')
+      .eq('published',true)
+      .order('updated_at',{ascending:false})
+      .limit(12);
+
+    if(cityId){
+      query=query.or('city_id.eq.'+cityId+',country_id.eq.'+countryId);
+    }else if(countryId){
+      query=query.eq('country_id',countryId);
+    }
+
+    const result=await query;
+    if(result.error){
+      box.innerHTML='<div class="empty">HN-informatie kon nu niet worden geladen.</div>';
+      return;
+    }
+
+    const topics=result.data||[];
+    const destination=[city?.name,country?.name].filter(Boolean).join(', ');
+
+    const types={};
+    topics.forEach(t=>{
+      const key=t.information_type||'Algemene informatie';
+      types[key]=(types[key]||0)+1;
+    });
+
+    const typeText=Object.entries(types)
+      .slice(0,4)
+      .map(([k,v])=>esc(k)+' ('+v+')')
+      .join(' · ');
+
+    const phase=getCurrentPhase();
+
+    box.innerHTML=
+      '<div class="summary-box" style="margin-top:12px">'+
+        '<div class="summary-item">'+
+          '<div class="summary-label">Mijn bestemming</div>'+
+          '<div class="summary-value">'+esc(destination||'Nog niet gekozen')+'</div>'+
+        '</div>'+
+        '<div class="summary-item">'+
+          '<div class="summary-label">Mijn fase</div>'+
+          '<div class="summary-value">'+esc(phase)+'</div>'+
+        '</div>'+
+        '<div class="summary-item">'+
+          '<div class="summary-label">HN-informatie voor jou</div>'+
+          '<div class="summary-value">'+topics.length+' recente fiches</div>'+
+        '</div>'+
+        '<div class="summary-item">'+
+          '<div class="summary-label">Soorten informatie</div>'+
+          '<div class="summary-value">'+(typeText||'Nog geen verdeling beschikbaar')+'</div>'+
+        '</div>'+
+      '</div>'+
+      '<div style="margin-top:18px">'+
+        '<div class="section-head"><h3>Relevant voor jouw bestemming</h3><span class="save-status">HN-kennisbank</span></div>'+
+        '<div class="list">'+
+          (topics.length?topics.slice(0,5).map(t=>
+            '<div class="item">'+
+              '<div class="item-head">'+
+                '<div>'+
+                  '<h3>'+esc(t.title)+'</h3>'+
+                  '<div class="meta">'+esc(t.information_type||'Algemene informatie')+'</div>'+
+                '</div>'+
+              '</div>'+
+              (t.summary?'<div style="margin-top:8px;line-height:1.5">'+esc(t.summary)+'</div>':'')+
+              '<a class="saved-open" href="/fiche?id='+encodeURIComponent(t.id)+'">Fiche bekijken →</a>'+
+            '</div>'
+          ).join(''):'<div class="empty">Er is nog geen gepubliceerde HN-informatie voor deze bestemming.</div>')+
+        '</div>'+
+      '</div>'+
+      '<div class="next-step" style="margin-top:18px">'+
+        '<div class="next-step-title">Wat moet ik nog uitzoeken?</div>'+
+        '<div class="muted">'+buildNextResearch(phase,topics)+'</div>'+
+        '<button class="button secondary" style="margin-top:12px" onclick="openPlanTab()">Mijn Hijrah Plan openen</button>'+
+      '</div>';
+
+    window.HN_RELEVANCE_CONTEXT={countryId,cityId,phase,topicCount:topics.length};
+  }
+
+  function getCurrentPhase(){
+    const modules=window.HN_STAPPENPLAN_MODULES||[];
+    const p=window.plan;
+    const data=p?.modules||{};
+    const order=['Oriëntatie','Voorbereiding','Vertrek','Aankomst & integratie'];
+    for(const phase of order){
+      const phaseModules=modules.filter(m=>m.phase===phase);
+      if(phaseModules.some(m=>!data[m.key]?.completed)) return phase;
+    }
+    return 'Aankomst & integratie';
+  }
+
+  function buildNextResearch(phase,topics){
+    if(!topics.length) return 'Controleer eerst officiële bronnen voor jouw bestemming en voeg je open vragen toe aan Mijn Vragen.';
+    if(phase==='Oriëntatie') return 'Vergelijk de informatie in de HN-kennisbank met officiële bronnen en ervaringen voordat je een definitieve bestemming kiest.';
+    if(phase==='Voorbereiding') return 'Gebruik de relevante fiches als startpunt en controleer vooral regels, documenten, wonen, onderwijs, zorg en inkomen.';
+    if(phase==='Vertrek') return 'Controleer of belangrijke gegevens recent zijn en bewaar de adressen en contactgegevens die je tijdens je vertrek nodig hebt.';
+    return 'Kijk regelmatig wat er voor jouw stad verandert en voeg je eigen ervaringen toe wanneer je iets hebt geleerd dat een volgende zuster kan helpen.';
+  }
+
+  window.HN_REFRESH_RELEVANCE=load;
+
+  waitForDashboard();
+
+  const observer=new MutationObserver(()=>{
+    if(window.plan && document.getElementById('hnRelevancePanel')) load();
+  });
+  observer.observe(document.body,{childList:true,subtree:true});
+
+  setInterval(()=>{
+    if(document.getElementById('hnRelevancePanel')) load();
+  },15000);
+})();
+\n
