@@ -66,6 +66,19 @@ function showCat(id){
  p.innerHTML='<h2>'+esc(cat.title)+'</h2><p>'+esc(cat.content||'Hulpinformatie die door HN aan deze categorie is gekoppeld.')+'</p><div class="results">'+(services.length?services.map(x=>{const c=x.card_data||{};return '<div class="result"><b>'+esc(x.title)+'</b><small>'+esc(x.content||'')+'</small>'+(c.phone?'<div class="tag">📞 '+esc(c.phone)+'</div>':'')+(c.address?'<div class="tag">📍 '+esc(c.address)+'</div>':'')+(c.website?'<div><a class="tag" href="'+esc(c.website)+'" target="_blank" rel="noopener">Website</a></div>':'')+'</div>'}).join(''):'<div class="result"><b>Nog geen hulpbronnen beschikbaar</b><small>HN kan hier per land en stad gecontroleerde hulpbronnen toevoegen.</small></div>')+'</div>';
  p.classList.add('show');p.scrollIntoView({behavior:'smooth',block:'center'});
 }
+function show(k){
+ const d={
+ medisch:['Medische hulp','Ziekenhuizen, apotheken en huisartsen.'],
+ veiligheid:['Veiligheid','Politie, gendarmerie en officiële veiligheidsinformatie.'],
+ kind:['Hulp voor mijn kind','Kindgerichte zorg, school en urgente hulp.'],
+ documenten:['Documenten & verblijf','Praktische informatie over documenten en verblijf.'],
+ woning:['Huisvesting','Informatie over woning, verhuurder en woonproblemen.'],
+ onderweg:['Onderweg','Hulp bij vervoer, pech en problemen onderweg.'],
+ financien:['Financiële problemen','Praktische lokale hulpbronnen.'],
+ weetniet:['Waar moet ik beginnen?','Een route naar de juiste HN-informatie.']
+ }[k]||['HN Hulpcentrum','Kies een categorie.'];
+ const p=document.getElementById('panel');p.innerHTML='<h2>'+esc(d[0])+'</h2><p>'+esc(d[1])+'</p><div class="results"><div class="result"><b>HN-informatie</b><small>Deze categorie wordt verder gevuld met gecontroleerde informatie.</small></div></div>';p.classList.add('show');p.scrollIntoView({behavior:'smooth',block:'center'});
+}
 async function loadHelp(){const db=window.hijrahSupabase;if(!db)return;const r=await db.from('topic').select('*').eq('source_type','hn_help').eq('status','published').order('created_at',{ascending:true});if(r.error){console.warn('HN Hulpcentrum:',r.error);return}helpRows=r.data||[];renderCategories()}
 loadHelp();
 </script>
