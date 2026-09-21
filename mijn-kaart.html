@@ -24,12 +24,7 @@
 <section class="wrap layout">
 <div class="map" id="map"><div class="map-note" id="detail">Klik op een locatie om de HN-informatie te bekijken.</div></div><aside class="side">
 <div class="box"><h2>Wat wil je zien?</h2><div class="filters"><button class="filter active" onclick="filter(this,'all')">Alles</button><button class="filter" onclick="filter(this,'zorg')">🏥 Zorg</button><button class="filter" onclick="filter(this,'onderwijs')">🏫 Onderwijs</button><button class="filter" onclick="filter(this,'islam')">🕌 Moskee</button><button class="filter" onclick="filter(this,'praktisch')">🛒 Praktisch</button><button class="filter" onclick="filter(this,'ervaring')">⭐ Ervaringen</button></div></div>
-<div class="box"><h2>HN in deze stad</h2><div class="places">
-<div class="place" data-type="onderwijs" onclick="detail('Onderwijs','Voorbeelden: scholen, onderwijsinformatie en ervaringen van ouders.')"><span class="type">Onderwijs</span><b>Scholen & ervaringen</b><small>Relevante HN-informatie</small></div>
-<div class="place" data-type="zorg" onclick="detail('Zorg','Voorbeelden: ziekenhuizen, apotheken en zorginformatie.')"><span class="type">Zorg</span><b>Zorgpunten</b><small>Relevante HN-informatie</small></div>
-<div class="place" data-type="ervaring" onclick="detail('Ervaringen','Ervaringen van mensen die hier wonen kunnen aan locaties gekoppeld worden.')"><span class="type">Ervaringen</span><b>Ervaringen van HN-leden</b><small>Persoonlijke laag</small></div>
-<div class="place" data-type="praktisch" onclick="detail('Praktisch','Winkels, vervoer, diensten en andere dagelijkse voorzieningen.')"><span class="type">Praktisch</span><b>Dagelijks leven</b><small>Relevante HN-informatie</small></div>
-</div><button class="save" onclick="alert('De persoonlijke opslag wordt gekoppeld aan Mijn Hijrah.')">＋ Bewaar op mijn kaart</button></div>
+<div class="box"><h2>HN in deze stad</h2><div class="places" id="places"><div class="place"><b>HN-locaties laden...</b><small>De kaart wordt gevuld vanuit de HN-database.</small></div></div><button class="save" onclick="alert('Log in op Mijn Hijrah om persoonlijke locaties op te slaan.')">＋ Bewaar op mijn kaart</button></div>
 </aside>
 </section>
 </main>
@@ -38,10 +33,9 @@ let mapRows=[];
 const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 function detail(title,text){document.getElementById('detail').innerHTML='<strong>'+esc(title)+'</strong><br>'+esc(text)}
 function renderMap(){
- const map=document.getElementById('map'),places=document.getElementById('places');
- map.querySelectorAll('.pin').forEach(x=>x.remove());
- places.innerHTML=mapRows.length?mapRows.map((x,i)=>{const c=x.card_data||{};return '<div class="place" data-type="'+esc(c.hn_map_type||'overig')+'" onclick="detail(\''+esc(x.title).replace(/'/g,"\\'")+'\',\''+esc(x.content||c.address||'Geen extra informatie').replace(/'/g,"\\'")+'\')"><span class="type">'+esc(c.hn_map_type||'overig')+'</span><b>'+esc(x.title)+'</b><small>'+esc([c.neighborhood,c.address].filter(Boolean).join(' · ')||'HN-locatie')+'</small></div>'}).join(''):'<div class="place"><b>Nog geen locaties</b><small>De beheerder kan hier HN-locaties toevoegen.</small></div>';
- mapRows.forEach((x,i)=>{const c=x.card_data||{};if(c.latitude==null||c.longitude==null)return;const pin=document.createElement('div');pin.className='pin';pin.style.left=(15+(i*17)%70)+'%';pin.style.top=(18+(i*23)%62)+'%';pin.textContent=({zorg:'🏥',onderwijs:'🏫',islam:'🕌',praktisch:'🛒',ervaring:'⭐',wijk:'🏠'}[c.hn_map_type]||'📍');pin.onclick=()=>detail(x.title,x.content||c.address||'HN-locatie');map.appendChild(pin)});
+ const map=document.getElementById('map'),places=document.getElementById('places');map.querySelectorAll('.pin').forEach(x=>x.remove());
+ places.innerHTML=mapRows.length?mapRows.map(x=>{const c=x.card_data||{};return '<div class="place" data-type="'+esc(c.hn_map_type||'overig')+'" onclick="detail(\\''+esc(x.title).replace(/'/g,"\\\\'")+"\\',\\'"+esc(x.content||c.address||'Geen extra informatie').replace(/'/g,"\\\\'")+"\\')"><span class="type">'+esc(c.hn_map_type||'overig')+'</span><b>'+esc(x.title)+'</b><small>'+esc([c.neighborhood,c.address].filter(Boolean).join(' · ')||'HN-locatie')+'</small></div>'}).join(''):'<div class="place"><b>Nog geen locaties</b><small>De beheerder kan hier HN-locaties toevoegen.</small></div>';
+ mapRows.forEach((x,i)=>{const c=x.card_data||{};if(c.latitude==null||c.longitude==null)return;const pin=document.createElement('div');pin.className='pin';pin.style.left=(12+(i*19)%74)+'%';pin.style.top=(16+(i*27)%65)+'%';pin.textContent=({zorg:'🏥',onderwijs:'🏫',islam:'🕌',praktisch:'🛒',ervaring:'⭐',wijk:'🏠'}[c.hn_map_type]||'📍');pin.onclick=()=>detail(x.title,x.content||c.address||'HN-locatie');map.appendChild(pin)});
 }
 function filter(btn,type){document.querySelectorAll('.filter').forEach(x=>x.classList.remove('active'));btn.classList.add('active');document.querySelectorAll('.place').forEach(p=>p.style.display=(type==='all'||p.dataset.type===type)?'block':'none')}
 async function loadMap(){const db=window.hijrahSupabase;if(!db)return;const r=await db.from('topic').select('*').eq('source_type','hn_map').eq('status','published').order('created_at',{ascending:true});if(r.error){console.warn('HN-kaart:',r.error);return}mapRows=r.data||[];renderMap()}
