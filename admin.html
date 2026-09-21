@@ -3051,7 +3051,7 @@ async function loadActivities(){
       'created_at',
       {ascending:false}
     )
-    .limit(50);
+    .limit(200);
 
   if(error){
 
@@ -3520,96 +3520,140 @@ function renderActivity(){
 
 
   const visibleActivities=userActivities.slice(0,5);
+  const olderActivities=userActivities.slice(5);
 
-  container.innerHTML=
-    visibleActivities.map(activity=>{
+  const renderActivityItems=(items)=>items.map(activity=>{
 
-      const user=
-        users.find(
-          x=>x.id===activity.user_id
-        );
+    const user=
+      users.find(
+        x=>x.id===activity.user_id
+      );
 
-      let details='';
+    let details='';
 
-      if(activity.details){
+    if(activity.details){
 
-        try{
+      try{
 
-          if(
-            typeof activity.details==='string'
-          ){
+        if(
+          typeof activity.details==='string'
+        ){
 
-            details=
-              activity.details;
+          details=
+            activity.details;
 
-          }else{
+        }else{
 
-            details=
-              Object.entries(
-                activity.details
+          details=
+            Object.entries(
+              activity.details
+            )
+              .map(
+                ([key,value])=>
+                  \`${key}: ${value}\`
               )
-                .map(
-                  ([key,value])=>
-                    `${key}: ${value}`
-                )
-                .join(' · ');
-          }
-
-        }catch(e){
-
-          details='';
-
+              .join(' · ');
         }
+
+      }catch(e){
+
+        details='';
+
       }
+    }
 
+    return \`
+      <div class="activity-item">
 
-      return `
-        <div class="activity-item">
+        <div class="activity-main">
 
-          <div class="activity-main">
+          <div>
 
-            <div>
-
-              <div class="activity-user">
-                ${esc(
-                  user?.email||
-                  'Onbekende gebruiker'
-                )}
-              </div>
-
-              <div class="activity-description">
-                ${esc(
-                  activity.description
-                )}
-              </div>
-
-              ${
-                details
-                  ? `
-                    <div class="activity-details">
-                      ${esc(details)}
-                    </div>
-                  `
-                  : ''
-              }
-
-            </div>
-
-            <div class="activity-time">
-              ${formatDateTime(
-                activity.created_at
+            <div class="activity-user">
+              ${esc(
+                user?.email||
+                'Onbekende gebruiker'
               )}
             </div>
 
+            <div class="activity-description">
+              ${esc(
+                activity.description
+              )}
+            </div>
+
+            ${
+              details
+                ? \`
+                  <div class="activity-details">
+                    ${esc(details)}
+                  </div>
+                \`
+                : ''
+            }
+
+          </div>
+
+          <div class="activity-time">
+            ${formatDateTime(
+              activity.created_at
+            )}
           </div>
 
         </div>
-      `;
 
-    }).join('');
+      </div>
+    \`;
+
+  }).join('');
+
+  container.innerHTML=
+    renderActivityItems(visibleActivities)+
+    (
+      olderActivities.length
+        ? \`
+          <div style="padding-top:14px;text-align:center;">
+            <button
+              type="button"
+              class="button button-secondary"
+              id="activityMoreButton"
+              onclick="toggleOlderActivities()">
+              Meer lezen (${olderActivities.length})
+            </button>
+          </div>
+
+          <div id="olderActivities" hidden>
+            ${renderActivityItems(olderActivities)}
+
+            <div style="padding-top:14px;text-align:center;">
+              <button
+                type="button"
+                class="button button-secondary"
+                onclick="toggleOlderActivities()">
+                Minder tonen
+              </button>
+            </div>
+          </div>
+        \`
+        : ''
+    );
+
+
+function toggleOlderActivities(){
+  const older=document.getElementById('olderActivities');
+  const more=document.getElementById('activityMoreButton');
+
+  if(!older) return;
+
+  older.hidden=!older.hidden;
+
+  if(more){
+    more.textContent=
+      older.hidden
+        ? \`Meer lezen (${userActivities.length-5})\`
+        : 'Minder tonen';
+  }
 }
-
-
 
 function normalizeAdminPlanData(data){
   let d=data;
