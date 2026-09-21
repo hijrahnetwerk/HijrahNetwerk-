@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mijn HN-kaart — Hijrah Netwerk</title>
+<style>
+:root{--brown:#684a25;--dark:#4d3819;--orange:#df842c;--gold:#e9a74b;--cream:#fbf8f4;--soft:#fdf1e3;--ink:#2b241c;--muted:#665d51;--line:#ece5da}
+*{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;color:var(--ink);background:var(--cream)}a{text-decoration:none;color:inherit}.wrap{max-width:1160px;margin:auto;padding:0 20px}header{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}.nav{height:70px;display:flex;justify-content:space-between;align-items:center}.brand{font-weight:800;color:var(--dark);display:flex;gap:10px;align-items:center}.mark{width:36px;height:36px;border-radius:10px;background:linear-gradient(155deg,var(--gold),var(--orange));color:#fff;display:grid;place-items:center;font-size:13px}.back{font-size:14px;font-weight:700;color:var(--muted)}
+.hero{padding:52px 0 28px}.eyebrow{display:inline-block;background:var(--soft);color:#b46218;font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;padding:7px 13px;border-radius:999px;margin-bottom:15px}.hero h1{font-size:clamp(30px,5vw,46px);line-height:1.12;color:var(--dark);margin:0 0 10px}.hero p{color:var(--muted);font-size:16px;max-width:720px}
+.destination{display:flex;gap:10px;flex-wrap:wrap;margin:22px 0}.pill{background:#fff;border:1px solid var(--line);border-radius:999px;padding:9px 14px;font-weight:700;color:var(--dark);font-size:13px}
+.layout{display:grid;grid-template-columns:1.25fr .75fr;gap:18px;padding-bottom:55px}@media(max-width:850px){.layout{grid-template-columns:1fr}}
+.map{background:#e9dfcf;border:1px solid #dccdb6;border-radius:24px;min-height:500px;position:relative;overflow:hidden;background-image:linear-gradient(30deg,transparent 48%,rgba(104,74,37,.09) 49%,transparent 51%),linear-gradient(120deg,transparent 48%,rgba(104,74,37,.07) 49%,transparent 51%);background-size:90px 90px}
+.map:after{content:"TANGER";position:absolute;left:50%;top:45%;transform:translate(-50%,-50%);font-size:42px;font-weight:900;letter-spacing:.08em;color:rgba(104,74,37,.10)}
+.pin{position:absolute;width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:#fff;border:2px solid var(--orange);box-shadow:0 6px 18px rgba(70,45,20,.18);cursor:pointer;z-index:2;font-size:19px}.p1{left:27%;top:30%}.p2{left:58%;top:22%}.p3{left:67%;top:55%}.p4{left:35%;top:68%}.p5{left:78%;top:34%}
+.map-note{position:absolute;bottom:16px;left:16px;right:16px;background:rgba(255,255,255,.92);border:1px solid var(--line);border-radius:14px;padding:11px 14px;font-size:12px;color:var(--muted);z-index:3}
+.side{display:flex;flex-direction:column;gap:14px}.box{background:#fff;border:1px solid var(--line);border-radius:20px;padding:20px}.box h2{font-size:18px;color:var(--dark);margin:0 0 13px}.filters{display:flex;flex-wrap:wrap;gap:8px}.filter{border:1px solid var(--line);background:#fff;border-radius:999px;padding:8px 11px;font-size:12px;font-weight:700;color:var(--muted);cursor:pointer}.filter.active{background:var(--orange);color:#fff;border-color:var(--orange)}.places{display:grid;gap:9px}.place{border:1px solid var(--line);border-radius:13px;padding:12px;background:var(--cream);cursor:pointer}.place b{display:block;color:var(--dark);font-size:14px}.place small{color:var(--muted)}.type{font-size:10px;font-weight:800;color:#a85e1b;text-transform:uppercase;letter-spacing:.05em}.save{margin-top:14px;width:100%;border:0;background:var(--orange);color:#fff;padding:11px;border-radius:999px;font-weight:800;cursor:pointer}
+.detail{display:none;margin-top:14px;padding:13px;background:var(--soft);border-radius:13px;font-size:13px;color:var(--muted)}.detail.show{display:block}
+</style>
+</head>
+<body>
+<header><div class="wrap nav"><a class="brand" href="/"><span class="mark">HN</span>Hijrah Netwerk</a><a class="back" href="/dashboard">← Mijn Hijrah</a></div></header>
+<main>
+<section class="hero"><div class="wrap"><span class="eyebrow">Mijn HN-kaart</span><h1>Mijn Tanger</h1><p>Een persoonlijke laag bovenop de HN-database. Bewaar plekken, ontdek relevante diensten en verbind je bestemming met je eigen hijrah.</p><div class="destination"><span class="pill">🇲🇦 Marokko</span><span class="pill">📍 Tanger</span><span class="pill">👨‍👩‍👧 Gezin</span><span class="pill">🔎 Voorbereiding</span></div></div></section>
+<section class="wrap layout">
+<div class="map">
+<div class="pin p1" onclick="detail('Mijn wijk','Jouw gekozen wijk wordt hier later gekoppeld aan HN-informatie.')">🏠</div>
+<div class="pin p2" onclick="detail('Onderwijs','Scholen en ervaringen van ouders kunnen hier verschijnen.')">🏫</div>
+<div class="pin p3" onclick="detail('Zorg','Ziekenhuizen, apotheken en andere zorgpunten.')">🏥</div>
+<div class="pin p4" onclick="detail('Moskee','Moskeeën en relevante islamitische voorzieningen.')">🕌</div>
+<div class="pin p5" onclick="detail('Winkels','Opgeslagen winkels en praktische voorzieningen.')">🛒</div>
+<div class="map-note" id="detail">Klik op een punt om te zien welke HN-informatie daar later aan gekoppeld kan worden.</div>
+</div>
+<aside class="side">
+<div class="box"><h2>Wat wil je zien?</h2><div class="filters"><button class="filter active" onclick="filter(this,'all')">Alles</button><button class="filter" onclick="filter(this,'zorg')">🏥 Zorg</button><button class="filter" onclick="filter(this,'onderwijs')">🏫 Onderwijs</button><button class="filter" onclick="filter(this,'islam')">🕌 Moskee</button><button class="filter" onclick="filter(this,'praktisch')">🛒 Praktisch</button><button class="filter" onclick="filter(this,'ervaring')">⭐ Ervaringen</button></div></div>
+<div class="box"><h2>HN in deze stad</h2><div class="places">
+<div class="place" data-type="onderwijs" onclick="detail('Onderwijs','Voorbeelden: scholen, onderwijsinformatie en ervaringen van ouders.')"><span class="type">Onderwijs</span><b>Scholen & ervaringen</b><small>Relevante HN-informatie</small></div>
+<div class="place" data-type="zorg" onclick="detail('Zorg','Voorbeelden: ziekenhuizen, apotheken en zorginformatie.')"><span class="type">Zorg</span><b>Zorgpunten</b><small>Relevante HN-informatie</small></div>
+<div class="place" data-type="ervaring" onclick="detail('Ervaringen','Ervaringen van mensen die hier wonen kunnen aan locaties gekoppeld worden.')"><span class="type">Ervaringen</span><b>Ervaringen van HN-leden</b><small>Persoonlijke laag</small></div>
+<div class="place" data-type="praktisch" onclick="detail('Praktisch','Winkels, vervoer, diensten en andere dagelijkse voorzieningen.')"><span class="type">Praktisch</span><b>Dagelijks leven</b><small>Relevante HN-informatie</small></div>
+</div><button class="save" onclick="alert('De persoonlijke opslag wordt gekoppeld aan Mijn Hijrah.')">＋ Bewaar op mijn kaart</button></div>
+</aside>
+</section>
+</main>
+<script>
+function detail(title,text){document.getElementById('detail').innerHTML='<strong>'+title+'</strong><br>'+text}
+function filter(btn,type){document.querySelectorAll('.filter').forEach(x=>x.classList.remove('active'));btn.classList.add('active');document.querySelectorAll('.place').forEach(p=>p.style.display=(type==='all'||p.dataset.type===type)?'block':'none')}
+</script>
+</body>
+</html>
