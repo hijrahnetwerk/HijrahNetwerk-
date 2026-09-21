@@ -3519,8 +3519,10 @@ function renderActivity(){
   }
 
 
+  const visibleActivities=userActivities.slice(0,5);
+
   container.innerHTML=
-    userActivities.map(activity=>{
+    visibleActivities.map(activity=>{
 
       const user=
         users.find(
@@ -4000,8 +4002,10 @@ async function viewUserPlan(userId){
 
 
 
-    <div class="panel" style="margin:20px 0;">
-      <h3 style="margin-bottom:15px;">Persoonlijke planning</h3>
+    <details class="panel" style="margin:20px 0;">
+      <summary style="cursor:pointer;font-weight:700;color:var(--brown);">Persoonlijke planning <span class="hint">Openen voor details</span></summary>
+      <div style="margin-top:16px;">
+        <h3 style="margin-bottom:15px;">Persoonlijke planning</h3>
       <div class="plan-summary">
         <div class="plan-box"><div class="plan-box-label">Persoonlijke taken</div><div class="plan-box-value">${structuredPlan.tasks.length} ${structuredPlan.tasks.length===1?'taak':'taken'}</div></div>
         <div class="plan-box"><div class="plan-box-label">Eenmalige kosten</div><div class="plan-box-value">${esc(structuredPlan.budget.one_time||'Niet ingevuld')}</div></div>
@@ -4011,13 +4015,13 @@ async function viewUserPlan(userId){
       <div class="plan-section"><h3>Documenten</h3>${renderAdminPlanList(structuredPlan.documents,'Geen documentenlijst.')}</div>
       <div class="plan-section"><h3>Vragen</h3>${renderAdminPlanList(structuredPlan.questions,'Geen openstaande vragen.')}</div>
       <div class="plan-section"><h3>Vertrekchecklist</h3>${renderAdminPlanList(structuredPlan.departure,'Geen vertrekchecklist.')}</div>
-    </div>
+      </div>
+    </details>
 
-    <div class="panel" style="margin:0;">
-
-      <h3 style="margin-bottom:15px;">
-        Hijrah-stappen
-      </h3>
+    <details class="panel" style="margin:0;">
+      <summary style="cursor:pointer;font-weight:700;color:var(--brown);">Hijrah-stappen <span class="hint">Openen voor details</span></summary>
+      <div style="margin-top:16px;">
+        <h3 style="margin-bottom:15px;">Hijrah-stappen</h3>
 
       ${
         hijrahSteps.length
@@ -4076,7 +4080,8 @@ async function viewUserPlan(userId){
           `
       }
 
-    </div>
+      </div>
+    </details>
 
   `;
 
