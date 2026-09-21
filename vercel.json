@@ -120,6 +120,16 @@
       "source": "/mijn-kaart.html",
       "destination": "/mijn-kaart",
       "permanent": true
+    },
+    {
+      "source": "/admin-hulp.html",
+      "destination": "/admin-hulp",
+      "permanent": true
+    },
+    {
+      "source": "/admin-kaart.html",
+      "destination": "/admin-kaart",
+      "permanent": true
     }
   ],
   "rewrites": [
@@ -218,6 +228,14 @@
     {
       "source": "/mijn-kaart",
       "destination": "/mijn-kaart.html"
+    },
+    {
+      "source": "/admin-hulp",
+      "destination": "/admin-hulp.html"
+    },
+    {
+      "source": "/admin-kaart",
+      "destination": "/admin-kaart.html"
     }
   ]
 }
