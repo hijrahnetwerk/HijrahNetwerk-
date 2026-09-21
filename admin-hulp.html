@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Admin Hulpcentrum — Hijrah Netwerk</title>
+<script src="assets/config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-client.js"></script>
+<style>
+:root{--brown:#684a25;--orange:#df842c;--cream:#faf7f2;--text:#29231d;--muted:#756d63;--border:#e8e0d6;--danger:#b33a3a;--success:#39734a}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:var(--cream);color:var(--text)}
+.wrap{max-width:1300px;margin:auto;padding:30px}.top{background:#fff;border-bottom:1px solid var(--border);padding:18px 30px;display:flex;justify-content:space-between;align-items:center;gap:15px}.brand{font-weight:700;color:var(--brown)}a{color:inherit;text-decoration:none}.btn{border:0;border-radius:8px;padding:10px 14px;cursor:pointer}.primary{background:var(--orange);color:#fff}.secondary{background:#f1ece5;color:var(--brown)}.danger{background:#f8e6e6;color:var(--danger)}
+.panel{background:#fff;border:1px solid var(--border);border-radius:12px;padding:22px;margin-bottom:22px}.panel h1,.panel h2{margin-top:0;color:var(--brown)}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:15px}.full{grid-column:1/-1}.field{display:flex;flex-direction:column;gap:7px}label{font-size:13px;font-weight:700}input,select,textarea{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:8px;background:#fff;font:inherit}textarea{resize:vertical}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}.msg{display:none;padding:12px;border-radius:8px;margin-bottom:18px}.msg.show{display:block}.ok{background:#e7f3e9;color:var(--success)}.err{background:#f8e5e5;color:var(--danger)}
+table{width:100%;border-collapse:collapse;min-width:900px}th,td{padding:11px 9px;border-bottom:1px solid var(--border);text-align:left;vertical-align:top;font-size:13px}th{font-size:11px;color:var(--muted);text-transform:uppercase}.table{overflow:auto}.tag{display:inline-block;padding:4px 8px;border-radius:20px;background:#f1ece5;color:var(--brown);font-size:11px}.note{color:var(--muted);font-size:13px;line-height:1.5}
+@media(max-width:700px){.wrap{padding:18px}.top{padding:15px 18px}.grid{grid-template-columns:1fr}.full{grid-column:auto}}
+</style>
+</head>
+<body>
+<header class="top"><a class="brand" href="/admin">← Admin Hijrah Netwerk</a><a class="btn secondary" href="/hulp" target="_blank">Hulpcentrum openen</a></header>
+<main class="wrap">
+<div id="message" class="msg"></div>
+<section class="panel">
+<h1>HN Hulpcentrum beheren</h1>
+<p class="note">Hier beheer je de categorieën en hulpbronnen die op het publieke HN Hulpcentrum verschijnen. Gebruik per hulpbron een land/stad, bron en controledatum. Noodinformatie moet altijd rechtstreeks bij een officiële bron worden gecontroleerd.</p>
+</section>
+<section class="panel">
+<h2 id="formTitle">Nieuwe hulpbron</h2>
+<form id="form">
+<input type="hidden" id="id">
+<div class="grid">
+<div class="field"><label>Naam / titel</label><input id="title" required placeholder="Bijv. CHU Tanger"></div>
+<div class="field"><label>Type</label><select id="recordType"><option value="service">Hulpbron / dienst</option><option value="category">Categorie</option></select></div>
+<div class="field"><label>Categorie</label><select id="category"><option value="">Kies categorie</option></select></div>
+<div class="field"><label>Land</label><select id="country"><option value="">Alle landen</option></select></div>
+<div class="field"><label>Stad</label><select id="city"><option value="">Alle steden</option></select></div>
+<div class="field"><label>Telefoon</label><input id="phone" placeholder="+212 ..."></div>
+<div class="field"><label>Website</label><input id="website" type="url" placeholder="https://..."></div>
+<div class="field"><label>Adres</label><input id="address" placeholder="Straat, wijk, stad"></div>
+<div class="field"><label>Bron</label><input id="source" placeholder="Officiële website / instantie"></div>
+<div class="field"><label>Bron-URL</label><input id="sourceUrl" type="url" placeholder="https://..."></div>
+<div class="field"><label>Gecontroleerd op</label><input id="checked" type="date"></div>
+<div class="field"><label>Status</label><select id="status"><option value="published">Actief</option><option value="draft">Concept</option></select></div>
+<div class="field full"><label>Beschrijving</label><textarea id="description" rows="4" placeholder="Wat moet een zuster hierover weten?"></textarea></div>
+</div>
+<div class="actions"><button class="btn primary">Opslaan</button><button type="button" class="btn secondary" id="cancel">Annuleren</button></div>
+</form>
+</section>
+<section class="panel"><div style="display:flex;justify-content:space-between;gap:10px;align-items:center"><h2>Hulpbronnen</h2><button class="btn secondary" id="seed">Basis categorieën toevoegen</button></div><div class="table"><table><thead><tr><th>Titel</th><th>Type</th><th>Categorie</th><th>Locatie</th><th>Bron</th><th>Status</th><th>Acties</th></tr></thead><tbody id="rows"></tbody></table></div></section>
+</main>
+<script>
+const db=()=>window.hijrahSupabase;let rows=[],countries=[],cities=[];
+const $=id=>document.getElementById(id);const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+function msg(t,error=false){$('message').textContent=t;$('message').className='msg show '+(error?'err':'ok');setTimeout(()=>$('message').className='msg',3500)}
+async function checkAdmin(){const s=await db().auth.getSession();if(!s.data.session){location.href='/login';return false}const p=await db().from('profiles').select('role').eq('id',s.data.session.user.id).single();if(p.error||p.data?.role!=='admin'){document.body.innerHTML='<div style="padding:60px;text-align:center;font-family:Arial"><h1>Geen toegang</h1><p>Alleen beheerders hebben toegang.</p></div>';return false}return true}
+async function loadBase(){const [a,b]=await Promise.all([db().from('countries').select('id,name').order('name'),db().from('cities').select('id,name,country_id').order('name')]);countries=a.data||[];cities=b.data||[];$('country').innerHTML='<option value="">Alle landen</option>'+countries.map(x=>'<option value="'+x.id+'">'+esc(x.name)+'</option>').join('');updateCities()}
+function updateCities(){const cid=$('country').value;$('city').innerHTML='<option value="">Alle steden</option>'+cities.filter(x=>!cid||String(x.country_id)===String(cid)).map(x=>'<option value="'+x.id+'">'+esc(x.name)+'</option>').join('')}
+$('country').onchange=updateCities;
+async function seed(){const existing=await db().from('topic').select('id').eq('source_type','hn_help').contains('card_data',{hn_record_type:'category'});if(existing.error)return msg(existing.error.message,true);if(existing.data?.length)return msg('De basis categorieën bestaan al.');const names=[['Medische hulp','🚑'],['Veiligheid','👮'],['Hulp voor mijn kind','👧'],['Documenten / verblijf','📄'],['Huisvesting','🏠'],['Onderweg','🚗'],['Financiële problemen','💰'],['Ik weet niet wat ik nodig heb','🧭']];const payload=names.map(([name,icon],i)=>({title:name,slug:'hn-hulp-categorie-'+(i+1)+'-'+Date.now(),information_type:'Algemene informatie',visibility:'internal',status:'published',published:true,source_type:'hn_help',content:'',summary:'',card_data:{hn_record_type:'category',hn_category:name,icon,description:'',active:true}}));const r=await db().from('topic').insert(payload);if(r.error)return msg(r.error.message,true);msg('Basis categorieën toegevoegd.');await load()}
+async function load(){const r=await db().from('topic').select('*').eq('source_type','hn_help').order('created_at',{ascending:false});if(r.error)return msg(r.error.message,true);rows=r.data||[];const cats=rows.filter(x=>x.card_data?.hn_record_type==='category');$('category').innerHTML='<option value="">Kies categorie</option>'+cats.map(x=>'<option value="'+x.id+'">'+esc(x.title)+'</option>').join('');$('rows').innerHTML=rows.length?rows.map(x=>{const cd=x.card_data||{};const country=countries.find(c=>String(c.id)===String(x.country_id));const city=cities.find(c=>String(c.id)===String(x.city_id));return '<tr><td><b>'+esc(x.title)+'</b></td><td><span class="tag">'+(cd.hn_record_type==='category'?'Categorie':'Hulpbron')+'</span></td><td>'+esc(cd.hn_category||'')+'</td><td>'+esc([city?.name,country?.name].filter(Boolean).join(', '))+'</td><td>'+esc(x.source||'')+'</td><td>'+esc(x.status||'')+'</td><td><div class="actions" style="margin:0"><button class="btn secondary" onclick="edit(\''+x.id+'\')">Bewerken</button><button class="btn danger" onclick="removeRow(\''+x.id+'\')">Verwijderen</button></div></td></tr>'}).join(''):'<tr><td colspan="7" style="text-align:center;color:#756d63">Nog geen hulpbronnen.</td></tr>'}
+function reset(){ $('form').reset();$('id').value='';$('formTitle').textContent='Nieuwe hulpbron';$('checked').value=new Date().toISOString().slice(0,10);updateCities()}
+function edit(id){const x=rows.find(r=>r.id===id);if(!x)return;const c=x.card_data||{};$('id').value=x.id;$('title').value=x.title||'';$('recordType').value=c.hn_record_type||'service';$('category').value=c.hn_category_id||'';$('country').value=x.country_id||'';updateCities();$('city').value=x.city_id||'';$('phone').value=c.phone||'';$('website').value=c.website||'';$('address').value=c.address||'';$('source').value=x.source||'';$('sourceUrl').value=x.source_url||'';$('checked').value=(x.last_checked_at||x.verified_at||'').slice(0,10);$('status').value=x.status||'published';$('description').value=x.content||'';$('formTitle').textContent='Hulpbron bewerken';scrollTo(0,0)}
+$('form').onsubmit=async e=>{e.preventDefault();const id=$('id').value;const cat=$('category').value;const categoryRow=rows.find(x=>x.id===cat);const type=$('recordType').value;const payload={title:$('title').value.trim(),slug:'hn-hulp-'+Date.now(),country_id:$('country').value||null,city_id:$('city').value||null,information_type:'Algemene informatie',visibility:'internal',status:$('status').value,published:$('status').value==='published',source:$('source').value.trim()||null,source_url:$('sourceUrl').value.trim()||null,content:$('description').value.trim(),summary:$('description').value.trim().slice(0,220),source_type:'hn_help',last_checked_at:$('checked').value?new Date($('checked').value).toISOString():null,verified_at:$('checked').value?new Date($('checked').value).toISOString():null,card_data:{hn_record_type:type,hn_category:categoryRow?.title||'',hn_category_id:cat||null,phone:$('phone').value.trim(),website:$('website').value.trim(),address:$('address').value.trim(),active:$('status').value==='published'}};let r=id?await db().from('topic').update(payload).eq('id',id):await db().from('topic').insert(payload);if(r.error)return msg(r.error.message,true);msg(id?'Hulpbron bijgewerkt.':'Hulpbron toegevoegd.');reset();await load()}
+async function removeRow(id){if(!confirm('Deze hulpbron verwijderen?'))return;const r=await db().from('topic').delete().eq('id',id);if(r.error)return msg(r.error.message,true);msg('Verwijderd.');await load()}
+$('cancel').onclick=reset;$('seed').onclick=seed;
+(async()=>{if(!(await checkAdmin()))return;await loadBase();reset();await load()})();
+</script>
+</body></html>
