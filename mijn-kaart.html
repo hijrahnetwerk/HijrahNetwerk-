@@ -31,15 +31,48 @@
 <script>
 let mapRows=[];
 const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-function detail(title,text){document.getElementById('detail').innerHTML='<strong>'+esc(title)+'</strong><br>'+esc(text)}
-function renderMap(){
- const map=document.getElementById('map'),places=document.getElementById('places');map.querySelectorAll('.pin').forEach(x=>x.remove());
- places.innerHTML=mapRows.length?mapRows.map(x=>{const c=x.card_data||{};return '<div class="place" data-type="'+esc(c.hn_map_type||'overig')+'" onclick="detail(\\''+esc(x.title).replace(/'/g,"\\\\'")+"\\',\\'"+esc(x.content||c.address||'Geen extra informatie').replace(/'/g,"\\\\'")+"\\')"><span class="type">'+esc(c.hn_map_type||'overig')+'</span><b>'+esc(x.title)+'</b><small>'+esc([c.neighborhood,c.address].filter(Boolean).join(' · ')||'HN-locatie')+'</small></div>'}).join(''):'<div class="place"><b>Nog geen locaties</b><small>De beheerder kan hier HN-locaties toevoegen.</small></div>';
- mapRows.forEach((x,i)=>{const c=x.card_data||{};if(c.latitude==null||c.longitude==null)return;const pin=document.createElement('div');pin.className='pin';pin.style.left=(12+(i*19)%74)+'%';pin.style.top=(16+(i*27)%65)+'%';pin.textContent=({zorg:'🏥',onderwijs:'🏫',islam:'🕌',praktisch:'🛒',ervaring:'⭐',wijk:'🏠'}[c.hn_map_type]||'📍');pin.onclick=()=>detail(x.title,x.content||c.address||'HN-locatie');map.appendChild(pin)});
+function detail(title,text){
+ const d=document.getElementById('detail');
+ d.innerHTML='<strong>'+esc(title)+'</strong><br>'+esc(text);
+ d.classList.add('show');
 }
-function filter(btn,type){document.querySelectorAll('.filter').forEach(x=>x.classList.remove('active'));btn.classList.add('active');document.querySelectorAll('.place').forEach(p=>p.style.display=(type==='all'||p.dataset.type===type)?'block':'none')}
-async function loadMap(){const db=window.hijrahSupabase;if(!db)return;const r=await db.from('topic').select('*').eq('source_type','hn_map').eq('status','published').order('created_at',{ascending:true});if(r.error){console.warn('HN-kaart:',r.error);return}mapRows=r.data||[];renderMap()}
+function iconFor(type){return {zorg:'🏥',onderwijs:'🏫',islam:'🕌',praktisch:'🛒',ervaring:'⭐',wijk:'🏠'}[type]||'📍'}
+function renderMap(){
+ const map=document.getElementById('map'),places=document.getElementById('places');
+ map.querySelectorAll('.pin').forEach(x=>x.remove());
+ places.innerHTML=mapRows.length?mapRows.map((x,i)=>{
+   const c=x.card_data||{};
+   return '<div class="place" data-type="'+esc(c.hn_map_type||'overig')+'" data-index="'+i+'"><span class="type">'+esc(c.hn_map_type||'overig')+'</span><b>'+esc(x.title)+'</b><small>'+esc([c.neighborhood,c.address].filter(Boolean).join(' · ')||'HN-locatie')+'</small></div>';
+ }).join(''):'<div class="place"><b>Nog geen locaties</b><small>De beheerder kan hier HN-locaties toevoegen.</small></div>';
+ places.querySelectorAll('.place').forEach((el,i)=>el.addEventListener('click',()=>{const x=mapRows[i];detail(x.title,x.content||x.card_data?.address||'HN-locatie')}));
+ const geo=mapRows.filter(x=>x.card_data?.latitude!=null&&x.card_data?.longitude!=null);
+ if(!geo.length)return;
+ const lats=geo.map(x=>Number(x.card_data.latitude)),lngs=geo.map(x=>Number(x.card_data.longitude));
+ const minLat=Math.min(...lats),maxLat=Math.max(...lats),minLng=Math.min(...lngs),maxLng=Math.max(...lngs);
+ const latSpan=maxLat-minLat||0.01,lngSpan=maxLng-minLng||0.01;
+ geo.forEach(x=>{
+   const c=x.card_data||{},pin=document.createElement('div');
+   const left=10+((Number(c.longitude)-minLng)/lngSpan)*80;
+   const top=85-((Number(c.latitude)-minLat)/latSpan)*70;
+   pin.className='pin';pin.style.left=Math.max(5,Math.min(90,left))+'%';pin.style.top=Math.max(10,Math.min(88,top))+'%';pin.textContent=iconFor(c.hn_map_type);pin.title=x.title;pin.onclick=()=>detail(x.title,x.content||c.address||'HN-locatie');map.appendChild(pin);
+ });
+}
+function filter(btn,type){
+ document.querySelectorAll('.filter').forEach(x=>x.classList.remove('active'));btn.classList.add('active');
+ document.querySelectorAll('.place').forEach(p=>p.style.display=(type==='all'||p.dataset.type===type)?'block':'none');
+ document.querySelectorAll('.pin').forEach(pin=>{
+   const idx=mapRows.findIndex(x=>x.title===pin.title);
+   const row=idx>=0?mapRows[idx]:null;
+   pin.style.display=(type==='all'||row?.card_data?.hn_map_type===type)?'grid':'none';
+ });
+}
+async function loadMap(){
+ const db=window.hijrahSupabase;if(!db)return;
+ const r=await db.from('topic').select('*').eq('source_type','hn_map').eq('status','published').order('created_at',{ascending:true});
+ if(r.error){console.warn('HN-kaart:',r.error);return}
+ mapRows=r.data||[];renderMap();
+}
 loadMap();
-</script>
+</script>>
 </body>
 </html>
