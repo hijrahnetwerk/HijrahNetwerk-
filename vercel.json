@@ -110,6 +110,16 @@
       "source": "/stappenplan.html",
       "destination": "/stappenplan",
       "permanent": true
+    },
+    {
+      "source": "/hulp.html",
+      "destination": "/hulp",
+      "permanent": true
+    },
+    {
+      "source": "/mijn-kaart.html",
+      "destination": "/mijn-kaart",
+      "permanent": true
     }
   ],
   "rewrites": [
@@ -200,6 +210,14 @@
     {
       "source": "/stappenplan",
       "destination": "/stappenplan.html"
+    },
+    {
+      "source": "/hulp",
+      "destination": "/hulp.html"
+    },
+    {
+      "source": "/mijn-kaart",
+      "destination": "/mijn-kaart.html"
     }
   ]
 }
