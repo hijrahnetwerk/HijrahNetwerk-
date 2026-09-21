@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HN Hulpcentrum — Hijrah Netwerk</title>
+<meta name="description" content="HN Hulpcentrum: snel vinden wat je nodig hebt tijdens je hijrah.">
+<style>
+:root{--brown:#684a25;--dark:#4d3819;--orange:#df842c;--gold:#e9a74b;--cream:#fbf8f4;--soft:#fdf1e3;--ink:#2b241c;--muted:#665d51;--line:#ece5da;--white:#fff}
+*{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;color:var(--ink);background:var(--cream);line-height:1.55}a{text-decoration:none;color:inherit}.wrap{max-width:1120px;margin:auto;padding:0 20px}
+header{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}.nav{height:70px;display:flex;align-items:center;justify-content:space-between;gap:20px}.brand{font-weight:800;color:var(--dark);font-size:18px;display:flex;align-items:center;gap:10px}.mark{width:36px;height:36px;border-radius:10px;background:linear-gradient(155deg,var(--gold),var(--orange));color:#fff;display:grid;place-items:center;font-size:13px}.back{font-size:14px;font-weight:700;color:var(--muted)}
+.hero{padding:58px 0 34px}.eyebrow{display:inline-block;background:var(--soft);color:#b46218;font-weight:800;font-size:12px;letter-spacing:.06em;text-transform:uppercase;padding:7px 13px;border-radius:999px;margin-bottom:16px}.hero h1{font-size:clamp(30px,5vw,46px);line-height:1.12;color:var(--dark);margin:0 0 14px}.hero p{max-width:680px;color:var(--muted);font-size:17px;margin:0}
+.alert{margin:22px 0;padding:18px 20px;background:#fff;border:1px solid #ead9c0;border-left:4px solid var(--orange);border-radius:16px}.alert strong{display:block;color:var(--dark);margin-bottom:4px}.alert span{font-size:14px;color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin:22px 0 48px}@media(max-width:650px){.grid{grid-template-columns:1fr}}
+.help{background:#fff;border:1px solid var(--line);border-radius:18px;padding:22px;cursor:pointer;transition:.18s}.help:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(104,74,37,.09);border-color:#e1c9a8}.icon{font-size:26px;margin-bottom:12px}.help h3{margin:0 0 5px;color:var(--dark);font-size:17px}.help p{margin:0;color:var(--muted);font-size:14px}
+.panel{display:none;background:#fff;border:1px solid var(--line);border-radius:22px;padding:26px;margin:-25px 0 48px}.panel.show{display:block}.panel h2{margin:0 0 6px;color:var(--dark)}.panel p{color:var(--muted);margin:0 0 18px}.results{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}@media(max-width:650px){.results{grid-template-columns:1fr}}.result{border:1px solid var(--line);border-radius:14px;padding:16px;background:var(--cream)}.result b{display:block;color:var(--dark);margin-bottom:3px}.result small{color:var(--muted)}.tag{display:inline-block;font-size:11px;font-weight:800;background:var(--soft);color:#a85e1b;border-radius:999px;padding:4px 8px;margin-top:9px}
+.section{padding:0 0 60px}.section h2{font-size:25px;color:var(--dark);margin:0 0 16px}.tools{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}@media(max-width:800px){.tools{grid-template-columns:1fr}}.tool{background:#fff;border:1px solid var(--line);border-radius:18px;padding:20px}.tool h3{margin:0 0 7px;color:var(--dark);font-size:16px}.tool p{margin:0;color:var(--muted);font-size:14px}.btn{display:inline-flex;margin-top:13px;padding:9px 14px;border-radius:999px;background:var(--orange);color:#fff;font-weight:700;font-size:13px}
+footer{padding:30px 0;border-top:1px solid var(--line);color:var(--muted);font-size:13px}
+</style>
+</head>
+<body>
+<header><div class="wrap nav"><a class="brand" href="/"><span class="mark">HN</span>Hijrah Netwerk</a><a class="back" href="/dashboard">← Mijn Hijrah</a></div></header>
+<main>
+<section class="hero"><div class="wrap">
+<span class="eyebrow">HN Hulpcentrum</span>
+<h1>Hulp nodig? Begin hier.</h1>
+<p>Van een noodsituatie tot een praktische vraag: kies wat er aan de hand is. HN brengt je vervolgens naar de informatie, diensten en contacten die bij jouw situatie horen.</p>
+<div class="alert"><strong>Bij direct gevaar</strong><span>Bel altijd eerst de officiële hulpdienst van het land waar je bent. HN is geen vervanging voor medische, juridische of andere professionele hulp.</span></div>
+</div></section>
+<section class="wrap">
+<div class="grid">
+<div class="help" onclick="show('medisch')"><div class="icon">🚑</div><h3>Medische hulp</h3><p>Zorg, ziekenhuis, apotheek of huisarts zoeken.</p></div>
+<div class="help" onclick="show('veiligheid')"><div class="icon">👮</div><h3>Veiligheid</h3><p>Politie, gendarmerie en andere hulp bij veiligheid.</p></div>
+<div class="help" onclick="show('kind')"><div class="icon">👧</div><h3>Mijn kind heeft hulp nodig</h3><p>Kindgerichte zorg, school of een urgente situatie.</p></div>
+<div class="help" onclick="show('documenten')"><div class="icon">📄</div><h3>Documenten / verblijf</h3><p>Je bent een document kwijt of weet niet welke instantie je nodig hebt.</p></div>
+<div class="help" onclick="show('woning')"><div class="icon">🏠</div><h3>Huisvesting</h3><p>Problemen met woning, verhuurder of zoeken naar hulp.</p></div>
+<div class="help" onclick="show('onderweg')"><div class="icon">🚗</div><h3>Onderweg</h3><p>Auto, pech, vervoer of een probleem onderweg.</p></div>
+<div class="help" onclick="show('financien')"><div class="icon">💰</div><h3>Financiële problemen</h3><p>Je zoekt praktische hulp of weet niet waar je terechtkunt.</p></div>
+<div class="help" onclick="show('weetniet')"><div class="icon">🧭</div><h3>Ik weet niet wat ik nodig heb</h3><p>Beantwoord een paar vragen en begin bij de juiste route.</p></div>
+</div>
+<div id="panel" class="panel"></div>
+</section>
+<section class="section wrap">
+<h2>Mijn snelle hulp</h2>
+<div class="tools">
+<div class="tool"><h3>📞 Mijn vertrouwenspersonen</h3><p>Bewaar mensen die je in een moeilijke situatie snel wilt kunnen bereiken.</p><a class="btn" href="/dashboard">Naar Mijn Hijrah</a></div>
+<div class="tool"><h3>📍 Mijn belangrijke plekken</h3><p>Bewaar je ziekenhuis, apotheek, consulaat, politiepost en andere plekken.</p><a class="btn" href="/mijn-kaart">Mijn HN-kaart</a></div>
+<div class="tool"><h3>📥 Offline noodinformatie</h3><p>De belangrijkste persoonlijke hulpinformatie moet later ook zonder internet beschikbaar kunnen zijn.</p><span class="tag">Wordt uitgebreid</span></div>
+</div>
+</section>
+</main>
+<footer><div class="wrap">HN Hulpcentrum · Informatie wordt per land en stad gekoppeld aan gecontroleerde bronnen.</div></footer>
+<script>
+const data={
+medisch:["Medische hulp","Ziekenhuizen, apotheken, huisartsen en andere zorgpunten voor jouw bestemming.","Ziekenhuis","Apotheek","Huisarts"],
+veiligheid:["Veiligheid","Officiële hulpdiensten en relevante veiligheidsinformatie voor jouw bestemming.","Politie / gendarmerie","Officiële noodinformatie","Veilige contactpersoon"],
+kind:["Hulp voor mijn kind","Kindgerichte zorg, onderwijs en hulpinformatie. Bij direct gevaar altijd de officiële hulpdienst bellen.","Kinderzorg","School / onderwijs","Kinderhulp"],
+documenten:["Documenten & verblijf","Praktische route naar de juiste officiële instantie voor documenten en verblijf.","Verblijfsinformatie","Paspoort / documenten","Consulaire informatie"],
+woning:["Huisvesting","Informatie en diensten rond woning, verhuurder en woonproblemen.","Huisvestingsinformatie","Lokale diensten","Ervaringen van HN-leden"],
+onderweg:["Onderweg","Hulp en praktische informatie voor vervoer en problemen onderweg.","Wegenhulp","Vervoer","Route / locatie"],
+financien:["Financiële problemen","Praktische informatie en lokale hulpbronnen. Geen financieel advies.","Lokale hulp","Bankinformatie","Ondersteuning"],
+weetniet:["Waar moet ik beginnen?","Je kunt later een korte beslisroute doorlopen die je naar de juiste HN-informatie brengt.","Ik weet niet wat ik moet doen","Mijn situatie uitleggen","Hulp zoeken"]
+};
+function show(k){const d=data[k];const p=document.getElementById('panel');p.innerHTML='<h2>'+d[0]+'</h2><p>'+d[1]+'</p><div class="results">'+d.slice(2).map(x=>'<div class="result"><b>'+x+'</b><small>Wordt gekoppeld aan jouw land en stad.</small><span class="tag">HN</span></div>').join('')+'</div>';p.classList.add('show');p.scrollIntoView({behavior:'smooth',block:'center'})}
+</script>
+</body>
+</html>
