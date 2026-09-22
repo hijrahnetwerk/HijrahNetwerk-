@@ -155,7 +155,7 @@ function render(){
      d.service_type?'<div><span>Type:</span> '+esc(d.service_type)+'</div>':'',
      d.address?'<div><span>Adres:</span> '+esc(d.address)+'</div>':'',
      d.neighborhood?'<div><span>Wijk:</span> '+esc(d.neighborhood)+'</div>':'',
-     d.languages?'<div><span>Talen:</span> '+esc(d.languages)+'</div>':'',
+     d.languages?'<div><span>Talen:</span> '+esc(Array.isArray(d.languages)?d.languages.map(x=>typeof x==='string'?x:(x.language||x.name||'')).filter(Boolean).join(', '):d.languages)+'</div>':'',
      d.phone?'<div><span>Telefoon:</span> '+esc(d.phone)+'</div>':''
    ].join('');
    return '<article class="card">'+
