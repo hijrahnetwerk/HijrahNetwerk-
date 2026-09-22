@@ -580,6 +580,20 @@ th{
   font-weight:700
 }
 
+.admin-overview-cards{grid-template-columns:repeat(4,1fr)}
+.overview-card{border:1px solid var(--border);background:#fff;border-radius:12px;padding:20px;text-align:left;cursor:pointer;color:var(--text);box-shadow:none}
+.overview-card:hover{border-color:var(--gold);transform:translateY(-1px)}
+.overview-card .card-number{margin-bottom:7px}
+.overview-card-link{font-size:12px;color:var(--orange);font-weight:700}
+.overview-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.overview-list{display:flex;flex-direction:column}
+.overview-item{display:flex;justify-content:space-between;align-items:center;gap:15px;padding:14px 0;border-bottom:1px solid var(--border)}
+.overview-item:last-child{border-bottom:0}
+.overview-item-main{min-width:0}
+.overview-item-title{font-weight:700}
+.overview-item-meta{font-size:12px;color:var(--muted);margin-top:4px}
+.overview-item .button{flex-shrink:0}
+.overview-empty{padding:12px 0;color:var(--muted);font-size:14px}
 @media(max-width:950px){
 
   .cards{
@@ -695,49 +709,38 @@ th{
 <section class="page active" id="page-overview">
 
   <div class="intro">
-    <h2>Hijrah Netwerk beheer</h2>
-    <p>Beheer je volledige HN-kennisstructuur vanuit één dashboard.</p>
+    <h2>Overzicht</h2>
+    <p>Zie hier snel wat er nieuw is en wat jouw aandacht nodig heeft. Van hieruit ga je door naar het juiste onderdeel.</p>
   </div>
 
-  <div class="panel" style="margin-bottom:24px;">
-    <div class="panel-header">
-      <h3>HN voorbeelddata</h3>
-      <div class="actions">
-        <button id="yohanSeedButton" class="button button-primary" onclick="seedYohanGuazzi()">Dr. Yohan Guazzi toevoegen</button>
-        <button id="najateSeedButton" class="button" onclick="seedNajateHadiBoukoula()">Dr. Najate Hadi Boukoula toevoegen</button>
-      </div>
-    </div>
-    <p id="yohanSeedHint" class="hint">Voegt een gecontroleerde fiche toe aan de kennisbank en Hijrah Navigatie.</p>
-    <p id="najateSeedHint" class="hint">Voegt de aparte fiche van Dr. Najate toe. De fiche wordt automatisch gekoppeld aan andere artsen op dezelfde praktijk.</p>
+  <div class="cards admin-overview-cards">
+    <button class="overview-card" type="button" onclick="showPage('submissions')"><div class="card-label">Nieuwe registraties</div><div class="card-number" id="overviewRegistrationCount">—</div><div class="overview-card-link">Naar inzendingen →</div></button>
+    <button class="overview-card" type="button" onclick="showPage('submissions')"><div class="card-label">Nieuwe inzendingen</div><div class="card-number" id="overviewSubmissionCount">—</div><div class="overview-card-link">Naar inzendingen →</div></button>
+    <button class="overview-card" type="button" onclick="showPage('topics')"><div class="card-label">Te controleren</div><div class="card-number" id="overviewReviewCount">—</div><div class="overview-card-link">Naar Kennisbank →</div></button>
+    <button class="overview-card" type="button" onclick="showPage('topics')"><div class="card-label">Verouderd</div><div class="card-number" id="overviewOutdatedCount">—</div><div class="overview-card-link">Naar Kennisbank →</div></button>
   </div>
 
-  <div class="cards">
-
-    <div class="card">
-      <div class="card-label">Landen</div>
-      <div class="card-number" id="countryCount">—</div>
+  <div class="overview-grid">
+    <div class="panel">
+      <div class="panel-header"><h3>Nieuw binnen</h3><button class="button button-secondary" type="button" onclick="showPage('submissions')">Alles bekijken</button></div>
+      <div id="overviewNewItems" class="overview-list"><div class="loading">Laden...</div></div>
     </div>
-
-    <div class="card">
-      <div class="card-label">Steden</div>
-      <div class="card-number" id="cityCount">—</div>
+    <div class="panel">
+      <div class="panel-header"><h3>Te controleren</h3><button class="button button-secondary" type="button" onclick="showPage('topics')">Kennisbank</button></div>
+      <div id="overviewReviewItems" class="overview-list"><div class="loading">Laden...</div></div>
     </div>
-
-    <div class="card">
-      <div class="card-label">Categorieën</div>
-      <div class="card-number" id="categoryCount">—</div>
-    </div>
-
-    <div class="card">
-      <div class="card-label">Topics</div>
-      <div class="card-number" id="topicCount">—</div>
-    </div>
-
   </div>
 
   <div class="panel">
-    <h3>Structuur</h3>
-    <p>Landen → Steden → Categorieën → Subcategorieën → Topics. Een Topic kan gekoppeld worden aan land, stad, categorie, subcategorie en reviewer en heeft een eigen publicatiestatus.</p>
+    <div class="panel-header"><h3>Recent toegevoegd of gewijzigd</h3><button class="button button-secondary" type="button" onclick="showPage('topics')">Alle topics</button></div>
+    <div id="overviewRecentTopics" class="overview-list"><div class="loading">Laden...</div></div>
+  </div>
+
+  <div class="cards" style="margin-top:0;">
+    <div class="card"><div class="card-label">Landen</div><div class="card-number" id="countryCount">—</div></div>
+    <div class="card"><div class="card-label">Steden</div><div class="card-number" id="cityCount">—</div></div>
+    <div class="card"><div class="card-label">Categorieën</div><div class="card-number" id="categoryCount">—</div></div>
+    <div class="card"><div class="card-label">Topics</div><div class="card-number" id="topicCount">—</div></div>
   </div>
 
 </section>
@@ -1662,6 +1665,10 @@ function showPage(p){
   if(p==='users'){
     renderMonitoringError();
   }
+
+  if(p==='overview'){
+    loadOverview();
+  }
 }
 
 
@@ -1706,6 +1713,67 @@ async function checkAdmin(){
   }
 
   return true;
+}
+
+
+/* OVERZICHT */
+
+function overviewDate(value){
+  return value ? new Date(value).toLocaleString('nl-NL',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}) : '—';
+}
+
+function overviewButton(label,onclick){
+  return '<button type="button" class="button button-secondary" onclick="'+onclick+'">'+label+'</button>';
+}
+
+async function loadOverview(){
+  const newBox=document.getElementById('overviewNewItems');
+  const reviewBox=document.getElementById('overviewReviewItems');
+  const recentBox=document.getElementById('overviewRecentTopics');
+  if(!newBox||!reviewBox||!recentBox)return;
+
+  const results=await Promise.all([
+    db().from('profiles').select('id,email,first_name,last_name,created_at,application_status').eq('application_status','pending').order('created_at',{ascending:false}).limit(8),
+    db().from('submissions').select('id,title,submission_type,submitter_name,created_at').eq('status','pending').order('created_at',{ascending:false}).limit(8),
+    db().from('topic').select('id,title,slug,status,published,updated_at').in('status',['needs_research','in_review','outdated']).order('updated_at',{ascending:false}).limit(10),
+    db().from('topic').select('id,title,slug,status,published,updated_at').eq('status','outdated').order('updated_at',{ascending:false}).limit(10),
+    db().from('topic').select('id,title,slug,status,published,updated_at').order('updated_at',{ascending:false}).limit(8)
+  ]);
+
+  const [registrations,submissions,reviewItems,outdated,recent]=results;
+  const firstError=[registrations,submissions,reviewItems,outdated,recent].find(x=>x.error);
+  if(firstError){
+    newBox.innerHTML='<div class="overview-empty">Het overzicht kon niet volledig worden geladen.<br><span class="hint">'+esc(firstError.error.message)+'</span></div>';
+    reviewBox.innerHTML='<div class="overview-empty">Controlelijst tijdelijk niet beschikbaar.</div>';
+    recentBox.innerHTML='<div class="overview-empty">Recente topics tijdelijk niet beschikbaar.</div>';
+    return;
+  }
+
+  const regs=registrations.data||[], subs=submissions.data||[], reviews=reviewItems.data||[], old=outdated.data||[], rec=recent.data||[];
+  document.getElementById('overviewRegistrationCount').textContent=regs.length;
+  document.getElementById('overviewSubmissionCount').textContent=subs.length;
+  document.getElementById('overviewReviewCount').textContent=reviews.length;
+  document.getElementById('overviewOutdatedCount').textContent=old.length;
+
+  const incoming=[
+    ...regs.map(x=>({title:[x.first_name,x.last_name].filter(Boolean).join(' ')||x.email||'Nieuwe registratie',meta:'Nieuwe registratie · '+overviewDate(x.created_at),action:"showPage('submissions')"})),
+    ...subs.map(x=>({title:x.title||'Nieuwe inzending',meta:(x.submission_type||'Informatie')+' · '+(x.submitter_name||'Anoniem')+' · '+overviewDate(x.created_at),action:"showPage('submissions')"}))
+  ].sort((a,b)=>a.meta.localeCompare(b.meta)).slice(0,8);
+
+  newBox.innerHTML=incoming.length
+    ? incoming.map(x=>'<div class="overview-item"><div class="overview-item-main"><div class="overview-item-title">'+esc(x.title)+'</div><div class="overview-item-meta">'+esc(x.meta)+'</div></div>'+overviewButton('Bekijken',x.action)+'</div>').join('')
+    : '<div class="overview-empty">Er staat momenteel niets nieuws klaar.</div>';
+
+  reviewBox.innerHTML=reviews.length
+    ? reviews.slice(0,8).map(x=>{
+        const status=x.status==='outdated'?'Verouderd':x.status==='in_review'?'In review':'Needs research';
+        return '<div class="overview-item"><div class="overview-item-main"><div class="overview-item-title">'+esc(x.title||'Zonder titel')+'</div><div class="overview-item-meta">'+status+' · '+overviewDate(x.updated_at)+'</div></div>'+overviewButton('Bekijken',"editTopic('"+x.id+"')")+'</div>';
+      }).join('')
+    : '<div class="overview-empty">Geen topics die nu controle nodig hebben.</div>';
+
+  recentBox.innerHTML=rec.length
+    ? rec.map(x=>'<div class="overview-item"><div class="overview-item-main"><div class="overview-item-title">'+esc(x.title||'Zonder titel')+'</div><div class="overview-item-meta">'+esc(x.status||'')+' · '+overviewDate(x.updated_at)+'</div></div>'+overviewButton('Bewerken',"editTopic('"+x.id+"')")+'</div>').join('')
+    : '<div class="overview-empty">Nog geen topics.</div>';
 }
 
 
@@ -4781,6 +4849,7 @@ async function init(){
 
   await loadTopics();
   await updateYohanSeedButton();
+  await loadOverview();
 
   await loadUsers();
   await loadSubmissions();
