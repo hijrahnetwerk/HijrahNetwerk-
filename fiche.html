@@ -379,6 +379,25 @@ async function init(){
   const loc=[city,country].filter(Boolean).join(', ');
   const exps=Array.isArray(d.experiences)?d.experiences:[];
   const infoType=x.information_type||'Praktische informatie';
+
+  const practiceKey=String(d.practice_name||d.website||d.address||'').trim().toLowerCase();
+  let relatedDoctors=[];
+  if(practiceKey){
+    const related=await db().from('topic')
+      .select('id,title,slug,card_data')
+      .eq('published',true)
+      .neq('id',id)
+      .eq('city_id',x.city_id)
+      .limit(100);
+    if(!related.error && Array.isArray(related.data)){
+      relatedDoctors=related.data.filter(t=>{
+        const rd=data(t);
+        const key=String(rd.practice_name||rd.website||rd.address||'').trim().toLowerCase();
+        const isDoctor=String(rd.doctor_name||'').trim()!=='';
+        return isDoctor && key && key===practiceKey;
+      });
+    }
+  }
   const verified=x.verified_at||x.last_checked_at;
   const pageTitle=x.title||'Hijrah Netwerk';
 
@@ -510,6 +529,16 @@ async function init(){
     html+='<section class="card"><h2>Praktische gegevens</h2><p class="card-sub">De belangrijkste informatie kort en overzichtelijk bij elkaar.</p><div class="practical-grid">'+practicalBlocks+'</div>';
     if(d.warning)html+='<div class="warning">⚠️ '+esc(d.warning)+'</div>';
     html+='</section>';
+  }
+
+  if(relatedDoctors.length){
+    html+='<section class="card"><h2>Andere artsen bij deze praktijk</h2><p class="card-sub">Deze arts werkt ook bij dezelfde praktijk.</p><div class="info-grid">';
+    relatedDoctors.forEach(t=>{
+      const rd=data(t);
+      const href='/fiche/'+encodeURIComponent(t.slug||t.id);
+      html+='<div class="info-item"><div class="info-label">Arts</div><div class="info-value"><a href="'+esc(href)+'">'+esc(t.title)+'</a></div></div>';
+    });
+    html+='</div></section>';
   }
 
   if(x.content){
