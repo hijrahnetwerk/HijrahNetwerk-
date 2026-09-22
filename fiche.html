@@ -6,7 +6,7 @@
 <title>Dr. Yohan Guazzi | Huisarts in Tanger</title>
 <meta name="description" content="Dr. Yohan Guazzi, huisarts in Tanger. Praktische informatie over Cabinet Médical Ibn Zuhr, adres, telefoon, openingstijden en afspraken.">
 <meta name="robots" content="index,follow">
-<link rel="canonical" href="https://hijrah-netwerk.vercel.app/fiche.html?id=8b023d28-599b-483a-bca8-5f88e721cb89">
+<link rel="canonical" href="https://hijrah-netwerk.vercel.app/fiche">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Dr. Yohan Guazzi | Huisarts in Tanger">
 <meta property="og:description" content="Praktische informatie over Dr. Yohan Guazzi en Cabinet Médical Ibn Zuhr in Tanger.">
@@ -212,7 +212,7 @@ h1{font-size:clamp(30px,4vw,42px);line-height:1.1;color:var(--brown-dark);margin
 <link rel="stylesheet" href="assets/public-nav.css">
 <script src="assets/public-nav.js"></script>
 <main class="wrap">
-  <a class="back" href="navigatie.html">← Terug naar Hijrah Navigatie</a>
+  <a class="back" href="/navigatie">← Terug naar Hijrah Navigatie</a>
   <div id="app"><div class="empty">Fiche wordt geladen...</div></div>
 </main>
 
@@ -220,7 +220,7 @@ h1{font-size:clamp(30px,4vw,42px);line-height:1.1;color:var(--brown-dark);margin
 const db=()=>window.hijrahSupabase;
 const esc=v=>v==null?'':String(v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
 const data=x=>x&&x.card_data&&typeof x.card_data==='object'?x.card_data:{};
-const params=new URLSearchParams(location.search),id=params.get('id');
+const params=new URLSearchParams(location.search),legacyId=params.get('id'),routeSlug=location.pathname.match(/^\/fiche\/([^/]+)\/?$/)?.[1]||params.get('slug')||'';
 
 const icon={
   pin:'<span class="icon"><svg viewBox="0 0 24 24"><path d="M12 21s7-6.2 7-12A7 7 0 1 0 5 9c0 5.8 7 12 7 12Z"/><circle cx="12" cy="9" r="2.3"/></svg></span>',
@@ -342,13 +342,21 @@ function mapsHref(d,pageTitle,loc){
 }
 
 async function init(){
-  if(!id){
+  if(!legacyId && !routeSlug){
     document.getElementById('app').innerHTML='<div class="error">Geen fiche geselecteerd.</div>';
     return;
   }
 
+  let topicQuery=db().from('topic').select('id,title,slug,summary,content,information_type,country_id,city_id,category_id,published,visibility,card_data,source,source_url,updated_at,last_checked_at,next_review_at,verified_at,submitted_by').eq('published',true);
+
+  if(routeSlug){
+    topicQuery=topicQuery.eq('slug',decodeURIComponent(routeSlug));
+  }else{
+    topicQuery=topicQuery.eq('id',legacyId);
+  }
+
   const [r,c,ci,ca]=await Promise.all([
-    db().from('topic').select('id,title,summary,content,information_type,country_id,city_id,category_id,published,visibility,card_data,source,source_url,updated_at,last_checked_at,next_review_at,verified_at,submitted_by').eq('id',id).eq('published',true).maybeSingle(),
+    topicQuery.maybeSingle(),
     db().from('countries').select('id,name').order('name'),
     db().from('cities').select('id,name').order('name'),
     db().from('categories').select('id,name').order('name')
@@ -360,6 +368,8 @@ async function init(){
   }
 
   const x=r.data,d=data(x);
+  const id=x.id;
+  const ficheSlug=x.slug||id;
   const country=(c.data||[]).find(y=>y.id===x.country_id)?.name||'';
   const city=(ci.data||[]).find(y=>y.id===x.city_id)?.name||'';
   const cat=(ca.data||[]).find(y=>y.id===x.category_id)?.name||'';
@@ -373,7 +383,7 @@ async function init(){
   const mapsUrl=mapsHref(d,pageTitle,loc);
 
   const seoDescription=(x.summary||d.short_description||('Praktische informatie over '+pageTitle+(loc?' in '+loc:''))) .replace(/\s+/g,' ').trim();
-  const canonicalUrl='https://hijrah-netwerk.vercel.app/fiche.html?id='+encodeURIComponent(id);
+  const canonicalUrl='https://hijrah-netwerk.vercel.app/fiche/'+encodeURIComponent(ficheSlug);
   const setMeta=(selector,attribute,value)=>{
     const el=document.querySelector(selector);
     if(el)el.setAttribute(attribute,value);
@@ -436,7 +446,7 @@ async function init(){
   html+='<div class="main">';
 
   if(x.content){
-    html+='<section class="card"><h2>Over deze arts en praktijk</h2><div class="content">'+formatContent(x.content,x.summary||d.short_description||'')+'</div></section>';
+    html+='<section class="card"><h2>Meer informatie</h2><p class="card-sub">De fiche geeft je de belangrijkste gegevens. Voor achtergrondinformatie, opleiding, uitleg en andere uitgebreide informatie kun je het volledige artikel in de HN-Kennisbank lezen.</p><div class="hero-actions"><a class="button primary" href="/kennisbank?topic='+encodeURIComponent(id)+'">Lees meer in de Kennisbank →</a></div></section>';
   }
 
   const basis=[
