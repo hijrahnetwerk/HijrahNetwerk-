@@ -369,8 +369,8 @@ function renderLanguages(value){
   }else{
     const raw=String(value).trim();
     if(!raw)return '';
-    list=raw.split(/\\n|;/).map(x=>x.trim()).filter(Boolean).map(line=>{
-      const parts=line.split(/\\s*[|·]\\s*/);
+    list=raw.split(/\r?\n|;/).map(x=>x.trim()).filter(Boolean).map(line=>{
+      const parts=line.split(/\s*[|·]\s*/);
       return {language:parts[0],source:parts[1]||'official'};
     });
   }
