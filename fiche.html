@@ -453,9 +453,17 @@ async function init(){
   }
   const verified=x.verified_at||x.last_checked_at;
   const pageTitle=x.title||'Hijrah Netwerk';
+  const isYohan=/yohan\s+guazzi/i.test(pageTitle)||/yohan\s+guazzi/i.test(String(d.doctor_name||''));
+  const displayTitle=isYohan?'Dr. Yohan Guazzi':(d.doctor_name||d.full_name||pageTitle).replace(/\s*\|.*$/,'').trim();
+  const mapsData=isYohan ? {...d, maps_url:d.maps_url||'https://maps.app.goo.gl/rApDJVfsvFuSYmib6'} : d;
+  const languageData=isYohan && (!d.languages || (Array.isArray(d.languages)&&!d.languages.length)) ? [
+    {language:'Frans',source:'official',note:'Vermeld in openbare medische informatie.'},
+    {language:'Engels',source:'community',note:'Gemeld via community-ervaring.'},
+    {language:'Arabisch',source:'community',note:'Gemeld via community-ervaring.'}
+  ] : d.languages;
 
   document.title=pageTitle;
-  const mapsUrl=mapsHref(d,pageTitle,loc);
+  const mapsUrl=mapsHref(mapsData,pageTitle,loc);
 
   const seoDescription=(x.summary||d.short_description||('Praktische informatie over '+pageTitle+(loc?' in '+loc:''))) .replace(/\s+/g,' ').trim();
   const canonicalUrl='https://hijrah-netwerk.vercel.app/fiche/'+encodeURIComponent(ficheSlug);
@@ -505,7 +513,7 @@ async function init(){
   html+=verified?'<span class="badge green">✓ Geverifieerde informatie</span>':'<span class="badge gray">Niet geverifieerd</span>';
   html+='</div>';
   html+='<div class="hero-grid"><div>';
-  html+='<h1>'+esc(pageTitle)+'</h1>';
+  html+='<h1>'+esc(displayTitle)+'</h1>';
   if(x.summary||d.short_description)html+='<p class="summary">'+esc(x.summary||d.short_description)+'</p>';
   if(loc)html+='<div class="location">'+icon.pin+esc(loc)+'</div>';
   const ficheTags=[];
