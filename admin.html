@@ -702,9 +702,13 @@ th{
   <div class="panel" style="margin-bottom:24px;">
     <div class="panel-header">
       <h3>HN voorbeelddata</h3>
-      <button id="yohanSeedButton" class="button button-primary" onclick="seedYohanGuazzi()">Dr. Yohan Guazzi toevoegen</button>
+      <div class="actions">
+        <button id="yohanSeedButton" class="button button-primary" onclick="seedYohanGuazzi()">Dr. Yohan Guazzi toevoegen</button>
+        <button id="najateSeedButton" class="button" onclick="seedNajateHadiBoukoula()">Dr. Najate Hadi Boukoula toevoegen</button>
+      </div>
     </div>
-    <p id="yohanSeedHint" class="hint">Voegt een gecontroleerde voorbeeldfiche toe aan de kennisbank en Hijrah Navigatie.</p>
+    <p id="yohanSeedHint" class="hint">Voegt een gecontroleerde fiche toe aan de kennisbank en Hijrah Navigatie.</p>
+    <p id="najateSeedHint" class="hint">Voegt de aparte fiche van Dr. Najate toe. De fiche wordt automatisch gekoppeld aan andere artsen op dezelfde praktijk.</p>
   </div>
 
   <div class="cards">
@@ -4425,6 +4429,79 @@ async function seedYohanGuazzi(){
   await loadTopics();
   await updateYohanSeedButton();
   msg('Dr. Yohan Guazzi is toegevoegd aan de kennisbank en Hijrah Navigatie.');
+}
+
+async function seedNajateHadiBoukoula(){
+  const button=document.getElementById('najateSeedButton');
+  if(button&&button.disabled)return;
+  if(!confirm('Dr. Najate Hadi Boukoula als fiche toevoegen aan de kennisbank?')) return;
+
+  const existing=await db().from('topic').select('id,title').ilike('title','%Najate Hadi Boukoula%').limit(1);
+  if(existing.error){
+    msg('De fiche kon niet worden gecontroleerd: '+existing.error.message,'error');
+    return;
+  }
+  if(existing.data && existing.data.length){
+    if(button)button.disabled=true;
+    msg('De fiche van Dr. Najate Hadi Boukoula bestaat al.','error');
+    return;
+  }
+
+  const results=await Promise.all([
+    db().from('countries').select('id,name').ilike('name','Morocco').limit(1),
+    db().from('cities').select('id,name').ilike('name','Tanger').limit(1),
+    db().from('categories').select('id,name').ilike('name','%gezondheid%').limit(1)
+  ]);
+
+  const country=results[0].data && results[0].data[0] || null;
+  const city=results[1].data && results[1].data[0] || null;
+  const category=results[2].data && results[2].data[0] || null;
+  const now=new Date().toISOString();
+
+  const payload={
+    title:'Dr. Najate Hadi Boukoula | Huisarts in Tanger',
+    slug:'dr-najate-hadi-boukoula-huisarts-tanger',
+    country_id:country ? country.id : null,
+    city_id:city ? city.id : null,
+    category_id:category ? category.id : null,
+    information_type:'Algemene informatie',
+    visibility:'public',
+    status:'published',
+    source:'Cabinet Médical Ibn Zuhr',
+    source_url:'https://www.cabmed-iz.ma/',
+    summary:'Dr. Najate Hadi Boukoula is huisarts (médecin généraliste) bij Cabinet Médical Ibn Zuhr in Tanger, met aanvullende opleiding in gynaecologie en verloskunde.',
+    content:'Dr. Najate Hadi Boukoula is huisarts (médecin généraliste) bij Cabinet Médical Ibn Zuhr in Tanger.\\n\\nOpleiding en professionele achtergrond\\n• Médecin Généraliste.\\n• Diploma complémentaire en Gynécologie-Obstétrique.\\n• Verbonden aan Cabinet Médical Ibn Zuhr in Tanger.\\n\\nOver het cabinet\\nCabinet Médical Ibn Zuhr is een praktijk in Branes 2, Tanger. De officiële website vermeldt dat het cabinet door twee Franse artsen werd opgericht.\\n\\nBelangrijk\\nControleer openingstijden, beschikbaarheid, tarieven, verzekeringsvoorwaarden en afspraken rechtstreeks bij het cabinet voordat je vertrekt.',
+    published:true,
+    verified_at:now,
+    last_checked_at:now,
+    card_data:{
+      service_type:'Huisarts / Médecin généraliste',
+      doctor_name:'Dr. Najate Hadi Boukoula',
+      full_name:'Najate Hadi Boukoula',
+      specialties:'Gynaecologie & verloskunde',
+      practice_name:'Cabinet Médical Ibn Zuhr',
+      address:'1, rue 6 Jabel Tarek, Rond point Nawras, Branes 2, 90000 Tanger, Marokko',
+      neighborhood:'Branes 2',
+      phone:'+212 5 39 42 77 77',
+      website:'https://www.cabmed-iz.ma/',
+      appointment:'Ja, via telefoon of het contactformulier van het cabinet',
+      home_visits:'Op afspraak volgens de officiële website',
+      teleconsultation:'Beschikbaar volgens de officiële website',
+      opening_hours:'Ma–do 08:30–18:30\\nVr 08:30–12:30 en 15:00–18:30\\nZa 08:30–14:00',
+      experiences:[],
+      warning:'Controleer afspraak, openingstijden, tarieven, verzekering en beschikbaarheid rechtstreeks bij het cabinet voordat je vertrekt.',
+      source_type:'official'
+    }
+  };
+
+  const result=await db().from('topic').insert(payload);
+  if(result.error){
+    msg('De fiche kon niet worden toegevoegd: '+result.error.message,'error');
+    return;
+  }
+
+  await loadTopics();
+  msg('Dr. Najate Hadi Boukoula is toegevoegd aan de kennisbank en Hijrah Navigatie.');
 }
 
 async function loadSubmissions(){
