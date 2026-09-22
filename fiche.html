@@ -606,14 +606,14 @@ async function init(){
   html+='</div>';
 
   html+='<aside class="side">';
-  html+='<section class="card"><h2>Bron & HN-status</h2><div class="meta-box">';
+  html+='<section class="card"><h2>Bronstatus</h2><div class="meta-box">';
   html+='<div class="meta-row"><div class="meta-label">Informatietype</div><div class="meta-value">'+esc(infoType)+'</div></div>';
   if(x.source_type)html+='<div class="meta-row"><div class="meta-label">Bronstatus</div><div class="meta-value">'+sourceBadge(x.source_type)+'</div></div>';
   if(x.source)html+='<div class="meta-row"><div class="meta-label">Bron</div><div class="meta-value">'+esc(x.source)+'</div></div>';
   if(x.source_url)html+='<div class="meta-row"><div class="meta-label">Officiële bron</div><div class="meta-value"><a href="'+esc(x.source_url)+'" target="_blank" rel="noopener">Officiële bron bekijken</a></div></div>';
   if(verified)html+='<div class="meta-row"><div class="meta-label">Laatst gecontroleerd</div><div class="meta-value">'+new Date(verified).toLocaleDateString('nl-NL')+'</div></div>';
   html+='</div>';
-  html+='<div class="source-explainer"><strong>Wat betekenen deze labels?</strong><div><b>Officiële informatie</b> · afkomstig van de officiële website, de aanbieder of een officiële bron.</div><div><b>Community-ervaring</b> · gedeeld door iemand uit de HN-community op basis van eigen ervaring en niet officieel bevestigd.</div><div><b>Review</b> · een beoordeling of ervaring van een gebruiker.</div><div><b>Aanbeveling</b> · een tip vanuit de community.</div><div><b>Waarschuwing</b> · een gemeld aandachtspunt dat niet automatisch als officieel bevestigd geldt.</div></div>';
+  html+='<div class="source-explainer"><strong>Wat betekent dit?</strong><div><b>Officiële informatie</b> · afkomstig van de officiële website, de aanbieder of een officiële bron.</div><div><b>Community-ervaring</b> · gedeeld door iemand uit de HN-community op basis van eigen ervaring en niet officieel bevestigd.</div><div><b>Review</b> · een beoordeling of ervaring van een gebruiker.</div><div><b>Aanbeveling</b> · een tip vanuit de community.</div><div><b>Waarschuwing</b> · een gemeld aandachtspunt dat niet automatisch als officieel bevestigd geldt.</div></div>';
   html+='<p class="note">Belangrijke gegevens zoals openingstijden, tarieven en beschikbaarheid kunnen veranderen. Controleer ze bij de bron voordat je vertrekt.</p></section>';
   html+='</aside></div>';
 
