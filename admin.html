@@ -1548,6 +1548,34 @@ th{
 
 
 <script>
+/* Vroege admin-navigatie: beschikbaar voor inline knoppen, ook als de rest van de admin-JS later een fout geeft. */
+window.showPage=function(p){
+  document.querySelectorAll('.page').forEach(function(x){x.classList.remove('active');});
+  document.querySelectorAll('.nav-button').forEach(function(x){x.classList.remove('active');});
+  var page=document.getElementById('page-'+p);
+  if(page) page.classList.add('active');
+  var nav=document.querySelector('.nav-button[data-page="'+p+'"]');
+  if(nav) nav.classList.add('active');
+  var title=document.getElementById('pageTitle');
+  if(title){
+    title.textContent={
+      overview:'Overzicht',
+      platform:"Platformpagina's",
+      countries:'Landen',
+      cities:'Steden',
+      categories:'Categorieën',
+      subcategories:'Subcategorieën',
+      topics:'Kennisbank',
+      reviewers:'Reviewers',
+      users:'Gebruikers',
+      submissions:'Inzendingen',
+      sync:'Sync Queue'
+    }[p]||'Admin';
+  }
+};
+</script>
+
+<script>
 
 let countries=[];
 let cities=[];
