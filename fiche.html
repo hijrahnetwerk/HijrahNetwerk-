@@ -450,7 +450,7 @@ async function init(){
   }
 
   const basis=[
-    item('Type',d.service_typ  const basis=[
+    item('Type',d.service_type),
     item('Type',d.service_type),
     item('Voor kinderen',d.for_children),
     item('Talen',d.languages)
@@ -531,7 +531,7 @@ async function init(){
 
   html+='<section class="card" style="margin-top:18px"><h2>Informatie corrigeren</h2><p class="empty-note">Zie je iets dat niet klopt of verouderd is? Stuur de correctie naar HN. Niets wordt automatisch aangepast.</p><div class="hero-actions"><a class="button secondary" href="bijdragen.html?type=correction&title='+encodeURIComponent(pageTitle)+'">Correctie insturen</a></div></section>';
 
-ml;
+  document.getElementById('app').innerHTML=html;
 }
 
 init();
