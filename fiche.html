@@ -397,7 +397,7 @@ async function init(){
     return;
   }
 
-  let topicQuery=db().from('topic').select('id,title,slug,summary,content,information_type,country_id,city_id,category_id,published,visibility,card_data,source,source_url,updated_at,last_checked_at,next_review_at,verified_at,submitted_by').eq('published',true);
+  let topicQuery=db().from('topic').select('id,title,slug,summary,content,information_type,country_id,city_id,category_id,published,visibility,card_data,source,source_url,source_type,updated_at,last_checked_at,next_review_at,verified_at,submitted_by').eq('published',true);
 
   if(routeSlug){
     topicQuery=topicQuery.eq('slug',decodeURIComponent(routeSlug));
@@ -428,6 +428,8 @@ async function init(){
   const infoType=x.information_type||'Praktische informatie';
 
   const practiceKey=String(d.practice_name||d.website||d.address||'').trim().toLowerCase();
+  const practiceWebsite=String(d.website||'').trim().toLowerCase();
+  const practiceAddress=String(d.address||'').trim().toLowerCase();
   let relatedDoctors=[];
   if(practiceKey){
     const related=await db().from('topic')
@@ -441,7 +443,8 @@ async function init(){
         const rd=data(t);
         const key=String(rd.practice_name||rd.website||rd.address||'').trim().toLowerCase();
         const isDoctor=String(rd.doctor_name||'').trim()!=='';
-        return isDoctor && key && key===practiceKey;
+        const samePractice=(practiceKey&&key===practiceKey)||(practiceWebsite&&String(rd.website||'').trim().toLowerCase()===practiceWebsite)||(practiceAddress&&String(rd.address||'').trim().toLowerCase()===practiceAddress);
+        return isDoctor && samePractice;
       });
     }
   }
@@ -502,6 +505,16 @@ async function init(){
   html+='<h1>'+esc(pageTitle)+'</h1>';
   if(x.summary||d.short_description)html+='<p class="summary">'+esc(x.summary||d.short_description)+'</p>';
   if(loc)html+='<div class="location">'+icon.pin+esc(loc)+'</div>';
+  const ficheTags=[];
+  if(country)ficheTags.push('<a class="fiche-tag" href="/navigatie?country='+encodeURIComponent(x.country_id)+'">'+esc(country)+'</a>');
+  if(city)ficheTags.push('<a class="fiche-tag" href="/navigatie?city='+encodeURIComponent(x.city_id)+'">'+esc(city)+'</a>');
+  if(cat)ficheTags.push('<a class="fiche-tag" href="/navigatie?category='+encodeURIComponent(x.category_id)+'">'+esc(cat)+'</a>');
+  if(d.neighborhood)ficheTags.push('<a class="fiche-tag" href="/navigatie?q='+encodeURIComponent(d.neighborhood)+'">'+esc(d.neighborhood)+'</a>');
+  if(d.specialties){
+    const specialties=Array.isArray(d.specialties)?d.specialties:[String(d.specialties)];
+    specialties.filter(Boolean).forEach(s=>ficheTags.push('<a class="fiche-tag" href="/navigatie?q='+encodeURIComponent(s)+'">'+esc(s)+'</a>'));
+  }
+  if(ficheTags.length)html+='<div class="fiche-tags">'+ficheTags.join('')+'</div>';
   html+='<div class="hero-actions">';
   if(d.phone)html+='<a class="button primary" href="'+esc(telHref(d.phone))+'">'+icon.phone+'Bel</a>';
   if(mapsUrl)html+='<a class="button secondary" target="_blank" rel="noopener" href="'+esc(mapsUrl)+'">'+icon.map+'Google Maps</a>';
@@ -516,6 +529,8 @@ async function init(){
 
   const basis=[
     item('Type',d.service_type),
+    item('Specialisatie',d.specialties),
+    item('Praktijk',d.practice_name),
     item('Voor kinderen',d.for_children),
     d.languages?item('Talen',d.languages,'<div class="language-list">'+renderLanguages(d.languages)+'</div>'):''
   ];
