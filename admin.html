@@ -1573,6 +1573,18 @@ window.showPage=function(p){
     }[p]||'Admin';
   }
 };
+
+/* Navigatie wordt hier al gekoppeld, vóór de rest van de Admin-JS. */
+document.querySelectorAll('.nav-button[data-page]').forEach(function(button){
+  button.addEventListener('click',function(event){
+    event.preventDefault();
+    window.showPage(button.getAttribute('data-page'));
+  });
+});
+document.querySelectorAll('a.nav-button').forEach(function(link){
+  link.style.display='block';
+  link.style.textDecoration='none';
+});
 </script>
 
 <script>
