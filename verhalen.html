@@ -18,10 +18,10 @@ const db=()=>window.hijrahSupabase,esc=v=>String(v??'').replace(/&/g,'&amp;').re
 async function init(){
  for(let i=0;i<60&&!db();i++)await new Promise(r=>setTimeout(r,100));
  const box=document.getElementById('stories'); if(!db()){box.innerHTML='<div class="search-empty">De ervaringen konden niet worden geladen.</div>';return}
- const {data,error}=await db().from('topic').select('id,title,summary,content,information_type,country_id,city_id,countries(name),cities(name)').eq('published',true).eq('information_type','Ervaring').order('updated_at',{ascending:false});
+ const {data,error}=await db().from('topic').select('id,title,slug,summary,content,information_type,country_id,city_id,countries(name),cities(name)').eq('published',true).eq('information_type','Ervaring').order('updated_at',{ascending:false});
  if(error){box.innerHTML='<div class="search-empty">De ervaringen konden momenteel niet worden geladen.</div>';return}
  if(!data?.length){box.innerHTML='<div class="search-empty">Er zijn nog geen gepubliceerde ervaringen. Je kunt wel alvast jouw ervaring insturen.</div>';return}
- box.innerHTML=data.map(x=>'<article class="story"><div class="story-meta">'+esc([x.cities?.name,x.countries?.name].filter(Boolean).join(', ')||'Ervaring')+'</div><h2>'+esc(x.title||'Ervaring')+'</h2><p>'+esc(x.summary||x.content||'')+'</p><a class="button secondary" href="/fiche?id='+encodeURIComponent(x.id)+'">Lees meer</a></article>').join('');
+ box.innerHTML=data.map(x=>'<article class="story"><div class="story-meta">'+esc([x.cities?.name,x.countries?.name].filter(Boolean).join(', ')||'Ervaring')+'</div><h2>'+esc(x.title||'Ervaring')+'</h2><p>'+esc(x.summary||x.content||'')+'</p><a class="button secondary" href="/fiche/'+encodeURIComponent(x.slug||x.id)+'">Lees meer</a></article>').join('');
 }
 init();
 </script></body></html>
