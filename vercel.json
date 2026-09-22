@@ -214,6 +214,10 @@
       "destination": "/stedengids.html"
     },
     {
+      "source": "/fiche/:slug",
+      "destination": "/fiche.html?slug=:slug"
+    },
+    {
       "source": "/fiche",
       "destination": "/fiche.html"
     },
