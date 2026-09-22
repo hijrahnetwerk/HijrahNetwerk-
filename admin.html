@@ -4322,10 +4322,20 @@ async function updateYohanSeedButton(){
   if(topic){
     const cardData=topic.card_data&&typeof topic.card_data==='object'?topic.card_data:{};
 
-    if(cardData.maps_url!=='https://maps.app.goo.gl/rApDJVfsvFuSYmib6'){
+    const desiredLanguages=[
+      {language:'Frans',source:'official',note:'Vermeld in openbare medische informatie.'},
+      {language:'Engels',source:'community',note:'Gemeld via community-ervaring.'},
+      {language:'Arabisch',source:'community',note:'Gemeld via community-ervaring.'}
+    ];
+    const currentLanguages=Array.isArray(cardData.languages)?cardData.languages:[];
+    const languageNeedsUpdate=JSON.stringify(currentLanguages)!==JSON.stringify(desiredLanguages);
+    const mapsNeedsUpdate=cardData.maps_url!=='https://maps.app.goo.gl/rApDJVfsvFuSYmib6';
+
+    if(mapsNeedsUpdate||languageNeedsUpdate){
       const updatedCardData={
         ...cardData,
-        maps_url:'https://maps.app.goo.gl/rApDJVfsvFuSYmib6'
+        maps_url:'https://maps.app.goo.gl/rApDJVfsvFuSYmib6',
+        languages:desiredLanguages
       };
 
       const updateResult=await db()
@@ -4334,7 +4344,7 @@ async function updateYohanSeedButton(){
         .eq('id',topic.id);
 
       if(updateResult.error){
-        console.warn('HN voorbeeldfiche: Maps-link kon niet worden bijgewerkt.',updateResult.error);
+        console.warn('HN voorbeeldfiche: voorbeeldgegevens konden niet worden bijgewerkt.',updateResult.error);
       }
     }
 
@@ -4413,7 +4423,11 @@ async function seedYohanGuazzi(){
       opening_hours:'Ma–do 08:30–18:30\\nVr 08:30–12:30 en 15:00–18:30\\nZa 08:30–14:00',
       equipment:'Elektrocardiografie en echografie worden vermeld op de officiële website',
       accreditation:'Het cabinet vermeldt dat het erkend is door het Consulaat-Generaal van Frankrijk in Tanger',
-      languages:'Frans wordt vermeld in openbare medische directory-informatie. Niet als definitief bevestigd gegeven opnemen zonder verificatie bij het cabinet.',
+      languages:[
+        {language:'Frans',source:'official',note:'Vermeld in openbare medische informatie.'},
+        {language:'Engels',source:'community',note:'Gemeld via community-ervaring.'},
+        {language:'Arabisch',source:'community',note:'Gemeld via community-ervaring.'}
+      ],
       experiences:[],
       warning:'Controleer afspraak, openingstijden, tarieven, verzekering en talen rechtstreeks bij het cabinet voordat je vertrekt.',
       source_type:'official'
