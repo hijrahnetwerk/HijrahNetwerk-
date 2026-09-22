@@ -46,7 +46,9 @@ button,input,textarea,select{font:inherit}
   background:var(--brown);
   color:#fff;
   padding:24px 16px;
-  flex-shrink:0
+  flex-shrink:0;
+  position:relative;
+  z-index:20
 }
 
 .logo{
@@ -70,7 +72,12 @@ button,input,textarea,select{font:inherit}
   padding:11px 14px;
   border-radius:9px;
   cursor:pointer;
-  margin-bottom:3px
+  margin-bottom:3px;
+  display:block;
+  position:relative;
+  z-index:21;
+  pointer-events:auto;
+  text-decoration:none
 }
 
 .nav-button:hover,
@@ -714,25 +721,25 @@ th{
   </div>
 
   <div class="cards admin-overview-cards">
-    <button class="overview-card" type="button" onclick="showPage('submissions')"><div class="card-label">Nieuwe registraties</div><div class="card-number" id="overviewRegistrationCount">—</div><div class="overview-card-link">Naar inzendingen →</div></button>
-    <button class="overview-card" type="button" onclick="showPage('submissions')"><div class="card-label">Nieuwe inzendingen</div><div class="card-number" id="overviewSubmissionCount">—</div><div class="overview-card-link">Naar inzendingen →</div></button>
-    <button class="overview-card" type="button" onclick="showPage('topics')"><div class="card-label">Te controleren</div><div class="card-number" id="overviewReviewCount">—</div><div class="overview-card-link">Naar Kennisbank →</div></button>
-    <button class="overview-card" type="button" onclick="showPage('topics')"><div class="card-label">Verouderd</div><div class="card-number" id="overviewOutdatedCount">—</div><div class="overview-card-link">Naar Kennisbank →</div></button>
+    <button class="overview-card" type="button" data-admin-page="submissions"><div class="card-label">Nieuwe registraties</div><div class="card-number" id="overviewRegistrationCount">—</div><div class="overview-card-link">Naar inzendingen →</div></button>
+    <button class="overview-card" type="button" data-admin-page="submissions"><div class="card-label">Nieuwe inzendingen</div><div class="card-number" id="overviewSubmissionCount">—</div><div class="overview-card-link">Naar inzendingen →</div></button>
+    <button class="overview-card" type="button" data-admin-page="topics"><div class="card-label">Te controleren</div><div class="card-number" id="overviewReviewCount">—</div><div class="overview-card-link">Naar Kennisbank →</div></button>
+    <button class="overview-card" type="button" data-admin-page="topics"><div class="card-label">Verouderd</div><div class="card-number" id="overviewOutdatedCount">—</div><div class="overview-card-link">Naar Kennisbank →</div></button>
   </div>
 
   <div class="overview-grid">
     <div class="panel">
-      <div class="panel-header"><h3>Nieuw binnen</h3><button class="button button-secondary" type="button" onclick="showPage('submissions')">Alles bekijken</button></div>
+      <div class="panel-header"><h3>Nieuw binnen</h3><button class="button button-secondary" type="button" data-admin-page="submissions">Alles bekijken</button></div>
       <div id="overviewNewItems" class="overview-list"><div class="loading">Laden...</div></div>
     </div>
     <div class="panel">
-      <div class="panel-header"><h3>Te controleren</h3><button class="button button-secondary" type="button" onclick="showPage('topics')">Kennisbank</button></div>
+      <div class="panel-header"><h3>Te controleren</h3><button class="button button-secondary" type="button" data-admin-page="topics">Kennisbank</button></div>
       <div id="overviewReviewItems" class="overview-list"><div class="loading">Laden...</div></div>
     </div>
   </div>
 
   <div class="panel">
-    <div class="panel-header"><h3>Recent toegevoegd of gewijzigd</h3><button class="button button-secondary" type="button" onclick="showPage('topics')">Alle topics</button></div>
+    <div class="panel-header"><h3>Recent toegevoegd of gewijzigd</h3><button class="button button-secondary" type="button" data-admin-page="topics">Alle topics</button></div>
     <div id="overviewRecentTopics" class="overview-list"><div class="loading">Laden...</div></div>
   </div>
 
@@ -1575,15 +1582,19 @@ window.showPage=function(p){
 };
 
 /* Navigatie wordt hier al gekoppeld, vóór de rest van de Admin-JS. */
+document.addEventListener('click',function(event){
+  const button=event.target.closest('[data-admin-page]');
+  if(button){
+    event.preventDefault();
+    window.showPage(button.getAttribute('data-admin-page'));
+  }
+});
+
 document.querySelectorAll('.nav-button[data-page]').forEach(function(button){
   button.addEventListener('click',function(event){
     event.preventDefault();
     window.showPage(button.getAttribute('data-page'));
   });
-});
-document.querySelectorAll('a.nav-button').forEach(function(link){
-  link.style.display='block';
-  link.style.textDecoration='none';
 });
 </script>
 
@@ -1672,23 +1683,18 @@ function options(el,items,placeholder='Kies...'){
 
 function showPage(p){
 
-  document
-    .querySelectorAll('.page')
-    .forEach(x=>x.classList.remove('active'));
+  const page=document.getElementById('page-'+p);
+  if(!page)return;
 
-  document
-    .querySelectorAll('.nav-button')
-    .forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.nav-button').forEach(x=>x.classList.remove('active'));
 
-  document
-    .getElementById('page-'+p)
-    ?.classList.add('active');
+  page.classList.add('active');
 
-  document
-    .querySelector(`[data-page="${p}"]`)
-    ?.classList.add('active');
+  const nav=document.querySelector('.nav-button[data-page="'+p+'"]');
+  if(nav)nav.classList.add('active');
 
-  document.getElementById('pageTitle').textContent={
+  const titles={
     overview:'Overzicht',
     platform:"Platformpagina's",
     countries:'Landen',
@@ -1700,15 +1706,34 @@ function showPage(p){
     users:'Gebruikers',
     submissions:'Inzendingen',
     sync:'Sync Queue'
-  }[p]||'Admin';
+  };
 
-  if(p==='users'){
-    renderMonitoringError();
+  const title=document.getElementById('pageTitle');
+  if(title)title.textContent=titles[p]||'Admin';
+
+  /*
+   * Pagina's kunnen altijd geopend worden, ook als een andere
+   * database-query nog bezig is. Indien nodig verversen we de
+   * relevante inhoud op de achtergrond.
+   */
+  const loaders={
+    overview:loadOverview,
+    countries:loadCountries,
+    cities:loadCities,
+    categories:loadCategories,
+    subcategories:loadSubcategories,
+    topics:loadTopics,
+    reviewers:loadReviewers,
+    users:loadUsers,
+    submissions:loadSubmissions,
+    sync:loadSync
+  };
+
+  if(loaders[p]){
+    runAdminLoad(titles[p]||'Pagina',loaders[p]);
   }
 
-  if(p==='overview'){
-    loadOverview();
-  }
+  if(p==='users')renderMonitoringError();
 }
 
 
@@ -1724,38 +1749,47 @@ document
 
 async function checkAdmin(){
 
-  const {
-    data:s,
-    error:se
-  }=await db().auth.getSession();
+  try{
+    const {
+      data:s,
+      error:se
+    }=await withTimeout(db().auth.getSession(),12000);
 
-  if(se||!s.session){
-    location.href='/login.html';
+    if(se){
+      document.body.innerHTML='<div style="padding:60px;text-align:center;font-family:Arial"><h1>Beheeromgeving kon niet laden</h1><p>'+esc(se.message||'De sessie kon niet worden gecontroleerd.')+'</p><p><a href="/login">Opnieuw inloggen</a></p></div>';
+      return false;
+    }
+
+    if(!s?.session){
+      location.href='/login';
+      return false;
+    }
+
+    const {
+      data:p,
+      error
+    }=await withTimeout(
+      db().from('profiles').select('role').eq('id',s.session.user.id).single(),
+      12000
+    );
+
+    if(error){
+      document.body.innerHTML='<div style="padding:60px;text-align:center;font-family:Arial"><h1>Beheeromgeving kon niet laden</h1><p>'+esc(error.message||'De beheerdersrol kon niet worden gecontroleerd.')+'</p><p><a href="/login">Opnieuw inloggen</a></p></div>';
+      return false;
+    }
+
+    if(p?.role!=='admin'){
+      document.body.innerHTML='<div style="padding:60px;text-align:center;font-family:Arial"><h1>Geen toegang</h1><p>Alleen beheerders hebben toegang.</p></div>';
+      return false;
+    }
+
+    return true;
+
+  }catch(error){
+    console.error('HN Admin - toegangscontrole:',error);
+    document.body.innerHTML='<div style="padding:60px;text-align:center;font-family:Arial"><h1>Beheeromgeving kon niet laden</h1><p>'+esc(error.message||'Onbekende fout bij het laden.')+'</p><p><a href="/login">Opnieuw inloggen</a></p></div>';
     return false;
   }
-
-  const {
-    data:p,
-    error
-  }=await db()
-    .from('profiles')
-    .select('role')
-    .eq('id',s.session.user.id)
-    .single();
-
-  if(error||p?.role!=='admin'){
-
-    document.body.innerHTML=`
-      <div style="padding:60px;text-align:center;font-family:Arial">
-        <h1>Geen toegang</h1>
-        <p>Alleen beheerders hebben toegang.</p>
-      </div>
-    `;
-
-    return false;
-  }
-
-  return true;
 }
 
 
@@ -4878,31 +4912,68 @@ async function rejectSubmission(id){
 }
 document.getElementById('refreshSubmissions')?.addEventListener('click',loadSubmissions);
 
+function withTimeout(promise, ms=12000){
+  return Promise.race([
+    promise,
+    new Promise((_,reject)=>setTimeout(()=>reject(new Error('De aanvraag duurde te lang. Controleer de Supabase-verbinding.')),ms))
+  ]);
+}
+
+async function runAdminLoad(label, fn){
+  try{
+    await withTimeout(fn(),12000);
+  }catch(error){
+    console.error('HN Admin - '+label+':',error);
+    msg(label+' kon niet op tijd worden geladen.','error');
+  }
+}
+
 async function init(){
+
+  const database=db();
+
+  if(!database){
+    document.querySelectorAll('.loading').forEach(el=>{
+      el.textContent='De beheeromgeving kon de databaseverbinding niet laden.';
+    });
+    msg('Supabase is niet beschikbaar.','error');
+    return;
+  }
 
   if(!(await checkAdmin()))
     return;
 
-  await loadCountries();
-  await loadCities();
-  await loadCategories();
-  await loadSubcategories();
-  await loadReviewers();
+  /*
+   * De oude versie laadde alles één voor één.
+   * Daardoor bleef de beheeromgeving lang op "Laden..." staan.
+   * Onafhankelijke onderdelen worden nu tegelijk geladen.
+   */
+  await Promise.all([
+    runAdminLoad('Landen',loadCountries),
+    runAdminLoad('Steden',loadCities),
+    runAdminLoad('Categorieën',loadCategories),
+    runAdminLoad('Reviewers',loadReviewers),
+    runAdminLoad('Gebruikers',loadUsers),
+    runAdminLoad('Inzendingen',loadSubmissions),
+    runAdminLoad('Sync Queue',loadSync),
+    runAdminLoad('Overzicht',loadOverview)
+  ]);
 
+  /*
+   * Deze twee onderdelen gebruiken de hierboven geladen basisgegevens.
+   * Daarom komen ze daarna.
+   */
   refreshTopicSelects();
 
-  await loadTopics();
+  await Promise.all([
+    runAdminLoad('Subcategorieën',loadSubcategories),
+    runAdminLoad('Kennisbank',loadTopics)
+  ]);
+
   await updateYohanSeedButton();
-  await loadOverview();
-
-  await loadUsers();
-  await loadSubmissions();
-
-  await loadSync();
 
   startUserMonitoring();
 }
-
 
 init();
 
