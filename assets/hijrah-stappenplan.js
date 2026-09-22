@@ -672,7 +672,7 @@ window.HN_STAPPENPLAN_VERSION='1';
     }
 
     let query=db.from('topic')
-      .select('id,title,summary,information_type,country_id,city_id,updated_at,last_checked_at,source_type')
+      .select('id,title,slug,summary,information_type,country_id,city_id,updated_at,last_checked_at,source_type')
       .eq('status','published')
       .eq('published',true)
       .order('updated_at',{ascending:false})
@@ -737,7 +737,7 @@ window.HN_STAPPENPLAN_VERSION='1';
                 '</div>'+
               '</div>'+
               (t.summary?'<div style="margin-top:8px;line-height:1.5">'+esc(t.summary)+'</div>':'')+
-              '<a class="saved-open" href="/fiche?id='+encodeURIComponent(t.id)+'">Fiche bekijken →</a>'+
+              '<a class="saved-open" href="/fiche/'+encodeURIComponent(t.slug||t.id)+'">Fiche bekijken →</a>'+
             '</div>'
           ).join(''):'<div class="empty">Er is nog geen gepubliceerde HN-informatie voor deze bestemming.</div>')+
         '</div>'+
