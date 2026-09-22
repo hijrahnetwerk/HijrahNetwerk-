@@ -75,6 +75,8 @@ h1{font-size:clamp(30px,4vw,42px);line-height:1.1;color:var(--brown-dark);margin
 .info-label{font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:4px}
 .info-value{font-size:14px;word-break:break-word;white-space:pre-wrap}
 .info-value a,.source a,.contact-value a{color:var(--orange);font-weight:700}
+.hours-list{display:grid;gap:7px}
+.hours-row{padding:10px 12px;border:1px solid var(--border);border-radius:9px;background:#fbfaf8;font-size:14px;line-height:1.45}
 .warning{margin-top:15px;background:#fff7e9;border:1px solid #f1d6a7;border-radius:11px;padding:13px;font-size:13px}
 .contact-card{display:grid;gap:10px}
 .contact-row{border:1px solid var(--border);border-radius:11px;padding:12px 13px;background:#fff}
@@ -168,6 +170,7 @@ h1{font-size:clamp(30px,4vw,42px);line-height:1.1;color:var(--brown-dark);margin
   .info-item{padding:11px 10px;border-radius:9px}
   .info-label{font-size:9px}
   .info-value{font-size:13px;line-height:1.45}
+  .hours-row{font-size:13px;padding:10px}
   .content{font-size:14px}
   .content h3{font-size:15px;margin:18px 0 7px}
   .content p{margin-bottom:12px}
@@ -445,12 +448,7 @@ async function init(){
 
   html+='<div class="main">';
 
-  if(x.content){
-    html+='<section class="card"><h2>Meer informatie</h2><p class="card-sub">De fiche geeft je de belangrijkste gegevens. Voor achtergrondinformatie, opleiding, uitleg en andere uitgebreide informatie kun je het volledige artikel in de HN-Kennisbank lezen.</p><div class="hero-actions"><a class="button primary" href="/kennisbank?topic='+encodeURIComponent(id)+'">Lees meer in de Kennisbank →</a></div></section>';
-  }
-
   const basis=[
-    item('Type',d.service_type),
     item('Type',d.service_type),
     item('Voor kinderen',d.for_children),
     item('Talen',d.languages)
@@ -464,8 +462,16 @@ async function init(){
     item('Adres',d.address),
     item('Wijk',d.neighborhood)
   ];
+  const openingHoursHtml=(value)=>{
+    if(value==null || String(value).trim()==='')return '';
+    let raw=String(value).replace(/\\r/g,'').replace(/\\n/g,'\\n').replace(/\\s+/g,' ').trim();
+    const days='Maandag|Dinsdag|Woensdag|Donderdag|Vrijdag|Zaterdag|Zondag';
+    const parts=raw.includes('\\n') ? raw.split(/\\n+/) : raw.split(new RegExp('(?=(?:'+days+')\\s*:)', 'i'));
+    const rows=parts.map(v=>v.replace(/^[-•\\s]+/,'').trim()).filter(Boolean);
+    return '<div class="hours-list">'+rows.map(v=>'<div class="hours-row">'+esc(v)+'</div>').join('')+'</div>';
+  };
+
   const afspraken=[
-    item('Openingstijden',d.opening_hours),
     item('Afspraak nodig',d.appointment),
     item('Huisbezoeken',d.home_visits),
     item('Teleconsultatie',d.teleconsultation)
@@ -488,17 +494,20 @@ async function init(){
   const moneyIcon='<span class="mini-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v10M15 9.5c-.7-.7-1.6-1-2.7-1-1.4 0-2.3.7-2.3 1.7 0 2.7 5 1.1 5 4 0 1.1-1 1.8-2.5 1.8-1.2 0-2.2-.4-2.9-1.1"/></svg></span>';
   const careIcon='<span class="mini-icon"><svg viewBox="0 0 24 24"><path d="M12 21s7-4.2 7-10V5l-7-3-7 3v6c0 5.8 7 10 7 10Z"/><path d="M12 8v6M9 11h6"/></svg></span>';
 
+  const locationItems=locatie.slice();
+  if(mapsUrl)locationItems.push(item('Google Maps','', '<a href="'+esc(mapsUrl)+'" target="_blank" rel="noopener">Bekijk locatie op Google Maps →</a>'));
+
   const practicalBlocks=
     block('Snelle info',webIcon,basis)+
     block('Contact',phoneIcon,contact)+
-    block('Locatie',pinIcon,locatie)+
-    block('Openingstijden & afspraken',clockIcon,afspraken)+
+    block('Locatie',pinIcon,locationItems)+
+    (d.opening_hours ? '<div class="practical-block full"><h3 class="practical-title">'+clockIcon+'Openingstijden</h3>'+openingHoursHtml(d.opening_hours)+'</div>' : '')+
+    block('Afspraken',clockIcon,afspraken)+
     block('Kosten & verzekering',moneyIcon,kosten)+
     block('Zorg & spoed',careIcon,zorg);
 
   if(practicalBlocks){
-    html+='<section class="card"><h2>Snelle info</h2><p class="card-sub">De belangrijkste informatie kort bij elkaar.</p><div class="practical-grid">'+practicalBlocks+'</div>';
-    if(mapsUrl)html+='<div class="hero-actions"><a class="button secondary" target="_blank" rel="noopener" href="'+esc(mapsUrl)+'">'+icon.map+'Bekijk op Google Maps</a></div>';
+    html+='<section class="card"><h2>Praktische gegevens</h2><p class="card-sub">De belangrijkste informatie kort en overzichtelijk bij elkaar.</p><div class="practical-grid">'+practicalBlocks+'</div>';
     if(d.warning)html+='<div class="warning">⚠️ '+esc(d.warning)+'</div>';
     html+='</section>';
   }
