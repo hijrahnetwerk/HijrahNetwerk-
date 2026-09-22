@@ -10,7 +10,7 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="Dr. Yohan Guazzi | Huisarts in Tanger">
 <meta property="og:description" content="Praktische informatie over Dr. Yohan Guazzi en Cabinet Médical Ibn Zuhr in Tanger.">
-<meta property="og:url" content="https://hijrah-netwerk.vercel.app/fiche.html?id=8b023d28-599b-483a-bca8-5f88e721cb89">
+<meta property="og:url" content="https://hijrah-netwerk.vercel.app/fiche">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Dr. Yohan Guazzi | Huisarts in Tanger">
 <meta name="twitter:description" content="Praktische informatie over Dr. Yohan Guazzi en Cabinet Médical Ibn Zuhr in Tanger.">
@@ -450,6 +450,7 @@ async function init(){
   }
 
   const basis=[
+    item('Type',d.service_typ  const basis=[
     item('Type',d.service_type),
     item('Voor kinderen',d.for_children),
     item('Talen',d.languages)
@@ -465,38 +466,45 @@ async function init(){
   ];
   const afspraken=[
     item('Openingstijden',d.opening_hours),
-    item('Afspraak nodig',d.appointment)
-  ];
-  const extra=[
+    item('Afspraak nodig',d.appointment),
     item('Huisbezoeken',d.home_visits),
-    item('Teleconsultatie',d.teleconsultation),
-    item('Verzekering / CNSS',d.insurance),
-    item('Prijs / kosten',d.price),
-    item('Spoed',d.emergency)
+    item('Teleconsultatie',d.teleconsultation)
   ];
+  const kosten=[
+    item('Prijs / kosten',d.price),
+    item('Verzekering / CNSS',d.insurance)
+  ];
+  const zorg=[item('Spoed',d.emergency)];
 
-  const block=(title,iconMarkup,items,full=false)=>{
+  const block=(title,iconMarkup,items)=>{
     if(!items.some(Boolean))return '';
-    return '<div class="practical-block'+(full?' full':'')+'"><h3 class="practical-title">'+iconMarkup+esc(title)+'</h3><div class="info-grid">'+items.join('')+'</div></div>';
+    return '<div class="practical-block"><h3 class="practical-title">'+iconMarkup+esc(title)+'</h3><div class="info-grid">'+items.join('')+'</div></div>';
   };
 
   const pinIcon='<span class="mini-icon">'+icon.pin+'</span>';
   const phoneIcon='<span class="mini-icon">'+icon.phone+'</span>';
   const webIcon='<span class="mini-icon">'+icon.web+'</span>';
   const clockIcon='<span class="mini-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>';
-  const extraIcon='<span class="mini-icon"><svg viewBox="0 0 24 24"><path d="M12 3v18M3 12h18"/></svg></span>';
+  const moneyIcon='<span class="mini-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v10M15 9.5c-.7-.7-1.6-1-2.7-1-1.4 0-2.3.7-2.3 1.7 0 2.7 5 1.1 5 4 0 1.1-1 1.8-2.5 1.8-1.2 0-2.2-.4-2.9-1.1"/></svg></span>';
+  const careIcon='<span class="mini-icon"><svg viewBox="0 0 24 24"><path d="M12 21s7-4.2 7-10V5l-7-3-7 3v6c0 5.8 7 10 7 10Z"/><path d="M12 8v6M9 11h6"/></svg></span>';
 
   const practicalBlocks=
-    block('Basisinformatie',webIcon,basis)+
-    block('Contactgegevens',phoneIcon,contact)+
+    block('Snelle info',webIcon,basis)+
+    block('Contact',phoneIcon,contact)+
     block('Locatie',pinIcon,locatie)+
     block('Openingstijden & afspraken',clockIcon,afspraken)+
-    block('Extra informatie',extraIcon,extra,true);
+    block('Kosten & verzekering',moneyIcon,kosten)+
+    block('Zorg & spoed',careIcon,zorg);
 
   if(practicalBlocks){
-    html+='<section class="card"><h2>Praktische gegevens</h2><p class="card-sub">Snel de belangrijkste informatie per onderdeel bekijken.</p><div class="practical-grid">'+practicalBlocks+'</div>';
+    html+='<section class="card"><h2>Snelle info</h2><p class="card-sub">De belangrijkste informatie kort bij elkaar.</p><div class="practical-grid">'+practicalBlocks+'</div>';
+    if(mapsUrl)html+='<div class="hero-actions"><a class="button secondary" target="_blank" rel="noopener" href="'+esc(mapsUrl)+'">'+icon.map+'Bekijk op Google Maps</a></div>';
     if(d.warning)html+='<div class="warning">⚠️ '+esc(d.warning)+'</div>';
     html+='</section>';
+  }
+
+  if(x.content){
+    html+='<section class="card"><h2>Meer informatie</h2><p class="card-sub">De fiche geeft je de belangrijkste gegevens. Voor achtergrondinformatie, opleiding, uitleg en andere uitgebreide informatie kun je het volledige artikel in de HN-Kennisbank lezen.</p><div class="hero-actions"><a class="button primary" href="/kennisbank?topic='+encodeURIComponent(id)+'">Lees meer in de Kennisbank →</a></div></section>';
   }
 
   html+='<section class="card"><h2>Ervaringen uit de HN-community</h2>';
@@ -513,33 +521,17 @@ async function init(){
   html+='</div>';
 
   html+='<aside class="side">';
-
-  if(d.address||mapsUrl){
-    html+='<section class="card"><h2>Locatie</h2>';
-    if(d.address)html+='<div class="source-row">'+icon.pin+'<span>'+esc(d.address)+'</span></div>';
-    if(mapsUrl)html+='<div class="hero-actions"><a class="button secondary" target="_blank" rel="noopener" href="'+esc(mapsUrl)+'">'+icon.map+'Google Maps</a></div>';
-    html+='</section>';
-  }
-
-  html+='<section class="card contact-card"><h2>Contact</h2>';
-  if(d.phone)html+='<div class="contact-row"><div class="contact-label">Telefoon</div><div class="contact-value"><a href="'+esc(telHref(d.phone))+'">'+esc(d.phone)+'</a></div></div>';
-  if(d.email)html+='<div class="contact-row"><div class="contact-label">E-mail</div><div class="contact-value"><a href="mailto:'+esc(d.email)+'">'+esc(d.email)+'</a></div></div>';
-  if(d.website)html+='<div class="contact-row"><div class="contact-label">Website</div><div class="contact-value"><a href="'+esc(d.website)+'" target="_blank" rel="noopener">Officiële website</a></div></div>';
-  if(!d.phone&&!d.email&&!d.website)html+='<p class="empty-note">Nog geen contactgegevens beschikbaar.</p>';
-  html+='</section>';
-
-  html+='<section class="card"><h2>HN-status & bron</h2><div class="meta-box">';
+  html+='<section class="card"><h2>Bron & HN-status</h2><div class="meta-box">';
   html+='<div class="meta-row"><div class="meta-label">Informatietype</div><div class="meta-value">'+esc(infoType)+'</div></div>';
   if(x.source)html+='<div class="meta-row"><div class="meta-label">Bron</div><div class="meta-value">'+esc(x.source)+'</div></div>';
   if(x.source_url)html+='<div class="meta-row"><div class="meta-label">Officiële bron</div><div class="meta-value"><a href="'+esc(x.source_url)+'" target="_blank" rel="noopener">Officiële bron bekijken</a></div></div>';
   if(verified)html+='<div class="meta-row"><div class="meta-label">Laatst gecontroleerd</div><div class="meta-value">'+new Date(verified).toLocaleDateString('nl-NL')+'</div></div>';
   html+='</div><p class="note">HN maakt onderscheid tussen bevestigde informatie en community-ervaringen. Controleer belangrijke gegevens bij de bron voordat je vertrekt.</p></section>';
-
   html+='</aside></div>';
 
   html+='<section class="card" style="margin-top:18px"><h2>Informatie corrigeren</h2><p class="empty-note">Zie je iets dat niet klopt of verouderd is? Stuur de correctie naar HN. Niets wordt automatisch aangepast.</p><div class="hero-actions"><a class="button secondary" href="bijdragen.html?type=correction&title='+encodeURIComponent(pageTitle)+'">Correctie insturen</a></div></section>';
 
-  document.getElementById('app').innerHTML=html;
+ml;
 }
 
 init();
