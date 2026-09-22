@@ -39,6 +39,9 @@ a{text-decoration:none;color:inherit}
 .back{display:inline-block;margin-bottom:15px;color:var(--brown);font-weight:700;font-size:14px}
 .hero{background:#fff;border:1px solid var(--border);border-radius:18px;padding:28px;box-shadow:var(--shadow)}
 .badges{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:11px}
+.fiche-tags{display:flex;flex-wrap:wrap;gap:7px;margin:14px 0 2px}
+.fiche-tag{display:inline-flex;align-items:center;padding:6px 10px;border-radius:999px;background:#f3e5d4;color:var(--brown);font-size:12px;font-weight:600;text-decoration:none}
+.fiche-tag:hover{background:#ead7bf;color:var(--brown-dark)}
 .badge{display:inline-flex;align-items:center;padding:6px 10px;border-radius:999px;background:#f2e7da;color:var(--brown);font-size:12px;font-weight:700}
 .badge.green{background:var(--green-bg);color:var(--green)}
 .badge.gray{background:#f1efec;color:#666}
@@ -545,10 +548,22 @@ async function init(){
   ];
   const openingHoursHtml=(value)=>{
     if(value==null || String(value).trim()==='')return '';
-    let raw=String(value).replace(/\\r/g,'').replace(/\\n/g,'\\n').replace(/\\s+/g,' ').trim();
-    const days='Maandag|Dinsdag|Woensdag|Donderdag|Vrijdag|Zaterdag|Zondag';
-    const parts=raw.includes('\\n') ? raw.split(/\\n+/) : raw.split(new RegExp('(?=(?:'+days+')\\s*:)', 'i'));
-    const rows=parts.map(v=>v.replace(/^[-•\\s]+/,'').trim()).filter(Boolean);
+    let raw=String(value)
+      .replace(/\\r/g,'')
+      .replace(/\\n/g,'\\n')
+      .trim();
+
+    if(!raw)return '';
+
+    const dayPattern='Maandag|Dinsdag|Woensdag|Donderdag|Vrijdag|Zaterdag|Zondag|Ma|Di|Wo|Do|Vr|Za|Zo';
+    const parts=raw.includes('\\n')
+      ? raw.split(/\\n+/)
+      : raw.split(new RegExp('(?=(?:'+dayPattern+')\\b)', 'i'));
+
+    const rows=parts
+      .map(v=>v.replace(/^[-•\\s]+/,'').trim())
+      .filter(Boolean);
+
     return '<div class="hours-list">'+rows.map(v=>'<div class="hours-row">'+esc(v)+'</div>').join('')+'</div>';
   };
 
