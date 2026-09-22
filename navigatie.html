@@ -160,7 +160,7 @@ function render(){
    ].join('');
    return '<article class="card">'+
     '<div><span class="badge">'+esc(cat||'Hijrah Navigatie')+'</span>'+(x.information_type?'<span class="badge">'+esc(x.information_type)+'</span>':'')+'</div>'+
-    '<h2><a class="card-title-link" href="fiche.html?id='+encodeURIComponent(x.id)+'">'+esc(x.title||'Zonder titel')+'</a></h2>'+
+    '<h2><a class="card-title-link" href="/fiche/'+encodeURIComponent(x.slug||x.id)+'">'+esc(x.title||'Zonder titel')+'</a></h2>'+
     '<p class="summary">'+esc(x.summary||d.short_description||'Praktische informatie voor emigranten.')+'</p>'+
     (info?'<div class="info-list">'+info+'</div>':'')+
     (d.warning?'<div class="warning">⚠️ '+esc(d.warning)+'</div>':'')+
