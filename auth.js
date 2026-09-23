@@ -3,16 +3,13 @@
  * Alle functies gebruiken de officiële supabase-js client (window.hijrahSupabase).
  */
 
-async function hnSignUp(email, password, metadata = {}) {
-  const { data, error } = await window.hijrahSupabase.auth.signUp({
-    email,
-    password,
-    options: {
-      data: metadata,
-      emailRedirectTo: window.location.origin + '/login.html'
+async function hnSignUp() {
+  return {
+    data: null,
+    error: {
+      message: 'Nieuwe accounts zijn tijdelijk gesloten. Meld je aan voor de lancering via de HN-wachtlijst.'
     }
-  });
-  return { data, error };
+  };
 }
 
 async function hnSignIn(email, password) {
