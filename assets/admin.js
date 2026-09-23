@@ -142,7 +142,45 @@ function renderUsers(){
  const t=$('usersTable');if(!t)return;const q=($('userFilter')?.value||'').toLowerCase();const list=state.users.filter(x=>(x.email||'').toLowerCase().includes(q));
  t.innerHTML=list.length?list.map(x=>'<tr><td><b>'+esc(x.email||'Geen e-mail')+'</b>'+(x.role==='admin'?'<div class="hint">Admin</div>':'')+'</td><td>'+esc(x.application_status||'—')+'</td><td>'+esc(x.updated_at?new Date(x.updated_at).toLocaleString('nl-NL'):'—')+'</td><td>—</td><td>—</td><td><button class="button-secondary" onclick="viewUserPlan(\''+x.id+'\')">Plan bekijken</button></td></tr>').join(''):'<tr><td colspan="6" class="empty">Geen gebruikers gevonden.</td></tr>';
 }
-window.viewUserPlan=async id=>{const x=state.users.find(x=>x.id===id);if(!$('userPlanPanel'))return;$('userPlanPanel').style.display='block';$('selectedUserTitle').textContent='Mijn Hijrah Plan · '+(x?.email||'Gebruiker');$('userPlanContent').innerHTML='<div class="empty">Het plan van deze gebruiker is beschikbaar zodra er een Mijn Hijrah Plan is opgeslagen.</div>'};
+window.viewUserPlan=async id=>{
+  const x=state.users.find(x=>x.id===id);
+  if(!$('userPlanPanel')||!x)return;
+  $('userPlanPanel').style.display='block';
+  $('selectedUserTitle').textContent='Mijn Hijrah Plan · '+(x.email||'Gebruiker');
+  $('userPlanContent').innerHTML='<div class="empty">Plan laden...</div>';
+  try{
+    const [plan,steps,progress]=await Promise.all([
+      db().from('hijrah_plans').select('*').eq('user_id',id).order('updated_at',{ascending:false}).limit(1).maybeSingle(),
+      db().from('hijrah_steps').select('*').order('sort_order'),
+      db().from('member_progress').select('*').eq('user_id',id)
+    ]);
+    if(plan.error)throw plan.error;
+    if(steps.error)throw steps.error;
+    if(progress.error)throw progress.error;
+    const p=plan.data;
+    if(!p){
+      $('userPlanContent').innerHTML='<div class="empty">Deze gebruiker heeft nog geen Mijn Hijrah Plan opgeslagen.</div>';
+      return;
+    }
+    const done=new Set((progress.data||[]).filter(x=>x.completed||x.is_completed).map(x=>x.item_key||x.step_key));
+    const list=(steps.data||[]).map(s=>{
+      const key=s.key||s.step_key||s.id;
+      const label=s.title||s.name||key;
+      return '<div class="activity-item"><div><b>'+esc(label)+'</b><div class="activity-description">'+(done.has(key)?'Voltooid':'Nog open')+'</div></div></div>';
+    }).join('');
+    $('userPlanContent').innerHTML=
+      '<div class="activity-details">'+
+      '<p><b>Doelland:</b> '+esc(p.target_country_id||'Niet ingevuld')+'</p>'+
+      '<p><b>Doelstad:</b> '+esc(p.target_city_id||'Niet ingevuld')+'</p>'+
+      '<p><b>Gewenste vertrekdatum:</b> '+esc(p.target_date||p.target_departure_date||'Niet ingevuld')+'</p>'+
+      '<p><b>Notities:</b> '+esc(p.notes||'Geen notities')+'</p>'+
+      '<p><b>Voortgang:</b> '+done.size+' / '+(steps.data||[]).length+' stappen</p>'+
+      '</div><div class="activity-list">'+(list||'<div class="empty">Geen stappen gevonden.</div>')+'</div>';
+  }catch(e){
+    console.error('HN Admin Mijn Hijrah Plan',e);
+    $('userPlanContent').innerHTML='<div class="empty">Het plan kon niet worden geladen: '+esc(e.message||'onbekende fout')+'</div>';
+  }
+};
 $('userFilter')?.addEventListener('input',renderUsers);
 $('closeUserPlanButton')?.addEventListener('click',()=>{$('userPlanPanel').style.display='none'});
 
@@ -183,7 +221,6 @@ function startUserMonitoring(){loadActivity().catch(e=>{console.error(e);renderM
 function renderMonitoringError(e){const el=$('monitorError');if(el){el.textContent='Activiteiten konden niet worden geladen: '+(e?.message||'onbekende fout');el.classList.add('show')}}
 window.toggleRegistrationDetails=id=>{const e=$('registration-details-'+id);if(e)e.hidden=!e.hidden};
 window.toggleOlderActivities=()=>{const el=$('activityList');if(el)el.scrollIntoView({behavior:'smooth',block:'start'})};
-window.updateYohanSeedButton=async()=>{};
 async function seedDoctor(data){
  const existing=await db().from('topic').select('id').eq('slug',data.slug).maybeSingle(); if(existing.error)throw existing.error;
  const payload={...data,updated_at:new Date().toISOString()};
