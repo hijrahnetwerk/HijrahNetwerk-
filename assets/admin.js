@@ -120,9 +120,54 @@ function refreshTopicSelects(){
 }
 $('topicCountry')?.addEventListener('change',()=>{const id=$('topicCountry').value;const cities=state.cities.filter(x=>!id||x.country_id===id);options($('topicCity'),cities,'Geen stad')});
 
-async function loadTopics(){const r=await db().from('topic').select('*,countries(name),cities(name),categories(name),subcategories(name),reviewers(name)').order('updated_at',{ascending:false});if(r.error)throw r.error;state.topics=r.data||[];if($('topicCount'))$('topicCount').textContent=state.topics.filter(x=>x.visibility!=='fiche_only').length;renderTopics()}
+async function loadTopics(){const r=await db().from('topic').select('*,countries(name),cities(name),categories(name),subcategories(name),reviewers(name)').order('updated_at',{ascending:false});if(r.error)throw r.error;state.topics=r.data||[];if($('topicCount'))$('topicCount').textContent=state.topics.filter(x=>x.visibility!=='fiche_only').length;renderTopics();await Promise.all(state.topics.filter(x=>x.visibility!=='fiche_only').map(ensureFicheProposal));await loadFicheProposals()}
 function renderTopics(){const t=$('topicsTable');if(!t)return;const q=($('topicFilter')?.value||'').toLowerCase();const list=state.topics.filter(x=>(x.title||'').toLowerCase().includes(q));t.innerHTML=list.length?list.map(x=>'<tr><td><b>'+esc(x.title)+'</b><div class="hint">'+esc(x.slug)+'</div></td><td>'+esc(x.cities?.name||'')+(x.countries?.name?' ('+esc(x.countries.name)+')':'')+'</td><td>'+esc(x.categories?.name)+(x.subcategories?.name?' / '+esc(x.subcategories.name):'')+'</td><td><span class="status '+(x.visibility==='fiche_only'?'status-draft':'')+'">'+(x.visibility==='fiche_only'?'Fiche':'Artikel')+'</span><div class="hint">'+esc(x.information_type)+'</div></td><td>'+esc(x.status)+'</td><td><span class="status '+(x.published?'status-published':'status-draft')+'">'+(x.published?'Gepubliceerd':'Concept')+'</span></td><td><div class="actions"><button class="button-secondary" onclick="editTopic(\''+x.id+'\')">Bewerken</button><button class="button-secondary" onclick="previewTopic(\''+x.id+'\')">Bekijken</button><button class="button-secondary" onclick="toggleTopicPublished(\''+x.id+'\','+!!x.published+')">'+(x.published?'Offline':'Publiceren')+'</button><button class="button-danger" onclick="deleteTopic(\''+x.id+'\')">Verwijderen</button></div></td></tr>').join(''):'<tr><td colspan="7" class="empty">Geen topics gevonden.</td></tr>'}
 $('topicFilter')?.addEventListener('input',renderTopics);
+
+function buildLocalFicheProposal(x){
+ const content=String(x.content||'');
+ const d={};
+ const set=(k,v)=>{if(v&&String(v).trim())d[k]=String(v).trim()};
+ set('practice_name',x.title);
+ const phone=content.match(/(?:\+212|0)[0-9 .-]{8,}/); if(phone)set('phone',phone[0]);
+ const url=String(x.source_url||'').trim(); if(url)set('website',url);
+ const addr=content.match(/(?:Adres|address|Adresse)[:\s]+([^\n]{8,120})/i); if(addr)set('address',addr[1]);
+ const hours=content.match(/(?:consultatie-uren|openingstijden|horaires)[\s\S]{0,700}/i); if(hours)set('opening_hours',hours[0].replace(/\s+/g,' ').trim());
+ if(/volwassenen en kinderen|adultes.*enfants/i.test(content))set('for_children','Ja, volgens het artikel');
+ if(/huisbezoeken|visites à domicile/i.test(content))set('home_visits','Wordt vermeld in het artikel');
+ if(/teleconsult/i.test(content))set('teleconsultation','Wordt vermeld in het artikel');
+ set('short_description',x.summary||'Korte praktische fiche voorgesteld op basis van het bestaande Kennisbankartikel.');
+ set('warning','Voorstel uit HN-informatie. Controleer actuele gegevens voordat de fiche wordt gepubliceerd.');
+ return d;
+}
+async function ensureFicheProposal(x){
+ if(!x||x.visibility==='fiche_only')return;
+ const q=await db().from('hn_fiche_proposals').select('id').eq('topic_id',x.id).maybeSingle();
+ if(q.error||q.data)return;
+ const d=buildLocalFicheProposal(x);
+ await db().from('hn_fiche_proposals').insert({topic_id:x.id,proposed_card_data:d,sources:x.source_url?[{label:x.source||'Bron uit artikel',url:x.source_url,type:'existing'}]:[],notes:'Automatisch voorstel op basis van bestaand HN-artikel. Online bronnen worden afzonderlijk beoordeeld.',status:'proposed'});
+}
+async function loadFicheProposals(){
+ const box=$('ficheProposalList'); if(!box)return;
+ const r=await db().from('hn_fiche_proposals').select('*,topic:topic_id(id,title,slug,city_id,country_id,category_id,visibility)').order('generated_at',{ascending:false});
+ if(r.error){box.innerHTML='<div class="overview-empty">Fichevoorstellen konden niet worden geladen.</div>';return}
+ const list=r.data||[];
+ box.innerHTML=list.length?list.map(p=>{
+   const fields=Object.entries(p.proposed_card_data||{}).filter(([k,v])=>v).slice(0,8);
+   const sources=p.sources||[];
+   const searchUrl='https://www.google.com/search?q='+encodeURIComponent((p.topic?.title||'')+' '+(p.topic?.city_id?'':'')+' praktische informatie');
+   return '<div class="overview-item" style="align-items:flex-start;"><div style="flex:1;"><b>'+esc(p.topic?.title||'Artikel')+'</b><div class="hint">'+(p.status==='accepted'?'Voorstel gebruikt':'Voorstel')+' · '+fields.length+' ingevulde velden</div><div style="margin-top:8px;font-size:13px;">'+fields.map(([k,v])=>'<span style="display:block;"><b>'+esc(k.replaceAll('_',' '))+':</b> '+esc(v)+'</span>').join('')+'</div><div class="hint" style="margin-top:8px;">'+esc(p.notes||'')+'</div><div class="actions" style="margin-top:10px;">'+sources.map(s=>'<a class="button button-secondary" href="'+esc(s.url)+'" target="_blank" rel="noopener">Bron: '+esc(s.label)+'</a>').join('')+'<a class="button button-secondary" href="'+esc(searchUrl)+'" target="_blank" rel="noopener">Online zoeken</a><button class="button button-primary" type="button" onclick="useFicheProposal(\''+p.id+'\')">Gebruik als fiche</button></div></div></div>';
+ }).join(''):'<div class="overview-empty">Nog geen fichevoorstellen.</div>';
+}
+window.useFicheProposal=async id=>{
+ const r=await db().from('hn_fiche_proposals').select('*,topic:topic_id(*)').eq('id',id).single();
+ if(r.error||!r.data)return msg('Fichevoorstel kon niet worden geladen.','error');
+ const p=r.data,x=p.topic;
+ $('topicId').value=x.id;$('topicTitle').value=x.title||'';$('topicContentType').value='fiche';
+ $('topicCountry').value=x.country_id||'';refreshTopicSelects();$('topicCountry').value=x.country_id||'';$('topicCity').value=x.city_id||'';$('topicCategory').value=x.category_id||'';$('topicSource').value=x.source||'';$('topicSourceUrl').value=x.source_url||'';$('topicSummary').value=x.summary||'';$('topicInformationType').value=x.information_type||'Algemene informatie';$('topicVisibility').value='public';$('topicStatus').value='in_review';$('topicPublished').checked=false;
+ setFicheData(p.proposed_card_data||{});syncFicheForm();$('topicFormTitle').textContent='Fichevoorstel bewerken';$('cancelTopic').hidden=false;showPage('topics');
+ window.scrollTo({top:0,behavior:'smooth'});msg('Fichevoorstel staat klaar om te controleren. Er wordt niets automatisch gepubliceerd.');
+};
 const ficheFields=['doctor_name','full_name','practice_name','service_type','specialties','additional_qualification','for_children','languages','phone','email','website','address','neighborhood','maps_url','opening_hours','appointment','home_visits','teleconsultation','price','insurance','emergency','equipment','accreditation','warning','short_description'];
 function ficheFieldId(key){return 'fiche'+key.split('_').map(x=>x.charAt(0).toUpperCase()+x.slice(1)).join('')}
 function getFicheData(){const d={};ficheFields.forEach(k=>{const el=$(ficheFieldId(k));if(el&&el.value.trim())d[k]=el.value.trim()});return d}
