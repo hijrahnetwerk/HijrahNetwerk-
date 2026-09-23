@@ -1150,8 +1150,8 @@ th{
 <section class="page" id="page-topics">
 
   <div class="intro">
-    <h2>Kennisbank</h2>
-    <p>Maak, bewerk en publiceer HN-topics.</p>
+    <h2>Kennisbank & Fiches</h2>
+    <p>Beheer uitgebreide artikelen en korte praktische fiches.</p>
   </div>
 
   <div class="panel">
@@ -1163,6 +1163,14 @@ th{
       <input type="hidden" id="topicId">
 
       <div class="form-grid">
+
+        <div class="field full">
+          <label>Type inhoud</label>
+          <select id="topicContentType">
+            <option value="article">Kennisbankartikel</option>
+            <option value="fiche">Fiche</option>
+          </select>
+        </div>
 
         <div class="field full">
           <label>Titel</label>
@@ -1243,8 +1251,9 @@ th{
         </div>
 
         <div class="field full">
-          <label>Inhoud</label>
+          <label id="topicContentLabel">Inhoud artikel</label>
           <textarea id="topicContent" rows="12" required></textarea>
+          <div id="topicFicheHint" class="hint" style="display:none;">Een fiche is kort en praktisch. Gebruik alleen de belangrijkste gegevens. Uitgebreide uitleg hoort in een Kennisbankartikel.</div>
         </div>
 
         <div class="field full">
