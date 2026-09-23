@@ -430,6 +430,19 @@ async function init(){
   const exps=Array.isArray(d.experiences)?d.experiences:[];
   const infoType=x.information_type||'Praktische informatie';
 
+  let practiceArticleId = null;
+  if (d.practice_name) {
+    const practiceArticle = await db().from('topic')
+      .select('id')
+      .eq('slug','cabinet-medical-ibn-zuhr-huisartsenpraktijk-in-tanger')
+      .eq('published',true)
+      .maybeSingle();
+
+    if (!practiceArticle.error && practiceArticle.data) {
+      practiceArticleId = practiceArticle.data.id;
+    }
+  }
+
   const practiceKey=String(d.practice_name||d.website||d.address||'').trim().toLowerCase();
   const practiceWebsite=String(d.website||'').trim().toLowerCase();
   const practiceAddress=String(d.address||'').trim().toLowerCase();
@@ -626,8 +639,15 @@ async function init(){
     html+='</div></section>';
   }
 
-  if(x.content){
-    html+='<section class="card"><h2>Meer informatie</h2><p class="card-sub">De fiche geeft je de belangrijkste gegevens. Voor achtergrondinformatie, opleiding, uitleg en andere uitgebreide informatie kun je het volledige artikel in de HN-Kennisbank lezen.</p><div class="hero-actions"><a class="button primary" href="/kennisbank?topic='+encodeURIComponent(id)+'">Lees meer in de Kennisbank →</a></div></section>';
+  if(x.content || practiceArticleId){
+    const articleId = practiceArticleId || id;
+    const articleLabel = practiceArticleId
+      ? 'Lees het uitgebreide artikel over de praktijk →'
+      : 'Lees meer in de Kennisbank →';
+    html+='<section class="card"><h2>Meer informatie</h2><p class="card-sub">'+(practiceArticleId
+      ? 'Deze fiche houdt de belangrijkste gegevens van deze arts overzichtelijk. Voor achtergrondinformatie over Cabinet Médical Ibn Zuhr en beide artsen kun je het uitgebreide kennisbankartikel lezen.'
+      : 'De fiche geeft je de belangrijkste gegevens. Voor achtergrondinformatie en uitgebreide informatie kun je het volledige artikel in de HN-Kennisbank lezen.'
+    )+'</p><div class="hero-actions"><a class="button primary" href="/kennisbank?topic='+encodeURIComponent(articleId)+'">'+articleLabel+'</a></div></section>';
   }
 
   html+='<section class="card"><h2>Ervaringen uit de HN-community</h2>';
