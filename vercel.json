@@ -135,6 +135,11 @@
       "source": "/admin-wachtlijst.html",
       "destination": "/admin-wachtlijst",
       "permanent": true
+    },
+    {
+      "source": "/werkruimte.html",
+      "destination": "/werkruimte",
+      "permanent": true
     }
   ],
   "rewrites": [
@@ -249,6 +254,10 @@
     {
       "source": "/admin-wachtlijst",
       "destination": "/admin-wachtlijst.html"
+    },
+    {
+      "source": "/werkruimte",
+      "destination": "/werkruimte.html"
     }
   ]
 }
