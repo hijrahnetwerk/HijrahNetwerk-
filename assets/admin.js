@@ -120,7 +120,7 @@ function refreshTopicSelects(){
 }
 $('topicCountry')?.addEventListener('change',()=>{const id=$('topicCountry').value;const cities=state.cities.filter(x=>!id||x.country_id===id);options($('topicCity'),cities,'Geen stad')});
 
-async function loadTopics(){const r=await db().from('topic').select('*,countries(name),cities(name),categories(name),subcategories(name),reviewers(name)').order('updated_at',{ascending:false});if(r.error)throw r.error;state.topics=r.data||[];if($('topicCount'))$('topicCount').textContent=state.topics.filter(x=>x.visibility!=='fiche_only').length;renderTopics();await Promise.all(state.topics.filter(x=>x.visibility!=='fiche_only').map(ensureFicheProposal));await loadFicheProposals()}
+async function loadTopics(){const r=await db().from('topic').select('*,countries(name),cities(name),categories(name),subcategories(name),reviewers(name)').order('updated_at',{ascending:false});if(r.error)throw r.error;state.topics=r.data||[];if($('topicCount'))$('topicCount').textContent=state.topics.filter(x=>x.visibility!=='fiche_only').length;renderTopics();await Promise.all(state.topics.filter(x=>x.visibility!=='fiche_only').map(ensureFicheProposal));await loadFicheProposals();await loadFicheClaims()}
 function renderTopics(){const t=$('topicsTable');if(!t)return;const q=($('topicFilter')?.value||'').toLowerCase();const list=state.topics.filter(x=>(x.title||'').toLowerCase().includes(q));t.innerHTML=list.length?list.map(x=>'<tr><td><b>'+esc(x.title)+'</b><div class="hint">'+esc(x.slug)+'</div></td><td>'+esc(x.cities?.name||'')+(x.countries?.name?' ('+esc(x.countries.name)+')':'')+'</td><td>'+esc(x.categories?.name)+(x.subcategories?.name?' / '+esc(x.subcategories.name):'')+'</td><td><span class="status '+(x.visibility==='fiche_only'?'status-draft':'')+'">'+(x.visibility==='fiche_only'?'Fiche':'Artikel')+'</span><div class="hint">'+esc(x.information_type)+'</div></td><td>'+esc(x.status)+'</td><td><span class="status '+(x.published?'status-published':'status-draft')+'">'+(x.published?'Gepubliceerd':'Concept')+'</span></td><td><div class="actions"><button class="button-secondary" onclick="editTopic(\''+x.id+'\')">Bewerken</button><button class="button-secondary" onclick="previewTopic(\''+x.id+'\')">Bekijken</button><button class="button-secondary" onclick="toggleTopicPublished(\''+x.id+'\','+!!x.published+')">'+(x.published?'Offline':'Publiceren')+'</button><button class="button-danger" onclick="deleteTopic(\''+x.id+'\')">Verwijderen</button></div></td></tr>').join(''):'<tr><td colspan="7" class="empty">Geen topics gevonden.</td></tr>'}
 $('topicFilter')?.addEventListener('input',renderTopics);
 
@@ -147,6 +147,19 @@ async function ensureFicheProposal(x){
  const d=buildLocalFicheProposal(x);
  await db().from('hn_fiche_proposals').insert({topic_id:x.id,proposed_card_data:d,sources:x.source_url?[{label:x.source||'Bron uit artikel',url:x.source_url,type:'existing'}]:[],notes:'Automatisch voorstel op basis van bestaand HN-artikel. Online bronnen worden afzonderlijk beoordeeld.',status:'proposed'});
 }
+async function loadFicheClaims(){
+ const box=$('ficheClaimsList');if(!box)return;
+ const r=await db().from('hn_fiche_claims').select('*,topic:topic_id(id,title,slug)').order('created_at',{ascending:false}).limit(50);
+ if(r.error){box.innerHTML='<div class="overview-empty">Claimaanvragen konden niet worden geladen.</div>';return}
+ const list=r.data||[];
+ box.innerHTML=list.length?list.map(x=>'<div class="overview-item" style="align-items:flex-start;"><div style="flex:1;"><b>'+esc(x.topic?.title||'Vermelding')+'</b><div class="hint">'+esc(x.name)+(x.role?' · '+esc(x.role):'')+' · '+esc(x.email)+' · '+new Date(x.created_at).toLocaleString('nl-NL')+'</div>'+(x.phone?'<div class="hint">Telefoon: '+esc(x.phone)+'</div>':'')+(x.message?'<div style="margin-top:7px;font-size:13px;">'+esc(x.message)+'</div>':'')+'</div><div class="actions"><button class="button button-primary" type="button" onclick="setFicheClaimStatus(\''+x.id+'\',\'reviewing\')">In controle</button><button class="button button-secondary" type="button" onclick="setFicheClaimStatus(\''+x.id+'\',\'approved\')">Goedkeuren</button><button class="button button-danger" type="button" onclick="setFicheClaimStatus(\''+x.id+'\',\'rejected\')">Afwijzen</button></div></div>').join(''):'<div class="overview-empty">Geen claimaanvragen.</div>';
+}
+window.setFicheClaimStatus=async(id,status)=>{
+ const r=await db().from('hn_fiche_claims').update({status,reviewed_at:new Date().toISOString()}).eq('id',id);
+ if(r.error)return msg(r.error.message,'error');
+ await loadFicheClaims();msg('Claimaanvraag bijgewerkt.');
+};
+
 async function loadFicheProposals(){
  const box=$('ficheProposalList'); if(!box)return;
  const r=await db().from('hn_fiche_proposals').select('*,topic:topic_id(id,title,slug,city_id,country_id,category_id,visibility)').order('generated_at',{ascending:false});
