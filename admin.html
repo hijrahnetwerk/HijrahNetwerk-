@@ -1249,10 +1249,43 @@ th{
           <textarea id="topicSummary" rows="3"></textarea>
         </div>
 
-        <div class="field full">
+        <div class="field full" id="ficheFields" style="display:none;">
+          <div style="padding:16px;background:#faf7f2;border:1px solid #e8e0d6;border-radius:10px;">
+            <h4 style="margin:0 0 6px;">Fiche-inhoud</h4>
+            <p class="hint" style="margin:0 0 16px;">Vul de praktische gegevens afzonderlijk in. Alleen ingevulde gegevens verschijnen op de fiche.</p>
+            <div class="form-grid">
+              <div class="field"><label>Naam / arts</label><input id="ficheDoctorName"></div>
+              <div class="field"><label>Volledige naam</label><input id="ficheFullName"></div>
+              <div class="field"><label>Praktijk / organisatie</label><input id="fichePracticeName"></div>
+              <div class="field"><label>Type dienst</label><input id="ficheServiceType" placeholder="Bijv. Huisarts / Médecin généraliste"></div>
+              <div class="field"><label>Specialisatie</label><input id="ficheSpecialties"></div>
+              <div class="field"><label>Extra opleiding / kwalificatie</label><input id="ficheAdditionalQualification"></div>
+              <div class="field"><label>Voor kinderen</label><input id="ficheForChildren"></div>
+              <div class="field"><label>Talen</label><input id="ficheLanguages" placeholder="Bijv. Frans, Arabisch"></div>
+              <div class="field"><label>Telefoon</label><input id="fichePhone" type="tel"></div>
+              <div class="field"><label>E-mail</label><input id="ficheEmail" type="email"></div>
+              <div class="field"><label>Website</label><input id="ficheWebsite" type="url"></div>
+              <div class="field"><label>Adres</label><input id="ficheAddress"></div>
+              <div class="field"><label>Wijk</label><input id="ficheNeighborhood"></div>
+              <div class="field"><label>Google Maps</label><input id="ficheMapsUrl" type="url"></div>
+              <div class="field full"><label>Openingstijden</label><textarea id="ficheOpeningHours" rows="5" placeholder="Maandag 08:30–18:30&#10;Dinsdag 08:30–18:30"></textarea></div>
+              <div class="field"><label>Afspraak nodig</label><input id="ficheAppointment"></div>
+              <div class="field"><label>Huisbezoeken</label><input id="ficheHomeVisits"></div>
+              <div class="field"><label>Teleconsultatie</label><input id="ficheTeleconsultation"></div>
+              <div class="field"><label>Prijs / kosten</label><input id="fichePrice"></div>
+              <div class="field"><label>Verzekering / CNSS</label><input id="ficheInsurance"></div>
+              <div class="field"><label>Spoed</label><input id="ficheEmergency"></div>
+              <div class="field"><label>Uitrusting</label><input id="ficheEquipment"></div>
+              <div class="field"><label>Erkenning / accreditatie</label><input id="ficheAccreditation"></div>
+              <div class="field full"><label>Waarschuwing</label><textarea id="ficheWarning" rows="3"></textarea></div>
+              <div class="field full"><label>Korte beschrijving</label><textarea id="ficheShortDescription" rows="3"></textarea></div>
+            </div>
+          </div>
+        </div>
+        <div class="field full" id="articleContentField">
           <label id="topicContentLabel">Inhoud artikel</label>
-          <textarea id="topicContent" rows="12" required></textarea>
-          <div id="topicFicheHint" class="hint" style="display:none;">Een fiche is kort en praktisch. Gebruik alleen de belangrijkste gegevens. Uitgebreide uitleg hoort in een Kennisbankartikel.</div>
+          <textarea id="topicContent" rows="12"></textarea>
+          <div id="topicFicheHint" class="hint" style="display:none;">Een fiche is kort en praktisch. De uitgebreide uitleg hoort in een Kennisbankartikel.</div>
         </div>
 
         <div class="field full">
