@@ -22,5 +22,12 @@ for select
 to authenticated
 using ((select public.is_admin()));
 
+drop policy if exists "Admins can delete launch waitlist" on public.launch_waitlist;
+create policy "Admins can delete launch waitlist"
+on public.launch_waitlist
+for delete
+to authenticated
+using ((select public.is_admin()));
+
 grant insert on table public.launch_waitlist to anon, authenticated;
-grant select on table public.launch_waitlist to authenticated;
+grant select, delete on table public.launch_waitlist to authenticated;
