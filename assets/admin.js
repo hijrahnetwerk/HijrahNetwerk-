@@ -179,13 +179,20 @@ async function loadOverview(){
  if(recent)recent.innerHTML='<div class="overview-empty">Recente topics staan in de Kennisbank.</div>';
 }
 
-function startUserMonitoring(){if($('onlineUsersCount'))$('onlineUsersCount').textContent='—';if($('activityCount'))$('activityCount').textContent='—'}
-function renderMonitoringError(){}
+function startUserMonitoring(){loadActivity().catch(e=>{console.error(e);renderMonitoringError(e)})}
+function renderMonitoringError(e){const el=$('monitorError');if(el){el.textContent='Activiteiten konden niet worden geladen: '+(e?.message||'onbekende fout');el.classList.add('show')}}
 window.toggleRegistrationDetails=id=>{const e=$('registration-details-'+id);if(e)e.hidden=!e.hidden};
-window.toggleOlderActivities=()=>{};
+window.toggleOlderActivities=()=>{const el=$('activityList');if(el)el.scrollIntoView({behavior:'smooth',block:'start'})};
 window.updateYohanSeedButton=async()=>{};
-window.seedYohanGuazzi=async()=>msg('Gebruik de bestaande artsfiche in de Kennisbank.','error');
-window.seedNajateHadiBoukoula=async()=>msg('Gebruik de bestaande artsfiche in de Kennisbank.','error');
+async function seedDoctor(data){
+ const existing=await db().from('topic').select('id').eq('slug',data.slug).maybeSingle(); if(existing.error)throw existing.error;
+ const payload={...data,updated_at:new Date().toISOString()};
+ if(existing.data){const r=await db().from('topic').update(payload).eq('id',existing.data.id);if(r.error)throw r.error}
+ else {const r=await db().from('topic').insert(payload);if(r.error)throw r.error}
+ await loadTopics(); msg(data.title+' opgeslagen.');
+}
+window.seedYohanGuazzi=async()=>safe('Dr. Yohan Guazzi',()=>seedDoctor({title:'Dr. Yohan Guazzi | Huisarts in Tanger',slug:'dr-yohan-guazzi-huisarts-in-tanger',city_id:'c09cd1f7-4281-4391-b099-79c58b436121',category_id:'f86405a9-cf8c-43fe-98bf-2f1ff46723e7',information_type:'Officiële informatie',status:'verified',visibility:'public',source:'Cabinet Médical Ibn Zuhr',source_url:'https://www.cabmed-iz.ma/',summary:'Dr. Yohan Guazzi is médecin généraliste in Tanger.',content:'Dr. Yohan Guazzi is huisarts / médecin généraliste bij Cabinet Médical Ibn Zuhr in Tanger. Talen: Frans (bron), Arabisch en Engels (community-informatie). Controleer actuele gegevens rechtstreeks bij de praktijk.',published:true,source_type:'official',verification_status:'verified',verified_at:new Date().toISOString(),last_checked_at:new Date().toISOString(),card_data:{doctor_name:'Dr. Yohan Guazzi',practice_name:'Cabinet Médical Ibn Zuhr',service_type:'Huisarts / Médecin généraliste',address:'1, rue 6 Jabel Tarek, Rond point Nawras, Branes 2, 90000 Tanger, Marokko',neighborhood:'Branes 2',phone:'+212 5 39 42 77 77',email:'y.guazzi@cabmed-iz.ma',website:'https://www.cabmed-iz.ma/',maps_url:'https://maps.app.goo.gl/rApDJVfsvFuSYmib6',languages:[{name:'Frans',source:'official'},{name:'Arabisch',source:'community'},{name:'Engels',source:'community'}]}}));
+window.seedNajateHadiBoukoula=async()=>safe('Dr. Najate Hadi Boukoula',()=>seedDoctor({title:'Dr. Najate Hadi Boukoula | Huisarts in Tanger',slug:'dr-najate-hadi-boukoula-huisarts-in-tanger',city_id:'c09cd1f7-4281-4391-b099-79c58b436121',category_id:'f86405a9-cf8c-43fe-98bf-2f1ff46723e7',information_type:'Officiële informatie',status:'verified',visibility:'public',source:'Cabinet Médical Ibn Zuhr',source_url:'https://www.cabmed-iz.ma/',summary:'Dr. Najate Hadi Boukoula is médecin généraliste in Tanger met aanvullende opleiding in gynaecologie en verloskunde.',content:'Dr. Najate Hadi Boukoula is médecin généraliste bij Cabinet Médical Ibn Zuhr in Tanger. De praktijk vermeldt daarnaast een diplôme inter-universitaire de formation complémentaire en Gynécologie-Obstétrique. Controleer actuele gegevens rechtstreeks bij de praktijk.',published:true,source_type:'official',verification_status:'verified',verified_at:new Date().toISOString(),last_checked_at:new Date().toISOString(),card_data:{doctor_name:'Dr. Najate Hadi Boukoula',practice_name:'Cabinet Médical Ibn Zuhr',service_type:'Huisarts / Médecin généraliste',additional_qualification:'Gynaecologie & verloskunde',languages:[{name:'Frans',source:'official'},{name:'Arabisch',source:'community'},{name:'Engels',source:'community'}]}}));
 
 async function init(){
   wireNavigation();
