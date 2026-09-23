@@ -1554,52 +1554,7 @@ th{
 </div>
 
 
-<script>
-/* Vroege admin-navigatie: beschikbaar voor inline knoppen, ook als de rest van de admin-JS later een fout geeft. */
-window.showPage=function(p){
-  document.querySelectorAll('.page').forEach(function(x){x.classList.remove('active');});
-  document.querySelectorAll('.nav-button').forEach(function(x){x.classList.remove('active');});
-  var page=document.getElementById('page-'+p);
-  if(page) page.classList.add('active');
-  var nav=document.querySelector('.nav-button[data-page="'+p+'"]');
-  if(nav) nav.classList.add('active');
-  var title=document.getElementById('pageTitle');
-  if(title){
-    title.textContent={
-      overview:'Overzicht',
-      platform:"Platformpagina's",
-      countries:'Landen',
-      cities:'Steden',
-      categories:'Categorieën',
-      subcategories:'Subcategorieën',
-      topics:'Kennisbank',
-      reviewers:'Reviewers',
-      users:'Gebruikers',
-      submissions:'Inzendingen',
-      sync:'Sync Queue'
-    }[p]||'Admin';
-  }
-};
-
-/* Navigatie wordt hier al gekoppeld, vóór de rest van de Admin-JS. */
-document.addEventListener('click',function(event){
-  const button=event.target.closest('[data-admin-page]');
-  if(button){
-    event.preventDefault();
-    window.showPage(button.getAttribute('data-admin-page'));
-  }
-});
-
-document.querySelectorAll('.nav-button[data-page]').forEach(function(button){
-  button.addEventListener('click',function(event){
-    event.preventDefault();
-    window.showPage(button.getAttribute('data-page'));
-  });
-});
-</script>
-
 <script src="assets/admin.js"></script>
-</script>
 
 </body>
 </html>
