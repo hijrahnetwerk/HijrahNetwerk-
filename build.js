@@ -8,6 +8,10 @@
  *
  * en maakt:
  * assets/config.js
+ *
+ * Pre-launch:
+ * Alle interne HTML-pagina's krijgen automatisch een admin-only guard.
+ * index.html, login/register en password-recovery blijven publiek toegankelijk.
  */
 
 const fs = require('fs');
@@ -42,21 +46,42 @@ window.__ENV = {
 
 const assetsDir = path.join(__dirname, 'assets');
 
-fs.mkdirSync(assetsDir, {
-  recursive: true
-});
+fs.mkdirSync(assetsDir, { recursive: true });
 
-const outPath = path.join(
-  assetsDir,
-  'config.js'
-);
+const outPath = path.join(assetsDir, 'config.js');
 
-fs.writeFileSync(
-  outPath,
-  configContent,
-  'utf8'
-);
+fs.writeFileSync(outPath, configContent, 'utf8');
 
-console.log(
-  '[HN build] assets/config.js succesvol aangemaakt.'
-);
+const guardTag = '<script src="/assets/private-preview.js"></script>';
+const publicPages = new Set([
+  'index.html',
+  'login.html',
+  'register.html',
+  'reset-password.html',
+  'update-password.html'
+]);
+
+const htmlFiles = fs.readdirSync(__dirname)
+  .filter(name => name.endsWith('.html') && !publicPages.has(name));
+
+let guarded = 0;
+
+for (const file of htmlFiles) {
+  const filePath = path.join(__dirname, file);
+  let html = fs.readFileSync(filePath, 'utf8');
+
+  if (html.includes(guardTag)) continue;
+
+  const marker = '</body>';
+  if (!html.includes(marker)) {
+    console.warn('[HN build] Geen </body> gevonden in ' + file + '; guard niet toegevoegd.');
+    continue;
+  }
+
+  html = html.replace(marker, guardTag + '\n' + marker);
+  fs.writeFileSync(filePath, html, 'utf8');
+  guarded++;
+}
+
+console.log('[HN build] Private preview guard toegevoegd aan ' + guarded + ' interne pagina\'s.');
+console.log('[HN build] assets/config.js succesvol aangemaakt.');
