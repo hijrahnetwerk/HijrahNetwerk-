@@ -1994,6 +1994,25 @@
 
   async function loadData() {
 
+    let canPreviewDrafts = false;
+
+    try {
+      const { data: sessionData } = await db().auth.getSession();
+      const user = sessionData?.session?.user;
+
+      if (user) {
+        const { data: profile } = await db()
+          .from("profiles")
+          .select("role")
+          .eq("id", user.id)
+          .maybeSingle();
+
+        canPreviewDrafts = profile?.role === "admin";
+      }
+    } catch (error) {
+      console.warn("HN Kennisbank admin-preview:", error);
+    }
+
     const [
       countriesResult,
       citiesResult,
@@ -2057,10 +2076,7 @@
           categories(name),
           subcategories(name)
         `)
-        .eq(
-          "published",
-          true
-        )
+        
         .order(
           "updated_at",
           {
@@ -2101,7 +2117,9 @@
       subcategoriesResult.data || [];
 
     topics =
-      topicsResult.data || [];
+      (topicsResult.data || []).filter(topic =>
+        canPreviewDrafts ? true : topic.published === true
+      );
 
     fillSelect(
       "countryFilter",
