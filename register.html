@@ -1,140 +1,21 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Account aanmaken — Hijrah Netwerk</title>
-  <link rel="stylesheet" href="auth-style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Account aanmaken | Hijrah Netwerk</title>
+<link rel="stylesheet" href="auth-style.css">
 </head>
-
 <body>
-
-  <div class="auth-page">
-
-    <a href="/" class="back-link">← Terug naar de website</a>
-
-    <div class="auth-card">
-
-      <div class="auth-logo">
-        <strong>HN</strong>
-        <span>Hijrah Netwerk</span>
-      </div>
-
-      <h1>Maak je account aan</h1>
-
-      <p class="auth-intro">
-        Maak een account aan om toegang te krijgen tot jouw persoonlijke omgeving.
-      </p>
-
-      <form id="register-form">
-
-        <div class="form-group">
-          <label for="first_name">Voornaam</label>
-          <input type="text" id="first_name" name="first_name" autocomplete="given-name" required>
-        </div>
-
-        <div class="form-group">
-          <label for="last_name">Achternaam <span style="font-weight:400">(optioneel)</span></label>
-          <input type="text" id="last_name" name="last_name" autocomplete="family-name">
-        </div>
-
-        <div class="form-group">
-          <label for="whatsapp_number">WhatsApp-nummer</label>
-          <input type="tel" id="whatsapp_number" name="whatsapp_number" autocomplete="tel" required>
-          <small style="display:block;margin-top:5px;color:#756d63">Alleen zichtbaar voor HN Admin voor verificatie. Wordt niet openbaar gemaakt.</small>
-        </div>
-
-        <div class="form-group">
-          <label for="email">E-mailadres</label>
-          <input
-            type="email"
-            id="email"
-            name="email"
-            autocomplete="email"
-            required
-          >
-        </div>
-
-        <div class="form-group">
-          <label for="password">Wachtwoord</label>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            autocomplete="new-password"
-            required
-          >
-        </div>
-
-        <button type="submit" class="auth-button">
-          Account aanmaken
-        </button>
-
-        <p id="register-message" class="auth-message"></p>
-
-      </form>
-
-      <p class="auth-switch">
-        Al een account?
-        <a href="/login.html">Inloggen</a>
-      </p>
-
-    </div>
-
-  </div>
-
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="assets/config.js"></script>
-  <script src="supabase-client.js"></script>
-  <script src="auth.js"></script>
-  <script type="module" src="assets/speed-insights-init.js"></script>
-  <script type="module" src="assets/analytics-init.js"></script>
-
-  <script>
-    const form = document.getElementById('register-form');
-    const message = document.getElementById('register-message');
-
-    form.addEventListener('submit', async (event) => {
-      event.preventDefault();
-
-      const first_name = document.getElementById('first_name').value.trim();
-      const last_name = document.getElementById('last_name').value.trim();
-      const whatsapp_number = document.getElementById('whatsapp_number').value.trim();
-      const email = document.getElementById('email').value.trim();
-      const password = document.getElementById('password').value;
-
-      message.textContent = 'Bezig met account aanmaken...';
-      message.className = 'auth-message';
-
-      try {
-        const { data, error } = await hnSignUp(email, password, {
-          first_name,
-          last_name,
-          whatsapp_number
-        });
-
-        if (error) {
-          message.textContent = error.message || 'Er ging iets mis bij het aanmaken van je account.';
-          message.className = 'auth-message error';
-          return;
-        }
-
-        message.textContent =
-          'Account aangemaakt. Controleer eventueel je e-mail om je account te bevestigen.';
-        message.className = 'auth-message success';
-
-        form.reset();
-
-      } catch (err) {
-        console.error(err);
-
-        message.textContent =
-          'Er ging iets mis. Probeer het opnieuw.';
-        message.className = 'auth-message error';
-      }
-    });
-  </script>
-
+<div class="auth-page">
+<a href="/" class="back-link">← Terug naar de website</a>
+<div class="auth-card">
+<div class="auth-logo"><strong>HN</strong><span>Hijrah Netwerk</span></div>
+<h1>De community gaat stap voor stap open</h1>
+<p class="auth-intro">Een persoonlijk HN-account wordt pas geopend wanneer de community voor nieuwe leden beschikbaar is.</p>
+<p class="auth-intro"><a href="/#aanmelden" style="font-weight:700;color:#684a25">Laat je e-mailadres achter voor de lancering.</a></p>
+<p class="auth-switch">Heb je al toegang? <a href="/login">Inloggen</a></p>
+</div>
+</div>
 </body>
 </html>
-```
