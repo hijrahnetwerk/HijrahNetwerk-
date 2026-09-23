@@ -26,7 +26,7 @@ function options(el,items,placeholder='Kies...'){
   if(old)el.value=old;
 }
 
-window.showPage=function(p){
+window.showPage=function(p,remember=true){
   const page=$('page-'+p); if(!page)return;
   document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
   document.querySelectorAll('.nav-button').forEach(x=>x.classList.remove('active'));
@@ -34,7 +34,10 @@ window.showPage=function(p){
   const nav=document.querySelector('.nav-button[data-page="'+p+'"]'); if(nav)nav.classList.add('active');
   const titles={overview:'Overzicht',platform:"Platformpagina's",countries:'Landen',cities:'Steden',categories:'Categorieën',subcategories:'Subcategorieën',topics:'Kennisbank',reviewers:'Reviewers',users:'Gebruikers',submissions:'Inzendingen',sync:'Sync Queue'};
   if($('pageTitle'))$('pageTitle').textContent=titles[p]||'Admin';
-  const loaders={overview:loadOverview,countries:loadCountries,cities:loadCities,categories:loadCategories,subcategories:loadSubcategories,topics:loadTopics,reviewers:loadReviewers,users:loadUsers,submissions:loadSubmissions,sync:loadSync};
+  if(remember){
+    try{localStorage.setItem('hn_admin_page',p);history.replaceState(null,'','#'+p)}catch(e){}
+  }
+  const loaders={overview:loadOverview,countries:loadCountries,platform:()=>{},categories:loadCategories,subcategories:loadSubcategories,topics:loadTopics,reviewers:loadReviewers,users:loadUsers,submissions:loadSubmissions,sync:loadSync};
   if(loaders[p])safe(titles[p]||'Pagina',loaders[p]);
 };
 
@@ -221,22 +224,41 @@ $('refreshSubmissions')?.addEventListener('click',loadSubmissions);
 async function loadSync(){const t=$('syncTable');if(!t)return;const r=await db().from('sync_queue').select('*').order('created_at',{ascending:false}).limit(100);if(r.error){t.innerHTML='<tr><td colspan="6" class="empty">Sync Queue kon niet worden geladen.</td></tr>';return}t.innerHTML=(r.data||[]).length?(r.data||[]).map(x=>'<tr><td>'+esc(x.record_id||x.airtable_record_id||'—')+'</td><td>'+esc(x.entity_type||'—')+'</td><td>'+esc(x.action||'—')+'</td><td>'+esc(x.status||'—')+'</td><td>'+esc(x.updated_at||x.created_at||'—')+'</td><td>'+esc(x.error||'')+'</td></tr>').join(''):'<tr><td colspan="6" class="empty">Geen sync-items.</td></tr>'}
 
 async function loadOverview(){
- const [r,s,t,o]=await Promise.all([
-  db().from('profiles').select('id').eq('application_status','pending'),
-  db().from('submissions').select('id').eq('status','pending'),
-  db().from('topic').select('id').in('status',['needs_research','in_review','outdated']),
-  db().from('topic').select('id').eq('status','outdated')
+ const [r,s,t,o,w,recent]=await Promise.all([
+  db().from('profiles').select('id,first_name,last_name,email,created_at').eq('application_status','pending').order('created_at',{ascending:false}).limit(8),
+  db().from('submissions').select('id,title,status,created_at,submitted_by').eq('status','pending').order('created_at',{ascending:false}).limit(8),
+  db().from('topic').select('id,title,slug,status,visibility,published,updated_at,created_at').neq('visibility','fiche_only').in('status',['needs_research','in_review']).order('updated_at',{ascending:false}).limit(8),
+  db().from('topic').select('id,title,slug,status,updated_at').neq('visibility','fiche_only').eq('status','outdated').order('updated_at',{ascending:false}).limit(8),
+  db().from('launch_waitlist').select('id,email,interest,created_at').order('created_at',{ascending:false}).limit(1),
+  db().from('topic').select('id,title,visibility,published,updated_at,created_at').order('updated_at',{ascending:false}).limit(8)
  ]);
- if($('overviewRegistrationCount'))$('overviewRegistrationCount').textContent=r.error?'—':(r.data||[]).length;
- if($('overviewSubmissionCount'))$('overviewSubmissionCount').textContent=s.error?'—':(s.data||[]).length;
- if($('overviewReviewCount'))$('overviewReviewCount').textContent=t.error?'—':(t.data||[]).length;
- if($('overviewOutdatedCount'))$('overviewOutdatedCount').textContent=o.error?'—':(o.data||[]).length;
- const newBox=$('overviewNewItems'),reviewBox=$('overviewReviewItems'),recent=$('overviewRecentTopics');
- if(newBox)newBox.innerHTML='<div class="overview-empty">Open Inzendingen om nieuwe registraties en inzendingen te beheren.</div>';
- if(reviewBox)reviewBox.innerHTML='<div class="overview-empty">Open Kennisbank om items te controleren.</div>';
- if(recent)recent.innerHTML='<div class="overview-empty">Recente topics staan in de Kennisbank.</div>';
+ const pendingProfiles=r.error?[]:(r.data||[]),pendingSubmissions=s.error?[]:(s.data||[]);
+ const reviewTopics=t.error?[]:(t.data||[]),outdated=o.error?[]:(o.data||[]);
+ if($('overviewRegistrationCount'))$('overviewRegistrationCount').textContent=r.error?'—':pendingProfiles.length;
+ if($('overviewSubmissionCount'))$('overviewSubmissionCount').textContent=s.error?'—':pendingSubmissions.length;
+ if($('overviewReviewCount'))$('overviewReviewCount').textContent=t.error?'—':reviewTopics.length;
+ if($('overviewOutdatedCount'))$('overviewOutdatedCount').textContent=o.error?'—':outdated.length;
+ const newBox=$('overviewNewItems'),reviewBox=$('overviewReviewItems'),recentBox=$('overviewRecentTopics');
+ if(newBox){
+   const items=[
+    ...pendingProfiles.map(x=>({type:'Registratie',title:(x.first_name||x.last_name)?[x.first_name,x.last_name].filter(Boolean).join(' '):(x.email||'Nieuwe registratie'),date:x.created_at,page:'submissions'})),
+    ...pendingSubmissions.map(x=>({type:'Inzending',title:x.title||'Nieuwe inzending',date:x.created_at,page:'submissions'}))
+   ].sort((a,b)=>new Date(b.date||0)-new Date(a.date||0)).slice(0,8);
+   newBox.innerHTML=items.length?items.map(x=>'<button type="button" class="overview-item" data-admin-page="'+x.page+'"><div><b>'+esc(x.title)+'</b><div class="hint">'+esc(x.type)+' · '+new Date(x.date).toLocaleString('nl-NL')+'</div></div><span>Openen →</span></button>').join(''):'<div class="overview-empty">Geen nieuwe registraties of inzendingen.</div>';
+ }
+ if(reviewBox){
+   const items=[
+    ...reviewTopics.map(x=>({title:x.title,type:x.status,date:x.updated_at||x.created_at})),
+    ...outdated.map(x=>({title:x.title,type:'Verouderd',date:x.updated_at}))
+   ].slice(0,8);
+   reviewBox.innerHTML=items.length?items.map(x=>'<button type="button" class="overview-item" data-admin-page="topics"><div><b>'+esc(x.title||'Zonder titel')+'</b><div class="hint">'+esc(x.type||'Controle nodig')+' · '+(x.date?new Date(x.date).toLocaleDateString('nl-NL'):'')+'</div></div><span>Openen →</span></button>').join(''):'<div class="overview-empty">Geen artikelen die momenteel controle nodig hebben.</div>';
+ }
+ if(recentBox){
+   const items=recent.error?[]:(recent.data||[]);
+   recentBox.innerHTML=items.length?items.map(x=>'<button type="button" class="overview-item" data-admin-page="topics"><div><b>'+esc(x.title||'Zonder titel')+'</b><div class="hint">'+(x.visibility==='fiche_only'?'Fiche':'Artikel')+' · '+(x.published?'Gepubliceerd':'Niet gepubliceerd')+' · '+new Date(x.updated_at||x.created_at).toLocaleString('nl-NL')+'</div></div><span>Bekijken →</span></button>').join(''):'<div class="overview-empty">Nog geen content gevonden.</div>';
+ }
+ if($('launchWaitlistCount'))$('launchWaitlistCount').textContent=w.error?'—':(w.data||[]).length;
 }
-
 function startUserMonitoring(){loadActivity().catch(e=>{console.error(e);renderMonitoringError(e)})}
 function renderMonitoringError(e){const el=$('monitorError');if(el){el.textContent='Activiteiten konden niet worden geladen: '+(e?.message||'onbekende fout');el.classList.add('show')}}
 window.toggleRegistrationDetails=id=>{const e=$('registration-details-'+id);if(e)e.hidden=!e.hidden};
@@ -268,7 +290,10 @@ async function init(){
   ];
   await Promise.all(jobs.map(([label,fn])=>safe(label,fn)));
   refreshTopicSelects();
-  showPage('overview');
+  let start='overview';
+  try{start=location.hash.replace('#','')||localStorage.getItem('hn_admin_page')||'overview'}catch(e){}
+  if(!$('page-'+start))start='overview';
+  showPage(start,false);
   startUserMonitoring();
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
