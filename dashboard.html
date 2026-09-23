@@ -1852,7 +1852,7 @@ async function loadProgress(){
       .upsert(
         {
           user_id:user.id,
-          item_key:step.step_key,
+          item_key:step.key,
           title:step.title,
           completed:false
         },
