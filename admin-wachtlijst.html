@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HN Lanceringlijst</title>
+<style>
+body{margin:0;background:#fbf8f4;color:#2b241c;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}.wrap{max-width:1000px;margin:auto;padding:30px 20px}.top{display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap}.brand{font-weight:800;color:#4d3819}.actions{display:flex;gap:8px}.btn{border:1px solid #e9e0d4;background:#fff;border-radius:999px;padding:10px 15px;font-weight:700;cursor:pointer;color:#4d3819}.primary{background:#df842c;color:#fff;border-color:#df842c}.card{margin-top:22px;background:#fff;border:1px solid #e9e0d4;border-radius:18px;overflow:hidden}.meta{padding:18px 20px;border-bottom:1px solid #eee6dc;color:#655b4e}.meta strong{color:#4d3819;font-size:24px;margin-right:6px}.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse;min-width:620px}th,td{text-align:left;padding:13px 16px;border-bottom:1px solid #f0ebe4;font-size:14px}th{background:#fbf8f4;color:#4d3819}td{color:#655b4e}.empty{padding:35px;text-align:center;color:#655b4e}.delete{color:#9a3d24;border-color:#edd7cf}.status{min-height:20px;padding:10px 20px;font-size:13px;color:#655b4e}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="top"><div><div class="brand">Hijrah Netwerk · Lanceringlijst</div><h1>Voorinschrijvingen</h1></div><div class="actions"><button class="btn" onclick="location.href='/admin'">← Admin</button><button class="btn primary" id="csv">CSV downloaden</button></div></div>
+<div class="card"><div class="meta"><strong id="count">0</strong> e-mailadressen</div><div id="status" class="status">Laden...</div><div class="table-wrap"><table><thead><tr><th>E-mail</th><th>Interesse</th><th>Aangemeld</th><th></th></tr></thead><tbody id="rows"></tbody></table></div><div id="empty" class="empty" hidden>Nog geen aanmeldingen.</div></div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/assets/config.js"></script>
+<script src="/supabase-client.js"></script>
+<script>
+(function(){
+  var db=window.hijrahSupabase,data=[];
+  var rows=document.getElementById('rows'),empty=document.getElementById('empty'),status=document.getElementById('status'),count=document.getElementById('count');
+  function esc(v){return String(v??'').replace(/[&<>"']/g,function(c){return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]})}
+  async function load(){
+    if(!db){status.textContent='Supabase kon niet laden.';return}
+    var r=await db.from('launch_waitlist').select('id,email,interest,created_at').order('created_at',{ascending:false});
+    if(r.error){status.textContent='Kon de lanceringlijst niet laden.';console.error(r.error);return}
+    data=r.data||[];count.textContent=data.length;status.textContent=data.length?'':'';
+    rows.innerHTML=data.map(function(x){return '<tr><td>'+esc(x.email)+'</td><td>'+esc(x.interest||'—')+'</td><td>'+new Date(x.created_at).toLocaleString('nl-BE')+'</td><td><button class="btn delete" data-id="'+esc(x.id)+'">Verwijderen</button></td></tr>'}).join('');
+    empty.hidden=data.length>0;
+    rows.querySelectorAll('[data-id]').forEach(function(b){b.addEventListener('click',async function(){if(!confirm('Dit e-mailadres verwijderen?'))return;var r=await db.from('launch_waitlist').delete().eq('id',this.dataset.id);if(r.error){alert('Verwijderen mislukt.');return}load()})});
+  }
+  document.getElementById('csv').addEventListener('click',function(){
+    var lines=['email,interest,created_at'].concat(data.map(function(x){return [x.email,x.interest||'',x.created_at].map(function(v){return '"'+String(v).replace(/"/g,'""')+'"'}).join(',')}));
+    var blob=new Blob([lines.join('\n')],{type:'text/csv;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='hn-lanceringlijst.csv';a.click();URL.revokeObjectURL(url);
+  });
+  load();
+})();
+</script>
+</body>
+</html>
