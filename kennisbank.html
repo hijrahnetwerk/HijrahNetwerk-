@@ -320,13 +320,38 @@
     .article-content ul { margin: 0 0 18px 20px; padding: 0; }
     .article-content li { margin: 7px 0; }
 
-    .article-source {
-      margin-top: 24px;
-      padding-top: 18px;
-      border-top: 1px solid var(--line);
-      color: var(--muted);
-      font-size: 14px;
+    .article-source{
+      margin-top:34px;
+      padding-top:14px;
+      border-top:1px solid var(--line);
+      color:var(--muted);
+      font-size:12px;
     }
+    .source-meta{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+    .source-meta-copy{
+      min-width:0;
+      display:flex;
+      align-items:center;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+    .source-meta-title{font-weight:600;color:var(--muted)}
+    .source-meta-updated{color:#9a9187}
+    .source-link{
+      color:#8a6a45;
+      font-size:12px;
+      font-weight:600;
+      text-decoration:underline;
+      text-underline-offset:2px;
+      white-space:nowrap;
+    }
+    .source-link:hover{color:var(--orange)}
+    @media(max-width:650px){.source-meta{align-items:flex-start;flex-direction:column}}
 
     .notice {
       display: none;
@@ -1157,9 +1182,9 @@
       .replace(/\\n/g, "\n")
       .replace(/\r/g, "")
       .trim();
+
     if (!text) return "<p>Geen inhoud beschikbaar.</p>";
 
-    const headingPattern = /^(Opleiding en professionele achtergrond|Over het cabinet|Consultaties|Afspraken|Huisbezoeken|Teleconsultatie|Belangrijk)$/i;
     const lines = text.split(/\n+/).map(line => line.trim()).filter(Boolean);
     const sections = [];
     let heading = "";
@@ -1172,9 +1197,10 @@
     };
 
     lines.forEach(line => {
-      if (headingPattern.test(line)) {
+      const markdownHeading = line.match(/^#{2,3}\s+(.+)$/);
+      if (markdownHeading) {
         pushSection();
-        heading = line;
+        heading = markdownHeading[1].trim();
       } else {
         body.push(line);
       }
@@ -1187,12 +1213,12 @@
 
       const flushBullets = () => {
         if (!bullets.length) return;
-        parts.push("<ul>" + bullets.map(item => "<li>" + esc(item.replace(/^•\\s*/, "")) + "</li>").join("") + "</ul>");
+        parts.push("<ul>" + bullets.map(item => "<li>" + esc(item.replace(/^•\s*/, "")) + "</li>").join("") + "</ul>");
         bullets = [];
       };
 
       section.body.forEach(line => {
-        if (/^•\\s*/.test(line)) {
+        if (/^•\s*/.test(line)) {
           bullets.push(line);
           return;
         }
@@ -1202,11 +1228,13 @@
       });
 
       flushBullets();
-      if (!parts.length) return "";
+      if (!parts.length && !section.heading) return "";
+
       const headingHtml = section.heading ? "<h3>" + esc(section.heading) + "</h3>" : "";
       return headingHtml + parts.join("");
     }).join("");
   }
+
 
   function renderResults() {
 
@@ -1828,14 +1856,7 @@
 
               ${topic.source_url
                 ? `
-                  <a
-                    class="btn btn-secondary"
-                    href="${esc(topic.source_url)}"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Bron openen →
-                  </a>
+                  <a class="source-link" href="${esc(topic.source_url)}" target="_blank" rel="noopener noreferrer">Officiële bron</a>
                 `
                 : ""
               }
