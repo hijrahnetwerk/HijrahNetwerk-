@@ -130,6 +130,11 @@
       "source": "/admin-kaart.html",
       "destination": "/admin-kaart",
       "permanent": true
+    },
+    {
+      "source": "/admin-wachtlijst.html",
+      "destination": "/admin-wachtlijst",
+      "permanent": true
     }
   ],
   "rewrites": [
@@ -240,6 +245,10 @@
     {
       "source": "/admin-kaart",
       "destination": "/admin-kaart.html"
+    },
+    {
+      "source": "/admin-wachtlijst",
+      "destination": "/admin-wachtlijst.html"
     }
   ]
 }
