@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bewerkvoorstellen · HN Admin</title>
+<meta name="robots" content="noindex,nofollow,noarchive">
+<style>
+:root{--brown:#684a25;--dark:#4d3819;--orange:#df842c;--cream:#faf8f5;--muted:#786f66;--line:#e8e1d8;--white:#fff}
+*{box-sizing:border-box}body{margin:0;background:var(--cream);color:#2c2722;font-family:Arial,sans-serif}
+.wrap{max-width:1100px;margin:auto;padding:30px 20px 70px}.top{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:24px}
+h1{margin:0;color:var(--dark);font-size:30px}.muted{color:var(--muted);font-size:13px}.back{color:var(--brown);font-weight:700;text-decoration:none}
+.card{background:#fff;border:1px solid var(--line);border-radius:15px;padding:20px;margin-top:14px}.head{display:flex;justify-content:space-between;gap:15px;align-items:flex-start}
+.badge{display:inline-block;padding:4px 8px;border-radius:999px;background:#f4eadc;color:var(--brown);font-size:11px;font-weight:700}
+.actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:14px}.btn{border:1px solid var(--line);background:#fff;color:var(--dark);border-radius:9px;padding:9px 12px;font-weight:700;cursor:pointer}.primary{background:var(--orange);color:#fff;border-color:var(--orange)}.danger{color:#9a3d2d}
+pre{white-space:pre-wrap;word-break:break-word;background:#fbfaf8;border:1px solid var(--line);border-radius:10px;padding:12px;font-size:12px;line-height:1.5}
+.empty{padding:30px;text-align:center;color:var(--muted);background:#fff;border:1px dashed var(--line);border-radius:12px}
+</style>
+</head>
+<body>
+<main class="wrap">
+<div class="top"><div><a class="back" href="/admin">← Admin</a><h1>Bewerkvoorstellen</h1><p class="muted">Voorstellen van zusters en aanbieders. Niets wordt automatisch in HN aangepast.</p></div><button class="btn" id="refresh">Vernieuwen</button></div>
+<div id="list"><div class="empty">Laden...</div></div>
+</main>
+<script src="assets/config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-client.js"></script>
+<script>
+const db=()=>window.hijrahSupabase;
+const esc=v=>String(v==null?'':v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+let rows=[];
+async function check(){const s=await db().auth.getSession();const u=s.data?.session?.user;if(!u){location.href='/';return false}const r=await db().rpc('is_admin');if(r.error||r.data!==true){location.href='/';return false}return true}
+function render(){
+ const box=document.getElementById('list');
+ if(!rows.length){box.innerHTML='<div class="empty">Geen bewerkvoorstellen.</div>';return}
+ box.innerHTML=rows.map(x=>{
+   const changes=x.proposed_changes||{};
+   return '<article class="card"><div class="head"><div><span class="badge">'+esc(x.content_type==='fiche'?'Fiche':'Artikel')+'</span><h2>'+esc(x.topic?.title||'Onbekende vermelding')+'</h2><div class="muted">'+new Date(x.created_at).toLocaleString('nl-NL')+(x.submitter_name?' · '+esc(x.submitter_name):'')+(x.submitter_email?' · '+esc(x.submitter_email):'')+'</div></div><span class="badge">'+esc(x.status)+'</span></div>'+
+   (x.message?'<p>'+esc(x.message)+'</p>':'')+
+   '<pre>'+esc(JSON.stringify(changes,null,2))+'</pre>'+
+   '<div class="actions">'+
+   (x.status==='new'||x.status==='reviewing'?'<button class="btn" onclick="statusProposal(\''+x.id+'\',\'reviewing\')">In controle</button><button class="btn primary" onclick="acceptProposal(\''+x.id+'\')">Goedkeuren & toepassen</button><button class="btn danger" onclick="statusProposal(\''+x.id+'\',\'rejected\')">Afwijzen</button>':'')+
+   '</div></article>';
+ }).join('');
+}
+async function load(){
+ const r=await db().from('hn_edit_proposals').select('*,topic:topic_id(id,title,slug,card_data,content,summary,source,source_url)').order('created_at',{ascending:false}).limit(100);
+ if(r.error){document.getElementById('list').innerHTML='<div class="empty">'+esc(r.error.message)+'</div>';return}
+ rows=r.data||[];render();
+}
+window.statusProposal=async(id,status)=>{
+ const r=await db().from('hn_edit_proposals').update({status,reviewed_at:status==='reviewing'?null:new Date().toISOString(),reviewed_by:(await db().auth.getUser()).data.user?.id||null}).eq('id',id);
+ if(r.error)return alert(r.error.message);load();
+};
+window.acceptProposal=async id=>{
+ const p=rows.find(x=>x.id===id);if(!p)return;
+ if(!confirm('Dit voorstel toepassen op de HN-vermelding?'))return;
+ const t=p.topic;if(!t)return;
+ let update={};
+ if(p.content_type==='fiche'){
+   const card={...(t.card_data||{})};
+   Object.entries(p.proposed_changes||{}).forEach(([k,v])=>{if(k==='name')card.full_name=v;else card[k]=v});
+   update={card_data:card,updated_at:new Date().toISOString()};
+ }else{
+   const c=p.proposed_changes||{};
+   update={};
+   ['title','summary','content','source','source_url'].forEach(k=>{if(c[k]!==undefined)update[k]=c[k]});
+   update.updated_at=new Date().toISOString();
+ }
+ const u=await db().from('topic').update(update).eq('id',t.id);
+ if(u.error)return alert('Toepassen mislukt: '+u.error.message);
+ const r=await db().from('hn_edit_proposals').update({status:'accepted',reviewed_at:new Date().toISOString(),reviewed_by:(await db().auth.getUser()).data.user?.id||null}).eq('id',id);
+ if(r.error)return alert(r.error.message);
+ load();
+};
+document.getElementById('refresh').onclick=load;
+(async()=>{if(await check())load()})();
+</script>
+</body>
+</html>
