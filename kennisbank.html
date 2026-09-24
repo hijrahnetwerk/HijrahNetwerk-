@@ -255,6 +255,15 @@
       font-weight: 800;
     }
 
+    .article-card-title {
+      display: block;
+      color: inherit;
+    }
+
+    .article-card-title:hover h3 {
+      color: var(--orange);
+    }
+
     .article-card h3 {
       margin: 0 0 9px;
       color: var(--brown-dark);
@@ -2261,6 +2270,33 @@
 
     }
 
+    if (params.get("city")) {
+
+      document.getElementById(
+        "cityFilter"
+      ).value =
+        params.get("city");
+
+    }
+
+    if (params.get("category")) {
+
+      document.getElementById(
+        "categoryFilter"
+      ).value =
+        params.get("category");
+
+    }
+
+    if (params.get("subcategory")) {
+
+      document.getElementById(
+        "subcategoryFilter"
+      ).value =
+        params.get("subcategory");
+
+    }
+
     renderResults();
 
     if (params.get("topic")) {
@@ -2320,6 +2356,39 @@
             country
           );
 
+        }
+
+        const city =
+          document
+            .getElementById(
+              "cityFilter"
+            )
+            .value;
+
+        const category =
+          document
+            .getElementById(
+              "categoryFilter"
+            )
+            .value;
+
+        const subcategory =
+          document
+            .getElementById(
+              "subcategoryFilter"
+            )
+            .value;
+
+        if (city) {
+          queryParams.set("city", city);
+        }
+
+        if (category) {
+          queryParams.set("category", category);
+        }
+
+        if (subcategory) {
+          queryParams.set("subcategory", subcategory);
         }
 
         const queryString =
