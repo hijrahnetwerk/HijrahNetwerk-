@@ -137,6 +137,11 @@
       "permanent": true
     },
     {
+      "source": "/admin-bewerkvoorstellen.html",
+      "destination": "/admin-bewerkvoorstellen",
+      "permanent": true
+    },
+    {
       "source": "/werkruimte.html",
       "destination": "/werkruimte",
       "permanent": true
@@ -254,6 +259,10 @@
     {
       "source": "/admin-wachtlijst",
       "destination": "/admin-wachtlijst.html"
+    },
+    {
+      "source": "/admin-bewerkvoorstellen",
+      "destination": "/admin-bewerkvoorstellen.html"
     },
     {
       "source": "/werkruimte",
