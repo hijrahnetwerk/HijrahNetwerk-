@@ -1,6 +1,24 @@
 (function () {
   "use strict";
 
+  let adminCopyAllowed = false;
+
+  async function checkAdmin() {
+    try {
+      if (!window.hijrahSupabase) return;
+      const { data: { user } } = await window.hijrahSupabase.auth.getUser();
+      if (!user) return;
+      const { data: profile } = await window.hijrahSupabase
+        .from("profiles")
+        .select("role")
+        .eq("id", user.id)
+        .maybeSingle();
+      adminCopyAllowed = profile?.role === "admin";
+    } catch (error) {
+      console.warn("HN kopieerrechten konden niet worden gecontroleerd.", error);
+    }
+  }
+
   function isEditable(target) {
     if (!target) return false;
 
