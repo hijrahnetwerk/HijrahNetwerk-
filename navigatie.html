@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Hijrah Navigatie | Hijrah Netwerk</title>
-<meta name="description" content="Praktische fiches voor emigranten: scholen, artsen, wijken, diensten en andere informatie per land en stad.">
+<meta name="description" content="Praktische informatie voor emigranten: fiches en artikelen over scholen, artsen, wijken, diensten en andere onderwerpen per land en stad.">
 <script src="assets/config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase-client.js"></script>
@@ -84,8 +84,8 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--orange);
 
 <section class="hero">
 <span class="eyebrow">Hijrah Navigatie</span>
-<h1>Praktische informatie, als fiche bij elkaar.</h1>
-<p>Zoek gericht naar scholen, artsen, wijken, diensten en andere praktische informatie. Per land, stad en onderwerp. Geen lange artikelen, maar informatie die je snel kunt gebruiken.</p><p class="note" style="margin:12px 0 0">Gebaseerd op ervaringen van emigranten uit Nederland en België en anderen met eigen ervaring ter plaatse. Waar mogelijk aangevuld met officiële bronnen.</p>
+<h1>Praktische informatie per land en stad.</h1>
+<p>Zoek gericht naar scholen, artsen, wijken, diensten en andere praktische informatie. Per land, stad en onderwerp. Open een korte fiche of lees het uitgebreide artikel als dat beschikbaar is.</p><p class="note" style="margin:12px 0 0">Gebaseerd op ervaringen van emigranten uit Nederland en België en anderen met eigen ervaring ter plaatse. Waar mogelijk aangevuld met officiële bronnen.</p>
 </section>
 
 <div class="filters">
@@ -107,7 +107,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--orange);
 <a class="submit-link" href="bijdragen.html">+ Informatie toevoegen</a>
 </div>
 <div id="cards" class="cards"><div class="empty">De navigatie wordt geladen...</div></div>
-<p class="note">Informatie wordt door HN gecontroleerd voordat deze openbaar wordt. Ervaringen en aanbevelingen worden als zodanig herkenbaar gemaakt.</p>
+<p class="note">Fiches geven de belangrijkste informatie kort weer. Artikelen geven meer achtergrond en uitleg. Ervaringen en aanbevelingen worden als zodanig herkenbaar gemaakt.</p>
 </section>
 </div>
 </main>
@@ -142,7 +142,7 @@ function render(){
    const text=[x.title,x.summary,x.content,x.information_type,d.address,d.neighborhood,d.service_type,d.languages,d.warning,d.phone].join(' ').toLowerCase();
    return (!q||text.includes(q))&&(!co||x.country_id===co)&&(!ci||x.city_id===ci)&&(!ca||x.category_id===ca);
  });
- document.getElementById('resultCount').textContent=filtered.length+' fiche'+(filtered.length===1?'':'s');
+ document.getElementById('resultCount').textContent=filtered.length+' resultaat'+(filtered.length===1?'':'en');
  const box=document.getElementById('cards');
  if(!filtered.length){box.innerHTML='<div class="empty">Geen fiches gevonden. Je kunt ontbrekende informatie zelf insturen.</div>';return}
  box.innerHTML=filtered.map(x=>{
@@ -184,7 +184,7 @@ async function waitForDb(){
 
 async function init(){
   const database=await waitForDb();
-  const coreTopics = 'id,title,summary,content,information_type,country_id,city_id,category_id,published,updated_at';
+  const coreTopics = 'id,title,slug,summary,content,information_type,country_id,city_id,category_id,published,visibility,card_data,updated_at';
 
   let topicResult = await database
     .from('topic')
