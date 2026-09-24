@@ -62,7 +62,7 @@ const fontsTag = '<link rel="stylesheet" href="/assets/fonts.css">';
 const htmlFiles = fs.readdirSync(__dirname)
   .filter(name => name.endsWith('.html'));
 
-let guarded = 0;
+let processed = 0;
 
 for (const file of htmlFiles) {
   const filePath = path.join(__dirname, file);
@@ -87,8 +87,8 @@ for (const file of htmlFiles) {
   ].filter(Boolean).join('\n') + '\n';
   html = html.replace(marker, additions + marker);
   fs.writeFileSync(filePath, html, 'utf8');
-  guarded++;
+  processed++;
 }
 
-console.log('[HN build] Private preview guard toegevoegd aan ' + guarded + ' interne pagina\'s.');
+console.log('[HN build] ' + processed + ' HTML-pagina\'s gecontroleerd en productie-klaar gemaakt.');
 console.log('[HN build] assets/config.js succesvol aangemaakt.');
