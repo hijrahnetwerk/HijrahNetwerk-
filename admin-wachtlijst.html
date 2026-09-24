@@ -21,6 +21,25 @@ body{margin:0;background:#fbf8f4;color:#2b241c;font-family:-apple-system,BlinkMa
   var db=window.hijrahSupabase,data=[];
   var rows=document.getElementById('rows'),empty=document.getElementById('empty'),status=document.getElementById('status'),count=document.getElementById('count');
   function esc(v){return String(v??'').replace(/[&<>"']/g,function(c){return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]})}
+  async function requireAdmin(){
+    if(!db){
+      status.textContent='Supabase kon niet laden.';
+      return false;
+    }
+    var sessionResult=await db.auth.getSession();
+    var session=sessionResult.data&&sessionResult.data.session;
+    if(!session){
+      location.href='/login?next=/admin-wachtlijst';
+      return false;
+    }
+    var profile=await db.from('profiles').select('role').eq('id',session.user.id).maybeSingle();
+    if(profile.error||profile.data?.role!=='admin'){
+      document.body.innerHTML='<div style="padding:40px;font-family:Arial,sans-serif"><h2>Geen toegang</h2><p>Deze pagina is alleen toegankelijk voor HN-beheerders.</p><a href="/admin">Terug naar admin</a></div>';
+      return false;
+    }
+    return true;
+  }
+
   async function load(){
     if(!db){status.textContent='Supabase kon niet laden.';return}
     var r=await db.from('launch_waitlist').select('id,email,interest,created_at').order('created_at',{ascending:false});
@@ -34,7 +53,7 @@ body{margin:0;background:#fbf8f4;color:#2b241c;font-family:-apple-system,BlinkMa
     var lines=['email,interest,created_at'].concat(data.map(function(x){return [x.email,x.interest||'',x.created_at].map(function(v){return '"'+String(v).replace(/"/g,'""')+'"'}).join(',')}));
     var blob=new Blob([lines.join('\n')],{type:'text/csv;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='hn-lanceringlijst.csv';a.click();URL.revokeObjectURL(url);
   });
-  load();
+  requireAdmin().then(function(ok){if(ok)load();});
 })();
 </script>
 </body>
