@@ -12,7 +12,7 @@
 <body>
 <link rel="stylesheet" href="assets/public-nav.css">
 <script src="assets/public-nav.js"></script>
-<main class="wrap"><div class="card"><a class="back" href="navigatie.html">Hijrah Navigatie</a><h1>Informatie insturen</h1><p class="intro">Heb je praktische informatie, een correctie, ervaring, review, aanbeveling of waarschuwing? Stuur het door. Niets wordt automatisch gepubliceerd. HN controleert iedere inzending eerst.</p><div id="message" class="message"></div>
+<main class="wrap"><div class="card"><a class="back" href="navigatie.html">Hijrah Navigatie</a><h1>Informatie insturen</h1><p class="intro">Heb je praktische informatie, een correctie, ervaring, review, aanbeveling of waarschuwing? Stuur het door. Niets wordt automatisch gepubliceerd. HN controleert iedere inzending eerst.</p><div class="private"><strong>Ervaringen uit de praktijk</strong><br>Een ervaring is persoonlijk. Wat iemand meemaakt kan verschillen per persoon, gezin, wijk, situatie en periode. Daarom verzamelen we meerdere ervaringen en houden we ze apart van officiële informatie.</div><div id="message" class="message"></div>
 <form id="form">
 <div class="grid">
 <div><label>Wat wil je insturen?</label><select id="type"><option value="information">Nieuwe informatie</option><option value="correction">Correctie</option><option value="experience">Ervaring</option><option value="review">Review</option><option value="recommendation">Aanbeveling</option><option value="warning">Waarschuwing</option></select></div>
@@ -42,6 +42,7 @@ async function init(){
  document.getElementById('country').addEventListener('change',()=>{const v=document.getElementById('country').value;fill('city',(ci.data||[]).filter(x=>!v||x.country_id===v),'Kies eventueel een stad')});
  document.getElementById('category').addEventListener('change',()=>{const v=document.getElementById('category').value;fill('subcategory',(sc.data||[]).filter(x=>!v||x.category_id===v),'Kies eventueel een subcategorie')});
 
+ const targetTopicId=q.get('topic')||'';
  const countryParam=q.get('country');
  const cityParam=q.get('city');
  const categoryParam=q.get('category');
@@ -69,7 +70,7 @@ form.addEventListener('submit',async e=>{
  e.preventDefault();msg.className='message show';msg.textContent='Bezig met insturen...';
  const {data:{session}}=await db().auth.getSession(),u=session?.user||null;
  const val=id=>document.getElementById(id).value.trim();
- const payload={submitted_by:u?.id||null,submitter_name:val('name')||null,submitter_email:val('email')||u?.email||null,submitter_whatsapp:val('whatsapp')||null,submission_type:document.getElementById('type').value,title:val('title'),country_id:document.getElementById('country').value||null,city_id:document.getElementById('city').value||null,category_id:document.getElementById('category').value||null,subcategory_id:document.getElementById('subcategory').value||null,content:val('content'),source_name:val('sourceName')||null,source_url:val('sourceUrl')||null,requested_visibility:'public',status:'pending'};
+ const payload={submitted_by:u?.id||null,submitter_name:val('name')||null,submitter_email:val('email')||u?.email||null,submitter_whatsapp:val('whatsapp')||null,submission_type:document.getElementById('type').value,title:val('title'),country_id:document.getElementById('country').value||null,city_id:document.getElementById('city').value||null,category_id:document.getElementById('category').value||null,subcategory_id:document.getElementById('subcategory').value||null,target_topic_id:targetTopicId||null,content:val('content'),source_name:val('sourceName')||null,source_url:val('sourceUrl')||null,requested_visibility:'public',status:'pending'};
  const {error}=await db().from('submissions').insert(payload);
  if(error){console.error(error);msg.className='message show error';msg.textContent='De inzending kon niet worden opgeslagen. Probeer het later opnieuw.';return}
  form.reset();msg.className='message show success';msg.textContent='Bedankt. Je inzending is ontvangen en wordt eerst door HN gecontroleerd.';
