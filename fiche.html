@@ -394,7 +394,7 @@ function mapsHref(d,pageTitle,loc){
   return query?'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(query):'';
 }
 
-async function init(){
+async function renderFiche(){
   if(!legacyId && !routeSlug){
     document.getElementById('app').innerHTML='<div class="error">Geen fiche geselecteerd.</div>';
     return;
@@ -699,6 +699,26 @@ async function init(){
       claimForm.reset();
       result.textContent='Ontvangen. HN controleert de aanvraag eerst.';
     });
+  }
+}
+
+async function waitForDatabase(timeout=10000){
+  const start=Date.now();
+  while(Date.now()-start<timeout){
+    if(window.hijrahSupabase)return window.hijrahSupabase;
+    await new Promise(resolve=>setTimeout(resolve,100));
+  }
+  throw new Error('De HN-database kon niet worden geïnitialiseerd.');
+}
+
+async function init(){
+  const app=document.getElementById('app');
+  try{
+    await waitForDatabase();
+    await renderFiche();
+  }catch(error){
+    console.error('HN fiche laden mislukt:',error);
+    app.innerHTML='<div class="error"><strong>Fiche kon niet worden geladen.</strong><br><span style="display:block;margin-top:7px">De verbinding met HN kon niet goed worden gemaakt. Vernieuw de pagina. Als dit blijft gebeuren, controleer dan de databaseverbinding.</span></div>';
   }
 }
 
