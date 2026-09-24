@@ -6,13 +6,13 @@
 (async function () {
   const { session } = await hnGetSession();
 
-  const loginLinks = document.querySelectorAll('a[href="login.html"]');
-  const registerLinks = document.querySelectorAll('a[href="register.html"]');
+  const loginLinks = document.querySelectorAll('a[href="/login"]');
+  const registerLinks = document.querySelectorAll('a[href="/register"]');
 
   if (session && session.user) {
     loginLinks.forEach(function (a) {
       a.textContent = 'Mijn dashboard';
-      a.setAttribute('href', 'dashboard.html');
+      a.setAttribute('href', '/dashboard');
     });
     registerLinks.forEach(function (a) {
       a.style.display = 'none';
