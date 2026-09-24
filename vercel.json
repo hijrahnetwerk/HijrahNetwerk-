@@ -156,6 +156,11 @@
       "destination": "/update-password",
       "permanent": true
     }
+    ,{
+      "source": "/auteursrecht.html",
+      "destination": "/auteursrecht",
+      "permanent": true
+    }
   ],
   "rewrites": [
     {
