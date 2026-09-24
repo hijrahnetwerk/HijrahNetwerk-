@@ -12,15 +12,16 @@
 <body>
 <link rel="stylesheet" href="assets/public-nav.css">
 <script src="assets/public-nav.js"></script>
-<main class="wrap"><div class="card"><a class="back" href="navigatie.html">Hijrah Navigatie</a><h1>Informatie insturen</h1><p class="intro">Heb je praktische informatie, een correctie, ervaring, review, aanbeveling of waarschuwing? Stuur het door. Niets wordt automatisch gepubliceerd. HN controleert iedere inzending eerst.</p><div class="private"><strong>Ervaringen uit de praktijk</strong><br>Een ervaring is persoonlijk. Wat iemand meemaakt kan verschillen per persoon, gezin, wijk, situatie en periode. Daarom verzamelen we meerdere ervaringen en houden we ze apart van officiële informatie.</div><div id="message" class="message"></div>
+<main class="wrap"><div class="card"><a class="back" href="navigatie.html">Hijrah Navigatie</a><h1>Informatie insturen</h1><p class="intro">Deel praktische informatie, een correctie, ervaring, review, aanbeveling of waarschuwing. Je kunt bestaande opties kiezen of zelf een land, stad of categorie typen. Niets wordt automatisch gepubliceerd: HN controleert iedere inzending eerst.</p><div class="private"><strong>Ervaringen uit de praktijk</strong><br>Een ervaring is persoonlijk. Wat iemand meemaakt kan verschillen per persoon, gezin, wijk, situatie en periode. Daarom verzamelen we meerdere ervaringen en houden we ze apart van officiële informatie.</div><div id="message" class="message"></div>
 <form id="form">
 <div class="grid">
 <div><label>Wat wil je insturen?</label><select id="type"><option value="information">Nieuwe informatie</option><option value="correction">Correctie</option><option value="experience">Ervaring</option><option value="review">Review</option><option value="recommendation">Aanbeveling</option><option value="warning">Waarschuwing</option></select></div>
 <div><label>Titel</label><input id="title" placeholder="Bijvoorbeeld Cabinet Médical Ibn Zuhr" required></div>
-<div><div><label>Land</label><select id="country"><option value="">Kies eventueel een land</option></select></div></div>
-<div><div><label>Stad</label><select id="city"><option value="">Kies eventueel een stad</option></select></div></div>
-<div><div><label>Categorie</label><select id="category"><option value="">Kies eventueel een categorie</option></select></div></div>
-<div><div><label>Subcategorie</label><select id="subcategory"><option value="">Kies eventueel een subcategorie</option></select></div></div>
+<div class="full"><div class="hint">Kies een suggestie of typ zelf een nieuwe waarde. Nieuwe opties gaan eerst naar HN ter controle.</div></div>
+<div><label for="country">Land <span class="hint">(optioneel)</span></label><input id="country" list="countryOptions" maxlength="100" placeholder="Typ of kies een land"><datalist id="countryOptions"></datalist></div>
+<div><label for="city">Stad <span class="hint">(optioneel)</span></label><input id="city" list="cityOptions" maxlength="100" placeholder="Typ of kies een stad"><datalist id="cityOptions"></datalist></div>
+<div><label for="category">Categorie <span class="hint">(optioneel)</span></label><input id="category" list="categoryOptions" maxlength="100" placeholder="Typ of kies een categorie"><datalist id="categoryOptions"></datalist></div>
+<div><label for="subcategory">Subcategorie <span class="hint">(optioneel)</span></label><input id="subcategory" list="subcategoryOptions" maxlength="100" placeholder="Typ of kies een subcategorie"><datalist id="subcategoryOptions"></datalist></div>
 <div class="full"><label>Jouw informatie / ervaring</label><textarea id="content" placeholder="Beschrijf zo concreet mogelijk wat je wilt doorgeven." required></textarea><div class="hint">Bij een ervaring kun je bijvoorbeeld vertellen wat je hebt meegemaakt, waarvoor je er bent geweest en wat je anderen wel of niet zou aanraden.</div></div>
 <div><label>Bron / website</label><input id="sourceName" placeholder="Naam van de bron"></div>
 <div><label>Bron URL</label><input id="sourceUrl" type="url" placeholder="https://..."></div>
@@ -34,48 +35,44 @@
 <script src="assets/config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-client.js"></script>
 <script>
 const db=()=>window.hijrahSupabase,form=document.getElementById('form'),msg=document.getElementById('message');
-const q=new URLSearchParams(location.search);if(q.get('type'))document.getElementById('type').value=q.get('type');if(q.get('title'))document.getElementById('title').value=q.get('title');
-function fill(id,items,placeholder){document.getElementById(id).innerHTML='<option value="">'+placeholder+'</option>'+(items||[]).map(x=>'<option value="'+x.id+'">'+String(x.name||'').replace(/&/g,'&amp;').replace(/</g,'&lt;')+'</option>').join('')}
+const q=new URLSearchParams(location.search);
+const taxonomy={countries:[],cities:[],categories:[],subcategories:[]};
+if(q.get('type'))document.getElementById('type').value=q.get('type');
+if(q.get('title'))document.getElementById('title').value=q.get('title');
+const norm=v=>String(v||'').trim().normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLocaleLowerCase();
+const esc=v=>String(v??'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+function setOptions(id,items){const list=document.getElementById(id+'Options');if(!list)return;const seen=new Set();list.innerHTML=(items||[]).filter(x=>x?.name&&!seen.has(norm(x.name))&&seen.add(norm(x.name))).map(x=>'<option value="'+esc(x.name)+'"></option>').join('')}
+function matchName(items,value){const key=norm(value);return key?(items||[]).find(x=>norm(x.name)===key)||null:null}
+function findId(items,id){return (items||[]).find(x=>x.id===id)||null}
+function refreshCities(){const country=matchName(taxonomy.countries,document.getElementById('country').value);setOptions('city',country?taxonomy.cities.filter(x=>x.country_id===country.id):taxonomy.cities)}
+function refreshSubcategories(){const category=matchName(taxonomy.categories,document.getElementById('category').value);setOptions('subcategory',category?taxonomy.subcategories.filter(x=>x.category_id===category.id):taxonomy.subcategories)}
 async function init(){
- const [co,ci,ca,sc]=await Promise.all([db().from('countries').select('id,name').order('name'),db().from('cities').select('id,name,country_id').order('name'),db().from('categories').select('id,name').order('name'),db().from('subcategories').select('id,name,category_id').order('name')]);
- fill('country',co.data,'Kies eventueel een land');fill('city',ci.data,'Kies eventueel een stad');fill('category',ca.data,'Kies eventueel een categorie');fill('subcategory',sc.data,'Kies eventueel een subcategorie');
- document.getElementById('country').addEventListener('change',()=>{const v=document.getElementById('country').value;fill('city',(ci.data||[]).filter(x=>!v||x.country_id===v),'Kies eventueel een stad')});
- document.getElementById('category').addEventListener('change',()=>{const v=document.getElementById('category').value;fill('subcategory',(sc.data||[]).filter(x=>!v||x.category_id===v),'Kies eventueel een subcategorie')});
-
- const targetTopicId=q.get('topic')||'';
- const countryParam=q.get('country');
- const cityParam=q.get('city');
- const categoryParam=q.get('category');
- const subcategoryParam=q.get('subcategory');
-
- if(countryParam){
-   document.getElementById('country').value=countryParam;
-   fill('city',(ci.data||[]).filter(x=>!countryParam||x.country_id===countryParam),'Kies eventueel een stad');
- }
-
- if(cityParam){
-   document.getElementById('city').value=cityParam;
- }
-
- if(categoryParam){
-   document.getElementById('category').value=categoryParam;
-   fill('subcategory',(sc.data||[]).filter(x=>!categoryParam||x.category_id===categoryParam),'Kies eventueel een subcategorie');
- }
-
- if(subcategoryParam){
-   document.getElementById('subcategory').value=subcategoryParam;
- }
+ const [co,ci,ca,sc]=await Promise.all([db().from('countries').select('id,name').eq('is_active',true).order('name'),db().from('cities').select('id,name,country_id').eq('is_active',true).order('name'),db().from('categories').select('id,name').eq('is_active',true).order('sort_order').order('name'),db().from('subcategories').select('id,name,category_id').eq('is_active',true).order('sort_order').order('name')]);
+ taxonomy.countries=co.data||[];taxonomy.cities=ci.data||[];taxonomy.categories=ca.data||[];taxonomy.subcategories=sc.data||[];
+ setOptions('country',taxonomy.countries);refreshCities();setOptions('category',taxonomy.categories);refreshSubcategories();
+ document.getElementById('country').addEventListener('input',refreshCities);
+ document.getElementById('category').addEventListener('input',refreshSubcategories);
+ const countryParam=q.get('country'),cityParam=q.get('city'),categoryParam=q.get('category'),subcategoryParam=q.get('subcategory');
+ if(countryParam){const item=findId(taxonomy.countries,countryParam);document.getElementById('country').value=item?.name||'';refreshCities()}
+ if(cityParam){const item=findId(taxonomy.cities,cityParam);document.getElementById('city').value=item?.name||''}
+ if(categoryParam){const item=findId(taxonomy.categories,categoryParam);document.getElementById('category').value=item?.name||'';refreshSubcategories()}
+ if(subcategoryParam){const item=findId(taxonomy.subcategories,subcategoryParam);document.getElementById('subcategory').value=item?.name||''}
 }
 form.addEventListener('submit',async e=>{
  e.preventDefault();msg.className='message show';msg.textContent='Bezig met insturen...';
  const {data:{session}}=await db().auth.getSession(),u=session?.user||null;
  const val=id=>document.getElementById(id).value.trim();
- const payload={submitted_by:u?.id||null,submitter_name:val('name')||null,submitter_email:val('email')||u?.email||null,submitter_whatsapp:val('whatsapp')||null,submission_type:document.getElementById('type').value,title:val('title'),country_id:document.getElementById('country').value||null,city_id:document.getElementById('city').value||null,category_id:document.getElementById('category').value||null,subcategory_id:document.getElementById('subcategory').value||null,target_topic_id:targetTopicId||null,content:val('content'),source_name:val('sourceName')||null,source_url:val('sourceUrl')||null,requested_visibility:'public',status:'pending'};
+ const countryName=val('country'),cityName=val('city'),categoryName=val('category'),subcategoryName=val('subcategory');
+ const country=matchName(taxonomy.countries,countryName);
+ const city=(country?taxonomy.cities.filter(x=>x.country_id===country.id):taxonomy.cities).find(x=>norm(x.name)===norm(cityName));
+ const category=matchName(taxonomy.categories,categoryName);
+ const subcategory=(category?taxonomy.subcategories.filter(x=>x.category_id===category.id):taxonomy.subcategories).find(x=>norm(x.name)===norm(subcategoryName));
+ const payload={submitted_by:u?.id||null,submitter_name:val('name')||null,submitter_email:val('email')||u?.email||null,submitter_whatsapp:val('whatsapp')||null,submission_type:document.getElementById('type').value,title:val('title'),country_id:country?.id||null,city_id:city?.id||null,category_id:category?.id||null,subcategory_id:subcategory?.id||null,country_name:countryName||null,city_name:cityName||null,category_name:categoryName||null,subcategory_name:subcategoryName||null,target_topic_id:q.get('topic')||null,content:val('content'),source_name:val('sourceName')||null,source_url:val('sourceUrl')||null,requested_visibility:'public',status:'pending'};
  const {error}=await db().from('submissions').insert(payload);
- if(error){console.error(error);msg.className='message show error';msg.textContent='De inzending kon niet worden opgeslagen. Probeer het later opnieuw.';return}
- form.reset();msg.className='message show success';msg.textContent='Bedankt. Je inzending is ontvangen en wordt eerst door HN gecontroleerd.';
+ if(error){console.error(error);msg.className='message show error';msg.textContent='De inzending kon niet worden opgeslagen. Controleer je verbinding en probeer het opnieuw.';return}
+ form.reset();msg.className='message show success';msg.textContent='Bedankt. Je inzending is ontvangen en wordt eerst door HN gecontroleerd.';refreshCities();refreshSubcategories();
 });
-init();
+init().catch(error=>{console.error(error);msg.className='message show error';msg.textContent='De keuzelijsten konden niet worden geladen. Je kunt de waarden nog steeds zelf typen.'});
 </script>
 </body>
 </html>
