@@ -4,10 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Kennisbank — Hijrah Netwerk</title>
+  <title>Artikels — Hijrah Netwerk</title>
   <meta
     name="description"
-    content="Doorzoek de Hijrah Netwerk kennisbank op land, stad en onderwerp."
+    content="Doorzoek de artikels op land, stad en onderwerp."
   >
 
   <style>
@@ -675,12 +675,12 @@
 <main class="wrap">
 
   <section class="hero">
-    <span class="eyebrow">Kennisbank</span>
+    <span class="eyebrow">Artikels</span>
 
     <h1>Vind praktische informatie.</h1>
 
     <p>
-      Zoek informatie over landen, steden en onderwerpen binnen de kennisbank.
+      Zoek praktische artikels over landen, steden en onderwerpen.
     </p>
     <p class="muted" style="margin:10px auto 0;max-width:700px">Gebaseerd op ervaringen van emigranten uit Nederland en België en anderen met eigen ervaring ter plaatse. Waar mogelijk aangevuld met officiële bronnen.</p>
 
@@ -1068,7 +1068,7 @@
   function updateArticleSeo(topic) {
     const title = topic?.title
       ? topic.title + " — Hijrah Netwerk"
-      : "Kennisbank — Hijrah Netwerk";
+      : "Artikels — Hijrah Netwerk";
 
     const description = (
       topic?.summary ||
@@ -1118,10 +1118,10 @@
   }
 
   function clearArticleSeo() {
-    document.title = "Kennisbank — Hijrah Netwerk";
+    document.title = "Artikels — Hijrah Netwerk";
     setMeta(
       "description",
-      "Doorzoek de Hijrah Netwerk kennisbank op land, stad en onderwerp."
+      "Doorzoek de artikels op land, stad en onderwerp."
     );
     setMeta("robots", "index,follow");
 
@@ -1761,7 +1761,7 @@
                         ${item.categories?.name ? `<span class="tag">${esc(item.categories.name)}</span>` : ""}
                       </div>
                       <h4>${esc(item.title)}</h4>
-                      <p>${esc(item.summary || "Bekijk dit artikel in de Kennisbank.")}</p>
+                      <p>${esc(item.summary || "Bekijk dit artikel.")}</p>
                     </a>
                   `).join("")}
                 </div>
@@ -1781,7 +1781,7 @@
                       <div class="related-card" style="background:#faf7f2">
                         <span class="tag">Binnenkort</span>
                         <h4>${esc(title)}</h4>
-                        <p>Nog in ontwikkeling binnen de HN-kennisbank.</p>
+                        <p>Nog in ontwikkeling binnen de artikels.</p>
                       </div>
                     `).join("")}
                   </div>
@@ -1800,7 +1800,7 @@
         class="btn btn-secondary"
         onclick="closeArticle()"
       >
-        ← Terug naar kennisbank
+        ← Terug naar artikels
       </button>
 
       <div class="tags" style="margin-top:20px">
@@ -2310,7 +2310,7 @@
       );
 
       showNotice(
-        "De kennisbank kon niet worden geladen: " +
+        "De artikels konden niet worden geladen: " +
         error.message
       );
 
@@ -2318,7 +2318,7 @@
         "results"
       ).innerHTML = `
         <div class="empty">
-          De kennisbank kon momenteel niet worden geladen.
+          De artikels konden momenteel niet worden geladen.
         </div>
       `;
 
