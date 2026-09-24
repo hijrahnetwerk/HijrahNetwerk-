@@ -657,7 +657,7 @@ async function renderFiche(){
     )+'</p><div class="hero-actions"><a class="button primary" href="/kennisbank?topic='+encodeURIComponent(articleId)+'">'+articleLabel+'</a></div></section>';
   }
 
-  html+='<section class="card"><h2>Ervaringen uit de praktijk</h2><p class="card-sub">Hier vind je ervaringen van mensen die deze dienst, plek of situatie zelf hebben meegemaakt. Een ervaring is persoonlijk en kan verschillen per persoon, gezin, wijk, situatie en periode. Daarom worden community-ervaringen apart gehouden van officiële informatie en verzamelen we waar mogelijk meerdere ervaringen.</p><div class="source-explainer" style="margin:0 0 16px"><strong>Let op</strong><div>Een persoonlijke ervaring is geen garantie dat dezelfde situatie voor iedereen geldt. Ervaringen zijn een aanvulling op andere bronnen en worden duidelijk onderscheiden van officiële informatie en gecontroleerde informatie.</div></div>';
+  html+='<section class="card"><h2>Ervaringen uit de praktijk</h2><p class="card-sub">Gebaseerd op ervaringen van emigranten uit Nederland en België en anderen met eigen ervaring ter plaatse. Waar mogelijk aangevuld met officiële bronnen. Een ervaring blijft persoonlijk en kan per persoon, gezin, wijk, situatie en periode verschillen.</p><div class="source-explainer" style="margin:0 0 16px"><strong>Let op</strong><div>Een persoonlijke ervaring is geen garantie dat dezelfde situatie voor iedereen geldt. Ervaringen zijn een aanvulling op andere bronnen en worden duidelijk onderscheiden van officiële informatie en gecontroleerde informatie.</div></div>';
   if(exps.length){
     html+=exps.map(e=>{
       const rating=Math.min(5,Math.max(0,Number(e.rating)||0));
