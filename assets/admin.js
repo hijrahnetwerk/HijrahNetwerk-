@@ -275,7 +275,40 @@ async function loadSubmissions(){
 }
 window.approveMember=async id=>{const r=await db().from('profiles').update({application_status:'approved',verification_status:'verified',approved_at:new Date().toISOString(),updated_at:new Date().toISOString()}).eq('id',id);if(r.error)return msg(r.error.message,'error');await loadSubmissions();await loadUsers();msg('Lid goedgekeurd.')};
 window.rejectMember=async id=>{const r=await db().from('profiles').update({application_status:'rejected',updated_at:new Date().toISOString()}).eq('id',id);if(r.error)return msg(r.error.message,'error');await loadSubmissions();await loadUsers();msg('Registratie afgewezen.')};
-window.approveSubmission=async id=>{const r=await db().from('submissions').select('*').eq('id',id).maybeSingle();if(r.error||!r.data)return msg(r.error?.message||'Inzending niet gevonden.','error');const s=r.data;const typeMap={information:'Algemene informatie',correction:'Algemene informatie',experience:'Ervaring',review:'Review',recommendation:'Aanbeveling',warning:'Waarschuwing'};const p={title:s.title||'Nieuwe HN-informatie',slug:slug(s.title||'Nieuwe HN-informatie')+'-'+Date.now().toString().slice(-6),country_id:s.country_id||null,city_id:s.city_id||null,category_id:s.category_id||null,subcategory_id:s.subcategory_id||null,information_type:typeMap[s.submission_type]||'Algemene informatie',visibility:s.requested_visibility||'public',status:'published',source:s.source_name||'HN-community',source_url:s.source_url||null,summary:String(s.content||'').replace(/\s+/g,' ').trim().slice(0,220),content:s.content||'',published:true,submitted_by:s.submitted_by||null,source_type:'community',verified_at:new Date().toISOString(),last_checked_at:new Date().toISOString(),card_data:{source_type:'community'}};const ins=await db().from('topic').insert(p);if(ins.error)return msg('Inzending niet gepubliceerd: '+ins.error.message,'error');const up=await db().from('submissions').update({status:'approved',reviewed_at:new Date().toISOString(),updated_at:new Date().toISOString()}).eq('id',id);if(up.error)return msg(up.error.message,'error');await loadSubmissions();await loadTopics();msg('Inzending goedgekeurd en als fiche toegevoegd.')};
+window.approveSubmission=async id=>{
+ const r=await db().from('submissions').select('*').eq('id',id).maybeSingle();
+ if(r.error||!r.data)return msg(r.error?.message||'Inzending niet gevonden.','error');
+ const s=r.data;
+ if(s.submission_type==='experience' && s.target_topic_id){
+   const t=await db().from('topic').select('id,title,card_data').eq('id',s.target_topic_id).maybeSingle();
+   if(t.error||!t.data)return msg(t.error?.message||'De gekoppelde HN-vermelding bestaat niet meer.','error');
+   const card={...(t.data.card_data||{})};
+   const experiences=Array.isArray(card.experiences)?card.experiences.slice():[];
+   experiences.push({
+     text:String(s.content||'').trim(),
+     name:String(s.submitter_name||'').trim()||'Anoniem',
+     date:new Date().toLocaleDateString('nl-NL'),
+     source:'community',
+     rating:0
+   });
+   const upTopic=await db().from('topic').update({
+     card_data:{...card,experiences},
+     updated_at:new Date().toISOString()
+   }).eq('id',t.data.id);
+   if(upTopic.error)return msg('Ervaring kon niet aan de fiche worden toegevoegd: '+upTopic.error.message,'error');
+   const up=await db().from('submissions').update({status:'approved',reviewed_at:new Date().toISOString(),updated_at:new Date().toISOString(),admin_notes:'Gepubliceerd als community-ervaring bij de gekoppelde HN-vermelding.'}).eq('id',id);
+   if(up.error)return msg(up.error.message,'error');
+   await loadSubmissions();await loadTopics();msg('Ervaring goedgekeurd en toegevoegd aan de community-ervaringen van de fiche.');
+   return;
+ }
+ const typeMap={information:'Algemene informatie',correction:'Algemene informatie',review:'Review',recommendation:'Aanbeveling',warning:'Waarschuwing'};
+ const p={title:s.title||'Nieuwe HN-informatie',slug:slug(s.title||'Nieuwe HN-informatie')+'-'+Date.now().toString().slice(-6),country_id:s.country_id||null,city_id:s.city_id||null,category_id:s.category_id||null,subcategory_id:s.subcategory_id||null,information_type:typeMap[s.submission_type]||'Algemene informatie',visibility:s.requested_visibility||'public',status:'published',source:s.source_name||'HN-community',source_url:s.source_url||null,summary:String(s.content||'').replace(/\s+/g,' ').trim().slice(0,220),content:s.content||'',published:true,submitted_by:s.submitted_by||null,source_type:'community',verified_at:new Date().toISOString(),last_checked_at:new Date().toISOString(),card_data:{source_type:'community'}};
+ const ins=await db().from('topic').insert(p);
+ if(ins.error)return msg('Inzending niet gepubliceerd: '+ins.error.message,'error');
+ const up=await db().from('submissions').update({status:'approved',reviewed_at:new Date().toISOString(),updated_at:new Date().toISOString()}).eq('id',id);
+ if(up.error)return msg(up.error.message,'error');
+ await loadSubmissions();await loadTopics();msg('Inzending goedgekeurd en als fiche toegevoegd.')
+};
 window.rejectSubmission=async id=>{const r=await db().from('submissions').update({status:'rejected',reviewed_at:new Date().toISOString(),updated_at:new Date().toISOString()}).eq('id',id);if(r.error)return msg(r.error.message,'error');await loadSubmissions();msg('Inzending afgewezen.')};
 $('refreshSubmissions')?.addEventListener('click',loadSubmissions);
 
