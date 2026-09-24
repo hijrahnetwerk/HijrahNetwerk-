@@ -400,7 +400,10 @@ async function renderFiche(){
     return;
   }
 
-  let topicQuery=db().from('topic').select('id,title,slug,summary,content,information_type,country_id,city_id,category_id,published,visibility,card_data,source,source_url,source_type,updated_at,last_checked_at,next_review_at,verified_at,submitted_by,verification_status').eq('published',true);
+  const adminViewer=await isAdminViewer();
+  const topicSelect='id,title,slug,summary,content,information_type,country_id,city_id,category_id,published,visibility,card_data,source,source_url,source_type,updated_at,last_checked_at,next_review_at,verified_at,submitted_by,verification_status';
+  let topicQuery=db().from('topic').select(topicSelect);
+  if(!adminViewer)topicQuery=topicQuery.eq('published',true);
 
   if(routeSlug){
     topicQuery=topicQuery.eq('slug',decodeURIComponent(routeSlug));
@@ -416,7 +419,10 @@ async function renderFiche(){
   ]);
 
   if(r.error||!r.data){
-    document.getElementById('app').innerHTML='<div class="error">Deze fiche is niet beschikbaar of kon niet worden geladen.</div>';
+    const reason=r.error&&r.error.message?String(r.error.message):'De fiche bestaat niet, is nog niet gepubliceerd of kon niet uit de database worden opgehaald.';
+    document.getElementById('app').innerHTML=adminViewer
+      ? '<div class="error"><strong>Fiche kon niet worden geladen.</strong><div style="margin-top:12px;padding:11px 12px;background:#fbfaf8;border:1px solid var(--border);border-radius:9px;text-align:left;font-size:12px;color:var(--muted)"><strong style="color:var(--brown-dark)">Reden:</strong><br>'+esc(reason)+'</div></div>'
+      : '<div class="error"><strong>Deze informatie wordt momenteel bijgewerkt.</strong><br><span style="display:block;margin-top:7px">Probeer het later opnieuw.</span></div>';
     return;
   }
 
