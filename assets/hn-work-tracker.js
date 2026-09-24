@@ -3,7 +3,7 @@
   'use strict';
   const db=()=>window.hijrahSupabase;
   const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
-  let user=null,active=null,sessions=[],timer=null;
+  let user=null,active=null,sessions=[],timer=null,lastCompletedId=null;
 
   const areas=['Algemeen HN','Mijn Hijrah','Hijrah Navigatie','Kennisbank','HN-kaart','Community','Smart Search','Admin','Techniek / bugs','Content / onderzoek'];
 
@@ -110,7 +110,7 @@
     const dur=Math.max(0,Math.round((end.getTime()-new Date(active.started_at).getTime())/1000-pausedTotal));
     const r=await db().from('hn_work_sessions').update({status:'completed',ended_at:end.toISOString(),paused_at:null,paused_seconds:Math.round(pausedTotal),duration_seconds:dur,updated_at:end.toISOString()}).eq('id',active.id).eq('user_id',user.id);
     if(r.error){alert(r.error.message);return}
-    active={...active,status:'completed',ended_at:end.toISOString(),duration_seconds:dur,paused_seconds:Math.round(pausedTotal),paused_at:null}; active=null;
+    lastCompletedId=active.id; active={...active,status:'completed',ended_at:end.toISOString(),duration_seconds:dur,paused_seconds:Math.round(pausedTotal),paused_at:null}; active=null;
     $('hwtResultRow').style.display='flex'; render(); await load(); render();
   }
   async function saveResult(){
