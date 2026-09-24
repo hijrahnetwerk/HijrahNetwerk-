@@ -13,17 +13,14 @@
           </a>
 
           <nav class="hn-links" aria-label="Hoofdnavigatie">
-            <a href="/">Home</a>
-            <a href="/orientatietest">Oriëntatietest</a>
-            <a href="/stappenplan">Stappenplan</a>
             <a href="/landen">Landen &amp; Steden</a>
             <a href="/navigatie">Hijrah Navigatie</a>
+            <a href="/orientatie">HijrahTools</a>
             <a href="/kennisbank">Artikels</a>
-            <a href="/smart-search">Smart Search</a>
             <a href="/community">Community</a>
-          </nav>
-
-          <div class="hn-actions">
+            <a href="/dashboard">Mijn Hijrah</a>
+            <a href="/#over-ons">Over HN</a>
+          </nav>          <div class="hn-actions">
             <a class="hn-action secondary" href="/dashboard">Mijn Hijrah</a>
             <a class="hn-action secondary" href="/bijdragen">Bijdragen</a>
             <a class="hn-action primary" href="/register">Aanmelden</a>
@@ -41,21 +38,13 @@
             <strong>Hijrah Netwerk</strong>
             <button class="hn-mobile-close" type="button" aria-label="Sluit menu">×</button>
           </div>
-          <a class="hn-mobile-link" href="/">Home</a>
-          <a class="hn-mobile-link" href="/orientatietest">Oriëntatietest</a>
           <a class="hn-mobile-link" href="/landen">Landen &amp; Steden</a>
           <a class="hn-mobile-link" href="/navigatie">Hijrah Navigatie</a>
+          <a class="hn-mobile-link" href="/orientatie">HijrahTools</a>
           <a class="hn-mobile-link" href="/kennisbank">Artikels</a>
-          <a class="hn-mobile-link" href="/smart-search">Smart Search</a>
           <a class="hn-mobile-link" href="/community">Community</a>
-          <a class="hn-mobile-link" href="/#over-ons">Over ons</a>
-          <a class="hn-mobile-link" href="/bijdragen">Bijdragen</a>
-          <a class="hn-mobile-link" href="/stappenplan">Hijrah Stappenplan</a>
-          <a class="hn-mobile-link" href="/stedengids">Stedengidsen</a>
-          <a class="hn-mobile-link" href="/verhalen">Verhalen &amp; ervaringen</a>
-          <a class="hn-mobile-link" href="/realiteitscheck">Realiteitscheck</a>
-          <div class="hn-mobile-divider"></div>
           <a class="hn-mobile-link" href="/dashboard">Mijn Hijrah</a>
+          <div class="hn-mobile-divider"></div>
           <a class="hn-mobile-link" href="/login">Inloggen</a>
           <a class="hn-mobile-primary" href="/register">Aanmelden voor de lancering</a>
         </div>
