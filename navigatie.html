@@ -338,9 +338,14 @@ async function init(){
 
   fill('country',countries,'Alle landen');
   const params=new URLSearchParams(location.search);
+  const presetQ=params.get('q');
   const presetCountry=params.get('country');
   const presetCity=params.get('city');
   const presetCategory=params.get('category');
+  if(presetQ){
+    document.getElementById('q').value=presetQ;
+    document.getElementById('heroQ').value=presetQ;
+  }
   if(presetCountry) document.getElementById('country').value=presetCountry;
   if(presetCity) document.getElementById('city').value=presetCity;
   if(presetCategory) document.getElementById('category').value=presetCategory;
