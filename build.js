@@ -60,7 +60,7 @@ const translateStyleTag = '<link rel="stylesheet" href="/assets/hn-translate.css
 const editProposalTag = '<script src="/assets/hn-edit-proposals.js"></script>';
 const fontsTag = '<link rel="stylesheet" href="/assets/fonts.css">';
 const htmlFiles = fs.readdirSync(__dirname)
-  .filter(name => name.endsWith('.html') && !publicPages.has(name));
+  .filter(name => name.endsWith('.html'));
 
 let guarded = 0;
 
@@ -70,12 +70,12 @@ for (const file of htmlFiles) {
 
   // Verwijder een eventueel eerder ingevoegde pre-launch guard.
   // Dit is belangrijk wanneer een bestaande HTML-versie al eerder gebouwd is.
-  html = html.replace(/<script src="\\/assets\\/private-preview\\.js"><\\/script>\\s*/g, '');
+  html = html.replace(/<script src="\/assets\/private-preview\.js"><\/script>\s*/g, '');
 
 
   const marker = '</body>';
   if (!html.includes(marker)) {
-    console.warn('[HN build] Geen </body> gevonden in ' + file + '; guard niet toegevoegd.');
+    console.warn('[HN build] Geen </body> gevonden in ' + file + '; pagina overgeslagen.');
     continue;
   }
 
