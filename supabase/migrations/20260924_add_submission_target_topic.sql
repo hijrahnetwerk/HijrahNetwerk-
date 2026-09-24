@@ -1,0 +1,2 @@
+alter table public.submissions add column if not exists target_topic_id uuid references public.topic(id) on delete set null;
+create index if not exists submissions_target_topic_id_idx on public.submissions(target_topic_id);
