@@ -431,6 +431,7 @@ async function renderFiche(){
   const ficheSlug=x.slug||id;
   const country=(c.data||[]).find(y=>y.id===x.country_id)?.name||'';
   const city=(ci.data||[]).find(y=>y.id===x.city_id)?.name||'';
+  const loc=[city,country].filter(Boolean).join(', ');
   const cat=(ca.data||[]).find(y=>y.id===x.category_id)?.name||'';
   const exps=Array.isArray(d.experiences)?d.experiences:[];
   const infoType=x.information_type||'Praktische informatie';
