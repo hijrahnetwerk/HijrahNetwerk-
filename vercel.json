@@ -146,7 +146,16 @@
       "destination": "/werkruimte",
       "permanent": true
     },
-
+    {
+      "source": "/reset-password.html",
+      "destination": "/reset-password",
+      "permanent": true
+    },
+    {
+      "source": "/update-password.html",
+      "destination": "/update-password",
+      "permanent": true
+    }
   ],
   "rewrites": [
     {
@@ -268,6 +277,14 @@
     {
       "source": "/werkruimte",
       "destination": "/werkruimte.html"
+    },
+    {
+      "source": "/reset-password",
+      "destination": "/reset-password.html"
+    },
+    {
+      "source": "/update-password",
+      "destination": "/update-password.html"
     },
     {
       "source": "/stad/:slug",
