@@ -57,7 +57,7 @@ async function hnGetSession() {
 
 async function hnRequestPasswordReset(email) {
   const { data, error } = await window.hijrahSupabase.auth.resetPasswordForEmail(email, {
-    redirectTo: window.location.origin + '/update-password.html'
+    redirectTo: window.location.origin + '/update-password'
   });
   return { data, error };
 }
