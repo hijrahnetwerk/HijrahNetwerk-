@@ -1302,18 +1302,36 @@
       list
         .map(topic => {
           const isSaved = savedTopics.has(topic.id);
+          const ficheAvailable = hasFiche(topic);
+          const topicHref = `kennisbank.html?topic=${encodeURIComponent(topic.id)}`;
+          const ficheHref = ficheAvailable
+            ? `/fiche/${encodeURIComponent(topic.slug || topic.id)}`
+            : "";
 
           return `
             <article class="article-card">
 
               <div class="tags">
-                ${topic.countries?.name ? `<span class="tag">${esc(topic.countries.name)}</span>` : ""}
-                ${topic.cities?.name ? `<span class="tag">${esc(topic.cities.name)}</span>` : ""}
-                ${topic.categories?.name ? `<span class="tag">${esc(topic.categories.name)}</span>` : ""}
-                ${topic.information_type ? `<span class="tag">${esc(topic.information_type)}</span>` : ""}
+                ${topic.countries?.name
+                  ? `<a class="tag" href="kennisbank.html?country=${encodeURIComponent(topic.country_id)}" onclick="event.stopPropagation()">${esc(topic.countries.name)}</a>`
+                  : ""}
+                ${topic.cities?.name
+                  ? `<a class="tag" href="kennisbank.html?country=${encodeURIComponent(topic.country_id || "")}&city=${encodeURIComponent(topic.city_id)}" onclick="event.stopPropagation()">${esc(topic.cities.name)}</a>`
+                  : ""}
+                ${topic.categories?.name
+                  ? `<a class="tag" href="kennisbank.html?category=${encodeURIComponent(topic.category_id)}" onclick="event.stopPropagation()">${esc(topic.categories.name)}</a>`
+                  : ""}
+                ${topic.subcategories?.name
+                  ? `<a class="tag" href="kennisbank.html?subcategory=${encodeURIComponent(topic.subcategory_id)}" onclick="event.stopPropagation()">${esc(topic.subcategories.name)}</a>`
+                  : ""}
+                ${topic.information_type
+                  ? `<span class="tag">${esc(topic.information_type)}</span>`
+                  : ""}
               </div>
 
-              <h3>${esc(topic.title)}</h3>
+              <a class="article-card-title" href="${topicHref}">
+                <h3>${esc(topic.title)}</h3>
+              </a>
 
               <p>${esc(
                 topic.summary ||
@@ -1321,21 +1339,35 @@
               )}</p>
 
               <div class="card-actions">
-                <button
+
+                ${ficheAvailable
+                  ? `
+                    <a
+                      class="btn btn-secondary"
+                      href="${ficheHref}"
+                    >
+                      Snel bekijken
+                    </a>
+                  `
+                  : ""
+                }
+
+                <a
                   class="btn btn-primary"
-                  onclick="openArticle('${esc(topic.id)}')"
+                  href="${topicHref}"
                 >
-                  Lees artikel
-                </button>
+                  Meer lezen
+                </a>
 
                 <button
                   class="heart-btn ${isSaved ? "saved" : ""}"
                   aria-label="${isSaved ? "Artikel verwijderen uit opgeslagen informatie" : "Artikel opslaan"}"
-                  onclick="toggleSaved('${esc(topic.id)}')"
+                  onclick="event.stopPropagation(); toggleSaved('${esc(topic.id)}')"
                 >
                   <span class="heart">${isSaved ? "♥" : "♡"}</span>
                   <span>${isSaved ? "Opgeslagen" : "Opslaan"}</span>
                 </button>
+
               </div>
 
             </article>
