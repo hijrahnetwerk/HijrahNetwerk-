@@ -64,9 +64,9 @@ form.addEventListener('submit',async e=>{
  const val=id=>document.getElementById(id).value.trim();
  const countryName=val('country'),cityName=val('city'),categoryName=val('category'),subcategoryName=val('subcategory');
  const country=matchName(taxonomy.countries,countryName);
- const city=(country?taxonomy.cities.filter(x=>x.country_id===country.id):taxonomy.cities).find(x=>norm(x.name)===norm(cityName));
+ const city=(countryName&&!country?[]:country?taxonomy.cities.filter(x=>x.country_id===country.id):taxonomy.cities).find(x=>norm(x.name)===norm(cityName));
  const category=matchName(taxonomy.categories,categoryName);
- const subcategory=(category?taxonomy.subcategories.filter(x=>x.category_id===category.id):taxonomy.subcategories).find(x=>norm(x.name)===norm(subcategoryName));
+ const subcategory=(categoryName&&!category?[]:category?taxonomy.subcategories.filter(x=>x.category_id===category.id):taxonomy.subcategories).find(x=>norm(x.name)===norm(subcategoryName));
  const payload={submitted_by:u?.id||null,submitter_name:val('name')||null,submitter_email:val('email')||u?.email||null,submitter_whatsapp:val('whatsapp')||null,submission_type:document.getElementById('type').value,title:val('title'),country_id:country?.id||null,city_id:city?.id||null,category_id:category?.id||null,subcategory_id:subcategory?.id||null,country_name:countryName||null,city_name:cityName||null,category_name:categoryName||null,subcategory_name:subcategoryName||null,target_topic_id:q.get('topic')||null,content:val('content'),source_name:val('sourceName')||null,source_url:val('sourceUrl')||null,requested_visibility:'public',status:'pending'};
  const {error}=await db().from('submissions').insert(payload);
  if(error){console.error(error);msg.className='message show error';msg.textContent='De inzending kon niet worden opgeslagen. Controleer je verbinding en probeer het opnieuw.';return}
