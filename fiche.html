@@ -41,7 +41,7 @@ a{text-decoration:none;color:inherit}
 .badges{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:11px}
 .fiche-tags{display:flex;flex-wrap:wrap;gap:7px;margin:14px 0 2px}
 .fiche-tag{display:inline-flex;align-items:center;padding:6px 10px;border-radius:999px;background:#f3e5d4;color:var(--brown);font-size:12px;font-weight:600;text-decoration:none}
-.fiche-tag:hover{background:#ead7bf;color:var(--brown-dark)}.fiche-tag:focus-visible{outline:2px solid var(--orange);outline-offset:2px}
+.fiche-tag:hover{background:#ead7bf;color:var(--brown-dark)}.fiche-tag:focus-visible{outline:2px solid var(--orange);outline-offset:2px}.fiche-meta{display:grid;gap:11px;margin-top:16px;padding:13px 15px;background:#fbfaf8;border:1px solid var(--border);border-radius:12px}.fiche-meta-row{display:grid;grid-template-columns:94px minmax(0,1fr);gap:12px;align-items:start}.fiche-meta-label{padding-top:5px;font-size:12px;font-weight:700;color:var(--muted)}.fiche-meta .fiche-tags{margin:0}.fiche-tag.location-tag{background:#e9f1f3;color:#34535c}.fiche-meta-badges{display:flex;flex-wrap:wrap;gap:7px}.badge.official{background:#e7f0f8;color:#2c5872}@media(max-width:560px){.fiche-meta-row{grid-template-columns:1fr;gap:4px}.fiche-meta-label{padding-top:0}}
 .badge{display:inline-flex;align-items:center;padding:6px 10px;border-radius:999px;background:#f2e7da;color:var(--brown);font-size:12px;font-weight:700}
 .badge.green{background:var(--green-bg);color:var(--green)}
 .badge.gray{background:#f1efec;color:#666}
@@ -529,22 +529,25 @@ async function renderFiche(){
   let html='';
 
   html+='<section class="hero">';
-  html+='<div class="badges"><span class="badge">'+esc(cat||'Hijrah Navigatie')+'</span>';
-  html+=verificationStatus==='official' || x.verified_at ? '<span class="badge green">✓ HN gecontroleerd</span>' : verified ? '<span class="badge green">✓ Recent gecontroleerd</span>' : '<span class="badge gray">Nog niet gecontroleerd</span>'; 
-  html+='</div>';
   html+='<div class="hero-grid"><div>';
   html+='<h1>'+esc(displayTitle)+'</h1>';
   if(x.summary||d.short_description)html+='<p class="summary">'+esc(x.summary||d.short_description)+'</p>';
-  const ficheTags=[];
-  if(country)ficheTags.push('<a class="fiche-tag" href="/navigatie?country='+encodeURIComponent(x.country_id)+'">'+esc(country)+'</a>');
-  if(city)ficheTags.push('<a class="fiche-tag" href="/navigatie?city='+encodeURIComponent(x.city_id)+'">'+esc(city)+'</a>');
-  if(cat)ficheTags.push('<a class="fiche-tag" href="/navigatie?category='+encodeURIComponent(x.category_id)+'">'+esc(cat)+'</a>');
-  if(d.neighborhood)ficheTags.push('<a class="fiche-tag" href="/navigatie?q='+encodeURIComponent(d.neighborhood)+'">'+esc(d.neighborhood)+'</a>');
+  const locationTags=[];
+  if(country)locationTags.push('<a class="fiche-tag location-tag" href="/navigatie?country='+encodeURIComponent(x.country_id)+'" title="Bekijk fiches in '+esc(country)+'">'+esc(country)+'</a>');
+  if(city)locationTags.push('<a class="fiche-tag location-tag" href="/navigatie?city='+encodeURIComponent(x.city_id)+'" title="Bekijk fiches in '+esc(city)+'">'+esc(city)+'</a>');
+  if(d.neighborhood)locationTags.push('<a class="fiche-tag location-tag" href="/navigatie?q='+encodeURIComponent(d.neighborhood)+'" title="Bekijk fiches in '+esc(d.neighborhood)+'">'+esc(d.neighborhood)+'</a>');
+  const subjectTags=[];
+  if(cat)subjectTags.push('<a class="fiche-tag" href="/navigatie?category='+encodeURIComponent(x.category_id)+'" title="Bekijk fiches over '+esc(cat)+'">'+esc(cat)+'</a>');
   if(d.specialties){
     const specialties=Array.isArray(d.specialties)?d.specialties:[String(d.specialties)];
-    specialties.filter(Boolean).forEach(s=>ficheTags.push('<a class="fiche-tag" href="/navigatie?q='+encodeURIComponent(s)+'">'+esc(s)+'</a>'));
+    specialties.filter(Boolean).forEach(s=>subjectTags.push('<a class="fiche-tag" href="/navigatie?q='+encodeURIComponent(s)+'" title="Bekijk fiches over '+esc(s)+'">'+esc(s)+'</a>'));
   }
-  if(ficheTags.length)html+='<nav class="fiche-tags" aria-label="Verken andere fiches op basis van land, stad, categorie of kenmerk">'+ficheTags.join('')+'</nav>';
+  html+='<div class="fiche-meta">';
+  if(locationTags.length)html+='<div class="fiche-meta-row"><div class="fiche-meta-label">Locatie</div><nav class="fiche-tags" aria-label="Verken fiches op deze locatie">'+locationTags.join('')+'</nav></div>';
+  if(subjectTags.length)html+='<div class="fiche-meta-row"><div class="fiche-meta-label">Onderwerpen</div><nav class="fiche-tags" aria-label="Verken fiches over deze onderwerpen">'+subjectTags.join('')+'</nav></div>';
+  html+='<div class="fiche-meta-row"><div class="fiche-meta-label">HN-status</div><div class="fiche-meta-badges">';
+  html+=verificationStatus==='official' || x.verified_at ? '<span class="badge green">✓ HN gecontroleerd</span>' : verified ? '<span class="badge green">✓ Recent gecontroleerd</span>' : '<span class="badge gray">Nog niet gecontroleerd</span>';
+  html+='<span class="badge official">'+esc(infoType)+'</span></div></div></div>';
   html+='<div class="hero-actions">';
   if(d.phone)html+='<a class="button primary" href="'+esc(telHref(d.phone))+'">'+icon.phone+'Bel</a>';
   if(mapsUrl)html+='<a class="button secondary" target="_blank" rel="noopener" href="'+esc(mapsUrl)+'">'+icon.map+'Google Maps</a>';
@@ -673,9 +676,7 @@ async function renderFiche(){
   html+='</div>';
 
   html+='<aside class="side">';
-  html+='<section class="card"><h2>Bronstatus</h2><div class="meta-box">';
-  html+='<div class="meta-row"><div class="meta-label">Informatietype</div><div class="meta-value">'+esc(infoType)+'</div></div>';
-  if(x.source_type)html+='<div class="meta-row"><div class="meta-label">Bronstatus</div><div class="meta-value">'+sourceBadge(x.source_type)+'</div></div>';
+  html+='<section class="card"><h2>Bron & controle</h2><div class="meta-box">';
   if(x.source)html+='<div class="meta-row"><div class="meta-label">Bron</div><div class="meta-value">'+esc(x.source)+'</div></div>';
   if(x.source_url)html+='<div class="meta-row"><div class="meta-label">Officiële bron</div><div class="meta-value"><a href="'+esc(x.source_url)+'" target="_blank" rel="noopener">Officiële bron bekijken</a></div></div>';
   if(verified)html+='<div class="meta-row"><div class="meta-label">Laatst gecontroleerd</div><div class="meta-value">'+new Date(verified).toLocaleDateString('nl-NL')+'</div></div>';
