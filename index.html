@@ -23,11 +23,47 @@ section{padding:72px 0}.cream{background:var(--cream);border-top:1px solid #f1e9
 .faq{display:grid;gap:10px;max-width:800px;margin:auto}.faq details{border:1px solid var(--line);border-radius:14px;padding:16px 18px;background:#fff}.faq summary{cursor:pointer;font-weight:700;color:var(--brown-dark)}.faq p{color:var(--muted);font-size:14px;margin:10px 0 0}
 footer{padding:34px 0;border-top:1px solid var(--line);background:#fff}.footer{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;color:var(--muted);font-size:13px}.footer strong{color:var(--brown-dark)}
 </style>
+<link rel="stylesheet" href="assets/public-nav.css">
+<style id="hn-discovery-style">.hn-discovery{padding:28px 0 72px;background:#fff}.hn-discovery-box{background:linear-gradient(135deg,#fffaf4,#f8efe3);border:1px solid #eadfce;border-radius:28px;padding:28px;box-shadow:0 16px 40px rgba(104,74,37,.08)}.hn-discovery-top{display:flex;justify-content:space-between;gap:20px;align-items:end;flex-wrap:wrap}.hn-discovery h2{margin:0 0 6px;color:#4d3819;font-size:clamp(24px,4vw,34px)}.hn-discovery p{margin:0;color:#6d6459}.hn-discovery-grid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:10px;margin-top:20px}.hn-discovery-grid input,.hn-discovery-grid select{width:100%;border:1px solid #e5d9ca;border-radius:14px;padding:14px 15px;background:#fff;color:#2b241c;outline:none}.hn-discovery-grid input:focus,.hn-discovery-grid select:focus{border-color:#df842c;box-shadow:0 0 0 4px rgba(223,132,44,.1)}.hn-discovery-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}.hn-discovery-cats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:18px}.hn-discovery-cat{border:1px solid #e8dfd3;background:#fff;border-radius:16px;padding:14px;text-align:left;cursor:pointer;color:#4d3819;font-weight:700;transition:.18s}.hn-discovery-cat:hover{transform:translateY(-2px);border-color:#df842c}.hn-discovery-cat small{display:block;color:#7a7064;font-weight:500;margin-top:3px}.hn-city-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.hn-city{border:1px solid #e8dfd3;background:#fff;border-radius:999px;padding:8px 12px;cursor:pointer;color:#684a25}.hn-discovery-note{margin-top:12px;font-size:13px;color:#756b60}@media(max-width:760px){.hn-discovery-grid{grid-template-columns:1fr}.hn-discovery-cats{grid-template-columns:repeat(2,1fr)}.hn-discovery-box{padding:20px}}@media(max-width:440px){.hn-discovery-cats{grid-template-columns:1fr}}</style>
 </head>
 <body>
 <header><div class="wrap nav"><a class="brand" href="/"><span class="mark">HN</span>Hijrah Netwerk</a><a class="navlink" href="#wat">Wat wordt HN?</a><a class="btn primary" href="#aanmelden">Blijf op de hoogte</a></div></header>
 <main>
 <section class="hero"><div class="wrap"><span class="eyebrow">Hijrah Netwerk komt eraan</span><h1>Van <span>oriëntatie</span> tot integratie.</h1><p>Een netwerk voor zusters die willen emigreren of al geëmigreerd zijn. Praktische informatie, echte ervaringen en hulpmiddelen op één plek.</p><div class="actions"><a class="btn primary" href="#aanmelden">Ik wil erbij zijn</a><a class="btn secondary" href="#wat">Ontdek het idee</a></div><div class="small">De website wordt stap voor stap geopend. Je hoeft niet te wachten tot alles tegelijk klaar is.</div></div></section>
+<section class="hn-discovery" id="hn-discovery">
+  <div class="wrap">
+    <div class="hn-discovery-box">
+      <div class="hn-discovery-top">
+        <div>
+          <span class="eyebrow">Start hier</span>
+          <h2>Waar ben je naar op zoek?</h2>
+          <p>Zoek direct in HN of kies eerst een onderwerp en stad.</p>
+        </div>
+      </div>
+      <div class="hn-discovery-grid">
+        <input id="hnHomeSearch" type="search" placeholder="Bijv. huisarts, school, huren, Tanger..." autocomplete="off">
+        <select id="hnHomeCountry"><option value="">Alle landen</option></select>
+        <select id="hnHomeCity"><option value="">Alle steden</option></select>
+      </div>
+      <div class="hn-discovery-actions">
+        <button class="btn primary" type="button" id="hnHomeSearchBtn">Zoeken in HN</button>
+        <a class="btn secondary" href="/landen">Een stad ontdekken</a>
+      </div>
+      <div class="hn-discovery-cats">
+        <button class="hn-discovery-cat" data-cat="Wonen">🏠 Wonen<small>Huur, woning, wijk</small></button>
+        <button class="hn-discovery-cat" data-cat="Onderwijs">🎓 Onderwijs<small>Scholen en kinderen</small></button>
+        <button class="hn-discovery-cat" data-cat="Zorg">🩺 Zorg<small>Artsen en zorg</small></button>
+        <button class="hn-discovery-cat" data-cat="Islamitisch leven">🕌 Islamitisch leven<small>Moskeeën en omgeving</small></button>
+        <button class="hn-discovery-cat" data-cat="Werk">💼 Werk<small>Werk en inkomen</small></button>
+        <button class="hn-discovery-cat" data-cat="Administratie">📄 Administratie<small>Documenten en procedures</small></button>
+        <button class="hn-discovery-cat" data-cat="Gezin & kinderen">👨‍👩‍👧 Gezin & kinderen<small>Praktisch voor gezinnen</small></button>
+        <button class="hn-discovery-cat" data-cat="Dagelijks leven">🛒 Dagelijks leven<small>Winkels en voorzieningen</small></button>
+      </div>
+      <div id="hnHomeCities" class="hn-city-row"></div>
+      <div class="hn-discovery-note">HN toont informatie uit artikelen, fiches en lokale informatie. Controleer altijd de vermelde bron en verificatiestatus.</div>
+    </div>
+  </div>
+</section>
 <section id="wat"><div class="wrap"><div class="head center"><span class="eyebrow">Waar HN voor staat</span><h2>Emigreren brengt veel vragen met zich mee.</h2><p>Waar begin je? Welke stad past bij je gezin? Waar vind je betrouwbare informatie? Hoe is het echt om ergens te wonen? HN brengt die zoektocht bij elkaar.</p></div><div class="grid three"><div class="card"><div class="icon">01</div><h3>Oriënteren</h3><p>Informatie om eerst rustig te ontdekken welke landen, steden en mogelijkheden bij jouw situatie passen.</p></div><div class="card"><div class="icon">02</div><h3>Voorbereiden</h3><p>Praktische stappen, documenten, huisvesting, onderwijs, zorg en andere zaken die je vooraf wilt uitzoeken.</p></div><div class="card"><div class="icon">03</div><h3>Integreren</h3><p>Ook na aankomst blijven er vragen. Daarom gaat HN verder dan alleen de voorbereiding.</p></div></div></div></section>
 <section class="cream"><div class="wrap"><div class="feature"><div><span class="eyebrow">Eén netwerk</span><div class="head"><h2>Niet meer verdwalen tussen losse groepjes, lijstjes en zoekopdrachten.</h2><p>HN wordt een plek waar praktische informatie, lokale kennis en ervaringen van emigranten samenkomen.</p></div><div class="list"><div><strong>Landen & steden</strong> om bestemmingen te verkennen.</div><div><strong>Hijrah Navigatie</strong> om lokaal informatie, plekken en ervaringen te vinden.</div><div><strong>HijrahTools</strong> om keuzes en voorbereiding overzichtelijker te maken.</div><div><strong>Community</strong> voor contact, ervaringen en herkenning.</div></div></div><div class="mock"><div class="mock-top"><span>Hijrah Netwerk</span><span>in ontwikkeling</span></div><div class="mock-box"><strong>Een stad ontdekken</strong><span>Wijken · scholen · zorg · moskeeën · winkels · ervaringen</span></div><div class="mock-box"><strong>Mijn Hijrah</strong><span>Je eigen stappen, notities, voortgang en plannen.</span></div><div class="mock-box"><strong>Van zuster tot zuster</strong><span>Ervaringen die je helpen om verder te kijken dan alleen informatie op papier.</span></div></div></div></div></section>
 <section><div class="wrap"><div class="head center"><span class="eyebrow">De route</span><h2>HN groeit mee met jouw reis.</h2><p>Je hoeft niet alles tegelijk te doen. De website wordt daarom ook stap voor stap gelanceerd.</p></div><div class="grid four steps"><div class="card step"><h3>Oriënteren</h3><p>Wat zoek ik eigenlijk en welke landen of steden wil ik onderzoeken?</p></div><div class="card step"><h3>Onderzoeken</h3><p>Informatie verzamelen, vergelijken en ervaringen naast elkaar leggen.</p></div><div class="card step"><h3>Voorbereiden</h3><p>Van documenten en woning tot onderwijs, zorg en dagelijkse zaken.</p></div><div class="card step"><h3>Aankomen & integreren</h3><p>Ook na vertrek blijft praktische lokale informatie belangrijk.</p></div></div></div></section>
@@ -57,5 +93,7 @@ footer{padding:34px 0;border-top:1px solid var(--line);background:#fff}.footer{d
   });
 })();
 </script>
+<script src="assets/public-nav.js"></script>
+<script src="assets/hn-home-discovery.js"></script>
 </body>
 </html>
