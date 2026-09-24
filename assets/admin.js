@@ -320,7 +320,7 @@ async function loadOverview(){
   db().from('submissions').select('id,title,status,created_at,submitted_by').eq('status','pending').order('created_at',{ascending:false}).limit(8),
   db().from('topic').select('id,title,slug,status,visibility,published,updated_at,created_at').neq('visibility','fiche_only').in('status',['needs_research','in_review']).order('updated_at',{ascending:false}).limit(8),
   db().from('topic').select('id,title,slug,status,updated_at').neq('visibility','fiche_only').eq('status','outdated').order('updated_at',{ascending:false}).limit(8),
-  db().from('launch_waitlist').select('id,email,interest,created_at').order('created_at',{ascending:false}).limit(1),
+  db().from('launch_waitlist').select('id',{count:'exact',head:true}),
   db().from('topic').select('id,title,visibility,published,updated_at,created_at').order('updated_at',{ascending:false}).limit(8)
  ]);
  const pendingProfiles=r.error?[]:(r.data||[]),pendingSubmissions=s.error?[]:(s.data||[]);
@@ -348,7 +348,7 @@ async function loadOverview(){
    const items=recent.error?[]:(recent.data||[]);
    recentBox.innerHTML=items.length?items.map(x=>'<button type="button" class="overview-item" data-admin-page="topics"><div><b>'+esc(x.title||'Zonder titel')+'</b><div class="hint">'+(x.visibility==='fiche_only'?'Fiche':'Artikel')+' · '+(x.published?'Gepubliceerd':'Niet gepubliceerd')+' · '+new Date(x.updated_at||x.created_at).toLocaleString('nl-NL')+'</div></div><span>Bekijken →</span></button>').join(''):'<div class="overview-empty">Nog geen content gevonden.</div>';
  }
- if($('launchWaitlistCount'))$('launchWaitlistCount').textContent=w.error?'—':(w.data||[]).length;
+ if($('launchWaitlistCount'))$('launchWaitlistCount').textContent=w.error?'—':(w.count||0);
 }
 function startUserMonitoring(){loadActivity().catch(e=>{console.error(e);renderMonitoringError(e)})}
 function renderMonitoringError(e){const el=$('monitorError');if(el){el.textContent='Activiteiten konden niet worden geladen: '+(e?.message||'onbekende fout');el.classList.add('show')}}
