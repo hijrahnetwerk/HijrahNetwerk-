@@ -55,6 +55,7 @@ fs.writeFileSync(outPath, configContent, 'utf8');
 const guardTag = '<script src="/assets/private-preview.js"></script>';
 const translateTag = '<script src="/assets/hn-translate.js"></script>';
 const translateStyleTag = '<link rel="stylesheet" href="/assets/hn-translate.css">';
+const editProposalTag = '<script src="/assets/hn-edit-proposals.js"></script>';
 const publicPages = new Set([
   'index.html',
   'login.html',
@@ -72,7 +73,7 @@ for (const file of htmlFiles) {
   const filePath = path.join(__dirname, file);
   let html = fs.readFileSync(filePath, 'utf8');
 
-  if (html.includes(translateTag)) continue;
+  if (html.includes(translateTag) && html.includes(editProposalTag)) continue;
 
   const marker = '</body>';
   if (!html.includes(marker)) {
@@ -80,7 +81,7 @@ for (const file of htmlFiles) {
     continue;
   }
 
-  const additions = (publicPages.has(file) ? '' : guardTag + '\n') + translateTag + '\n' + translateStyleTag + '\n';
+  const additions = (publicPages.has(file) ? '' : guardTag + '\n') + translateTag + '\n' + translateStyleTag + '\n' + editProposalTag + '\n';
   html = html.replace(marker, additions + marker);
   fs.writeFileSync(filePath, html, 'utf8');
   guarded++;
