@@ -9,9 +9,12 @@
  * en maakt:
  * assets/config.js
  *
- * Pre-launch:
- * Alle interne HTML-pagina's krijgen automatisch een admin-only guard.
- * index.html, login/register en password-recovery blijven publiek toegankelijk.
+ * Productie:
+ * Publieke pagina's blijven publiek toegankelijk.
+ * Persoonlijke pagina's en adminfuncties moeten hun eigen
+ * authenticatie- en autorisatiecontrole uitvoeren.
+ * De oude private-preview guard wordt tijdens de build verwijderd,
+ * zodat een oude pre-launch build nooit per ongeluk blijft blokkeren.
  */
 
 const fs = require('fs');
@@ -52,19 +55,10 @@ const outPath = path.join(assetsDir, 'config.js');
 
 fs.writeFileSync(outPath, configContent, 'utf8');
 
-const guardTag = '<script src="/assets/private-preview.js"></script>';
 const translateTag = '<script src="/assets/hn-translate.js"></script>';
 const translateStyleTag = '<link rel="stylesheet" href="/assets/hn-translate.css">';
 const editProposalTag = '<script src="/assets/hn-edit-proposals.js"></script>';
 const fontsTag = '<link rel="stylesheet" href="/assets/fonts.css">';
-const publicPages = new Set([
-  'index.html',
-  'login.html',
-  'register.html',
-  'reset-password.html',
-  'update-password.html'
-]);
-
 const htmlFiles = fs.readdirSync(__dirname)
   .filter(name => name.endsWith('.html') && !publicPages.has(name));
 
@@ -74,7 +68,10 @@ for (const file of htmlFiles) {
   const filePath = path.join(__dirname, file);
   let html = fs.readFileSync(filePath, 'utf8');
 
-  if (html.includes(translateTag) && html.includes(editProposalTag) && html.includes(fontsTag)) continue;
+  // Verwijder een eventueel eerder ingevoegde pre-launch guard.
+  // Dit is belangrijk wanneer een bestaande HTML-versie al eerder gebouwd is.
+  html = html.replace(/<script src="\\/assets\\/private-preview\\.js"><\\/script>\\s*/g, '');
+
 
   const marker = '</body>';
   if (!html.includes(marker)) {
@@ -83,7 +80,6 @@ for (const file of htmlFiles) {
   }
 
   const additions = [
-    !publicPages.has(file) && !html.includes(guardTag) ? guardTag : '',
     !html.includes(translateTag) ? translateTag : '',
     !html.includes(translateStyleTag) ? translateStyleTag : '',
     !html.includes(editProposalTag) ? editProposalTag : '',
