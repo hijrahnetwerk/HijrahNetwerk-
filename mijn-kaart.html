@@ -24,7 +24,7 @@
 <section class="wrap layout">
 <div class="map" id="map"><div class="map-note" id="detail">Klik op een locatie om de informatie te bekijken.</div></div><aside class="side">
 <div class="box"><h2>Wat wil je zien?</h2><div class="filters"><button class="filter active" onclick="filter(this,'all')">Alles</button><button class="filter" onclick="filter(this,'zorg')">🏥 Zorg</button><button class="filter" onclick="filter(this,'onderwijs')">🏫 Onderwijs</button><button class="filter" onclick="filter(this,'islam')">🕌 Moskee</button><button class="filter" onclick="filter(this,'praktisch')">🛒 Praktisch</button><button class="filter" onclick="filter(this,'ervaring')">⭐ Ervaringen</button></div></div>
-<div class="box"><h2>In deze stad</h2><div class="places" id="places"><div class="place"><b>HN-locaties laden...</b><small>De kaart wordt gevuld vanuit de HN-database.</small></div></div><button class="save" onclick="alert('Log in op Mijn Hijrah om persoonlijke locaties op te slaan.')">＋ Bewaar op mijn kaart</button></div>
+<div class="box"><h2>In deze stad</h2><div class="places" id="places"><div class="place"><b>HN-locaties laden...</b><small>De kaart wordt gevuld vanuit de HN-database.</small></div></div><button class="save" id="saveFromMap">＋ Bewaar op mijn kaart</button><div id="mapSaveStatus" style="margin-top:9px;font-size:12px;color:var(--muted)"></div></div>
 </aside>
 </section>
 </main>
@@ -68,11 +68,43 @@ function filter(btn,type){
 }
 async function loadMap(){
  const db=window.hijrahSupabase;if(!db)return;
- const r=await db.from('topic').select('*').eq('source_type','hn_map').eq('status','published').order('created_at',{ascending:true});
- if(r.error){console.warn('HN-kaart:',r.error);return}
- mapRows=r.data||[];renderMap();
+ const topicR=await db.from('topic').select('*').eq('source_type','hn_map').eq('status','published').order('created_at',{ascending:true});
+ if(!topicR.error) mapRows=topicR.data||[];
+ const userR=await db.auth.getUser();
+ const user=userR.data?.user||null;
+ if(user){
+   const personalR=await db.from('hn_personal_items').select('*').eq('user_id',user.id).eq('item_type','place').order('created_at',{ascending:false});
+   if(!personalR.error){
+     const personal=(personalR.data||[]).map(x=>({
+       id:'personal-'+x.id,
+       title:x.title,
+       content:x.description||'Persoonlijke opgeslagen plek',
+       card_data:{...(x.data||{}),hn_map_type:(x.data||{}).hn_map_type||'persoonlijk'}
+     }));
+     mapRows=[...personal,...mapRows];
+   }
+ }
+ renderMap();
 }
+async function saveCurrentMap(){
+ const db=window.hijrahSupabase;
+ const status=document.getElementById('mapSaveStatus');
+ const userR=await db.auth.getUser();
+ const user=userR.data?.user||null;
+ if(!user){status.textContent='Log eerst in om persoonlijke locaties te bewaren.';return;}
+ const title=prompt('Naam van de plek');
+ if(!title)return;
+ const description=prompt('Notitie (optioneel)')||'';
+ const r=await db.from('hn_personal_items').insert({
+   user_id:user.id,item_type:'place',title,description,
+   data:{source:'mijn-hn-kaart',hn_map_type:'persoonlijk'}
+ });
+ if(r.error){status.textContent='Opslaan lukt momenteel niet.';console.error(r.error);return;}
+ status.textContent='✓ Opgeslagen in jouw HN-kaart.';
+ await loadMap();
+}
+document.getElementById('saveFromMap')?.addEventListener('click',saveCurrentMap);
 loadMap();
-</script>>
+</script>
 </body>
 </html>
