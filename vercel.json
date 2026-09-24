@@ -146,11 +146,7 @@
       "destination": "/werkruimte",
       "permanent": true
     },
-    {
-      "source": "/stad",
-      "destination": "/stad.html",
-      "permanent": false
-    }
+
   ],
   "rewrites": [
     {
@@ -272,6 +268,14 @@
     {
       "source": "/werkruimte",
       "destination": "/werkruimte.html"
+    },
+    {
+      "source": "/stad/:slug",
+      "destination": "/stad.html?slug=:slug"
+    },
+    {
+      "source": "/stad",
+      "destination": "/stad.html"
     }
   ]
 }
