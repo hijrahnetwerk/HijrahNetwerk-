@@ -711,6 +711,20 @@ async function waitForDatabase(timeout=10000){
   throw new Error('De HN-database kon niet worden geïnitialiseerd.');
 }
 
+async function isAdminViewer(){
+  try{
+    const client=window.hijrahSupabase;
+    if(!client)return false;
+    const session=await client.auth.getSession();
+    const user=session&&session.data&&session.data.session&&session.data.session.user;
+    if(!user)return false;
+    const profile=await client.from('profiles').select('role').eq('id',user.id).maybeSingle();
+    return !profile.error && profile.data && profile.data.role==='admin';
+  }catch(e){
+    return false;
+  }
+}
+
 async function init(){
   const app=document.getElementById('app');
   try{
@@ -718,8 +732,12 @@ async function init(){
     await renderFiche();
   }catch(error){
     console.error('HN fiche laden mislukt:',error);
-    const reason=error&&error.message?String(error.message):'Onbekende fout';
-    app.innerHTML='<div class="error"><strong>Fiche kon niet worden geladen.</strong><br><span style="display:block;margin-top:7px">De verbinding met HN kon niet goed worden gemaakt.</span><div style="margin-top:14px;padding:11px 12px;background:#fbfaf8;border:1px solid var(--border);border-radius:9px;text-align:left;font-size:12px;color:var(--muted)"><strong style="color:var(--brown-dark)">Reden:</strong><br>'+esc(reason)+'</div><span style="display:block;margin-top:10px;font-size:12px">Ververs de pagina. Als dezelfde reden terugkomt, kunnen we gericht de oorzaak oplossen.</span></div>';
+    if(await isAdminViewer()){
+      const reason=error&&error.message?String(error.message):'Onbekende fout';
+      app.innerHTML='<div class="error"><strong>Fiche kon niet worden geladen.</strong><br><span style="display:block;margin-top:7px">De verbinding met HN kon niet goed worden gemaakt.</span><div style="margin-top:14px;padding:11px 12px;background:#fbfaf8;border:1px solid var(--border);border-radius:9px;text-align:left;font-size:12px;color:var(--muted)"><strong style="color:var(--brown-dark)">Reden:</strong><br>'+esc(reason)+'</div><span style="display:block;margin-top:10px;font-size:12px">Ververs de pagina. Als dezelfde reden terugkomt, kunnen we gericht de oorzaak oplossen.</span></div>';
+    }else{
+      app.innerHTML='<div class="error"><strong>Deze informatie wordt momenteel bijgewerkt.</strong><br><span style="display:block;margin-top:7px">Probeer het later opnieuw.</span></div>';
+    }
   }
 }
 
