@@ -155,8 +155,13 @@
       "source": "/update-password.html",
       "destination": "/update-password",
       "permanent": true
-    }
-    ,{
+    },
+    {
+      "source": "/stad.html",
+      "destination": "/stad",
+      "permanent": true
+    },
+    {
       "source": "/auteursrecht.html",
       "destination": "/auteursrecht",
       "permanent": true
