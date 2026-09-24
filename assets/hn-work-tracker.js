@@ -114,12 +114,21 @@
     $('hwtResultRow').style.display='flex'; render(); await load(); render();
   }
   async function saveResult(){
-    const item=sessions.find(x=>x.id===active?.id);
-    const last=sessions.find(x=>x.status==='completed'&&!x.result&&(!$('hwtResult').value.trim()?false:true));
-    const target=last||sessions.find(x=>x.status==='completed'&&x.result==null);
-    if(!target)return;
-    const r=await db().from('hn_work_sessions').update({result:$('hwtResult').value.trim()||null,updated_at:new Date().toISOString()}).eq('id',target.id).eq('user_id',user.id);
-    if(!r.error){$('hwtResult').value='';$('hwtResultRow').style.display='none';await load();render()}
+    const result=$('hwtResult').value.trim();
+    if(!lastCompletedId||!result)return;
+    const r=await db().from('hn_work_sessions').update({
+      result:result,
+      updated_at:new Date().toISOString()
+    }).eq('id',lastCompletedId).eq('user_id',user.id);
+    if(r.error){
+      alert(r.error.message);
+      return;
+    }
+    $('hwtResult').value='';
+    $('hwtResultRow').style.display='none';
+    await load();
+    lastCompletedId=null;
+    render();
   }
   async function manualSave(){
     const date=$('hwtManualDate').value||new Date().toISOString().slice(0,10), hours=Number($('hwtManualHours').value||0);
