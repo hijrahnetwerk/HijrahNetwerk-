@@ -550,7 +550,7 @@ async function renderFiche(){
   if(d.phone)html+='<a class="button primary" href="'+esc(telHref(d.phone))+'">'+icon.phone+'Bel</a>';
   if(mapsUrl)html+='<a class="button secondary" target="_blank" rel="noopener" href="'+esc(mapsUrl)+'">'+icon.map+'Google Maps</a>';
   if(d.website)html+='<a class="button outline" target="_blank" rel="noopener" href="'+esc(d.website)+'">'+icon.web+'Website</a>';
-  html+='<a class="button primary" href="bijdragen.html?type=experience&title='+encodeURIComponent(pageTitle)+'">Ervaring delen</a>';
+  html+='<a class="button primary" href="/bijdragen?type=experience&topic='+encodeURIComponent(id)+'&title='+encodeURIComponent(pageTitle)+'">Ervaring delen</a>';
   html+='</div>';
   html+='</div></div></section>';
 
@@ -657,7 +657,7 @@ async function renderFiche(){
     )+'</p><div class="hero-actions"><a class="button primary" href="/kennisbank?topic='+encodeURIComponent(articleId)+'">'+articleLabel+'</a></div></section>';
   }
 
-  html+='<section class="card"><h2>Ervaringen uit de HN-community</h2>';
+  html+='<section class="card"><h2>Ervaringen uit de HN-community</h2><p class="card-sub">Hier vind je ervaringen van mensen die deze dienst, plek of situatie zelf hebben meegemaakt. Een ervaring is persoonlijk en kan verschillen per persoon, gezin, wijk, situatie en periode. Daarom worden community-ervaringen apart gehouden van officiële informatie en verzamelen we waar mogelijk meerdere ervaringen.</p><div class="source-explainer" style="margin:0 0 16px"><strong>Let op</strong><div>Een persoonlijke ervaring is geen garantie dat dezelfde situatie voor iedereen geldt. HN gebruikt ervaringen als aanvulling op andere bronnen en maakt duidelijk onderscheid tussen officiële informatie, HN-gecontroleerde informatie en community-ervaringen.</div></div>';
   if(exps.length){
     html+=exps.map(e=>{
       const rating=Math.min(5,Math.max(0,Number(e.rating)||0));
@@ -669,7 +669,7 @@ async function renderFiche(){
   }else{
     html+='<p class="empty-note">Er zijn nog geen ervaringen uit de HN-community toegevoegd.</p>';
   }
-  html+='<div class="hero-actions"><a class="button primary" href="bijdragen.html?type=experience&title='+encodeURIComponent(pageTitle)+'">Ervaring delen</a></div></section>';
+  html+='<div class="hero-actions"><a class="button primary" href="/bijdragen?type=experience&topic='+encodeURIComponent(id)+'&title='+encodeURIComponent(pageTitle)+'">Ervaring delen</a></div></section>';
 
   html+='</div>';
 
