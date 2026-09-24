@@ -735,8 +735,8 @@
       ? cs.slice(0,8).map(c=>'<span class="destination-city">'+esc(c.name)+'</span>').join('')
       : '<span class="destination-city">Nog geen steden toegevoegd</span>';
 
-    document.getElementById('selectedNavigation').href='navigatie.html?country='+encodeURIComponent(country.id);
-    document.getElementById('selectedKnowledge').href='kennisbank.html?country='+encodeURIComponent(country.id);
+    document.getElementById('selectedNavigation').href='/navigatie?country='+encodeURIComponent(country.id);
+    document.getElementById('selectedKnowledge').href='/kennisbank?country='+encodeURIComponent(country.id);
 
     document.querySelectorAll('.country-card').forEach(card=>{
       card.classList.toggle('active',String(card.dataset.id)===String(country.id));
