@@ -292,6 +292,10 @@
       "destination": "/update-password.html"
     },
     {
+      "source": "/auteursrecht",
+      "destination": "/auteursrecht.html"
+    },
+    {
       "source": "/stad/:slug",
       "destination": "/stad.html?slug=:slug"
     },
