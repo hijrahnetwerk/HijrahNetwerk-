@@ -74,7 +74,7 @@ for (const file of htmlFiles) {
   const filePath = path.join(__dirname, file);
   let html = fs.readFileSync(filePath, 'utf8');
 
-  if (html.includes(translateTag) && html.includes(editProposalTag)) continue;
+  if (html.includes(translateTag) && html.includes(editProposalTag) && html.includes(fontsTag)) continue;
 
   const marker = '</body>';
   if (!html.includes(marker)) {
@@ -82,7 +82,13 @@ for (const file of htmlFiles) {
     continue;
   }
 
-  const additions = (publicPages.has(file) ? '' : guardTag + '\n') + translateTag + '\n' + translateStyleTag + '\n' + editProposalTag + '\n' + fontsTag + '\n';
+  const additions = [
+    !publicPages.has(file) && !html.includes(guardTag) ? guardTag : '',
+    !html.includes(translateTag) ? translateTag : '',
+    !html.includes(translateStyleTag) ? translateStyleTag : '',
+    !html.includes(editProposalTag) ? editProposalTag : '',
+    !html.includes(fontsTag) ? fontsTag : ''
+  ].filter(Boolean).join('\n') + '\n';
   html = html.replace(marker, additions + marker);
   fs.writeFileSync(filePath, html, 'utf8');
   guarded++;
