@@ -145,6 +145,11 @@
       "source": "/werkruimte.html",
       "destination": "/werkruimte",
       "permanent": true
+    },
+    {
+      "source": "/stad",
+      "destination": "/stad.html",
+      "permanent": false
     }
   ],
   "rewrites": [
