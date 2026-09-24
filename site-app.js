@@ -187,7 +187,7 @@
                 </span>
 
                 <a
-                  href="kennisbank.html?country=${encodeURIComponent(countryFilterId)}"
+                  href="/kennisbank?country=${encodeURIComponent(countryFilterId)}"
                   class="country-link"
                 >
                   Bekijk land →
@@ -397,7 +397,7 @@
 
     if (link) {
       link.href =
-        'kennisbank.html?topic=' +
+        '/kennisbank?topic=' +
         encodeURIComponent(topic.id);
     }
   }
@@ -419,7 +419,7 @@
           if (!value) return;
 
           window.location.href =
-            'kennisbank.html?q=' +
+            '/kennisbank?q=' +
             encodeURIComponent(value);
         };
       }
@@ -432,7 +432,7 @@
         if (!value) return;
 
         window.location.href =
-          'kennisbank.html?q=' +
+          '/kennisbank?q=' +
           encodeURIComponent(value);
       };
     });
@@ -444,7 +444,7 @@
         link.textContent.trim() ===
         'Start de Smart Search'
       ) {
-        link.href = 'smart-search.html';
+        link.href = '/smart-search';
       }
     });
   }
