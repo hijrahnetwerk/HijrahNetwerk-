@@ -27,6 +27,135 @@
   --danger:#a63b3b
 }
 
+/* Modern Mijn Hijrah dashboard UI */
+body{
+  background:
+    radial-gradient(circle at 8% 0%,rgba(233,167,75,.13),transparent 28%),
+    radial-gradient(circle at 92% 8%,rgba(223,132,44,.10),transparent 25%),
+    var(--cream);
+}
+.top{
+  background:linear-gradient(135deg,#684a25 0%,#80592d 55%,#9a672f 100%);
+  box-shadow:0 3px 18px rgba(60,38,18,.16);
+}
+.nav{max-width:1240px;padding:16px 22px}
+.brand{letter-spacing:.1px}
+.wrap{max-width:1240px;padding:30px 22px 70px}
+.hero{
+  position:relative;
+  overflow:hidden;
+  margin:0 0 22px;
+  padding:30px;
+  border-radius:24px;
+  color:#fff;
+  background:linear-gradient(135deg,#684a25 0%,#8b5e2d 58%,#b87935 100%);
+  box-shadow:0 14px 35px rgba(86,55,25,.16);
+}
+.hero:after{
+  content:"";
+  position:absolute;
+  width:260px;height:260px;
+  right:-90px;top:-110px;
+  border:1px solid rgba(255,255,255,.18);
+  border-radius:50%;
+  box-shadow:0 0 0 45px rgba(255,255,255,.035),0 0 0 90px rgba(255,255,255,.025);
+}
+.hero h1{font-size:34px;margin:0 0 7px;position:relative;z-index:1}
+.hero p{color:rgba(255,255,255,.78);position:relative;z-index:1}
+.grid{grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:6px}
+.card{
+  position:relative;
+  padding:18px 20px;
+  border-radius:18px;
+  box-shadow:0 5px 18px rgba(70,45,25,.045);
+  transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease;
+}
+.card:hover{transform:translateY(-3px);box-shadow:0 10px 24px rgba(70,45,25,.10);border-color:#dcc9b5}
+.value{font-size:27px}
+.panel{
+  padding:20px;
+  border-radius:20px;
+  box-shadow:0 7px 25px rgba(70,45,25,.055);
+}
+.tabs{
+  padding:5px;
+  background:#f7f2ec;
+  border:1px solid #eee4d9;
+  border-radius:14px;
+  gap:4px;
+}
+.tab{
+  border:0;
+  background:transparent;
+  border-radius:10px;
+  padding:10px 14px;
+  transition:background .18s ease,color .18s ease,transform .18s ease;
+}
+.tab:hover{background:#fff;transform:translateY(-1px)}
+.tab.active{background:#684a25;box-shadow:0 3px 10px rgba(104,74,37,.18)}
+.summary-box{gap:12px}
+.summary-item{
+  background:linear-gradient(180deg,#fff,#fbf8f4);
+  border-radius:14px;
+  transition:transform .18s ease,border-color .18s ease;
+}
+.summary-item:hover{transform:translateY(-2px);border-color:#dcc9b5}
+.button,.hnbtn{transition:transform .16s ease,box-shadow .16s ease}
+.button:hover,.hnbtn:hover{transform:translateY(-1px);box-shadow:0 5px 13px rgba(80,50,20,.12)}
+.plan-section{
+  border-top-color:#eee5db;
+  padding-top:26px;
+}
+.next-step{
+  background:linear-gradient(135deg,#fff9f1,#faf5ef);
+  border-color:#e6d5c2;
+}
+.task,.item,.checklist-row{
+  transition:background .18s ease,border-color .18s ease,transform .18s ease;
+}
+.task:hover,.item:hover{background:#fffaf5;border-color:#dcc9b5;transform:translateY(-1px)}
+/* Countdown */
+.hn-countdown{
+  margin-top:22px;
+  display:grid;
+  grid-template-columns:minmax(220px,1.35fr) repeat(3,minmax(90px,.5fr));
+  gap:10px;
+  position:relative;
+  z-index:2;
+}
+.hn-countdown-main,.hn-countdown-box{
+  border:1px solid rgba(255,255,255,.16);
+  background:rgba(255,255,255,.10);
+  backdrop-filter:blur(8px);
+  border-radius:15px;
+  padding:14px 16px;
+}
+.hn-countdown-main .small,.hn-countdown-box .small{
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  color:rgba(255,255,255,.68);
+}
+.hn-countdown-main strong{display:block;font-size:19px;margin-top:5px}
+.hn-countdown-box{text-align:center}
+.hn-countdown-box strong{display:block;font-size:27px;line-height:1.1;margin-top:4px}
+.hn-countdown-message{font-size:13px;color:rgba(255,255,255,.78);margin-top:5px}
+@media(max-width:900px){
+  .grid{grid-template-columns:repeat(2,1fr)}
+  .hn-countdown{grid-template-columns:1fr 1fr 1fr}
+  .hn-countdown-main{grid-column:1/-1}
+}
+@media(max-width:650px){
+  .grid{grid-template-columns:1fr 1fr}
+  .hero{padding:23px;border-radius:20px}
+  .hero h1{font-size:28px}
+  .hn-countdown{grid-template-columns:1fr 1fr}
+  .hn-countdown-main{grid-column:1/-1}
+  .panel{padding:15px}
+  .tabs{overflow-x:auto;flex-wrap:nowrap}
+  .tab{white-space:nowrap}
+}
+
 *{box-sizing:border-box}
 
 body{
@@ -586,6 +715,17 @@ textarea{
   <p id="welcome">
     Je persoonlijke omgeving.
   </p>
+
+  <div class="hn-countdown" id="hnDepartureCountdown">
+    <div class="hn-countdown-main">
+      <div class="small">Mijn vertrek</div>
+      <strong id="hnCountdownDate">Nog geen vertrekdatum ingesteld</strong>
+      <div class="hn-countdown-message" id="hnCountdownMessage">Stel je vertrekdatum in bij Mijn Hijrah Plan.</div>
+    </div>
+    <div class="hn-countdown-box"><div class="small">Dagen</div><strong id="hnCountdownDays">—</strong></div>
+    <div class="hn-countdown-box"><div class="small">Uren</div><strong id="hnCountdownHours">—</strong></div>
+    <div class="hn-countdown-box"><div class="small">Minuten</div><strong id="hnCountdownMinutes">—</strong></div>
+  </div>
 
 </section>
 
@@ -1928,6 +2068,7 @@ async function loadProgress(){
   renderProgress();
   renderNextStep();
   renderPlanSummary();
+  startDepartureCountdown();
 
 }
 
@@ -2650,6 +2791,46 @@ async function completeActiveModule(){
   await saveActiveModule(!md.completed);
 }
 
+function renderDepartureCountdown(){
+  const dateInput=$('planDate');
+  const dateValue=dateInput?.value||plan?.target_date||'';
+  const dateEl=$('hnCountdownDate');
+  const daysEl=$('hnCountdownDays');
+  const hoursEl=$('hnCountdownHours');
+  const minutesEl=$('hnCountdownMinutes');
+  const msgEl=$('hnCountdownMessage');
+  if(!dateEl||!daysEl||!hoursEl||!minutesEl||!msgEl)return;
+  if(!dateValue){
+    dateEl.textContent='Nog geen vertrekdatum ingesteld';
+    msgEl.textContent='Stel je vertrekdatum in bij Mijn Hijrah Plan.';
+    daysEl.textContent=hoursEl.textContent=minutesEl.textContent='—';
+    return;
+  }
+  const target=new Date(dateValue+'T00:00:00');
+  const now=new Date();
+  const diff=target.getTime()-now.getTime();
+  dateEl.textContent=target.toLocaleDateString('nl-BE',{day:'numeric',month:'long',year:'numeric'});
+  if(diff<=0){
+    daysEl.textContent='0'; hoursEl.textContent='0'; minutesEl.textContent='0';
+    msgEl.textContent=diff>-86400000?'Vandaag is je geplande vertrekdatum.':'Je geplande vertrekdatum is voorbij.';
+    return;
+  }
+  const totalMinutes=Math.floor(diff/60000);
+  const days=Math.floor(totalMinutes/1440);
+  const hours=Math.floor((totalMinutes%1440)/60);
+  const minutes=totalMinutes%60;
+  daysEl.textContent=days;
+  hoursEl.textContent=String(hours).padStart(2,'0');
+  minutesEl.textContent=String(minutes).padStart(2,'0');
+  msgEl.textContent=days===1?'Nog 1 dag tot je geplande vertrek.':'Nog '+days+' dagen tot je geplande vertrek.';
+}
+let hnCountdownTimer=null;
+function startDepartureCountdown(){
+  renderDepartureCountdown();
+  clearInterval(hnCountdownTimer);
+  hnCountdownTimer=setInterval(renderDepartureCountdown,60000);
+}
+
 async function savePlan(silent=true){
 
   if(!user){
@@ -2782,8 +2963,10 @@ function schedulePlanSave(){
 
 }
 
-$('planDate').onchange=
-schedulePlanSave;
+$('planDate').onchange=()=>{
+  schedulePlanSave();
+  renderDepartureCountdown();
+};
 
 $('planNotes').oninput=
 schedulePlanSave;
