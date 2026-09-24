@@ -781,7 +781,7 @@
           <span class="count">${cs.length} ${cs.length===1?'stad':'steden'}</span>
         </div>
         <div class="city-list">
-          ${cs.slice(0,5).map(city=>'<span class="city-pill">'+esc(city.name)+'</span>').join('')||'<span class="city-pill">Nog geen steden</span>'}
+          ${cs.slice(0,5).map(city=>'<a class="city-pill" href="/stad?city='+encodeURIComponent(city.id)+'">'+esc(city.name)+'</a>').join('')||'<span class="city-pill">Nog geen steden</span>'}
         </div>
         <div class="country-footer">
           <span class="country-more">Bekijk bestemming →</span>
