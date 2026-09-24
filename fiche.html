@@ -724,9 +724,14 @@ async function isAdminViewer(){
     const session=await client.auth.getSession();
     const user=session&&session.data&&session.data.session&&session.data.session.user;
     if(!user)return false;
+
+    const rpc=await client.rpc('is_admin');
+    if(!rpc.error && rpc.data===true)return true;
+
     const profile=await client.from('profiles').select('role').eq('id',user.id).maybeSingle();
     return !profile.error && profile.data && profile.data.role==='admin';
   }catch(e){
+    console.error('HN admincontrole mislukt:',e);
     return false;
   }
 }
