@@ -49,10 +49,13 @@
   var db=window.hijrahSupabase;
   var esc=function(v){return String(v==null?'':v).replace(/[&<>"']/g,function(x){return({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[x]})};
   async function run(){
-    var id=new URLSearchParams(location.search).get('city');
-    if(!id){document.getElementById('cityName').textContent='Geen stad geselecteerd';document.getElementById('cityIntro').textContent='Kies een stad via Landen & Steden.';return}
+    var params=new URLSearchParams(location.search);
+    var id=params.get('city');
+    var slug=params.get('slug');
+    if(!id && !slug){document.getElementById('cityName').textContent='Geen stad geselecteerd';document.getElementById('cityIntro').textContent='Kies een stad via Landen & Steden.';return}
     if(!db){document.getElementById('cityName').textContent='Kan informatie niet laden';return}
-    var cr=await db.from('cities').select('id,name,country_id').eq('id',id).maybeSingle();
+    var cr=id ? await db.from('cities').select('id,name,country_id').eq('id',id).maybeSingle() : await db.from('cities').select('id,name,country_id').eq('id',slug).maybeSingle();
+    if(!cr.data && slug){ cr=await db.from('cities').select('id,name,country_id').ilike('name',decodeURIComponent(slug).replace(/-/g,' ')).maybeSingle(); }
     if(cr.error||!cr.data){document.getElementById('cityName').textContent='Stad niet gevonden';return}
     var city=cr.data;
     var countryR=await db.from('countries').select('id,name').eq('id',city.country_id).maybeSingle();
