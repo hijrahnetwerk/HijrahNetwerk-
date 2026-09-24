@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Stad | Hijrah Netwerk</title>
+<meta name="description" content="Lokale informatie per stad binnen Hijrah Netwerk.">
+<link rel="stylesheet" href="assets/platform-pages.css">
+<link rel="stylesheet" href="assets/public-nav.css">
+<style>
+:root{--brown:#684a25;--dark:#4d3819;--orange:#df842c;--gold:#e9a74b;--cream:#fbf8f4;--line:#e8dfd3;--ink:#2b241c;--muted:#6d6459}
+.city-page{background:linear-gradient(180deg,#fffaf5 0,#fff 420px);min-height:100vh}.city-hero{padding:62px 0 34px}.city-kicker{display:inline-flex;padding:7px 12px;border-radius:999px;background:#fdf1e3;color:#9c5515;font-size:12px;font-weight:800}.city-hero h1{font-size:clamp(38px,6vw,64px);line-height:1.05;color:var(--dark);margin:15px 0 10px}.city-hero p{max-width:720px;color:var(--muted);font-size:18px;margin:0}.city-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}.city-main{padding:18px 0 80px}.city-grid{display:grid;grid-template-columns:1.5fr 1fr;gap:18px}.city-panel{background:#fff;border:1px solid var(--line);border-radius:22px;padding:22px;box-shadow:0 10px 30px rgba(104,74,37,.06)}.city-panel h2{margin:0 0 5px;color:var(--dark);font-size:23px}.city-panel>p{margin:0 0 17px;color:var(--muted);font-size:14px}.city-cats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.city-cat{display:block;border:1px solid var(--line);border-radius:16px;padding:15px;background:#fff}.city-cat strong{display:block;color:var(--dark)}.city-cat span{font-size:13px;color:var(--muted)}.city-topic{display:flex;gap:12px;padding:14px 0;border-top:1px solid #eee7de}.city-topic:first-child{border-top:0;padding-top:0}.city-topic strong{display:block;color:var(--dark)}.city-topic p{margin:3px 0 0;color:var(--muted);font-size:13px}.badge{display:inline-flex;margin-top:6px;padding:4px 8px;border-radius:999px;background:#f7efe5;color:#755735;font-size:11px}.city-empty{padding:20px;border:1px dashed var(--line);border-radius:16px;color:var(--muted);text-align:center}.city-stat{font-size:34px;font-weight:800;color:var(--dark)}.city-stat-label{color:var(--muted);font-size:13px}.city-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:20px}.city-stat-box{padding:15px;border:1px solid var(--line);border-radius:16px;background:#fff}.loading{color:var(--muted)}@media(max-width:800px){.city-grid{grid-template-columns:1fr}}@media(max-width:520px){.city-cats{grid-template-columns:1fr}.city-stats{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<main class="city-page">
+<section class="city-hero"><div class="wrap">
+  <span class="city-kicker">Hijrah Navigatie · Stad</span>
+  <h1 id="cityName">Stad laden...</h1>
+  <p id="cityIntro">Lokale informatie, praktische onderwerpen en HN-informatie op één plek.</p>
+  <div class="city-stats" id="cityStats"></div>
+  <div class="city-actions">
+    <a class="btn primary" id="cityNav" href="/navigatie">Bekijk alle lokale informatie</a>
+    <a class="btn secondary" href="/vergelijken">Steden vergelijken</a>
+    <a class="btn secondary" href="/landen">Andere steden</a>
+  </div>
+</div></section>
+<section class="city-main"><div class="wrap">
+  <div class="city-grid">
+    <div class="city-panel">
+      <h2>Wat vind je in deze stad?</h2>
+      <p>Ga direct naar een onderwerp. Alleen categorieën met beschikbare HN-informatie worden getoond.</p>
+      <div id="cityCategories" class="city-cats"><div class="loading">Laden...</div></div>
+    </div>
+    <div class="city-panel">
+      <h2>Recente lokale informatie</h2>
+      <p>Artikels en fiches die aan deze stad gekoppeld zijn.</p>
+      <div id="cityTopics"><div class="loading">Laden...</div></div>
+    </div>
+  </div>
+</div></section>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="assets/config.js"></script>
+<script src="supabase-client.js"></script>
+<script src="assets/public-nav.js"></script>
+<script>
+(function(){
+  var db=window.hijrahSupabase;
+  var esc=function(v){return String(v==null?'':v).replace(/[&<>"']/g,function(x){return({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[x]})};
+  async function run(){
+    var id=new URLSearchParams(location.search).get('city');
+    if(!id){document.getElementById('cityName').textContent='Geen stad geselecteerd';document.getElementById('cityIntro').textContent='Kies een stad via Landen & Steden.';return}
+    if(!db){document.getElementById('cityName').textContent='Kan informatie niet laden';return}
+    var cr=await db.from('cities').select('id,name,country_id').eq('id',id).maybeSingle();
+    if(cr.error||!cr.data){document.getElementById('cityName').textContent='Stad niet gevonden';return}
+    var city=cr.data;
+    var countryR=await db.from('countries').select('id,name').eq('id',city.country_id).maybeSingle();
+    var country=countryR.data;
+    document.title=city.name+' | Hijrah Netwerk';
+    document.getElementById('cityName').textContent=city.name;
+    document.getElementById('cityIntro').textContent=(country?country.name+' · ':'')+'Lokale informatie, praktische onderwerpen en ervaringen binnen Hijrah Netwerk.';
+    document.getElementById('cityNav').href='/navigatie?city='+encodeURIComponent(city.id);
+    var tr=await db.from('topic').select('id,title,slug,summary,information_type,category_id,city_id,published,visibility,updated_at').eq('city_id',city.id).eq('published',true).order('updated_at',{ascending:false}).limit(100);
+    var topics=tr.error?[]:(tr.data||[]);
+    var catIds=[...new Set(topics.map(function(x){return x.category_id}).filter(Boolean))];
+    var cats=[];
+    if(catIds.length){
+      var ar=await db.from('categories').select('id,name').in('id',catIds);
+      cats=ar.error?[]:(ar.data||[]);
+    }
+    var catMap={};cats.forEach(function(x){catMap[x.id]=x});
+    var groups={};topics.forEach(function(t){if(!groups[t.category_id])groups[t.category_id]=[];groups[t.category_id].push(t)});
+    document.getElementById('cityStats').innerHTML=[
+      '<div class="city-stat-box"><div class="city-stat">'+topics.length+'</div><div class="city-stat-label">lokale items</div></div>',
+      '<div class="city-stat-box"><div class="city-stat">'+cats.length+'</div><div class="city-stat-label">categorieën</div></div>',
+      '<div class="city-stat-box"><div class="city-stat">'+topics.filter(function(t){return String(t.information_type||'').toLowerCase().includes('ervaring')}).length+'</div><div class="city-stat-label">ervaringen</div></div>'
+    ].join('');
+    var cc=document.getElementById('cityCategories');
+    var catArr=cats.sort(function(a,b){return (a.name||'').localeCompare(b.name||'')});
+    cc.innerHTML=catArr.length?catArr.map(function(cat){
+      var count=(groups[cat.id]||[]).length;
+      return '<a class="city-cat" href="/navigatie?city='+encodeURIComponent(city.id)+'&category='+encodeURIComponent(cat.id)+'"><strong>'+esc(cat.name)+'</strong><span>'+count+' '+(count===1?'item':'items')+'</span></a>';
+    }).join(''):'<div class="city-empty">Er is nog geen HN-informatie aan deze stad gekoppeld.</div>';
+    var list=document.getElementById('cityTopics');
+    list.innerHTML=topics.slice(0,8).map(function(t){
+      var href=t.visibility==='fiche_only'?('/fiche/'+encodeURIComponent(t.slug||t.id)):('/kennisbank?topic='+encodeURIComponent(t.id));
+      return '<div class="city-topic"><div><strong><a href="'+href+'">'+esc(t.title)+'</a></strong><p>'+esc(t.summary||'Lokale HN-informatie voor '+city.name+'.')+'</p><span class="badge">'+esc(t.information_type||'HN-informatie')+'</span></div></div>';
+    }).join('')||'<div class="city-empty">Nog geen artikelen of fiches gevonden.</div>';
+  }
+  run();
+})();
+</script>
+</body>
+</html>
