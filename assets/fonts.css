@@ -1,0 +1,23 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600;700&display=swap');
+
+html,body,
+button,input,select,textarea,
+a,.brand,.nav,.nav-links,.nav-action,.mobile-panel,
+.btn,.eyebrow,.card,.list,.table-wrap,.filter,
+label,small,footer,header,main,section,article,aside,nav {
+  font-family:"Work Sans",sans-serif !important;
+}
+
+h1,h2,h3,h4,h5,h6,
+.hero h1,.hero h2,.hero h3,
+.section-head h2,.head h2,
+.card h3,.card h4,
+.cta h2,
+.hn-discovery h2 {
+  font-family:"Fraunces",serif !important;
+  font-weight:600;
+}
+
+input,select,textarea,button {
+  font-family:"Work Sans",sans-serif !important;
+}
