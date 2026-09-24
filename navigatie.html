@@ -109,10 +109,10 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--orange);
 <input id="heroQ" placeholder="Wat zoek je? Bijvoorbeeld huisarts Tanger, school, wijk..." aria-label="Zoek in Hijrah Navigatie">
 </div>
 <div class="quick-links">
-<a class="quick-link" href="/navigatie?category=medisch">Zorg</a>
-<a class="quick-link" href="/navigatie?category=onderwijs">Onderwijs</a>
-<a class="quick-link" href="/navigatie?category=wonen">Wonen</a>
-<a class="quick-link" href="/navigatie?category=moslimleven">Moslimleven</a>
+<a class="quick-link" data-category-name="zorg" href="/navigatie">Zorg</a>
+<a class="quick-link" data-category-name="onderwijs" href="/navigatie">Onderwijs</a>
+<a class="quick-link" data-category-name="wonen" href="/navigatie">Wonen</a>
+<a class="quick-link" data-category-name="moslimleven" href="/navigatie">Moslimleven</a>
 </div>
 <div class="trust">
 <span class="trust-badge">Officiële bronnen waar beschikbaar</span>
@@ -177,6 +177,32 @@ function updateContext(){
  if(category&&category!=='Alle categorieën') parts.push(category);
  document.getElementById('resultContext').textContent=parts.length?parts.join(' · '):'Alle informatie';
 }
+function normalizeText(value){return String(value||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim()}
+function categoryForPreset(value){
+ if(!value) return '';
+ const exact=categories.find(x=>String(x.id)===String(value));
+ if(exact) return exact.id;
+ const wanted=normalizeText(value).replace(/[^a-z0-9]+/g,'');
+ const aliases={
+   zorg:['zorg','medisch','gezondheid'],
+   onderwijs:['onderwijs','school','scholen'],
+   wonen:['wonen','huisvesting'],
+   moslimleven:['moslimleven','islam','moslim']
+ };
+ const candidates=aliases[wanted]||[wanted];
+ const found=categories.find(x=>candidates.includes(normalizeText(x.name).replace(/[^a-z0-9]+/g,'')));
+ return found?found.id:'';
+}
+function updateQuickLinks(){
+ document.querySelectorAll('.quick-link[data-category-name]').forEach(link=>{
+   const cat=categoryForPreset(link.dataset.categoryName);
+   link.href=cat?'/navigatie?category='+encodeURIComponent(cat):'/navigatie';
+ });
+}
+function syncCategorySidebar(){
+ const selected=document.getElementById('category').value;
+ document.querySelectorAll('#categoryButtons button').forEach(b=>b.classList.toggle('active',String(b.dataset.cat)===String(selected)));
+}
 function catButtons(){
  const box=document.getElementById('categoryButtons');
  box.innerHTML='<button class="active" data-cat="">Alles</button>'+categories.map(x=>'<button data-cat="'+x.id+'">'+esc(x.name)+'</button>').join('');
@@ -202,7 +228,7 @@ function render(){
  if(!filtered.length){box.innerHTML='<div class="empty">Geen fiches gevonden. Je kunt ontbrekende informatie zelf insturen.</div>';return}
  const ficheRows=rows.filter(item=>item.visibility==='fiche_only');
  const articleRows=rows.filter(item=>item.visibility!=='fiche_only');
- const normalizeText=value=>String(value||'').toLowerCase().normalize('NFD').replace(/[\\u0300-\\u036f]/g,'');
+ const normalizeText=value=>String(value||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
  const findFicheForArticle=article=>ficheRows.find(f=>{
    const fd=data(f);
    return (fd.article_slug&&article.slug&&fd.article_slug===article.slug) ||
@@ -338,7 +364,10 @@ document.getElementById('country').addEventListener('change',()=>{
  render();
 });
 document.getElementById('city').addEventListener('change',render);
-document.getElementById('category').addEventListener('change',render);
+document.getElementById('category').addEventListener('change',()=>{
+ syncCategorySidebar();
+ render();
+});
 document.getElementById('clearFilters').addEventListener('click',()=>{
  document.getElementById('q').value='';
  document.getElementById('heroQ').value='';
