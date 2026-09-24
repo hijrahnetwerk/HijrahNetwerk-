@@ -12,7 +12,7 @@
 </head>
 <body>
 <link rel="stylesheet" href="assets/public-nav.css">
-<script src="assets/public-nav.js"></script>
+<script src="assets/public-nav.js"></script>\n<script src="supabase-client.js"></script>
 
 <main class="hero"><div class="container hero-inner"><span class="eyebrow">Hijrah Oriëntatietest</span><h1>Wat is voor jou echt belangrijk?</h1><p>Beantwoord een paar vragen. De test geeft je geen landadvies, maar helpt je eigen prioriteiten zichtbaar te maken.</p></div></main>
 
@@ -47,10 +47,10 @@ function render(){
  box.querySelectorAll('.opt').forEach(b=>b.addEventListener('click',()=>{answers[step]=Number(b.dataset.j);localStorage.setItem('hn_orientation_test',JSON.stringify(answers));if(step<qs.length-1){step++;render()}else{showResult()}}));
  document.getElementById('bar').style.width=((step+1)/qs.length*100)+'%';
 }
-function showResult(){
+async function saveOrientation(){\n try{const db=window.hijrahSupabase;if(!db)return;const {data}=await db.auth.getUser();if(!data?.user)return;const payload={user_id:data.user.id,orientation_answers:Object.fromEntries(answers.map((a,i)=>[String(i),qs[i][1][a]||null])),priorities:answers.map((a,i)=>qs[i][1][a]).filter(Boolean),onboarding_completed:true,updated_at:new Date().toISOString()};await db.from('member_preferences').upsert(payload,{onConflict:'user_id'});}catch(e){console.warn('HN oriëntatie opslaan',e)}\n}\nfunction showResult(){
  const labels=answers.map((a,i)=>qs[i][1][a]).filter(Boolean);
  document.getElementById('resultText').textContent='Je belangrijkste antwoorden: '+labels.join(' · ')+'. Gebruik dit als uitgangspunt voor je verdere onderzoek. HN bepaalt op basis hiervan niet welk land je moet kiezen.';
- document.getElementById('result').classList.add('show');
+ document.getElementById('result').classList.add('show');saveOrientation();
  document.querySelectorAll('.q').forEach(x=>x.classList.remove('active'));
  document.getElementById('bar').style.width='100%';
 }
