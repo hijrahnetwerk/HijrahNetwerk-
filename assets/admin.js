@@ -271,7 +271,7 @@ async function loadSubmissions(){
  if(s.error||p.error){box.innerHTML='<div class="empty">Inzendingen konden niet worden geladen.</div>';reg.innerHTML='<div class="empty">Registraties konden niet worden geladen.</div>';return}
  const subs=s.data||[],profiles=p.data||[];if($('submissionBadge')){$('submissionBadge').textContent=subs.length+profiles.length;$('submissionBadge').style.display=(subs.length+profiles.length)?'inline-flex':'none'}
  reg.innerHTML=profiles.length?profiles.map(x=>'<div class="activity-item"><div class="activity-main"><div><div class="activity-user">'+esc([x.first_name,x.last_name].filter(Boolean).join(' ')||x.email)+'</div><div class="activity-description">'+esc(x.email||'')+' · WhatsApp: '+esc(x.whatsapp_number||'Niet ingevuld')+'</div></div><div class="actions"><button class="button button-primary" onclick="approveMember(\''+x.id+'\')">Goedkeuren</button><button class="button button-danger" onclick="rejectMember(\''+x.id+'\')">Afwijzen</button></div></div></div>').join(''):'<div class="empty">Geen openstaande registraties.</div>';
- box.innerHTML=subs.length?subs.map(x=>'<div class="activity-item"><div class="activity-main"><div><div class="activity-user">'+esc(x.title||'Nieuwe inzending')+'</div><div class="activity-description">'+esc(x.submission_type||'Informatie')+' · '+esc(x.content||'')+'</div><div class="activity-details">'+esc(x.submitter_name||'Anoniem')+' · '+esc(x.created_at?new Date(x.created_at).toLocaleString('nl-NL'):'')+'</div></div><div class="actions"><button class="button button-primary" onclick="approveSubmission(\''+x.id+'\')">Goedkeuren & fiche maken</button><button class="button button-danger" onclick="rejectSubmission(\''+x.id+'\')">Afwijzen</button></div></div></div>').join(''):'<div class="empty">Geen openstaande inzendingen.</div>';
+ box.innerHTML=subs.length?subs.map(x=>{const names=[[x.country_name||state.countries.find(y=>y.id===x.country_id)?.name,'Land'],[x.city_name||state.cities.find(y=>y.id===x.city_id)?.name,'Stad'],[x.category_name||state.categories.find(y=>y.id===x.category_id)?.name,'Categorie'],[x.subcategory_name||state.subcategories.find(y=>y.id===x.subcategory_id)?.name,'Subcategorie']].filter(y=>y[0]).map(y=>'<span><b>'+y[1]+':</b> '+esc(y[0])+'</span>').join(' · ');return '<div class="activity-item"><div class="activity-main"><div><div class="activity-user">'+esc(x.title||'Nieuwe inzending')+'</div><div class="activity-description">'+esc(x.submission_type||'Informatie')+' · '+esc(x.content||'')+'</div>'+(names?'<div class="activity-details">'+names+'</div>':'')+'<div class="activity-details">Naam alleen voor HN: '+esc(x.submitter_name||'niet opgegeven')+' · '+esc(x.created_at?new Date(x.created_at).toLocaleString('nl-NL'):'')+'</div></div><div class="actions"><button class="button button-primary" onclick="approveSubmission(\''+x.id+'\')">Goedkeuren & fiche maken</button><button class="button button-danger" onclick="rejectSubmission(\''+x.id+'\')">Afwijzen</button></div></div></div>'}).join(''):'<div class="empty">Geen openstaande inzendingen.</div>';
 }
 window.approveMember=async id=>{const r=await db().from('profiles').update({application_status:'approved',verification_status:'verified',approved_at:new Date().toISOString(),updated_at:new Date().toISOString()}).eq('id',id);if(r.error)return msg(r.error.message,'error');await loadSubmissions();await loadUsers();msg('Lid goedgekeurd.')};
 window.rejectMember=async id=>{const r=await db().from('profiles').update({application_status:'rejected',updated_at:new Date().toISOString()}).eq('id',id);if(r.error)return msg(r.error.message,'error');await loadSubmissions();await loadUsers();msg('Registratie afgewezen.')};
@@ -279,14 +279,17 @@ window.approveSubmission=async id=>{
  const r=await db().from('submissions').select('*').eq('id',id).maybeSingle();
  if(r.error||!r.data)return msg(r.error?.message||'Inzending niet gevonden.','error');
  const s=r.data;
+ const publicContent=window.prompt('Controleer de tekst voor anonieme publicatie. Verwijder namen of andere herkenbare persoonsgegevens. Je kunt de tekst hier aanpassen:',String(s.content||''));
+ if(publicContent===null)return;
+ if(!publicContent.trim())return msg('De openbare tekst mag niet leeg zijn.','error');
  if(s.submission_type==='experience' && s.target_topic_id){
    const t=await db().from('topic').select('id,title,card_data').eq('id',s.target_topic_id).maybeSingle();
    if(t.error||!t.data)return msg(t.error?.message||'De gekoppelde HN-vermelding bestaat niet meer.','error');
    const card={...(t.data.card_data||{})};
    const experiences=Array.isArray(card.experiences)?card.experiences.slice():[];
    experiences.push({
-     text:String(s.content||'').trim(),
-     name:String(s.submitter_name||'').trim()||'Anoniem',
+     text:publicContent.trim(),
+     name:'Anoniem',
      date:new Date().toLocaleDateString('nl-NL'),
      source:'community',
      rating:0
@@ -302,7 +305,25 @@ window.approveSubmission=async id=>{
    return;
  }
  const typeMap={information:'Algemene informatie',correction:'Algemene informatie',review:'Review',recommendation:'Aanbeveling',warning:'Waarschuwing'};
- const p={title:s.title||'Nieuwe HN-informatie',slug:slug(s.title||'Nieuwe HN-informatie')+'-'+Date.now().toString().slice(-6),country_id:s.country_id||null,city_id:s.city_id||null,category_id:s.category_id||null,subcategory_id:s.subcategory_id||null,information_type:typeMap[s.submission_type]||'Algemene informatie',visibility:s.requested_visibility||'public',status:'published',source:s.source_name||'HN-community',source_url:s.source_url||null,summary:String(s.content||'').replace(/\s+/g,' ').trim().slice(0,220),content:s.content||'',published:true,submitted_by:s.submitted_by||null,source_type:'community',verified_at:new Date().toISOString(),last_checked_at:new Date().toISOString(),card_data:{source_type:'community'}};
+ const normalizeName=v=>String(v||'').trim().normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLocaleLowerCase();
+ const resolveValue=async(table,cache,name,extra={})=>{
+   const value=String(name||'').trim();if(!value)return null;
+   const existing=cache.find(x=>normalizeName(x.name)===normalizeName(value));if(existing)return existing.id;
+   const valueSlug=slug(value);if(!valueSlug)throw new Error('Deze nieuwe categorie kan niet worden opgeslagen.');
+   const found=await db().from(table).select('id,name').eq('slug',valueSlug).maybeSingle();
+   if(found.error)throw found.error;if(found.data){cache.push(found.data);return found.data.id}
+   const inserted=await db().from(table).insert({name:value,slug:valueSlug,...extra}).select('id,name').single();
+   if(inserted.error){const retry=await db().from(table).select('id,name').eq('slug',valueSlug).maybeSingle();if(retry.error||!retry.data)throw inserted.error;cache.push(retry.data);return retry.data.id}
+   cache.push(inserted.data);return inserted.data.id;
+ };
+ let countryId=s.country_id||null,cityId=s.city_id||null,categoryId=s.category_id||null,subcategoryId=s.subcategory_id||null;
+ try{
+   if(!countryId&&s.country_name)countryId=await resolveValue('countries',state.countries,s.country_name);
+   if(!cityId&&s.city_name)cityId=await resolveValue('cities',state.cities,s.city_name,{country_id:countryId});
+   if(!categoryId&&s.category_name)categoryId=await resolveValue('categories',state.categories,s.category_name);
+   if(!subcategoryId&&s.subcategory_name)subcategoryId=await resolveValue('subcategories',state.subcategories,s.subcategory_name,{category_id:categoryId});
+ }catch(error){return msg('Nieuwe locatie/categorie kon niet worden toegevoegd: '+(error.message||''),'error')}
+ const p={title:s.title||'Nieuwe HN-informatie',slug:slug(s.title||'Nieuwe HN-informatie')+'-'+Date.now().toString().slice(-6),country_id:countryId,city_id:cityId,category_id:categoryId,subcategory_id:subcategoryId,information_type:typeMap[s.submission_type]||'Algemene informatie',visibility:s.requested_visibility||'public',status:'published',source:s.source_name||'HN-community',source_url:s.source_url||null,summary:publicContent.trim().replace(/\s+/g,' ').slice(0,220),content:publicContent.trim(),published:true,submitted_by:s.submitted_by||null,source_type:'community',verified_at:new Date().toISOString(),last_checked_at:new Date().toISOString(),card_data:{source_type:'community'}};
  const ins=await db().from('topic').insert(p);
  if(ins.error)return msg('Inzending niet gepubliceerd: '+ins.error.message,'error');
  const up=await db().from('submissions').update({status:'approved',reviewed_at:new Date().toISOString(),updated_at:new Date().toISOString()}).eq('id',id);
