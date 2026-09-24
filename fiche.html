@@ -547,7 +547,10 @@ async function renderFiche(){
   if(subjectTags.length)html+='<div class="fiche-meta-row"><div class="fiche-meta-label">Onderwerpen</div><nav class="fiche-tags" aria-label="Verken fiches over deze onderwerpen">'+subjectTags.join('')+'</nav></div>';
   html+='<div class="fiche-meta-row"><div class="fiche-meta-label">HN-status</div><div class="fiche-meta-badges">';
   html+=verificationStatus==='official' || x.verified_at ? '<span class="badge green">✓ HN gecontroleerd</span>' : verified ? '<span class="badge green">✓ Recent gecontroleerd</span>' : '<span class="badge gray">Nog niet gecontroleerd</span>';
-  html+='<span class="badge official">'+esc(infoType)+'</span></div></div></div>';
+  const sourceTypeLabel=sourceLabel(x.source_type);
+  html+='<span class="badge official">'+esc(sourceTypeLabel||infoType)+'</span>';
+  if(sourceTypeLabel&&infoType&&sourceTypeLabel.toLocaleLowerCase()!==String(infoType).toLocaleLowerCase())html+='<span class="badge gray">'+esc(infoType)+'</span>';
+  html+='</div></div></div>';
   html+='<div class="hero-actions">';
   if(d.phone)html+='<a class="button primary" href="'+esc(telHref(d.phone))+'">'+icon.phone+'Bel</a>';
   if(mapsUrl)html+='<a class="button secondary" target="_blank" rel="noopener" href="'+esc(mapsUrl)+'">'+icon.map+'Google Maps</a>';
