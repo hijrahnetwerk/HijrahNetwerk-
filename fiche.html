@@ -41,7 +41,7 @@ a{text-decoration:none;color:inherit}
 .badges{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:11px}
 .fiche-tags{display:flex;flex-wrap:wrap;gap:7px;margin:14px 0 2px}
 .fiche-tag{display:inline-flex;align-items:center;padding:6px 10px;border-radius:999px;background:#f3e5d4;color:var(--brown);font-size:12px;font-weight:600;text-decoration:none}
-.fiche-tag:hover{background:#ead7bf;color:var(--brown-dark)}
+.fiche-tag:hover{background:#ead7bf;color:var(--brown-dark)}.fiche-tag:focus-visible{outline:2px solid var(--orange);outline-offset:2px}
 .badge{display:inline-flex;align-items:center;padding:6px 10px;border-radius:999px;background:#f2e7da;color:var(--brown);font-size:12px;font-weight:700}
 .badge.green{background:var(--green-bg);color:var(--green)}
 .badge.gray{background:#f1efec;color:#666}
@@ -432,7 +432,6 @@ async function renderFiche(){
   const country=(c.data||[]).find(y=>y.id===x.country_id)?.name||'';
   const city=(ci.data||[]).find(y=>y.id===x.city_id)?.name||'';
   const cat=(ca.data||[]).find(y=>y.id===x.category_id)?.name||'';
-  const loc=[city,country].filter(Boolean).join(', ');
   const exps=Array.isArray(d.experiences)?d.experiences:[];
   const infoType=x.information_type||'Praktische informatie';
 
@@ -535,7 +534,6 @@ async function renderFiche(){
   html+='<div class="hero-grid"><div>';
   html+='<h1>'+esc(displayTitle)+'</h1>';
   if(x.summary||d.short_description)html+='<p class="summary">'+esc(x.summary||d.short_description)+'</p>';
-  if(loc)html+='<div class="location">'+icon.pin+esc(loc)+'</div>';
   const ficheTags=[];
   if(country)ficheTags.push('<a class="fiche-tag" href="/navigatie?country='+encodeURIComponent(x.country_id)+'">'+esc(country)+'</a>');
   if(city)ficheTags.push('<a class="fiche-tag" href="/navigatie?city='+encodeURIComponent(x.city_id)+'">'+esc(city)+'</a>');
@@ -545,7 +543,7 @@ async function renderFiche(){
     const specialties=Array.isArray(d.specialties)?d.specialties:[String(d.specialties)];
     specialties.filter(Boolean).forEach(s=>ficheTags.push('<a class="fiche-tag" href="/navigatie?q='+encodeURIComponent(s)+'">'+esc(s)+'</a>'));
   }
-  if(ficheTags.length)html+='<div class="fiche-tags">'+ficheTags.join('')+'</div>';
+  if(ficheTags.length)html+='<nav class="fiche-tags" aria-label="Verken andere fiches op basis van land, stad, categorie of kenmerk">'+ficheTags.join('')+'</nav>';
   html+='<div class="hero-actions">';
   if(d.phone)html+='<a class="button primary" href="'+esc(telHref(d.phone))+'">'+icon.phone+'Bel</a>';
   if(mapsUrl)html+='<a class="button secondary" target="_blank" rel="noopener" href="'+esc(mapsUrl)+'">'+icon.map+'Google Maps</a>';
