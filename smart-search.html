@@ -473,7 +473,7 @@
             <a
               class="btn"
               style="background:#efe7dc;color:#684a25;"
-              href="kennisbank.html?topic=${encodeURIComponent(topic.id)}"
+              href="/kennisbank?topic=${encodeURIComponent(topic.id)}"
             >
               Bekijk informatie →
             </a>
@@ -546,7 +546,7 @@
       history.replaceState(
         {},
         "",
-        `smart-search.html?q=${encodeURIComponent(query)}`
+        `/smart-search?q=${encodeURIComponent(query)}`
       );
 
       renderResults(query);
