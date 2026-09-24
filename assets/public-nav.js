@@ -18,7 +18,7 @@
             <a href="/stappenplan">Stappenplan</a>
             <a href="/landen">Landen &amp; Steden</a>
             <a href="/navigatie">Hijrah Navigatie</a>
-            <a href="/kennisbank">Kennisbank</a>
+            <a href="/kennisbank">Artikels</a>
             <a href="/smart-search">Smart Search</a>
             <a href="/community">Community</a>
           </nav>
@@ -45,7 +45,7 @@
           <a class="hn-mobile-link" href="/orientatietest">Oriëntatietest</a>
           <a class="hn-mobile-link" href="/landen">Landen &amp; Steden</a>
           <a class="hn-mobile-link" href="/navigatie">Hijrah Navigatie</a>
-          <a class="hn-mobile-link" href="/kennisbank">Kennisbank</a>
+          <a class="hn-mobile-link" href="/kennisbank">Artikels</a>
           <a class="hn-mobile-link" href="/smart-search">Smart Search</a>
           <a class="hn-mobile-link" href="/community">Community</a>
           <a class="hn-mobile-link" href="/#over-ons">Over ons</a>
