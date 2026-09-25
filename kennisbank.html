@@ -831,12 +831,16 @@
       .replace(/^-+|-+$/g, "");
   }
 
+  function publicSlug(value) {
+    return String(value || "").replace(/-([0-9a-f]{8})-([0-9a-f]{4})-([0-9a-f]{4})-([0-9a-f]{4})-([0-9a-f]{12})$/i, "");
+  }
+
   function articleUrl(topicId) {
     const topic = topics.find(item => item.id === topicId);
     if (!topic?.slug) {
       return window.location.origin + "/kennisbank?topic=" + encodeURIComponent(topicId);
     }
-    return window.location.origin + "/artikels/" + encodeURIComponent(topic.slug);
+    return window.location.origin + "/artikels/" + encodeURIComponent(publicSlug(topic.slug));
   }
 
   function ficheUrl(topic) {
@@ -848,7 +852,7 @@
     if (city) parts.push(slugify(city));
     if (area) parts.push(slugify(area));
     if (category) parts.push(slugify(category));
-    parts.push(slugify(topic.slug));
+    parts.push(slugify(publicSlug(topic.slug)));
     return parts.join("/");
   }
 
