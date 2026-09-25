@@ -62,6 +62,9 @@ for (const file of htmlFiles) {
   // Use root-relative asset URLs so clean nested routes (/artikels/... and /locaties/...) load assets correctly.
   html = html.replace(/(href|src)=(['"])assets\//g, '$1=$2/assets/');
 
+  // Root-level scripts must also resolve from nested clean routes such as /artikels/... .
+  html = html.replace(/<script src="(?:\.\/)?(supabase-client|auth|site-app)\.js"><\\/script>/g, '<script src="/$1.js"><\\/script>');
+
   html = html.replace(/<script src="\/assets\/private-preview\.js"><\/script>\s*/g, '');
 
   if (!html.includes('</body>')) {
