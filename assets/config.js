@@ -1,7 +1,6 @@
-// AUTOMATISCH GEGENEREERD DOOR build.js — NIET HANDMATIG BEWERKEN.
-// Wordt bij elke Netlify-deploy opnieuw geschreven op basis van de
-// environment variables VITE_SUPABASE_URL en VITE_SUPABASE_ANON_KEY.
+// AUTOMATISCH GEGENEREERD DOOR build.js.
+// Deze fallback zorgt dat publieke pagina's ook buiten een build om kunnen laden.
 window.__ENV = {
-  SUPABASE_URL: "test",
-  SUPABASE_ANON_KEY: "test"
+  SUPABASE_URL: "https://dejmckimvstfjeickplx.supabase.co",
+  SUPABASE_ANON_KEY: "sb_publishable_1PWjRBFubdwO43JBebGowg_R5_OEtFi"
 };
