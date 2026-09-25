@@ -213,6 +213,8 @@ function catButtons(){
    render();
  }));
 }
+function slugify(value){return String(value||'').toLowerCase().trim().normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').replace(/&/g,'-en-').replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');}
+function ficheUrl(topic,city,category){const d=data(topic);const cityName=city||'';const area=d.neighborhood||'';const categoryName=category||'';const slug=topic.slug||topic.id;const parts=['/locaties',slugify(cityName)];if(area)parts.push(slugify(area));if(categoryName)parts.push(slugify(categoryName));parts.push(slugify(slug));return parts.join('/');}
 function render(){
  const q=document.getElementById('q').value.toLowerCase().trim();
  const co=document.getElementById('country').value;
@@ -270,9 +272,9 @@ function render(){
  };
    const verification=x.verification_status||d.verification_status||'';
    const verificationLabel=verificationMap[verification]||'';
-   const ficheButton=fiche?'<a class="button primary" href="/fiche/'+encodeURIComponent(fiche.slug||fiche.id)+'">Snel bekijken</a>':'';
+   const ficheButton=fiche?'<a class="button primary" href="'+esc(ficheUrl(fiche,city,cat))+'">Snel bekijken</a>':'';
    const articleButton=article?'<a class="button secondary" href="/kennisbank?topic='+encodeURIComponent(article.id)+'">Meer lezen</a>':'';
-   const detailHref=fiche?'/fiche/'+encodeURIComponent(fiche.slug||fiche.id):'/kennisbank?topic='+encodeURIComponent(article?.id||x.id);
+   const detailHref=fiche?ficheUrl(fiche,city,cat):'/kennisbank?topic='+encodeURIComponent(article?.id||x.id);
    const countryHref=x.country_id?'/navigatie?country='+encodeURIComponent(x.country_id):'/navigatie';
    const cityHref=x.city_id?'/navigatie?city='+encodeURIComponent(x.city_id):'/navigatie';
    const categoryHref=x.category_id?'/navigatie?category='+encodeURIComponent(x.category_id):'/navigatie';
