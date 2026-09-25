@@ -225,7 +225,7 @@ async function buildSitemap() {
     try {
       topics = await fetchJson(
         'topic',
-        'select=slug,city_id,category_id,neighborhood,published,visibility,updated_at&published=eq.true&visibility=neq.private&order=updated_at.desc'
+        'select=slug,city_id,category_id,neighborhood,published,visibility,updated_at&published=eq.true&order=updated_at.desc'
       );
     } catch (error) {
       console.warn('[HN build] Artikelen/fiches konden niet in sitemap worden geladen:', error.message);
