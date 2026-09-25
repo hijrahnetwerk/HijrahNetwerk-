@@ -737,7 +737,7 @@ window.HN_STAPPENPLAN_VERSION='1';
                 '</div>'+
               '</div>'+
               (t.summary?'<div style="margin-top:8px;line-height:1.5">'+esc(t.summary)+'</div>':'')+
-              '<a class="saved-open" href="/fiche/'+encodeURIComponent(t.slug||t.id)+'">Fiche bekijken →</a>'+
+              '<a class="saved-open" href="/locaties/'+encodeURIComponent(t.slug||t.id)+'">Fiche bekijken →</a>'+
             '</div>'
           ).join(''):'<div class="empty">Er is nog geen gepubliceerde HN-informatie voor deze bestemming.</div>')+
         '</div>'+
