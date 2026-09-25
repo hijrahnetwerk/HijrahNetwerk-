@@ -16,7 +16,8 @@
 <script>
 const db=()=>window.hijrahSupabase,esc=v=>String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 function slugify(value){return String(value||'').toLowerCase().trim().normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').replace(/&/g,'-en-').replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');}
-function ficheUrl(topic,cityName){const d=topic.card_data&&typeof topic.card_data==='object'?topic.card_data:{};const parts=['/locaties',slugify(cityName||'')];if(d.neighborhood)parts.push(slugify(d.neighborhood));parts.push(slugify(topic.information_type||'ervaring'));parts.push(slugify(topic.slug||topic.id));return parts.join('/');}
+function publicSlug(value){return String(value||'').replace(/-([0-9a-f]{8})-([0-9a-f]{4})-([0-9a-f]{4})-([0-9a-f]{4})-([0-9a-f]{12})$/i,'');}
+function ficheUrl(topic,cityName){const d=topic.card_data&&typeof topic.card_data==='object'?topic.card_data:{};const parts=['/locaties',slugify(cityName||'')];if(d.neighborhood)parts.push(slugify(d.neighborhood));parts.push(slugify(topic.information_type||'ervaring'));parts.push(slugify(publicSlug(topic.slug||topic.id)));return parts.join('/');}
 async function init(){
  for(let i=0;i<60&&!db();i++)await new Promise(r=>setTimeout(r,100));
  const box=document.getElementById('stories'); if(!db()){box.innerHTML='<div class="search-empty">De ervaringen konden niet worden geladen.</div>';return}
