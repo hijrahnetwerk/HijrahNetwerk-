@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+
+Disallow: /admin
+Disallow: /werkruimte
+Disallow: /dashboard
+Disallow: /mijn-kaart
+Disallow: /login
+Disallow: /register
+Disallow: /reset-password
+Disallow: /update-password
+
+Sitemap: https://hijrah-netwerk.vercel.app/sitemap.xml
