@@ -846,11 +846,9 @@
   function ficheUrl(topic) {
     if (!topic?.slug) return "";
     const city = topic.cities?.name || "";
-    const area = topic.neighborhood || "";
     const category = topic.categories?.name || topic.information_type || "informatie";
     const parts = ["/locaties"];
     if (city) parts.push(slugify(city));
-    if (area) parts.push(slugify(area));
     if (category) parts.push(slugify(category));
     parts.push(slugify(publicSlug(topic.slug)));
     return parts.join("/");
