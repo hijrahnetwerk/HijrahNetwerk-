@@ -444,7 +444,7 @@ async function renderFiche(){
   const [r,c,ci,ca]=await Promise.all([
     topicQuery.maybeSingle(),
     db().from('countries').select('id,name').order('name'),
-    db().from('cities').select('id,name,country_id').order('name'),
+    db().from('cities').select('id,name,slug,country_id').order('name'),
     db().from('categories').select('id,name').order('name')
   ]);
 
