@@ -169,6 +169,14 @@
   ],
   "rewrites": [
     {
+      "source": "/locaties/:city/:area/:category/:slug",
+      "destination": "/fiche.html?city_slug=:city&area_slug=:area&category_slug=:category&slug=:slug"
+    },
+    {
+      "source": "/locaties/:city/:category/:slug",
+      "destination": "/fiche.html?city_slug=:city&category_slug=:category&slug=:slug"
+    },
+    {
       "source": "/community",
       "destination": "/community.html"
     },
