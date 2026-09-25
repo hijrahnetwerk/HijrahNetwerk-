@@ -2387,7 +2387,7 @@
     if (routeTopicId) {
       openArticle(routeTopicId);
     } else if (routeTopicSlug) {
-      const routedTopic = topics.find(item => item.slug === routeTopicSlug);
+      const routedTopic = topics.find(item => publicSlug(item.slug) === routeTopicSlug || item.slug === routeTopicSlug);
       if (routedTopic) openArticle(routedTopic.id, false);
     }
 
