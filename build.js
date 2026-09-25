@@ -110,7 +110,7 @@ for (const file of htmlFiles) {
   }
 
   if (canonicalRoute && !html.includes('property="og:title"')) {
-    const titleMatch = html.match(/<title[^>]*>([\\s\\S]*?)<\\/title>/i);
+    const titleMatch = html.match(/<title[^>]*>([\s\S]*?)<\/title>/i);
     const descriptionMatch = html.match(/<meta[^>]+name=["']description["'][^>]+content=["']([^"']*)["']/i);
     const title = titleMatch ? titleMatch[1].replace(/<[^>]+>/g,'').trim() : 'Hijrah Netwerk';
     const description = descriptionMatch ? descriptionMatch[1].trim() : 'Hijrah Netwerk: praktische informatie en hulpmiddelen van oriëntatie tot integratie.';
