@@ -240,7 +240,16 @@ h1{font-size:clamp(30px,4vw,42px);line-height:1.1;color:var(--brown-dark);margin
 const db=()=>window.hijrahSupabase;
 const esc=v=>v==null?'':String(v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
 const data=x=>x&&x.card_data&&typeof x.card_data==='object'?x.card_data:{};
-const params=new URLSearchParams(location.search),legacyId=params.get('id'),routeSlug=location.pathname.match(/^\/fiche\/([^/]+)\/?$/)?.[1]||params.get('slug')||'',hierarchicalCitySlug=params.get('city_slug')||'',hierarchicalAreaSlug=params.get('area_slug')||'',hierarchicalCategorySlug=params.get('category_slug')||'',isHierarchicalRoute=Boolean(hierarchicalCitySlug&&routeSlug);
+const params=new URLSearchParams(location.search);
+const legacyId=params.get('id')||'';
+const pathParts=location.pathname.split('/').filter(Boolean).map(x=>decodeURIComponent(x));
+const isLocationPath=pathParts[0]==='locaties';
+const pathRouteSlug=isLocationPath?pathParts[pathParts.length-1]:'';
+const routeSlug=location.pathname.match(/^\/fiche\/([^/]+)\/?$/)?.[1]||params.get('slug')||pathRouteSlug||'';
+const hierarchicalCitySlug=params.get('city_slug')|| (isLocationPath?pathParts[1]||'':'');
+const hierarchicalAreaSlug=params.get('area_slug')|| (isLocationPath && pathParts.length===4?pathParts[2]||'':'');
+const hierarchicalCategorySlug=params.get('category_slug')|| (isLocationPath?(pathParts.length===4?pathParts[3]:pathParts[2])||'':'');
+const isHierarchicalRoute=Boolean(isLocationPath&&routeSlug&&hierarchicalCitySlug);
 
 const icon={
   pin:'<span class="icon"><svg viewBox="0 0 24 24"><path d="M12 21s7-6.2 7-12A7 7 0 1 0 5 9c0 5.8 7 12 7 12Z"/><circle cx="12" cy="9" r="2.3"/></svg></span>',
@@ -410,10 +419,9 @@ function slugify(value){
 }
 
 function hierarchicalFicheUrl(cityName,areaName,categoryName,slug){
-  const citySlug=slugify(cityName), areaSlug=slugify(areaName), categorySlug=slugify(categoryName), itemSlug=slugify(slug);
+  const citySlug=slugify(cityName), categorySlug=slugify(categoryName), itemSlug=slugify(slug);
   if(!citySlug||!itemSlug)return '/fiche/'+encodeURIComponent(slug||'');
   const parts=['/locaties',citySlug];
-  if(areaSlug)parts.push(areaSlug);
   if(categorySlug)parts.push(categorySlug);
   parts.push(itemSlug);
   return parts.join('/');
