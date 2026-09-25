@@ -1825,7 +1825,7 @@
         <div class="article-nav">
           ${previous
             ? `
-              <a class="article-nav-link" href="/kennisbank?topic=${encodeURIComponent(previous.id)}">
+              <a class="article-nav-link" href="${articleUrl(previous.id).replace(window.location.origin, "")}">
                 <span class="article-nav-label">← Vorige</span>
                 <span class="article-nav-title">${esc(previous.title)}</span>
               </a>
@@ -1835,7 +1835,7 @@
 
           ${next
             ? `
-              <a class="article-nav-link next" href="/kennisbank?topic=${encodeURIComponent(next.id)}">
+              <a class="article-nav-link next" href="${articleUrl(next.id).replace(window.location.origin, "")}">
                 <span class="article-nav-label">Volgende →</span>
                 <span class="article-nav-title">${esc(next.title)}</span>
               </a>
@@ -1858,7 +1858,7 @@
                 <h3>Andere artikelen</h3>
                 <div class="related-grid">
                   ${fallbackRelated.map(item => `
-                    <a class="related-card" href="/kennisbank?topic=${encodeURIComponent(item.id)}">
+                    <a class="related-card" href="${articleUrl(item.id).replace(window.location.origin, "")}">
                       <div class="tags">
                         ${item.cities?.name ? `<span class="tag">${esc(item.cities.name)}</span>` : ""}
                         ${item.categories?.name ? `<span class="tag">${esc(item.categories.name)}</span>` : ""}
@@ -2047,7 +2047,7 @@
       history.replaceState(
         {},
         "",
-        `/kennisbank?topic=${encodeURIComponent(topicId)}`
+        `/artikels/${encodeURIComponent(topics.find(item => item.id === topicId)?.slug || topicId)}`
       );
     }
 
