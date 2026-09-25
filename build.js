@@ -209,26 +209,22 @@ async function buildSitemap() {
   staticRoutes.forEach(route => add(route, route === '/' ? '1.0' : '0.7', route === '/' ? 'weekly' : 'monthly'));
 
   try {
-    const [countries, cities, topics] = await Promise.all([
-      fetchJson('countries', 'select=slug,is_active&is_active=eq.true&order=name'),
-      fetchJson('cities', 'select=slug,name,country_id,is_active&is_active=eq.true&order=name'),
+    const [cities, topics] = await Promise.all([
+      fetchJson('cities', 'select=id,slug,name,country_id,is_active&is_active=eq.true&order=name'),
       fetchJson(
         'topic',
         'select=slug,city_id,category_id,neighborhood,published,visibility,updated_at&published=eq.true&visibility=neq.private&order=updated_at.desc'
       )
     ]);
 
-    const countryMap = new Map(countries.map(x => [x.slug || slugify(x.name), x]));
-    const cityMap = new Map(cities.map(x => [x.country_id + ':' + (x.slug || slugify(x.name)), x]));
     const cityById = new Map(cities.map(x => [x.id, x]));
 
     cities.forEach(city => {
-      const country = countryMap.get(city.country_id);
       const citySlug = city.slug || slugify(city.name);
       add('/stad/' + citySlug, '0.8', 'weekly');
     });
 
-    const categories = await fetchJson('categories', 'select=id,slug,name,is_active&is_active=eq.true');
+    const categories = await fetchJson('categories', 'select=id,slug,name,is_active&is_active=eq.true&order=name');
     const categoryById = new Map(categories.map(x => [x.id, x]));
 
     topics.forEach(topic => {
