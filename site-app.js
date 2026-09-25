@@ -397,8 +397,8 @@
 
     if (link) {
       link.href =
-        '/kennisbank?topic=' +
-        encodeURIComponent(topic.id);
+        '/artikels/' +
+        encodeURIComponent(topic.slug || topic.id);
     }
   }
 
