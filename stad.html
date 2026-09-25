@@ -11,7 +11,7 @@
 <link rel="stylesheet" href="assets/public-nav.css">
 <style>
 :root{--brown:#684a25;--dark:#4d3819;--orange:#df842c;--gold:#e9a74b;--cream:#fbf8f4;--line:#e8dfd3;--ink:#2b241c;--muted:#6d6459}
-.city-page{background:linear-gradient(180deg,#fffaf5 0,#fff 420px);min-height:100vh}.city-hero{padding:62px 0 34px}.city-kicker{display:inline-flex;padding:7px 12px;border-radius:999px;background:#fdf1e3;color:#9c5515;font-size:12px;font-weight:800}.city-hero h1{font-size:clamp(38px,6vw,64px);line-height:1.05;color:var(--dark);margin:15px 0 10px}.city-hero p{max-width:720px;color:var(--muted);font-size:18px;margin:0}.city-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}.city-main{padding:18px 0 80px}.city-grid{display:grid;grid-template-columns:1.5fr 1fr;gap:18px}.city-panel{background:#fff;border:1px solid var(--line);border-radius:22px;padding:22px;box-shadow:0 10px 30px rgba(104,74,37,.06)}.city-panel h2{margin:0 0 5px;color:var(--dark);font-size:23px}.city-panel>p{margin:0 0 17px;color:var(--muted);font-size:14px}.city-cats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.city-cat{display:block;border:1px solid var(--line);border-radius:16px;padding:15px;background:#fff}.city-cat strong{display:block;color:var(--dark)}.city-cat span{font-size:13px;color:var(--muted)}.city-topic{display:flex;gap:12px;padding:14px 0;border-top:1px solid #eee7de}.city-topic:first-child{border-top:0;padding-top:0}.city-topic strong{display:block;color:var(--dark)}.city-topic p{margin:3px 0 0;color:var(--muted);font-size:13px}.badge{display:inline-flex;margin-top:6px;padding:4px 8px;border-radius:999px;background:#f7efe5;color:#755735;font-size:11px}.city-empty{padding:20px;border:1px dashed var(--line);border-radius:16px;color:var(--muted);text-align:center}.city-stat{font-size:34px;font-weight:800;color:var(--dark)}.city-stat-label{color:var(--muted);font-size:13px}.city-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:20px}.city-stat-box{padding:15px;border:1px solid var(--line);border-radius:16px;background:#fff}.loading{color:var(--muted)}@media(max-width:800px){.city-grid{grid-template-columns:1fr}}@media(max-width:520px){.city-cats{grid-template-columns:1fr}.city-stats{grid-template-columns:1fr 1fr}}
+.city-page{background:linear-gradient(180deg,#fffaf5 0,#fff 420px);min-height:100vh}.city-hero{padding:62px 0 34px}.city-kicker{display:inline-flex;padding:7px 12px;border-radius:999px;background:#fdf1e3;color:#9c5515;font-size:12px;font-weight:800}.city-hero h1{font-size:clamp(38px,6vw,64px);line-height:1.05;color:var(--dark);margin:15px 0 10px}.city-hero p{max-width:720px;color:var(--muted);font-size:18px;margin:0}.city-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}.city-main{padding:18px 0 80px}.city-grid{display:grid;grid-template-columns:1.5fr 1fr;gap:18px}.city-panel{background:#fff;border:1px solid var(--line);border-radius:22px;padding:22px;box-shadow:0 10px 30px rgba(104,74,37,.06)}.city-panel h2{margin:0 0 5px;color:var(--dark);font-size:23px}.city-panel>p{margin:0 0 17px;color:var(--muted);font-size:14px}.city-cats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.city-cat{display:block;border:1px solid var(--line);border-radius:16px;padding:15px;background:#fff}.city-cat strong{display:block;color:var(--dark)}.city-cat span{font-size:13px;color:var(--muted)}.city-topic{display:flex;gap:12px;padding:14px 0;border-top:1px solid #eee7de}.city-topic:first-child{border-top:0;padding-top:0}.city-topic strong{display:block;color:var(--dark)}.city-topic p{margin:3px 0 0;color:var(--muted);font-size:13px}.badge{display:inline-flex;margin-top:6px;padding:4px 8px;border-radius:999px;background:#f7efe5;color:#755735;font-size:11px}.city-empty{padding:20px;border:1px dashed var(--line);border-radius:16px;color:var(--muted);text-align:center}.city-breadcrumb{margin-top:18px;padding:15px 17px;background:#fff;border:1px solid var(--line);border-radius:14px;color:var(--muted);font-size:12px}.city-breadcrumb-title{display:block;margin-bottom:7px;color:var(--dark);font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase}.city-breadcrumb nav{display:flex;flex-wrap:wrap;gap:6px;align-items:center}.city-breadcrumb a{color:var(--brown);font-weight:700}.city-breadcrumb span{color:#b6aa9b}.city-stat{font-size:34px;font-weight:800;color:var(--dark)}.city-stat-label{color:var(--muted);font-size:13px}.city-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:20px}.city-stat-box{padding:15px;border:1px solid var(--line);border-radius:16px;background:#fff}.loading{color:var(--muted)}@media(max-width:800px){.city-grid{grid-template-columns:1fr}}@media(max-width:520px){.city-cats{grid-template-columns:1fr}.city-stats{grid-template-columns:1fr 1fr}}
 </style>
 </head>
 <body>
@@ -40,6 +40,15 @@
       <div id="cityTopics"><div class="loading">Laden...</div></div>
     </div>
   </div>
+  <section class="city-breadcrumb" aria-label="Broodkruimelpad">
+    <span class="city-breadcrumb-title">Jij bent nu hier</span>
+    <nav>
+      <a href="/">Home</a><span>›</span>
+      <a href="/landen">Landen &amp; Steden</a>
+      <span>›</span>
+      <strong id="cityBreadcrumbName">Stad</strong>
+    </nav>
+  </section>
 </div></section>
 </main>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -79,6 +88,8 @@
     if(!ogUrl){ogUrl=document.createElement('meta');ogUrl.setAttribute('property','og:url');document.head.appendChild(ogUrl);}
     ogUrl.setAttribute('content',location.origin+'/stad/'+encodeURIComponent(city.slug||slugify(city.name)));
     document.getElementById('cityName').textContent=city.name;
+    var breadcrumbName=document.getElementById('cityBreadcrumbName');
+    if(breadcrumbName)breadcrumbName.textContent=city.name;
     document.getElementById('cityIntro').textContent=(country?country.name+' · ':'')+'Lokale informatie, praktische onderwerpen en ervaringen binnen Hijrah Netwerk.';
     document.getElementById('cityNav').href='/navigatie?city='+encodeURIComponent(city.id);
     var tr=await db.from('topic').select('id,title,slug,summary,information_type,category_id,city_id,published,visibility,updated_at').eq('city_id',city.id).eq('published',true).order('updated_at',{ascending:false}).limit(100);
