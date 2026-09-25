@@ -1185,7 +1185,7 @@
     script.id = "hnArticleJsonLd";
     script.type = "application/ld+json";
 
-    script.textContent = JSON.stringify({
+    const articleSchema = {
       "@context":"https://schema.org",
       "@type":"Article",
       "headline":String(topic.title || "").slice(0,180),
@@ -1197,8 +1197,22 @@
         "name":"Hijrah Netwerk",
         "url":window.location.origin
       }
-    });
+    };
 
+    const breadcrumbSchema = {
+      "@context":"https://schema.org",
+      "@type":"BreadcrumbList",
+      "itemListElement":[
+        {"@type":"ListItem","position":1,"name":"Home","item":window.location.origin+"/"},
+        {"@type":"ListItem","position":2,"name":"Artikels","item":window.location.origin+"/kennisbank"},
+        topic.countries?.name ? {"@type":"ListItem","position":3,"name":topic.countries.name} : null,
+        topic.cities?.name ? {"@type":"ListItem","position":topic.countries?.name?4:3,"name":topic.cities.name,"item":window.location.origin+"/stad/"+encodeURIComponent(topic.cities.slug||slugify(topic.cities.name))} : null,
+        topic.categories?.name ? {"@type":"ListItem","position":topic.countries?.name&&topic.cities?.name?5:(topic.countries?.name||topic.cities?.name?4:3),"name":topic.categories.name} : null,
+        {"@type":"ListItem","position":topic.countries?.name&&topic.cities?.name&&topic.categories?.name?6:(topic.countries?.name&&topic.cities?.name?5:(topic.countries?.name||topic.cities?.name?4:3)),"name":topic.title}
+      ].filter(Boolean)
+    };
+
+    script.textContent = JSON.stringify([articleSchema,breadcrumbSchema]);
     document.head.appendChild(script);
   }
 
