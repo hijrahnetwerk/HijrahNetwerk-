@@ -792,6 +792,37 @@
       window.location.search
     );
 
+  function slugify(value) {
+    return String(value || "")
+      .normalize("NFD")
+      .replace(/[\\u0300-\\u036f]/g, "")
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "");
+  }
+
+  function articleUrl(topicId) {
+    const topic = topics.find(item => item.id === topicId);
+    if (!topic?.slug) {
+      return window.location.origin + "/kennisbank?topic=" + encodeURIComponent(topicId);
+    }
+    return window.location.origin + "/artikels/" + encodeURIComponent(topic.slug);
+  }
+
+  function ficheUrl(topic) {
+    if (!topic?.slug) return "";
+    const city = topic.cities?.name || "";
+    const area = topic.neighborhood || "";
+    const category = topic.categories?.name || topic.information_type || "informatie";
+    const parts = ["/locaties"];
+    if (city) parts.push(slugify(city));
+    if (area) parts.push(slugify(area));
+    if (category) parts.push(slugify(category));
+    parts.push(slugify(topic.slug));
+    return parts.join("/");
+  }
+
 
   /* =========================
      ALGEMENE FUNCTIES
@@ -1050,12 +1081,6 @@
     );
   }
 
-  function articleUrl(topicId) {
-    return window.location.origin +
-      "//kennisbank?topic=" +
-      encodeURIComponent(topicId);
-  }
-
   function setMeta(name, content) {
     let element = document.querySelector(
       'meta[name="' + name + '"]'
@@ -1312,10 +1337,8 @@
         .map(topic => {
           const isSaved = savedTopics.has(topic.id);
           const ficheAvailable = hasFiche(topic);
-          const topicHref = `/kennisbank?topic=${encodeURIComponent(topic.id)}`;
-          const ficheHref = ficheAvailable
-            ? `/fiche/${encodeURIComponent(topic.slug || topic.id)}`
-            : "";
+          const topicHref = articleUrl(topic.id).replace(window.location.origin, "");
+          const ficheHref = ficheAvailable ? ficheUrl(topic) : "";
 
           return `
             <article class="article-card">
@@ -1788,7 +1811,7 @@
           <div class="article-toolbar">
             <a
               class="btn btn-primary"
-              href="/fiche/${encodeURIComponent(topic.slug||topic.id)}"
+              href="${ficheUrl(topic)}"
             >
               Bekijk volledige fiche →
             </a>
@@ -2299,12 +2322,13 @@
 
     renderResults();
 
-    if (params.get("topic")) {
-
-      openArticle(
-        params.get("topic")
-      );
-
+    const routeTopicId = params.get("topic");
+    const routeTopicSlug = params.get("slug");
+    if (routeTopicId) {
+      openArticle(routeTopicId);
+    } else if (routeTopicSlug) {
+      const routedTopic = topics.find(item => item.slug === routeTopicSlug);
+      if (routedTopic) openArticle(routedTopic.id, false);
     }
 
   }
