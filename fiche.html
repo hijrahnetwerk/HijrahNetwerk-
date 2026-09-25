@@ -490,16 +490,35 @@ async function renderFiche(){
 
   let practiceArticleId = null;
   let practiceArticleSlug = null;
-  if (d.practice_name) {
-    const practiceArticle = await db().from('topic')
-      .select('id,slug,visibility,title')
-      .eq('slug','cabinet-medical-ibn-zuhr')
+  if (d.practice_name || d.article_id || d.article_slug) {
+    const articleRows = await db().from('topic')
+      .select('id,slug,title,visibility,card_data,city_id')
       .eq('published',true)
-      .maybeSingle();
+      .neq('visibility','fiche_only')
+      .neq('id',id)
+      .eq('city_id',x.city_id)
+      .limit(100);
 
-    if (!practiceArticle.error && practiceArticle.data && practiceArticle.data.id !== id) {
-      practiceArticleId = practiceArticle.data.id;
-      practiceArticleSlug = practiceArticle.data.slug || null;
+    if (!articleRows.error && Array.isArray(articleRows.data)) {
+      const practiceName = String(d.practice_name || '').trim().toLowerCase();
+      const articleId = String(d.article_id || '').trim();
+      const articleSlug = String(d.article_slug || '').trim();
+
+      const match = articleRows.data.find(article => {
+        const ad = data(article);
+        const title = String(article.title || '').trim().toLowerCase();
+        const slug = String(article.slug || '').trim();
+
+        if (articleId && article.id === articleId) return true;
+        if (articleSlug && slug === articleSlug) return true;
+        if (practiceName && (title === practiceName || title.includes(practiceName) || practiceName.includes(title))) return true;
+        return false;
+      });
+
+      if (match) {
+        practiceArticleId = match.id;
+        practiceArticleSlug = match.slug || null;
+      }
     }
   }
 
@@ -731,7 +750,7 @@ async function renderFiche(){
     html+='<section class="card"><h2>Meer informatie</h2><p class="card-sub">'+(practiceArticleId
       ? 'Deze fiche houdt de belangrijkste gegevens van deze arts overzichtelijk. Voor achtergrondinformatie over Cabinet Médical Ibn Zuhr en beide artsen kun je het uitgebreide artikel lezen.'
       : 'De fiche geeft je de belangrijkste gegevens. Voor achtergrondinformatie en uitgebreide informatie kun je het volledige artikel in de Kennisbank lezen.'
-    )+'</p><div class="hero-actions"><a class="button primary" href="/artikels/'+encodeURIComponent(practiceArticleSlug||articleId)+'">'+articleLabel+'</a></div></section>';
+    )+'</p><div class="hero-actions"><a class="button primary" href="/artikels/'+encodeURIComponent(String(practiceArticleSlug||articleId).replace(/-([0-9a-f]{8})-([0-9a-f]{4})-([0-9a-f]{4})-([0-9a-f]{4})-([0-9a-f]{12})$/i,''))+'">'+articleLabel+'</a></div></section>';
   }
 
   html+='<section class="card"><h2>Ervaringen uit de praktijk</h2><p class="card-sub">Gebaseerd op ervaringen van emigranten uit Nederland en België en anderen met eigen ervaring ter plaatse. Waar mogelijk aangevuld met officiële bronnen. Een ervaring blijft persoonlijk en kan per persoon, gezin, wijk, situatie en periode verschillen.</p><div class="source-explainer" style="margin:0 0 16px"><strong>Let op</strong><div>Een persoonlijke ervaring is geen garantie dat dezelfde situatie voor iedereen geldt. Ervaringen zijn een aanvulling op andere bronnen en worden duidelijk onderscheiden van officiële informatie en gecontroleerde informatie.</div></div>';
