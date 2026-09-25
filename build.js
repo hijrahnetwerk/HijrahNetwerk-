@@ -209,13 +209,36 @@ async function buildSitemap() {
   staticRoutes.forEach(route => add(route, route === '/' ? '1.0' : '0.7', route === '/' ? 'weekly' : 'monthly'));
 
   try {
-    const [cities, topics] = await Promise.all([
-      fetchJson('cities', 'select=id,slug,name,country_id,is_active&is_active=eq.true&order=name'),
-      fetchJson(
+    let cities = [];
+    let topics = [];
+    let categories = [];
+
+    try {
+      cities = await fetchJson(
+        'cities',
+        'select=id,slug,name,country_id,is_active&is_active=eq.true&order=name'
+      );
+    } catch (error) {
+      console.warn('[HN build] Steden konden niet in sitemap worden geladen:', error.message);
+    }
+
+    try {
+      topics = await fetchJson(
         'topic',
         'select=slug,city_id,category_id,neighborhood,published,visibility,updated_at&published=eq.true&visibility=neq.private&order=updated_at.desc'
-      )
-    ]);
+      );
+    } catch (error) {
+      console.warn('[HN build] Artikelen/fiches konden niet in sitemap worden geladen:', error.message);
+    }
+
+    try {
+      categories = await fetchJson(
+        'categories',
+        'select=id,slug,name,is_active&is_active=eq.true&order=name'
+      );
+    } catch (error) {
+      console.warn('[HN build] Categorieën konden niet in sitemap worden geladen:', error.message);
+    }
 
     const cityById = new Map(cities.map(x => [x.id, x]));
 
@@ -224,7 +247,6 @@ async function buildSitemap() {
       add('/stad/' + citySlug, '0.8', 'weekly');
     });
 
-    const categories = await fetchJson('categories', 'select=id,slug,name,is_active&is_active=eq.true&order=name');
     const categoryById = new Map(categories.map(x => [x.id, x]));
 
     topics.forEach(topic => {
