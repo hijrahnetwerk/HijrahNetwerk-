@@ -73,6 +73,67 @@ for (const file of htmlFiles) {
     !html.includes(fontsTag) ? fontsTag : ''
   ].filter(Boolean).join('\n') + '\n';
 
+  const canonicalRoutes = {
+    'index.html':'/',
+    'landen.html':'/landen',
+    'navigatie.html':'/navigatie',
+    'kennisbank.html':'/kennisbank',
+    'smart-search.html':'/smart-search',
+    'community.html':'/community',
+    'bijdragen.html':'/bijdragen',
+    'orientatie.html':'/orientatie',
+    'orientatietest.html':'/orientatietest',
+    'stappenplan.html':'/stappenplan',
+    'voorbereiding.html':'/voorbereiding',
+    'vertrek.html':'/vertrek',
+    'integratie.html':'/integratie',
+    'realiteitscheck.html':'/realiteitscheck',
+    'verhalen.html':'/verhalen',
+    'stedengids.html':'/stedengids',
+    'vergelijken.html':'/vergelijken',
+    'hulp.html':'/hulp',
+    'auteursrecht.html':'/auteursrecht'
+  };
+
+  const noindexFiles = new Set([
+    'login.html','register.html','reset-password.html','update-password.html',
+    'dashboard.html','mijn-kaart.html','admin.html','admin-hulp.html',
+    'admin-kaart.html','admin-wachtlijst.html','admin-bewerkvoorstellen.html',
+    'werkruimte.html'
+  ]);
+
+  const canonicalRoute = canonicalRoutes[file];
+  if (canonicalRoute && !html.includes('rel="canonical"')) {
+    html = html.replace('</head>',
+      '<link rel="canonical" href="' + SITE_URL + canonicalRoute + '">' + '\n' +
+      '</head>');
+  }
+
+  if (canonicalRoute && !html.includes('property="og:title"')) {
+    const titleMatch = html.match(/<title[^>]*>([\\s\\S]*?)<\\/title>/i);
+    const descriptionMatch = html.match(/<meta[^>]+name=["']description["'][^>]+content=["']([^"']*)["']/i);
+    const title = titleMatch ? titleMatch[1].replace(/<[^>]+>/g,'').trim() : 'Hijrah Netwerk';
+    const description = descriptionMatch ? descriptionMatch[1].trim() : 'Hijrah Netwerk: praktische informatie en hulpmiddelen van oriëntatie tot integratie.';
+    const social = '<meta property="og:type" content="website">\\n' +
+      '<meta property="og:title" content="' + title.replace(/"/g,'&quot;') + '">\\n' +
+      '<meta property="og:description" content="' + description.replace(/"/g,'&quot;') + '">\\n' +
+      '<meta property="og:url" content="' + SITE_URL + canonicalRoute + '">\\n' +
+      '<meta name="twitter:card" content="summary">\\n' +
+      '<meta name="twitter:title" content="' + title.replace(/"/g,'&quot;') + '">\\n' +
+      '<meta name="twitter:description" content="' + description.replace(/"/g,'&quot;') + '">';
+    html = html.replace('</head>', social + '\n</head>');
+  }
+
+  if (noindexFiles.has(file)) {
+    const existingRobots = html.match(/<meta[^>]+name=["']robots["'][^>]*>/i);
+    const tag = '<meta name="robots" content="noindex,nofollow">';
+    if (existingRobots) {
+      html = html.replace(existingRobots[0], tag);
+    } else {
+      html = html.replace('</head>', tag + '\n</head>');
+    }
+  }
+
   html = html.replace('</body>', additions + '</body>');
   fs.writeFileSync(filePath, html, 'utf8');
   processed++;
