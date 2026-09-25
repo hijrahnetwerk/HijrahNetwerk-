@@ -158,6 +158,11 @@ function slugify(value) {
     .replace(/^-+|-+$/g, '');
 }
 
+function publicSlug(value) {
+  return String(value || '')
+    .replace(/-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i, '');
+}
+
 async function fetchJson(table, query) {
   const url = SUPABASE_URL.replace(/\/$/, '') + '/rest/v1/' + table + '?' + query;
   const response = await fetch(url, {
@@ -227,7 +232,7 @@ async function buildSitemap() {
     const categoryById = new Map(categories.map(x => [x.id, x]));
 
     topics.forEach(topic => {
-      const slug = topic.slug || '';
+      const slug = publicSlug(topic.slug || '');
       if (!slug) return;
 
       const city = cityById.get(topic.city_id);
