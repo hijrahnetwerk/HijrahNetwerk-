@@ -4,7 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Stad | Hijrah Netwerk</title>
-<meta name="description" content="Lokale informatie per stad binnen Hijrah Netwerk.">
+<meta name="description" content="Praktische lokale informatie per stad binnen Hijrah Netwerk. Ontdek wijken, zorg, onderwijs, dagelijks leven en ervaringen.">
+<meta name="robots" content="index,follow">
+<link rel="canonical" href="https://hijrah-netwerk.vercel.app/stad">
 <link rel="stylesheet" href="assets/platform-pages.css">
 <link rel="stylesheet" href="assets/public-nav.css">
 <style>
@@ -54,13 +56,28 @@
     var slug=params.get('slug');
     if(!id && !slug){document.getElementById('cityName').textContent='Geen stad geselecteerd';document.getElementById('cityIntro').textContent='Kies een stad via Landen & Steden.';return}
     if(!db){document.getElementById('cityName').textContent='Kan informatie niet laden';return}
-    var cr=id ? await db.from('cities').select('id,name,country_id').eq('id',id).maybeSingle() : await db.from('cities').select('id,name,country_id').eq('id',slug).maybeSingle();
+    var cr=id ? await db.from('cities').select('id,name,slug,country_id').eq('id',id).maybeSingle() : await db.from('cities').select('id,name,country_id').eq('id',slug).maybeSingle();
     if(!cr.data && slug){ cr=await db.from('cities').select('id,name,country_id').ilike('name',decodeURIComponent(slug).replace(/-/g,' ')).maybeSingle(); }
     if(cr.error||!cr.data){document.getElementById('cityName').textContent='Stad niet gevonden';return}
     var city=cr.data;
     var countryR=await db.from('countries').select('id,name').eq('id',city.country_id).maybeSingle();
     var country=countryR.data;
-    document.title=city.name+' | Hijrah Netwerk';
+    var cityTitle=city.name+' | Hijrah Netwerk';
+    var cityDescription=((country?country.name+' · ':'')+'Praktische lokale informatie over '+city.name+' voor emigranten: wijken, zorg, onderwijs, dagelijks leven en ervaringen binnen Hijrah Netwerk.').slice(0,155);
+    document.title=cityTitle;
+    var desc=document.querySelector('meta[name="description"]');
+    if(desc)desc.setAttribute('content',cityDescription);
+    var canonical=document.querySelector('link[rel="canonical"]');
+    if(canonical)canonical.setAttribute('href','https://hijrah-netwerk.vercel.app/stad/'+encodeURIComponent(city.slug||slugify(city.name)));
+    var ogTitle=document.querySelector('meta[property="og:title"]');
+    if(!ogTitle){ogTitle=document.createElement('meta');ogTitle.setAttribute('property','og:title');document.head.appendChild(ogTitle);}
+    ogTitle.setAttribute('content',cityTitle);
+    var ogDesc=document.querySelector('meta[property="og:description"]');
+    if(!ogDesc){ogDesc=document.createElement('meta');ogDesc.setAttribute('property','og:description');document.head.appendChild(ogDesc);}
+    ogDesc.setAttribute('content',cityDescription);
+    var ogUrl=document.querySelector('meta[property="og:url"]');
+    if(!ogUrl){ogUrl=document.createElement('meta');ogUrl.setAttribute('property','og:url');document.head.appendChild(ogUrl);}
+    ogUrl.setAttribute('content',location.origin+'/stad/'+encodeURIComponent(city.slug||slugify(city.name)));
     document.getElementById('cityName').textContent=city.name;
     document.getElementById('cityIntro').textContent=(country?country.name+' · ':'')+'Lokale informatie, praktische onderwerpen en ervaringen binnen Hijrah Netwerk.';
     document.getElementById('cityNav').href='/navigatie?city='+encodeURIComponent(city.id);
@@ -87,7 +104,7 @@
     }).join(''):'<div class="city-empty">Er is nog geen HN-informatie aan deze stad gekoppeld.</div>';
     var list=document.getElementById('cityTopics');
     list.innerHTML=topics.slice(0,8).map(function(t){
-      var catName=catMap[t.category_id]?.name||''; var href=t.visibility==='fiche_only'?ficheUrl(t,city.name,catName):('/kennisbank?topic='+encodeURIComponent(t.id));
+      var catName=catMap[t.category_id]?.name||''; var href=t.visibility==='fiche_only'?ficheUrl(t,city.name,catName):('/artikels/'+encodeURIComponent(t.slug||t.id));
       return '<div class="city-topic"><div><strong><a href="'+href+'">'+esc(t.title)+'</a></strong><p>'+esc(t.summary||'Lokale HN-informatie voor '+city.name+'.')+'</p><span class="badge">'+esc(t.information_type||'HN-informatie')+'</span></div></div>';
     }).join('')||'<div class="city-empty">Nog geen artikelen of fiches gevonden.</div>';
   }
