@@ -699,6 +699,7 @@ textarea{
 
     <div class="nav-actions">
       <button id="homeBtn">Website</button>
+      <button id="adminBtn" style="display:none">Admin</button>
       <button id="logoutBtn">Uitloggen</button>
     </div>
   </div>
@@ -1389,6 +1390,20 @@ async function requireUser(){
   }
 
   user=data.session.user;
+
+  const profileResult=await db()
+    .from('profiles')
+    .select('role')
+    .eq('id',user.id)
+    .maybeSingle();
+
+  if(!profileResult.error && profileResult.data?.role==='admin'){
+    const adminBtn=$('adminBtn');
+    if(adminBtn){
+      adminBtn.style.display='inline-block';
+      adminBtn.onclick=()=>location.href='/admin';
+    }
+  }
 
   $('welcome').textContent=
     'Ingelogd als '+
