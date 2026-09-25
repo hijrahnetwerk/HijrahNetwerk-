@@ -187,7 +187,7 @@ function buttonFor(container,title,topicId,url,extra){
 
 function scan(){
   document.querySelectorAll('.card').forEach(card=>{
-    const link=card.querySelector('a[href*="/fiche/"],a[href*="topic="]');
+    const link=card.querySelector('a[href*='/locaties/'],a[href*="topic="]');
     if(!link)return;
 
     const href=link.getAttribute('href')||'';
