@@ -214,7 +214,8 @@ function catButtons(){
  }));
 }
 function slugify(value){return String(value||'').toLowerCase().trim().normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').replace(/&/g,'-en-').replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');}
-function ficheUrl(topic,city,category){const d=data(topic);const cityName=city||'';const area=d.neighborhood||'';const categoryName=category||'';const slug=topic.slug||topic.id;const parts=['/locaties',slugify(cityName)];if(area)parts.push(slugify(area));if(categoryName)parts.push(slugify(categoryName));parts.push(slugify(slug));return parts.join('/');}
+function publicSlug(value){return String(value||'').replace(/-([0-9a-f]{8})-([0-9a-f]{4})-([0-9a-f]{4})-([0-9a-f]{4})-([0-9a-f]{12})$/i,'');}
+function ficheUrl(topic,city,category){const d=data(topic);const cityName=city||'';const area=d.neighborhood||'';const categoryName=category||'';const slug=publicSlug(topic.slug||topic.id);const parts=['/locaties',slugify(cityName)];if(area)parts.push(slugify(area));if(categoryName)parts.push(slugify(categoryName));parts.push(slugify(slug));return parts.join('/');}
 function render(){
  const q=document.getElementById('q').value.toLowerCase().trim();
  const co=document.getElementById('country').value;
