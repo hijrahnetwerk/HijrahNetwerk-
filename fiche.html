@@ -547,8 +547,8 @@ async function renderFiche(){
     "name":String(d.doctor_name||d.full_name||pageTitle).replace(/\s*\|.*$/,"").replace(/^Dr\.\s*/,"").trim(),
     "url":canonicalUrl,
     "description":seoDescription,
-    "medicalSpecialty":"GeneralPractice"
   };
+  if(isPhysician)structuredData.medicalSpecialty="GeneralPractice";
   if(d.phone)structuredData.telephone=d.phone;
   if(d.email)structuredData.email=d.email;
   if(d.website)structuredData.sameAs=[d.website];
