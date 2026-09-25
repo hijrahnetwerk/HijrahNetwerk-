@@ -2,6 +2,11 @@
   "buildCommand": "node build.js",
   "redirects": [
     {
+      "source": "/locaties/:city/:area/:category/:slug",
+      "destination": "/locaties/:city/:category/:slug",
+      "permanent": true
+    },
+    {
       "source": "/community.html",
       "destination": "/community",
       "permanent": true
