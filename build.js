@@ -59,6 +59,9 @@ for (const file of htmlFiles) {
   const filePath = path.join(__dirname, file);
   let html = fs.readFileSync(filePath, 'utf8');
 
+  // Use root-relative asset URLs so clean nested routes (/artikels/... and /locaties/...) load assets correctly.
+  html = html.replace(/(href|src)=(['"])assets\//g, '$1=$2/assets/');
+
   html = html.replace(/<script src="\/assets\/private-preview\.js"><\/script>\s*/g, '');
 
   if (!html.includes('</body>')) {
