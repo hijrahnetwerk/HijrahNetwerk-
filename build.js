@@ -20,20 +20,22 @@
 const fs = require('fs');
 const path = require('path');
 
-const SUPABASE_URL = process.env.VITE_SUPABASE_URL;
-const SUPABASE_ANON_KEY = process.env.VITE_SUPABASE_ANON_KEY;
+// De browser mag alleen een publieke Supabase key gebruiken. Als Vercel/Netlify
+// de environment variables niet injecteert, gebruiken we deze veilige fallback.
+// Dit voorkomt dat publieke pagina's eindeloos op "laden" blijven staan.
+const DEFAULT_SUPABASE_URL = 'https://dejmckimvstfjeickplx.supabase.co';
+const DEFAULT_SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_1PWjRBFubdwO43JBebGowg_R5_OEtFi';
+
+const envUrl = String(process.env.VITE_SUPABASE_URL || '').trim();
+const envKey = String(process.env.VITE_SUPABASE_ANON_KEY || '').trim();
+const SUPABASE_URL = envUrl && envUrl !== 'test' ? envUrl : DEFAULT_SUPABASE_URL;
+const SUPABASE_ANON_KEY = envKey && envKey !== 'test' ? envKey : DEFAULT_SUPABASE_PUBLISHABLE_KEY;
 const SITE_URL = 'https://hijrah-netwerk.vercel.app';
 
 console.log('\n[HN build] Supabase configuratie controleren...');
 
-if (!SUPABASE_URL) {
-  console.error('[HN build] FOUT: VITE_SUPABASE_URL ontbreekt.');
-  process.exit(1);
-}
-if (!SUPABASE_ANON_KEY) {
-  console.error('[HN build] FOUT: VITE_SUPABASE_ANON_KEY ontbreekt.');
-  process.exit(1);
-}
+console.log('[HN build] Supabase URL: ' + SUPABASE_URL);
+console.log('[HN build] Supabase sleutel beschikbaar: ' + Boolean(SUPABASE_ANON_KEY));
 
 const configContent = `// AUTOMATISCH GEGENEREERD DOOR build.js.
 // NIET HANDMATIG BEWERKEN.
