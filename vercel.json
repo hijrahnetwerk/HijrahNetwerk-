@@ -169,6 +169,10 @@
   ],
   "rewrites": [
     {
+      "source": "/artikels/:slug",
+      "destination": "/kennisbank.html?slug=:slug"
+    },
+    {
       "source": "/locaties/:city/:area/:category/:slug",
       "destination": "/fiche.html?city_slug=:city&area_slug=:area&category_slug=:category&slug=:slug"
     },
