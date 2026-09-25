@@ -420,6 +420,10 @@ function hierarchicalFicheUrl(cityName,areaName,categoryName,slug){
   return parts.join('/');
 }
 
+function publicSlug(value){
+  return String(value||'').replace(/-([0-9a-f]{8})-([0-9a-f]{4})-([0-9a-f]{4})-([0-9a-f]{4})-([0-9a-f]{12})$/i,'');
+}
+
 function breadcrumbLabel(value){
   return decodeURIComponent(String(value||'')).replace(/[-_]+/g,' ').replace(/\\s+/g,' ').trim().replace(/\\b\\w/g,ch=>ch.toUpperCase());
 }
@@ -441,12 +445,18 @@ async function renderFiche(){
     topicQuery=topicQuery.eq('id',legacyId);
   }
 
-  const [r,c,ci,ca]=await Promise.all([
+  let [r,c,ci,ca]=await Promise.all([
     topicQuery.maybeSingle(),
     db().from('countries').select('id,name').order('name'),
     db().from('cities').select('id,name,slug,country_id').order('name'),
     db().from('categories').select('id,name').order('name')
   ]);
+
+  if((r.error||!r.data) && routeSlug && !legacyId){
+    let aliasQuery=db().from('topic').select(topicSelect).ilike('slug',decodeURIComponent(routeSlug)+'-%').limit(1).maybeSingle();
+    if(!adminViewer)aliasQuery=aliasQuery.eq('published',true);
+    r=await aliasQuery;
+  }
 
   if(r.error||!r.data){
     const reason=r.error&&r.error.message?String(r.error.message):'De fiche bestaat niet, is nog niet gepubliceerd of kon niet uit de database worden opgehaald.';
@@ -458,7 +468,7 @@ async function renderFiche(){
 
   const x=r.data,d=data(x);
   const id=x.id;
-  const ficheSlug=x.slug||id;
+  const ficheSlug=publicSlug(x.slug||id);
   const country=(c.data||[]).find(y=>y.id===x.country_id)?.name||'';
   const city=(ci.data||[]).find(y=>y.id===x.city_id)?.name||'';
   const loc=[city,country].filter(Boolean).join(', ');
