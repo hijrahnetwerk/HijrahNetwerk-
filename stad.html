@@ -57,6 +57,16 @@
 <script src="assets/public-nav.js"></script>
 <script>
 (function(){
+  function slugify(value){return String(value||'').toLowerCase().trim().normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').replace(/&/g,'-en-').replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');}
+  function publicSlug(value){return String(value||'').replace(/-([0-9a-f]{8})-([0-9a-f]{4})-([0-9a-f]{4})-([0-9a-f]{4})-([0-9a-f]{12})$/i,'');}
+  function ficheUrl(topic,city,category){
+    var d=topic&&topic.card_data&&typeof topic.card_data==='object'?topic.card_data:{};
+    var parts=['/locaties',slugify(city||'')];
+    if(d.neighborhood)parts.push(slugify(d.neighborhood));
+    if(category)parts.push(slugify(category));
+    parts.push(slugify(publicSlug(topic.slug||topic.id)));
+    return parts.join('/');
+  }
   var db=window.hijrahSupabase;
   var esc=function(v){return String(v==null?'':v).replace(/[&<>"']/g,function(x){return({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[x]})};
   async function run(){
@@ -115,7 +125,7 @@
     }).join(''):'<div class="city-empty">Er is nog geen HN-informatie aan deze stad gekoppeld.</div>';
     var list=document.getElementById('cityTopics');
     list.innerHTML=topics.slice(0,8).map(function(t){
-      var catName=catMap[t.category_id]?.name||''; var href=t.visibility==='fiche_only'?ficheUrl(t,city.name,catName):('/artikels/'+encodeURIComponent(t.slug||t.id));
+      var catName=catMap[t.category_id]?.name||''; var href=t.visibility==='fiche_only'?ficheUrl(t,city.name,catName):('/artikels/'+encodeURIComponent(publicSlug(t.slug||t.id)));
       return '<div class="city-topic"><div><strong><a href="'+href+'">'+esc(t.title)+'</a></strong><p>'+esc(t.summary||'Lokale HN-informatie voor '+city.name+'.')+'</p><span class="badge">'+esc(t.information_type||'HN-informatie')+'</span></div></div>';
     }).join('')||'<div class="city-empty">Nog geen artikelen of fiches gevonden.</div>';
   }
