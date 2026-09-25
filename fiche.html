@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Dr. Yohan Guazzi | Huisarts in Tanger</title>
-<meta name="description" content="Dr. Yohan Guazzi, huisarts in Tanger. Praktische informatie over Cabinet Médical Ibn Zuhr, adres, telefoon, openingstijden en afspraken.">
+<title>Lokale informatie | Hijrah Netwerk</title>
+<meta name="description" content="Praktische lokale informatie over een plek, dienst of organisatie binnen Hijrah Netwerk.">
 <meta name="robots" content="index,follow">
 <link rel="canonical" href="https://hijrah-netwerk.vercel.app/fiche">
 <meta property="og:type" content="website">
@@ -538,10 +538,12 @@ async function renderFiche(){
   const canonical=document.querySelector('link[rel="canonical"]');
   if(canonical)canonical.href=canonicalUrl;
 
+  const isPhysician=Boolean(d.doctor_name||/huisarts|arts|physician|médecin|dokter/i.test(String(cat||"")+" "+String(d.service_type||"")));
+  const schemaType=isPhysician?"Physician":"LocalBusiness";
   const structuredData={
     "@context":"https://schema.org",
-    "@type":"Physician",
-    "@id":canonicalUrl+"#physician",
+    "@type":schemaType,
+    "@id":canonicalUrl+"#place",
     "name":String(d.doctor_name||d.full_name||pageTitle).replace(/\s*\|.*$/,"").replace(/^Dr\.\s*/,"").trim(),
     "url":canonicalUrl,
     "description":seoDescription,
@@ -560,8 +562,22 @@ async function renderFiche(){
   }
   if(mapsUrl)structuredData.hasMap=mapsUrl;
   if(d.for_children)structuredData.description=seoDescription+' '+String(d.for_children);
+
+  const breadcrumbItems=[
+    {"@type":"ListItem","position":1,"name":"Home","item":"https://hijrah-netwerk.vercel.app/"},
+    breadcrumbCountry?{"@type":"ListItem","position":2,"name":breadcrumbCountry,"item":"https://hijrah-netwerk.vercel.app/landen"}:null,
+    breadcrumbCity?{"@type":"ListItem","position":breadcrumbCountry?3:2,"name":breadcrumbCity,"item":"https://hijrah-netwerk.vercel.app/stad/"+encodeURIComponent(hierarchicalCity?.slug||slugify(breadcrumbCity))}:null,
+    breadcrumbArea?{"@type":"ListItem","position":breadcrumbCountry&&breadcrumbCity?4:3,"name":breadcrumbArea}:null,
+    breadcrumbCategory?{"@type":"ListItem","position":breadcrumbCountry&&breadcrumbCity&&breadcrumbArea?5:(breadcrumbCountry&&breadcrumbCity?4:3),"name":breadcrumbCategory}:null,
+    {"@type":"ListItem","position":breadcrumbCountry&&breadcrumbCity&&breadcrumbArea&&breadcrumbCategory?6:(breadcrumbCountry&&breadcrumbCity&&breadcrumbArea?5:(breadcrumbCountry&&breadcrumbCity?4:3)),"name":pageTitle}
+  ].filter(Boolean);
+
+  const schemaPayload=isHierarchicalRoute
+    ? [structuredData,{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":breadcrumbItems}]
+    : structuredData;
+
   const schemaEl=document.getElementById('structured-data');
-  if(schemaEl)schemaEl.textContent=JSON.stringify(structuredData);
+  if(schemaEl)schemaEl.textContent=JSON.stringify(schemaPayload);
 
   let html='';
 
