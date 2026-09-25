@@ -14,9 +14,8 @@
 
           <nav class="hn-links" aria-label="Hoofdnavigatie">
             <a href="/landen">Landen &amp; Steden</a>
-            <a href="/navigatie">Hijrah Navigatie</a>
+            <a class="hn-nav-special" href="/navigatie"><span class="hn-nav-special-icon">⌕</span><span>Hijrah Navigatie</span><small>Zoek in HN</small></a>
             <a href="/orientatie">HijrahTools</a>
-            <a href="/kennisbank">Artikels</a>
             <a href="/community">Community</a>
             <a href="/dashboard">Mijn Hijrah</a>
             <a href="/#over-ons">Over HN</a>
@@ -39,9 +38,8 @@
             <button class="hn-mobile-close" type="button" aria-label="Sluit menu">×</button>
           </div>
           <a class="hn-mobile-link" href="/landen">Landen &amp; Steden</a>
-          <a class="hn-mobile-link" href="/navigatie">Hijrah Navigatie</a>
+          <a class="hn-mobile-link hn-mobile-special" href="/navigatie"><span>⌕</span><span><strong>Hijrah Navigatie</strong><small>Zoek in HN</small></span></a>
           <a class="hn-mobile-link" href="/orientatie">HijrahTools</a>
-          <a class="hn-mobile-link" href="/kennisbank">Artikels</a>
           <a class="hn-mobile-link" href="/community">Community</a>
           <a class="hn-mobile-link" href="/dashboard">Mijn Hijrah</a>
           <div class="hn-mobile-divider"></div>
