@@ -10,6 +10,7 @@
  * - assets/config.js
  * - robots.txt
  * - sitemap.xml
+ * - root-relative routes
  *
  * De sitemap wordt bij elke productie-build opnieuw opgebouwd vanuit
  * de publiek leesbare HN-data, zodat nieuwe steden en publicaties
