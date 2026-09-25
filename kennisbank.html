@@ -1800,6 +1800,18 @@
 
     const saved = savedTopics.has(topic.id);
     const publicArticleUrl = articleUrl(topic.id);
+    const articleBreadcrumb = `
+      <section class="hn-article-breadcrumb" aria-label="Broodkruimelpad">
+        <span class="hn-article-breadcrumb-title">Jij bent nu hier</span>
+        <nav>
+          <a href="/">Home</a><span>›</span>
+          <a href="/kennisbank">Artikels</a>
+          ${topic.countries?.name ? `<span>›</span><span>${esc(topic.countries.name)}</span>` : ""}
+          ${topic.cities?.name ? `<span>›</span><a href="/stad/${encodeURIComponent(topic.cities.slug || slugify(topic.cities.name))}">${esc(topic.cities.name)}</a>` : ""}
+          ${topic.categories?.name ? `<span>›</span><span>${esc(topic.categories.name)}</span>` : ""}
+          <span>›</span><strong>${esc(topic.title)}</strong>
+        </nav>
+      </section>`;
 
     const ficheBlock = hasFiche(topic)
       ? `
@@ -2029,7 +2041,8 @@
           </a>
         </div>
 
-        ${articleNavigation}
+        ${articleBreadcrumb}
+      ${articleNavigation}
       </div>
 
       ${relatedBlock}
