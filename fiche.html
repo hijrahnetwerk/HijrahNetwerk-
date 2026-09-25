@@ -453,9 +453,9 @@ async function renderFiche(){
   ]);
 
   if((r.error||!r.data) && routeSlug && !legacyId){
-    let aliasQuery=db().from('topic').select(topicSelect).ilike('slug',decodeURIComponent(routeSlug)+'-%').limit(1).maybeSingle();
+    let aliasQuery=db().from('topic').select(topicSelect).ilike('slug',decodeURIComponent(routeSlug)+'-%');
     if(!adminViewer)aliasQuery=aliasQuery.eq('published',true);
-    r=await aliasQuery;
+    r=await aliasQuery.limit(1).maybeSingle();
   }
 
   if(r.error||!r.data){
