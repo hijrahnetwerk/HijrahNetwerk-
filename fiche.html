@@ -201,6 +201,14 @@ h1{font-size:clamp(30px,4vw,42px);line-height:1.1;color:var(--brown-dark);margin
   h1{font-size:27px}
 }
 
+.hn-breadcrumb{margin-top:18px;padding:16px 18px;background:#fff;border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow);font-size:12px;color:var(--muted)}
+.hn-breadcrumb-title{display:block;margin-bottom:8px;font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--brown-dark)}
+.hn-breadcrumb nav{display:flex;align-items:center;flex-wrap:wrap;gap:6px;line-height:1.5}
+.hn-breadcrumb a{color:var(--brown);font-weight:700}
+.hn-breadcrumb a:hover{color:var(--orange)}
+.hn-breadcrumb .sep{color:#b6aa9b}
+.hn-breadcrumb .current{color:var(--muted)}
+@media(max-width:680px){.hn-breadcrumb{padding:13px 14px;font-size:11px}.hn-breadcrumb-title{font-size:10px}.hn-breadcrumb nav{gap:5px}}
 .mobile-menu-toggle{display:none;align-items:center;justify-content:center;flex-direction:column;gap:4px;width:42px;height:42px;border:1px solid var(--line,#e8e1d8);border-radius:10px;background:#fff;cursor:pointer}
 .mobile-menu-toggle span{display:block;width:18px;height:2px;border-radius:2px;background:var(--brown,#684a25)}
 .desktop-only{display:flex}
@@ -233,7 +241,7 @@ h1{font-size:clamp(30px,4vw,42px);line-height:1.1;color:var(--brown-dark);margin
 const db=()=>window.hijrahSupabase;
 const esc=v=>v==null?'':String(v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
 const data=x=>x&&x.card_data&&typeof x.card_data==='object'?x.card_data:{};
-const params=new URLSearchParams(location.search),legacyId=params.get('id'),routeSlug=location.pathname.match(/^\/fiche\/([^/]+)\/?$/)?.[1]||params.get('slug')||'';
+const params=new URLSearchParams(location.search),legacyId=params.get('id'),routeSlug=location.pathname.match(/^\/fiche\/([^/]+)\/?$/)?.[1]||params.get('slug')||'',hierarchicalCitySlug=params.get('city_slug')||'',hierarchicalAreaSlug=params.get('area_slug')||'',hierarchicalCategorySlug=params.get('category_slug')||'',isHierarchicalRoute=Boolean(hierarchicalCitySlug&&routeSlug);
 
 const icon={
   pin:'<span class="icon"><svg viewBox="0 0 24 24"><path d="M12 21s7-6.2 7-12A7 7 0 1 0 5 9c0 5.8 7 12 7 12Z"/><circle cx="12" cy="9" r="2.3"/></svg></span>',
@@ -394,6 +402,28 @@ function mapsHref(d,pageTitle,loc){
   return query?'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(query):'';
 }
 
+function slugify(value){
+  return String(value||'').toLowerCase().trim()
+    .normalize('NFD').replace(/[\\u0300-\\u036f]/g,'')
+    .replace(/&/g,' en ')
+    .replace(/[^a-z0-9]+/g,'-')
+    .replace(/^-+|-+$/g,'');
+}
+
+function hierarchicalFicheUrl(cityName,areaName,categoryName,slug){
+  const citySlug=slugify(cityName), areaSlug=slugify(areaName), categorySlug=slugify(categoryName), itemSlug=slugify(slug);
+  if(!citySlug||!itemSlug)return '/fiche/'+encodeURIComponent(slug||'');
+  const parts=['/locaties',citySlug];
+  if(areaSlug)parts.push(areaSlug);
+  if(categorySlug)parts.push(categorySlug);
+  parts.push(itemSlug);
+  return parts.join('/');
+}
+
+function breadcrumbLabel(value){
+  return decodeURIComponent(String(value||'')).replace(/[-_]+/g,' ').replace(/\\s+/g,' ').trim().replace(/\\b\\w/g,ch=>ch.toUpperCase());
+}
+
 async function renderFiche(){
   if(!legacyId && !routeSlug){
     document.getElementById('app').innerHTML='<div class="error">Geen fiche geselecteerd.</div>';
@@ -414,7 +444,7 @@ async function renderFiche(){
   const [r,c,ci,ca]=await Promise.all([
     topicQuery.maybeSingle(),
     db().from('countries').select('id,name').order('name'),
-    db().from('cities').select('id,name').order('name'),
+    db().from('cities').select('id,name,country_id').order('name'),
     db().from('categories').select('id,name').order('name')
   ]);
 
@@ -433,6 +463,11 @@ async function renderFiche(){
   const city=(ci.data||[]).find(y=>y.id===x.city_id)?.name||'';
   const loc=[city,country].filter(Boolean).join(', ');
   const cat=(ca.data||[]).find(y=>y.id===x.category_id)?.name||'';
+  const hierarchicalCity=(ci.data||[]).find(y=>slugify(y.name)===slugify(hierarchicalCitySlug));
+  const breadcrumbCity=hierarchicalCity?.name||city||breadcrumbLabel(hierarchicalCitySlug);
+  const breadcrumbCountry=(c.data||[]).find(y=>y.id===hierarchicalCity?.country_id)?.name||country;
+  const breadcrumbArea=d.neighborhood||breadcrumbLabel(hierarchicalAreaSlug);
+  const breadcrumbCategory=cat||breadcrumbLabel(hierarchicalCategorySlug);
   const exps=Array.isArray(d.experiences)?d.experiences:[];
   const infoType=x.information_type||'Praktische informatie';
 
@@ -486,7 +521,9 @@ async function renderFiche(){
   const mapsUrl=mapsHref(mapsData,pageTitle,loc);
 
   const seoDescription=(x.summary||d.short_description||('Praktische informatie over '+pageTitle+(loc?' in '+loc:''))) .replace(/\s+/g,' ').trim();
-  const canonicalUrl='https://hijrah-netwerk.vercel.app/fiche/'+encodeURIComponent(ficheSlug);
+  const canonicalUrl=isHierarchicalRoute
+    ? 'https://hijrah-netwerk.vercel.app'+location.pathname
+    : 'https://hijrah-netwerk.vercel.app/fiche/'+encodeURIComponent(ficheSlug);
   const setMeta=(selector,attribute,value)=>{
     const el=document.querySelector(selector);
     if(el)el.setAttribute(attribute,value);
@@ -645,7 +682,7 @@ async function renderFiche(){
     html+='<section class="card"><h2>Andere artsen bij deze praktijk</h2><p class="card-sub">Deze arts werkt ook bij dezelfde praktijk.</p><div class="info-grid">';
     relatedDoctors.forEach(t=>{
       const rd=data(t);
-      const href='/fiche/'+encodeURIComponent(t.slug||t.id);
+      const href=hierarchicalFicheUrl(city,d.neighborhood||'',cat,t.slug||t.id);
       html+='<div class="info-item"><div class="info-label">Arts</div><div class="info-value"><a href="'+esc(href)+'">'+esc(t.title)+'</a></div></div>';
     });
     html+='</div></section>';
@@ -691,6 +728,17 @@ async function renderFiche(){
   html+='<section class="card" style="margin-top:18px"><h2>Informatie corrigeren</h2><p class="empty-note">Zie je iets dat niet klopt of verouderd is? Stuur de correctie naar HN. Niets wordt automatisch aangepast.</p><div class="hero-actions"><a class="button secondary" href="/bijdragen?type=correction&title='+encodeURIComponent(pageTitle)+'">Correctie insturen</a><a class="button outline" href="#claim" onclick="var x=document.getElementById(\'claim\');if(x)x.open=true">Vermelding claimen</a></div></section>';
 
   html+='<details class="card" id="claim" style="margin-top:18px"><summary style="cursor:pointer;font-weight:700;color:var(--brown-dark)">Ben jij eigenaar of beheerder?</summary><div style="padding-top:12px"><h2 style="display:none">Ben jij eigenaar of beheerder?</h2><p class="card-sub">Je kunt bij HN aangeven dat je deze vermelding beheert. HN controleert de aanvraag eerst. Een claim betekent niet automatisch dat de gegevens worden aangepast of dat de vermelding wordt overgenomen.</p><form id="claimForm" class="form-grid" style="margin-top:14px"><div><label style="display:block;font-size:12px;margin-bottom:5px;color:var(--muted)">Naam</label><input id="claimName" required style="width:100%;padding:11px;border:1px solid var(--border);border-radius:9px"></div><div><label style="display:block;font-size:12px;margin-bottom:5px;color:var(--muted)">Rol</label><input id="claimRole" placeholder="Bijv. eigenaar, arts, medewerker" style="width:100%;padding:11px;border:1px solid var(--border);border-radius:9px"></div><div><label style="display:block;font-size:12px;margin-bottom:5px;color:var(--muted)">E-mail</label><input id="claimEmail" type="email" required style="width:100%;padding:11px;border:1px solid var(--border);border-radius:9px"></div><div><label style="display:block;font-size:12px;margin-bottom:5px;color:var(--muted)">Telefoon</label><input id="claimPhone" type="tel" style="width:100%;padding:11px;border:1px solid var(--border);border-radius:9px"></div><div style="grid-column:1/-1"><label style="display:block;font-size:12px;margin-bottom:5px;color:var(--muted)">Bericht</label><textarea id="claimMessage" rows="3" placeholder="Hoe kunnen we controleren dat je deze vermelding beheert?"></textarea></div><div style="grid-column:1/-1"><button class="button primary" type="submit">Claimaanvraag versturen</button><span id="claimResult" class="note" style="display:inline-block;margin-left:10px"></span></div></form></div></details>';
+
+  if(isHierarchicalRoute){
+    const crumbs=[];
+    crumbs.push('<a href="/">Home</a>');
+    if(breadcrumbCountry)crumbs.push('<a href="/landen">'+esc(breadcrumbCountry)+'</a>');
+    if(breadcrumbCity)crumbs.push('<a href="/stad/'+encodeURIComponent(hierarchicalCity?.id||x.city_id||'')+'">'+esc(breadcrumbCity)+'</a>');
+    if(breadcrumbArea)crumbs.push('<span>'+esc(breadcrumbArea)+'</span>');
+    if(breadcrumbCategory)crumbs.push('<span>'+esc(breadcrumbCategory)+'</span>');
+    crumbs.push('<span class="current">'+esc(pageTitle)+'</span>');
+    html+='<section class="hn-breadcrumb" aria-label="Broodkruimelpad"><span class="hn-breadcrumb-title">Jij bent nu hier</span><nav>'+crumbs.map((item,index)=>index?'<span class="sep">›</span>'+item:item).join('')+'</nav></section>';
+  }
 
   document.getElementById('app').innerHTML=html;
   const claimForm=document.getElementById('claimForm');
