@@ -160,9 +160,6 @@ async function buildSitemap() {
       const country = countryMap.get(city.country_id);
       const citySlug = city.slug || slugify(city.name);
       add('/stad/' + citySlug, '0.8', 'weekly');
-      if (country) {
-        add('/locaties/' + slugify(city.name), '0.8', 'weekly');
-      }
     });
 
     const categories = await fetchJson('categories', 'select=id,slug,name,is_active&is_active=eq.true');
