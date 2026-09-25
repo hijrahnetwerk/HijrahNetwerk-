@@ -472,15 +472,17 @@ async function renderFiche(){
   const infoType=x.information_type||'Praktische informatie';
 
   let practiceArticleId = null;
+  let practiceArticleSlug = null;
   if (d.practice_name) {
     const practiceArticle = await db().from('topic')
-      .select('id')
+      .select('id,slug')
       .eq('slug','cabinet-medical-ibn-zuhr-huisartsenpraktijk-in-tanger')
       .eq('published',true)
       .maybeSingle();
 
     if (!practiceArticle.error && practiceArticle.data) {
       practiceArticleId = practiceArticle.data.id;
+      practiceArticleSlug = practiceArticle.data.slug || null;
     }
   }
 
@@ -712,7 +714,7 @@ async function renderFiche(){
     html+='<section class="card"><h2>Meer informatie</h2><p class="card-sub">'+(practiceArticleId
       ? 'Deze fiche houdt de belangrijkste gegevens van deze arts overzichtelijk. Voor achtergrondinformatie over Cabinet Médical Ibn Zuhr en beide artsen kun je het uitgebreide artikel lezen.'
       : 'De fiche geeft je de belangrijkste gegevens. Voor achtergrondinformatie en uitgebreide informatie kun je het volledige artikel in de Kennisbank lezen.'
-    )+'</p><div class="hero-actions"><a class="button primary" href="/kennisbank?topic='+encodeURIComponent(articleId)+'">'+articleLabel+'</a></div></section>';
+    )+'</p><div class="hero-actions"><a class="button primary" href="/artikels/'+encodeURIComponent(practiceArticleSlug||articleId)+'">'+articleLabel+'</a></div></section>';
   }
 
   html+='<section class="card"><h2>Ervaringen uit de praktijk</h2><p class="card-sub">Gebaseerd op ervaringen van emigranten uit Nederland en België en anderen met eigen ervaring ter plaatse. Waar mogelijk aangevuld met officiële bronnen. Een ervaring blijft persoonlijk en kan per persoon, gezin, wijk, situatie en periode verschillen.</p><div class="source-explainer" style="margin:0 0 16px"><strong>Let op</strong><div>Een persoonlijke ervaring is geen garantie dat dezelfde situatie voor iedereen geldt. Ervaringen zijn een aanvulling op andere bronnen en worden duidelijk onderscheiden van officiële informatie en gecontroleerde informatie.</div></div>';
