@@ -87,7 +87,7 @@
     }).join(''):'<div class="city-empty">Er is nog geen HN-informatie aan deze stad gekoppeld.</div>';
     var list=document.getElementById('cityTopics');
     list.innerHTML=topics.slice(0,8).map(function(t){
-      var catName=(categories||[]).find(function(cat){return cat.id===t.category_id;})?.name||''; var href=t.visibility==='fiche_only'?ficheUrl(t,city.name,catName):('/kennisbank?topic='+encodeURIComponent(t.id));
+      var catName=catMap[t.category_id]?.name||''; var href=t.visibility==='fiche_only'?ficheUrl(t,city.name,catName):('/kennisbank?topic='+encodeURIComponent(t.id));
       return '<div class="city-topic"><div><strong><a href="'+href+'">'+esc(t.title)+'</a></strong><p>'+esc(t.summary||'Lokale HN-informatie voor '+city.name+'.')+'</p><span class="badge">'+esc(t.information_type||'HN-informatie')+'</span></div></div>';
     }).join('')||'<div class="city-empty">Nog geen artikelen of fiches gevonden.</div>';
   }
