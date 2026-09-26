@@ -1,1 +1,45 @@
-<!doctype html><html lang="nl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>HN Pagina-bouwer</title><link rel="stylesheet" href="/assets/fonts.css"><link rel="stylesheet" href="/assets/platform-pages.css"><link rel="stylesheet" href="/assets/admin-builder.css"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/assets/config.js"></script><script src="/supabase-client.js"></script><script src="/auth.js"></script><script src="/assets/admin-builder.js" defer></script></head><body><main class="hn-builder"><header><div><a href="/admin">← Admin</a><h1>HN Pagina-bouwer</h1><p>Beheer je pagina-opbouw zonder code.</p></div><div><button id="save" class="button primary">Opslaan</button> <button id="publish" class="button secondary">Publiceren</button></div></header><div id="msg" class="msg" hidden></div><div class="grid"><aside class="panel"><b>Pagina's</b><button id="new" class="button secondary full">+ Nieuwe pagina</button><div id="pages"></div></aside><section class="panel"><div id="empty">Kies een pagina.</div><div id="editor" hidden><div class="editorbar"><h2 id="heading"></h2><select id="status"><option value="draft">Concept</option><option value="published">Gepubliceerd</option><option value="archived">Gearchiveerd</option></select></div><label>Titel<input id="title"></label><label>URL-slug<input id="slug"></label><label>Beschrijving<textarea id="desc"></textarea></label><div class="sectbar"><b>Secties</b><button id="add" class="button secondary">+ Sectie</button></div><p class="muted">Sleep secties om ze te verplaatsen.</p><div id="sections"></div></div></section><aside class="panel"><b>Wat je hiermee beheert</b><p>Pagina's, zichtbaarheid, volgorde en inhoudsblokken. We breiden de blokken verder uit zodat ook afbeeldingen, kaarten, CTA's, HN-informatie en andere onderdelen zonder code te beheren zijn.</p><p class="muted">Publiceren blijft onder jouw controle.</p></aside></div></main></body></html>
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>HN Pagina-bouwer</title>
+<link rel="stylesheet" href="/assets/fonts.css">
+<link rel="stylesheet" href="/assets/platform-pages.css">
+<link rel="stylesheet" href="/assets/admin-builder.css">
+<script src="/assets/config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/supabase-client.js"></script>
+<script src="/auth.js"></script>
+<script src="/assets/admin-builder.js" defer></script>
+</head>
+<body>
+<main class="hn-builder">
+<header class="builder-top">
+  <div><a href="/admin">← Admin</a><h1>HN Pagina-bouwer</h1><p>Beheer pagina's zonder code. Opslaan en publiceren zijn aparte stappen.</p></div>
+  <div class="builder-actions"><button id="save" class="button primary">Opslaan</button><button id="publish" class="button secondary">Publiceren</button></div>
+</header>
+<div id="msg" class="msg" hidden></div>
+<div class="builder-grid">
+  <aside class="panel page-list"><div class="panel-title">Pagina's</div><button id="new" class="button secondary full">+ Nieuwe pagina</button><div id="pages"></div></aside>
+  <section class="panel editor-panel">
+    <div id="empty" class="empty-state">Kies een pagina of maak een nieuwe pagina.</div>
+    <div id="editor" hidden>
+      <div class="editorbar"><div><h2 id="heading"></h2><span id="route" class="route"></span></div><select id="status"><option value="draft">Concept</option><option value="published">Gepubliceerd</option><option value="archived">Gearchiveerd</option></select></div>
+      <div class="form-grid">
+        <label>Titel<input id="title"></label>
+        <label>URL-slug<input id="slug"><small>Gebruik alleen kleine letters, cijfers en koppeltekens.</small></label>
+        <label class="wide">Beschrijving<textarea id="desc" rows="3"></textarea></label>
+        <label>SEO-titel<input id="seoTitle"></label>
+        <label>SEO-beschrijving<textarea id="seoDesc" rows="3"></textarea></label>
+      </div>
+      <div class="sectbar"><div><b>Secties</b><p class="muted">Sleep secties om de volgorde te wijzigen.</p></div><button id="add" class="button secondary">+ Sectie</button></div>
+      <div id="sections"></div>
+    </div>
+  </section>
+  <aside class="panel preview-panel"><div class="panel-title">Voorbeeld</div><div id="preview" class="preview"></div><div id="previewLink" class="preview-link"></div></aside>
+</div>
+</main>
+</body>
+</html>
