@@ -16,9 +16,9 @@
       --brown-dark: #674C2E;
       --orange: #DD842A;
       --gold: #C6A15B;
-      --cream: #fbf8f4;
+      --cream: #FFFFFF;
       --white: #ffffff;
-      --ink: #2b241c;
+      --ink: #674C2E;
       --muted: #6f665b;
       --line: #ece5da;
       --success: #3f744b;
@@ -114,7 +114,7 @@
       display: inline-block;
       padding: 6px 12px;
       border-radius: 999px;
-      background: #fdf1e3;
+      background: #FFFFFF;
       color: #a55e16;
       font-size: 12px;
       font-weight: 800;
@@ -366,8 +366,8 @@
       font-size:11px;
       font-weight:600;
       text-decoration:none;
-      border:1px solid #e8dfd3;
-      background:#faf7f2;
+      border:1px solid #674C2E;
+      background:#FFFFFF;
       padding:6px 9px;
       border-radius:999px;
       white-space:nowrap;
@@ -418,7 +418,7 @@
       margin: 15px 0;
       padding: 12px 14px;
       border-radius: 10px;
-      background: #fdf1e3;
+      background: #FFFFFF;
       color: var(--brown-dark);
     }
 
@@ -613,7 +613,7 @@
     }
 
     .submission-cta p{
-      color:#eadfce;
+      color:#674C2E;
       margin:0 0 15px;
     }
 
@@ -707,7 +707,7 @@
     }
 
 
-.mobile-menu-toggle{display:none;align-items:center;justify-content:center;flex-direction:column;gap:4px;width:42px;height:42px;border:1px solid var(--line,#e8e1d8);border-radius:10px;background:#fff;cursor:pointer}
+.mobile-menu-toggle{display:none;align-items:center;justify-content:center;flex-direction:column;gap:4px;width:42px;height:42px;border:1px solid var(--line,#674C2E);border-radius:10px;background:#fff;cursor:pointer}
 .mobile-menu-toggle span{display:block;width:18px;height:2px;border-radius:2px;background:var(--brown,#674C2E)}
 .desktop-only{display:flex}
 .mobile-nav{position:fixed;inset:0;z-index:999;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .2s ease,visibility .2s ease}
@@ -716,10 +716,10 @@
 .mobile-nav-panel{position:absolute;right:0;top:0;height:100%;width:min(88vw,360px);background:#fff;padding:20px;box-shadow:-10px 0 30px rgba(0,0,0,.12);display:flex;flex-direction:column;gap:5px;transform:translateX(100%);transition:transform .25s ease}
 .mobile-nav.open .mobile-nav-panel{transform:translateX(0)}
 .mobile-nav-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-.mobile-nav-close{width:38px;height:38px;border:1px solid var(--line,#e8e1d8);background:#fff;border-radius:50%;font-size:24px;line-height:1;cursor:pointer;color:var(--brown-dark,#674C2E)}
+.mobile-nav-close{width:38px;height:38px;border:1px solid var(--line,#674C2E);background:#fff;border-radius:50%;font-size:24px;line-height:1;cursor:pointer;color:var(--brown-dark,#674C2E)}
 .mobile-nav-panel>a{padding:13px 11px;border-radius:10px;color:var(--brown-dark,#674C2E);font-weight:600}
 .mobile-nav-panel>a:hover{background:#f5efe8}
-.mobile-nav-divider{height:1px;background:var(--line,#e8e1d8);margin:8px 0}
+.mobile-nav-divider{height:1px;background:var(--line,#674C2E);margin:8px 0}
 .mobile-nav-panel .mobile-nav-primary{background:var(--orange,#DD842A);color:#fff;text-align:center}
 @media(max-width:680px){
   .desktop-only{display:none!important}
@@ -1938,7 +1938,7 @@
                   </p>
                   <div class="related-grid">
                     ${plannedArticles.slice(0,4).map(title => `
-                      <div class="related-card" style="background:#faf7f2">
+                      <div class="related-card" style="background:#FFFFFF">
                         <span class="tag">Binnenkort</span>
                         <h4>${esc(title)}</h4>
                         <p>Nog in ontwikkeling binnen de artikels.</p>
