@@ -1,9 +1,9 @@
 :root{
   --brown:#674C2E; --brown-dark:#674C2E;
-  --orange:#DD842A; --orange-dark:#c66f1e;
-  --gold:#D4AF37; --gold-light:#f6e4c9;
-  --white:#fff; --cream:#fbf8f4;
-  --ink:#2b241c; --ink-soft:#5c5346;
+  --orange:#DD842A; --orange-dark:#DD842A;
+  --gold:#D4AF37; --gold-light:#FFFFFF;
+  --white:#fff; --cream:#FFFFFF;
+  --ink:#674C2E; --ink-soft:#5c5346;
   --line:#ece5da;
   --shadow-md:0 8px 24px rgba(103,76,46,.08);
   --radius-lg:24px; --radius-md:14px; --radius-full:999px;
@@ -23,7 +23,7 @@ p.lead{ margin:0 0 28px; color:var(--ink-soft); font-size:14.5px; }
   border-radius:var(--radius-lg); box-shadow:var(--shadow-md); padding:36px 32px;
 }
 .brand{ display:flex; align-items:center; gap:10px; font-weight:800; color:var(--brown-dark); margin-bottom:28px; font-size:16px; }
-.brand-mark{ width:34px; height:34px; border-radius:10px; background:linear-gradient(155deg,var(--gold),var(--orange)); display:flex; align-items:center; justify-content:center; color:#fff; font-size:14px; font-weight:800; }
+.brand-mark{ width:34px; height:34px; border-radius:10px; background:#674C2E,var(--orange)); display:flex; align-items:center; justify-content:center; color:#fff; font-size:14px; font-weight:800; }
 
 .field{ margin-bottom:16px; }
 .field label{ display:block; font-size:12.5px; font-weight:700; color:var(--brown-dark); margin-bottom:6px; }
