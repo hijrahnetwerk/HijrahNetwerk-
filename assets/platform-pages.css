@@ -1,10 +1,10 @@
 
 :root{
-  --brown:#684a25;
-  --brown-dark:#4d3819;
-  --orange:#df842c;
+  --brown:#674C2E;
+  --brown-dark:#674C2E;
+  --orange:#DD842A;
   --orange-dark:#c66f1e;
-  --gold:#e9a74b;
+  --gold:#C6A15B;
   --gold-light:#f6e4c9;
   --cream:#fbf8f4;
   --white:#fff;
@@ -14,7 +14,7 @@
   --soft:#f6f1ea;
   --radius:18px;
   --container:1120px;
-  --shadow:0 10px 30px rgba(104,74,37,.08);
+  --shadow:0 10px 30px rgba(103,76,46,.08);
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
