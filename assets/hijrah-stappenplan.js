@@ -832,7 +832,7 @@ window.HN_STAPPENPLAN_VERSION='1';
 
     const priorities=['Betaalbare huisvesting','Onderwijs voor kinderen','Actief moslimleven','Werk en inkomen','Verblijfsrecht','Zorg','Veiligheid','Taal','Gemeenschap','Rustige leefomgeving'];
     document.getElementById('hnPriorities').innerHTML=priorities.map((p,i)=>
-      '<label style="display:flex;align-items:center;gap:6px;border:1px solid var(--border);border-radius:20px;padding:8px 10px;font-weight:400;background:#faf8f5">'+
+      '<label style="display:flex;align-items:center;gap:6px;border:1px solid var(--border);border-radius:20px;padding:8px 10px;font-weight:400;background:#FFFFFF">'+
       '<input type="checkbox" class="hn-priority" value="'+esc2(p)+'"> '+esc2(p)+'</label>'
     ).join('');
 
@@ -911,7 +911,7 @@ window.HN_STAPPENPLAN_VERSION='1';
   }
 
   function card(url,title,text){
-    return '<a href="'+url+'" style="text-decoration:none;color:inherit;border:1px solid var(--border);border-radius:12px;padding:16px;background:#faf8f5;display:block">'+
+    return '<a href="'+url+'" style="text-decoration:none;color:inherit;border:1px solid var(--border);border-radius:12px;padding:16px;background:#FFFFFF;display:block">'+
       '<strong style="color:var(--brown);display:block;margin-bottom:6px">'+esc2(title)+'</strong>'+
       '<span class="muted" style="line-height:1.45;font-size:13px">'+esc2(text)+'</span></a>';
   }
