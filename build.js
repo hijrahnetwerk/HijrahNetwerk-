@@ -54,6 +54,8 @@ const translateTag = '<script src="/assets/hn-translate.js"></script>';
 const translateStyleTag = '<link rel="stylesheet" href="/assets/hn-translate.css">';
 const editProposalTag = '<script src="/assets/hn-edit-proposals.js"></script>';
 const fontsTag = '<link rel="stylesheet" href="/assets/fonts.css">';
+const adminBarTag = '<script src="/assets/hn-admin-bar.js"></script>';
+const adminBarStyleTag = '<link rel="stylesheet" href="/assets/hn-admin-bar.css">';
 
 const htmlFiles = fs.readdirSync(__dirname).filter(name => name.endsWith('.html'));
 let processed = 0;
@@ -79,7 +81,9 @@ for (const file of htmlFiles) {
     !html.includes(translateTag) ? translateTag : '',
     !html.includes(translateStyleTag) ? translateStyleTag : '',
     !html.includes(editProposalTag) ? editProposalTag : '',
-    !html.includes(fontsTag) ? fontsTag : ''
+    !html.includes(fontsTag) ? fontsTag : '',
+    !html.includes(adminBarTag) ? adminBarTag : '',
+    !html.includes(adminBarStyleTag) ? adminBarStyleTag : ''
   ].filter(Boolean).join('\n') + '\n';
 
   const canonicalRoutes = {
