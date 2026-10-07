@@ -161,3 +161,7 @@ footer{padding:36px 0;border-top:1px solid rgba(103,76,46,.25);background:linear
   .cta{padding:27px}
   .card,.country-card{padding:21px}
 }
+
+/* Real HN brand logo overrides the legacy text mark. */
+.hn-mark{background:#fff!important;overflow:hidden!important;}
+.hn-mark img{display:block!important;width:100%!important;height:100%!important;max-width:100%!important;max-height:100%!important;object-fit:contain!important;padding:3px!important;}
