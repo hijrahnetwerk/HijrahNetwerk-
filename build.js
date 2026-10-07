@@ -54,7 +54,7 @@ for (const file of htmlFiles) {
   html = html.replace(/(href|src)=(['"])assets\\//g, '$1=$2/assets/');
   html = html.replace(/<script src="(?:\.\/)?(supabase-client|auth|site-app)\.js"><\/script>/g, '<script src="/$1.js"><\/script>');
   html = html.replace(/assets\/public-nav\.(css|js)(?:\?[^"']*)?/g, 'assets/public-nav.$1?v=20261007');
-  html = html.replace(/<script src="\\/assets\\/private-preview\\.js"><\\/script>\\s*/g, '');
+  html = html.replace(/<script src="\/assets\/private-preview\.js"><\/script>\s*/g, '');
 
   // Verwijder oude favicon-verwijzingen voordat de juiste HN-favicon opnieuw
   // wordt geplaatst. Hierdoor blijft een eerdere build niet naar een verkeerd
