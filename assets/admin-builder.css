@@ -42,3 +42,12 @@
 .hn-builder-preview h2{color:#674C2E;margin:0 0 12px}
 
 .hn-builder-preview[data-hn-component-id]{cursor:grab;position:relative}.hn-builder-preview[data-hn-component-id]:active{cursor:grabbing}.hn-builder-preview.hn-component-dragging{opacity:.55}.hn-builder-preview.hn-component-drop{outline:3px dashed #DD842A!important;outline-offset:3px}.hn-builder-preview[data-hn-component-id]::before{content:"HN-component";position:absolute;left:0;top:0;z-index:3;font:700 9px Inter,Arial,sans-serif;color:#fff;background:#674C2E;padding:3px 6px;border-radius:0 0 5px 0}.hn-db-preview{cursor:default}
+
+
+/* HN component inspector */
+.data-settings{margin-top:14px;padding-top:14px;border-top:1px solid rgba(103,76,46,.14)}
+.data-settings small{display:block;margin-top:6px;color:#6f665c;line-height:1.45}
+.component-meta{margin-top:14px;padding:10px 12px;background:#f8f5f1;border-radius:10px;border:1px solid rgba(103,76,46,.14)}
+.component-meta div{display:flex;justify-content:space-between;gap:12px;padding:3px 0;font-size:12px}
+.component-meta span{color:#746b62}
+.component-meta code{color:#674C2E;word-break:break-all}
