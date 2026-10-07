@@ -276,7 +276,7 @@ function render(){
  if(!filtered.length){box.innerHTML='<div class="empty">Geen fiches gevonden. Je kunt ontbrekende informatie zelf insturen.</div>';return}
  const ficheRows=rows.filter(item=>item.visibility==='fiche_only');
  const articleRows=rows.filter(item=>item.visibility!=='fiche_only');
- const normalizeText=value=>String(value||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+ 
  const findFicheForArticle=article=>ficheRows.find(f=>{
    const fd=data(f);
    return (fd.article_slug&&article.slug&&fd.article_slug===article.slug) ||
