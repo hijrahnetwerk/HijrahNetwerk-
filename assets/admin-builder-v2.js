@@ -49,6 +49,7 @@ function showInspector(){
 }
 function patchField(id,fn){$(id).oninput=()=>{if(selected<0)return;fn(sections[selected]);draw();selected=Math.min(selected,sections.length-1);showInspector()}}
 function setupInspector(){
+ ['','cities','categories','topics','fiches'].forEach((v,i)=>{const s=$('dataSource');if(s&&!s.querySelector('option[value="'+v+'"]'))s.insertAdjacentHTML('beforeend','<option value="'+v+'">'+(v===''?'Geen databron':v==='cities'?'Steden':v==='categories'?'Categorieën':v==='topics'?'Artikelen / onderwerpen':'Fiches')+'</option>')});
  $('type').onchange=()=>{if(selected<0)return;const old=sections[selected],n=defaults($('type').value);sections[selected]={...old,...n,component_id:old.component_id,content:{...n.content,...old.content,title:old.title||n.content.title},data:{...n.data,...old.data}};draw();selected=selected;showInspector()};
  patchField('bt',s=>{s.title=$('bt').value;s.content.title=$('bt').value});patchField('tx',s=>s.content.text=$('tx').value);patchField('url',s=>s.content.url=$('url').value);patchField('btn',s=>s.content.button=$('btn').value);patchField('img',s=>s.content.image=$('img').value);patchField('cards',s=>s.content.cards=$('cards').value);patchField('dataSource',s=>s.content.data_source=$('dataSource').value);patchField('dataLimit',s=>s.content.data_limit=Number($('dataLimit').value)||6);patchField('dataFilters',s=>{try{s.content.data_filters=JSON.parse($('dataFilters').value||'{}')}catch{}});
  $('visible').onchange=()=>{if(selected>=0){sections[selected].is_visible=$('visible').checked;draw();showInspector()}};
