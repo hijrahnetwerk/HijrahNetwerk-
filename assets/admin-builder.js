@@ -41,6 +41,16 @@ function ensureBuilderUI(){
     $("inspector").appendChild(p);
     $("refreshVersions").onclick=loadVersions;
   }
+  if(!$("existingActions")){
+    var a=document.createElement("div");a.id="existingActions";a.className="existing-actions";a.hidden=true;
+    a.innerHTML='<button id="saveExisting" type="button" class="primary">Bestaand element opslaan</button><button id="resetExisting" type="button">Origineel herstellen</button><button id="cancelExisting" type="button">Selectie sluiten</button>';
+    $("blockInspector").appendChild(a);
+  }
+  if(!$("dataWrap")){
+    var d=document.createElement("div");d.id="dataWrap";d.className="data-wrap";d.hidden=true;
+    d.innerHTML='<div class="section-heading">HN-database</div><label>Databron<select id="dataSource"><option value="cities">Steden</option><option value="topic">Topics / artikelen</option><option value="categories">Categorieën</option></select></label><label>Aantal<input id="dataLimit" type="number" min="1" max="50" value="6"></label>';
+    $("blockInspector").appendChild(d);
+  }
   if(!$("selectionState")){
     var s=document.createElement("div");s.id="selectionState";s.className="selection-state";
     s.innerHTML='<span class="selection-dot"></span><div><b id="selectionTitle">Niets geselecteerd</b><small id="selectionMeta">Klik op een onderdeel in de pagina.</small></div>';
@@ -481,7 +491,7 @@ function bind(){
   $("save").onclick=function(){save(false);};
   $("publish").onclick=function(){save(true);};
   $("open").onclick=function(){if(page)window.open(route(page.slug),"_blank");};
-  $("focus").onclick=function(){$("builder").classList.toggle("focus-mode");};
+  $("focus").onclick=function(){document.querySelector(".builder").classList.toggle("focus-mode");};
   $("desktop").onclick=function(){$("liveFrameWrap").className="desktop";$("desktop").classList.add("active");$("mobile").classList.remove("active");};
   $("mobile").onclick=function(){$("liveFrameWrap").className="mobile";$("mobile").classList.add("active");$("desktop").classList.remove("active");};
 
