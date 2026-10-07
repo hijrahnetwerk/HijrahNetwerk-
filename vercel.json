@@ -193,10 +193,6 @@
       "destination": "/concept.html"
     },
     {
-      "source": "/home",
-      "destination": "/home.html"
-    },
-    {
       "source": "/admin-navigation",
       "destination": "/admin-navigation.html"
     },
