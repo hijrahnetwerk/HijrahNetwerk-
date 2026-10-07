@@ -271,65 +271,45 @@ async function loadSubmissions(){
  if(s.error||p.error){box.innerHTML='<div class="empty">Inzendingen konden niet worden geladen.</div>';reg.innerHTML='<div class="empty">Registraties konden niet worden geladen.</div>';return}
  const subs=s.data||[],profiles=p.data||[];if($('submissionBadge')){$('submissionBadge').textContent=subs.length+profiles.length;$('submissionBadge').style.display=(subs.length+profiles.length)?'inline-flex':'none'}
  reg.innerHTML=profiles.length?profiles.map(x=>'<div class="activity-item"><div class="activity-main"><div><div class="activity-user">'+esc([x.first_name,x.last_name].filter(Boolean).join(' ')||x.email)+'</div><div class="activity-description">'+esc(x.email||'')+' · WhatsApp: '+esc(x.whatsapp_number||'Niet ingevuld')+'</div></div><div class="actions"><button class="button button-primary" onclick="approveMember(\''+x.id+'\')">Goedkeuren</button><button class="button button-danger" onclick="rejectMember(\''+x.id+'\')">Afwijzen</button></div></div></div>').join(''):'<div class="empty">Geen openstaande registraties.</div>';
- box.innerHTML=subs.length?subs.map(x=>{const names=[[x.country_name||state.countries.find(y=>y.id===x.country_id)?.name,'Land'],[x.city_name||state.cities.find(y=>y.id===x.city_id)?.name,'Stad'],[x.category_name||state.categories.find(y=>y.id===x.category_id)?.name,'Categorie'],[x.subcategory_name||state.subcategories.find(y=>y.id===x.subcategory_id)?.name,'Subcategorie']].filter(y=>y[0]).map(y=>'<span><b>'+y[1]+':</b> '+esc(y[0])+'</span>').join(' · ');return `<div class="activity-item"><div class="activity-main"><div><div class="activity-user">${esc(x.title||'Nieuwe inzending')}</div><div class="activity-description">${esc(x.submission_type||'Informatie')} · ${esc(x.content||'')}</div>${names?'<div class="activity-details">'+names+'</div>':''}<div class="activity-details"><b>Contactgegevens voor HN:</b> ${([x.submitter_name&&'Naam: '+x.submitter_name,x.submitter_email&&'E-mail: '+x.submitter_email,x.submitter_whatsapp&&'WhatsApp: '+x.submitter_whatsapp,x.submitter_social&&'Social media: '+x.submitter_social].filter(Boolean).map(esc).join(' · ')||'Geen contactgegevens opgegeven')}</div><div class="activity-details">Ontvangen: ${esc(x.created_at?new Date(x.created_at).toLocaleString('nl-NL'):'')}</div></div><div class="actions"><button class="button button-primary" onclick="approveSubmission('${esc(x.id)}')">Goedkeuren & fiche maken</button><button class="button button-danger" onclick="rejectSubmission('${esc(x.id)}')">Afwijzen</button></div></div></div>`}).join(''):'<div class="empty">Geen openstaande inzendingen.</div>';
+ box.innerHTML=subs.length?subs.map(x=>{const names=[[x.country_name||state.countries.find(y=>y.id===x.country_id)?.name,'Land'],[x.city_name||state.cities.find(y=>y.id===x.city_id)?.name,'Stad'],[x.category_name||state.categories.find(y=>y.id===x.category_id)?.name,'Categorie'],[x.subcategory_name||state.subcategories.find(y=>y.id===x.subcategory_id)?.name,'Subcategorie']].filter(y=>y[0]).map(y=>'<span><b>'+y[1]+':</b> '+esc(y[0])+'</span>').join(' · ');return `<div class="activity-item"><div class="activity-main"><div><div class="activity-user">${esc(x.title||'Nieuwe inzending')}</div><div class="activity-description">${esc(x.submission_type||'Informatie')} · ${esc(x.content||'')}</div>${names?'<div class="activity-details">'+names+'</div>':''}<div class="activity-details"><b>Contactgegevens voor HN:</b> ${([x.submitter_name&&'Naam: '+x.submitter_name,x.submitter_email&&'E-mail: '+x.submitter_email,x.submitter_whatsapp&&'WhatsApp: '+x.submitter_whatsapp,x.submitter_social&&'Social media: '+x.submitter_social].filter(Boolean).map(esc).join(' · ')||'Geen contactgegevens opgegeven')}</div><div class="activity-details">Ontvangen: ${esc(x.created_at?new Date(x.created_at).toLocaleString('nl-NL'):'')}</div></div><div class="actions"><button class="button button-primary" onclick="openSubmissionReview('${esc(x.id)}')">Goedkeuren & fiche maken</button><button class="button button-danger" onclick="rejectSubmission('${esc(x.id)}')">Afwijzen</button></div></div></div>`}).join(''):'<div class="empty">Geen openstaande inzendingen.</div>';
 }
 window.approveMember=async id=>{const r=await db().from('profiles').update({application_status:'approved',verification_status:'verified',approved_at:new Date().toISOString(),updated_at:new Date().toISOString()}).eq('id',id);if(r.error)return msg(r.error.message,'error');await loadSubmissions();await loadUsers();msg('Lid goedgekeurd.')};
 window.rejectMember=async id=>{const r=await db().from('profiles').update({application_status:'rejected',updated_at:new Date().toISOString()}).eq('id',id);if(r.error)return msg(r.error.message,'error');await loadSubmissions();await loadUsers();msg('Registratie afgewezen.')};
-window.approveSubmission=async id=>{
+let currentSubmissionReview=null;
+window.openSubmissionReview=async id=>{
  const r=await db().from('submissions').select('*').eq('id',id).maybeSingle();
  if(r.error||!r.data)return msg(r.error?.message||'Inzending niet gevonden.','error');
- const s=r.data;
- const publicContent=window.prompt('Controleer de tekst voor anonieme publicatie. Verwijder namen of andere herkenbare persoonsgegevens. Je kunt de tekst hier aanpassen:',String(s.content||''));
- if(publicContent===null)return;
- if(!publicContent.trim())return msg('De openbare tekst mag niet leeg zijn.','error');
- if(s.submission_type==='experience' && s.target_topic_id){
-   const t=await db().from('topic').select('id,title,card_data').eq('id',s.target_topic_id).maybeSingle();
-   if(t.error||!t.data)return msg(t.error?.message||'De gekoppelde HN-vermelding bestaat niet meer.','error');
-   const card={...(t.data.card_data||{})};
-   const experiences=Array.isArray(card.experiences)?card.experiences.slice():[];
-   experiences.push({
-     text:publicContent.trim(),
-     name:'Anoniem',
-     date:new Date().toLocaleDateString('nl-NL'),
-     source:'community',
-     rating:0
-   });
-   const upTopic=await db().from('topic').update({
-     card_data:{...card,experiences},
-     updated_at:new Date().toISOString()
-   }).eq('id',t.data.id);
-   if(upTopic.error)return msg('Ervaring kon niet aan de fiche worden toegevoegd: '+upTopic.error.message,'error');
-   const up=await db().from('submissions').update({status:'approved',reviewed_at:new Date().toISOString(),updated_at:new Date().toISOString(),admin_notes:'Gepubliceerd als community-ervaring bij de gekoppelde HN-vermelding.'}).eq('id',id);
-   if(up.error)return msg(up.error.message,'error');
-   await loadSubmissions();await loadTopics();msg('Ervaring goedgekeurd en toegevoegd aan de community-ervaringen van de fiche.');
-   return;
- }
- const typeMap={information:'Algemene informatie',correction:'Algemene informatie',review:'Review',recommendation:'Aanbeveling',warning:'Waarschuwing'};
- const normalizeName=v=>String(v||'').trim().normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLocaleLowerCase();
- const resolveValue=async(table,cache,name,extra={})=>{
-   const value=String(name||'').trim();if(!value)return null;
-   const existing=cache.find(x=>normalizeName(x.name)===normalizeName(value));if(existing)return existing.id;
-   const valueSlug=slug(value);if(!valueSlug)throw new Error('Deze nieuwe categorie kan niet worden opgeslagen.');
-   const found=await db().from(table).select('id,name').eq('slug',valueSlug).maybeSingle();
-   if(found.error)throw found.error;if(found.data){cache.push(found.data);return found.data.id}
-   const inserted=await db().from(table).insert({name:value,slug:valueSlug,...extra}).select('id,name').single();
-   if(inserted.error){const retry=await db().from(table).select('id,name').eq('slug',valueSlug).maybeSingle();if(retry.error||!retry.data)throw inserted.error;cache.push(retry.data);return retry.data.id}
-   cache.push(inserted.data);return inserted.data.id;
- };
- let countryId=s.country_id||null,cityId=s.city_id||null,categoryId=s.category_id||null,subcategoryId=s.subcategory_id||null;
- try{
-   if(!countryId&&s.country_name)countryId=await resolveValue('countries',state.countries,s.country_name);
-   if(!cityId&&s.city_name)cityId=await resolveValue('cities',state.cities,s.city_name,{country_id:countryId});
-   if(!categoryId&&s.category_name)categoryId=await resolveValue('categories',state.categories,s.category_name);
-   if(!subcategoryId&&s.subcategory_name)subcategoryId=await resolveValue('subcategories',state.subcategories,s.subcategory_name,{category_id:categoryId});
- }catch(error){return msg('Nieuwe locatie/categorie kon niet worden toegevoegd: '+(error.message||''),'error')}
- const p={title:s.title||'Nieuwe HN-informatie',slug:slug(s.title||'Nieuwe HN-informatie')+'-'+Date.now().toString().slice(-6),country_id:countryId,city_id:cityId,category_id:categoryId,subcategory_id:subcategoryId,information_type:typeMap[s.submission_type]||'Algemene informatie',visibility:'fiche_only',status:'published',source:s.source_name||'HN-community',source_url:s.source_url||null,summary:publicContent.trim().replace(/\s+/g,' ').slice(0,220),content:publicContent.trim(),published:true,submitted_by:s.submitted_by||null,source_type:'community',verified_at:new Date().toISOString(),last_checked_at:new Date().toISOString(),card_data:{source_type:'community'}};
- const ins=await db().from('topic').insert(p);
- if(ins.error)return msg('Inzending niet gepubliceerd: '+ins.error.message,'error');
- const up=await db().from('submissions').update({status:'approved',reviewed_at:new Date().toISOString(),updated_at:new Date().toISOString()}).eq('id',id);
- if(up.error)return msg(up.error.message,'error');
- await loadSubmissions();await loadTopics();msg('Inzending goedgekeurd en als fiche toegevoegd.')
+ const s=r.data;currentSubmissionReview=s;const modal=$('submissionReviewModal');if(!modal)return;
+ $('submissionReviewTitle').textContent=s.title||'Nieuwe inzending';$('submissionOriginalText').value=String(s.content||'');$('submissionPublicText').value=String(s.content||'');$('submissionAdminNotes').value=String(s.admin_notes||'');
+ const names=[[s.country_name||state.countries.find(y=>y.id===s.country_id)?.name,'Land'],[s.city_name||state.cities.find(y=>y.id===s.city_id)?.name,'Stad'],[s.category_name||state.categories.find(y=>y.id===s.category_id)?.name,'Categorie'],[s.subcategory_name||state.subcategories.find(y=>y.id===s.subcategory_id)?.name,'Subcategorie']].filter(x=>x[0]).map(x=>'<b>'+esc(x[1])+'</b>: '+esc(x[0])).join(' · ');
+ $('submissionReviewMeta').innerHTML='<b>Type:</b> '+esc(s.submission_type||'Informatie')+(names?' · '+names:'')+'<br><b>Bron:</b> '+esc(s.source_name||'Niet opgegeven')+(s.source_url?' · <a href="'+esc(s.source_url)+'" target="_blank" rel="noopener">Bron openen</a>':'');
+ $('submissionReviewContact').textContent='Contactgegevens voor HN: '+([s.submitter_name&&'Naam: '+s.submitter_name,s.submitter_email&&'E-mail: '+s.submitter_email,s.submitter_whatsapp&&'WhatsApp: '+s.submitter_whatsapp,s.submitter_social&&'Social media: '+s.submitter_social].filter(Boolean).join(' · ')||'Geen contactgegevens opgegeven');
+ modal.hidden=false;document.body.style.overflow='hidden';
 };
+async function finalizeSubmissionApproval(s,publicContent,adminNotes){
+ if(!publicContent.trim()){msg('De openbare tekst mag niet leeg zijn.','error');return false}
+ const typeMap={information:'Algemene informatie',correction:'Algemene informatie',review:'Review',recommendation:'Aanbeveling',warning:'Waarschuwing'};
+ if(s.submission_type==='experience'&&s.target_topic_id){
+   const t=await db().from('topic').select('id,title,card_data').eq('id',s.target_topic_id).maybeSingle();
+   if(t.error||!t.data){msg(t.error?.message||'De gekoppelde HN-vermelding bestaat niet meer.','error');return false}
+   const card={...(t.data.card_data||{})};const experiences=Array.isArray(card.experiences)?card.experiences.slice():[];
+   experiences.push({text:publicContent.trim(),name:'Anoniem',date:new Date().toLocaleDateString('nl-NL'),source:'community',rating:0});
+   const upTopic=await db().from('topic').update({card_data:{...card,experiences},updated_at:new Date().toISOString()}).eq('id',t.data.id);
+   if(upTopic.error){msg('Ervaring kon niet aan de fiche worden toegevoegd: '+upTopic.error.message,'error');return false}
+   const up=await db().from('submissions').update({status:'approved',reviewed_at:new Date().toISOString(),updated_at:new Date().toISOString(),admin_notes:adminNotes||'Gepubliceerd als community-ervaring bij de gekoppelde HN-vermelding.'}).eq('id',s.id);
+   if(up.error){msg(up.error.message,'error');return false}
+   return true;
+ }
+ const normalizeName=v=>String(v||'').trim().normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLocaleLowerCase();
+ const resolveValue=async(table,cache,name,extra={})=>{const value=String(name||'').trim();if(!value)return null;const existing=cache.find(x=>normalizeName(x.name)===normalizeName(value));if(existing)return existing.id;const valueSlug=slug(value);if(!valueSlug)throw new Error('Deze nieuwe categorie kan niet worden opgeslagen.');const found=await db().from(table).select('id,name').eq('slug',valueSlug).maybeSingle();if(found.error)throw found.error;if(found.data){cache.push(found.data);return found.data.id}const inserted=await db().from(table).insert({name:value,slug:valueSlug,...extra}).select('id,name').single();if(inserted.error){const retry=await db().from(table).select('id,name').eq('slug',valueSlug).maybeSingle();if(retry.error||!retry.data)throw inserted.error;cache.push(retry.data);return retry.data.id}cache.push(inserted.data);return inserted.data.id};
+ let countryId=s.country_id||null,cityId=s.city_id||null,categoryId=s.category_id||null,subcategoryId=s.subcategory_id||null;
+ try{if(!countryId&&s.country_name)countryId=await resolveValue('countries',state.countries,s.country_name);if(!cityId&&s.city_name)cityId=await resolveValue('cities',state.cities,s.city_name,{country_id:countryId});if(!categoryId&&s.category_name)categoryId=await resolveValue('categories',state.categories,s.category_name);if(!subcategoryId&&s.subcategory_name)subcategoryId=await resolveValue('subcategories',state.subcategories,s.subcategory_name,{category_id:categoryId})}catch(error){msg('Nieuwe locatie/categorie kon niet worden toegevoegd: '+(error.message||''),'error');return false}
+ const p={title:s.title||'Nieuwe HN-informatie',slug:slug(s.title||'Nieuwe HN-informatie')+'-'+Date.now().toString().slice(-6),country_id:countryId,city_id:cityId,category_id:categoryId,subcategory_id:subcategoryId,information_type:typeMap[s.submission_type]||'Algemene informatie',visibility:'fiche_only',status:'published',source:s.source_name||'HN-community',source_url:s.source_url||null,summary:publicContent.trim().replace(/\s+/g,' ').slice(0,220),content:publicContent.trim(),published:true,submitted_by:s.submitted_by||null,source_type:'community',verified_at:new Date().toISOString(),last_checked_at:new Date().toISOString(),card_data:{source_type:'community'}};
+ const ins=await db().from('topic').insert(p);if(ins.error){msg('Inzending niet gepubliceerd: '+ins.error.message,'error');return false}
+ const up=await db().from('submissions').update({status:'approved',reviewed_at:new Date().toISOString(),updated_at:new Date().toISOString(),admin_notes:adminNotes||null}).eq('id',s.id);if(up.error){msg(up.error.message,'error');return false}return true;
+}
+window.approveSubmission=async id=>{const s=currentSubmissionReview?.id===id?currentSubmissionReview:(await db().from('submissions').select('*').eq('id',id).maybeSingle()).data;if(!s)return msg('Inzending niet gevonden.','error');const ok=await finalizeSubmissionApproval(s,$('submissionPublicText')?.value??s.content??'',$('submissionAdminNotes')?.value??'');if(!ok)return;const modal=$('submissionReviewModal');if(modal){modal.hidden=true;document.body.style.overflow=''}currentSubmissionReview=null;await loadSubmissions();await loadTopics();msg(s.submission_type==='experience'&&s.target_topic_id?'Ervaring goedgekeurd en toegevoegd aan de community-ervaringen van de fiche.':'Inzending goedgekeurd en als fiche toegevoegd.');};
+
 window.rejectSubmission=async id=>{const r=await db().from('submissions').update({status:'rejected',reviewed_at:new Date().toISOString(),updated_at:new Date().toISOString()}).eq('id',id);if(r.error)return msg(r.error.message,'error');await loadSubmissions();msg('Inzending afgewezen.')};
 $('refreshSubmissions')?.addEventListener('click',loadSubmissions);
 
