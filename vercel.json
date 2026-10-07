@@ -2,6 +2,21 @@
   "buildCommand": "node build.js",
   "redirects": [
     {
+      "source": "/home-oud",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/home-huidig",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/home",
+      "destination": "/",
+      "permanent": true
+    },
+    {
       "source": "/locaties/:city/:area/:category/:slug",
       "destination": "/locaties/:city/:category/:slug",
       "permanent": true
