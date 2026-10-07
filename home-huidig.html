@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hijrah Netwerk — Huidige Home</title>
+<meta name="description" content="Hijrah Netwerk wordt een netwerk voor zusters die willen emigreren of al geëmigreerd zijn. Praktische informatie, ervaringen en hulpmiddelen, van oriëntatie tot integratie.">
+<meta name="theme-color" content="#674C2E">
+<style>
+:root{--brown:#674C2E;--brown-dark:#674C2E;--orange:#DD842A;--gold:#C6A15B;--cream:#FFFFFF;--soft:#FFFFFF;--ink:#674C2E;--muted:#674C2E;--line:#674C2E;--white:#fff;--max:1080px}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;color:var(--ink);background:#fff;line-height:1.6}a{text-decoration:none;color:inherit}button,input{font:inherit}.wrap{max-width:var(--max);margin:auto;padding:0 22px}
+header{position:sticky;top:0;z-index:10;background:rgba(255,255,255,.94);backdrop-filter:blur(12px);border-bottom:1px solid #FFFFFF}.nav{height:70px;display:flex;align-items:center;justify-content:space-between;gap:20px}.brand{display:flex;align-items:center;gap:10px;font-weight:800;color:var(--brown-dark)}.mark{width:36px;height:36px;border-radius:10px;background:#674C2E,var(--orange));color:#fff;display:grid;place-items:center;font-size:12px}.navlink{display:none;color:var(--muted);font-weight:600;font-size:14px}.navlink:hover{color:var(--brown)}@media(min-width:760px){.navlink{display:block}}
+.btn{display:inline-flex;align-items:center;justify-content:center;border-radius:999px;padding:13px 21px;font-weight:700;border:1px solid transparent;cursor:pointer}.primary{background:var(--orange);color:#fff}.primary:hover{background:#DD842A}.secondary{background:#fff;border-color:var(--line);color:var(--brown-dark)}.secondary:hover{border-color:var(--gold)}
+.hero{background:#674C2E;padding:72px 0 58px;text-align:center;position:relative;overflow:hidden}.hero:before{content:"";position:absolute;width:480px;height:480px;border-radius:50%;background:radial-gradient(circle,var(--soft),transparent 68%);right:-220px;top:-210px}.eyebrow{display:inline-flex;background:#FFFFFF;color:#DD842A;border-radius:999px;padding:7px 13px;font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase}.hero h1{font-size:clamp(36px,6vw,64px);line-height:1.08;letter-spacing:-.04em;max-width:820px;margin:22px auto 18px;color:var(--brown-dark)}.hero h1 span{color:var(--orange)}.hero p{max-width:690px;margin:0 auto 28px;font-size:18px;color:var(--muted)}.actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}.small{font-size:13px;color:var(--muted);margin-top:17px}
+section{padding:72px 0}.cream{background:var(--cream);border-top:1px solid #FFFFFF;border-bottom:1px solid #FFFFFF}.head{max-width:680px;margin-bottom:38px}.head.center{text-align:center;margin-left:auto;margin-right:auto}.head h2{font-size:clamp(27px,4vw,38px);line-height:1.18;color:var(--brown-dark);margin:10px 0 12px}.head p{color:var(--muted);font-size:16px}
+.grid{display:grid;grid-template-columns:1fr;gap:16px}@media(min-width:720px){.grid.three{grid-template-columns:repeat(3,1fr)}.grid.four{grid-template-columns:repeat(4,1fr)}}
+.card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:24px}.card h3{margin:12px 0 7px;color:var(--brown-dark);font-size:18px}.card p{margin:0;color:var(--muted);font-size:14.5px}.icon{width:44px;height:44px;border-radius:13px;background:var(--soft);display:grid;place-items:center;color:var(--brown-dark);font-weight:800}
+.steps{counter-reset:step}.step{position:relative}.step:before{counter-increment:step;content:counter(step);display:grid;place-items:center;width:32px;height:32px;border-radius:50%;background:var(--orange);color:#fff;font-weight:800}.step h3{margin-top:15px}
+.feature{display:grid;grid-template-columns:1fr;gap:28px;align-items:center}@media(min-width:820px){.feature{grid-template-columns:1fr 1fr}}.mock{background:var(--brown-dark);border-radius:24px;padding:25px;color:#fff;box-shadow:0 20px 50px rgba(103,76,46,.16)}.mock-top{display:flex;justify-content:space-between;color:#674C2E;font-size:12px;margin-bottom:18px}.mock-box{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:15px;padding:15px;margin-top:10px}.mock-box strong{display:block;color:#fff;margin-bottom:4px}.mock-box span{font-size:13px;color:#674C2E}
+.list{display:grid;gap:10px}.list div{padding:12px 15px;background:#fff;border:1px solid var(--line);border-radius:12px;font-size:14px;color:var(--muted)}.list strong{color:var(--brown-dark)}
+.quote{font-size:20px;color:var(--brown-dark);line-height:1.5;text-align:center;max-width:760px;margin:auto}.quote small{display:block;font-size:13px;color:var(--muted);margin-top:12px}
+.wait{max-width:650px;margin:auto;text-align:center}.form{display:flex;flex-direction:column;gap:10px;margin-top:24px}@media(min-width:620px){.form{flex-direction:row}}.form input{flex:1;min-width:0;border:1px solid var(--line);border-radius:999px;padding:14px 18px;outline:none;background:#fff}.form input:focus{border-color:var(--orange);box-shadow:0 0 0 4px rgba(223,132,44,.12)}.interests{display:flex;justify-content:center;flex-wrap:wrap;gap:8px;margin-top:14px}.interest{border:1px solid var(--line);background:#fff;border-radius:999px;padding:8px 12px;font-size:12.5px;color:var(--muted);cursor:pointer}.interest.active{border-color:var(--orange);background:#FFFFFF;color:#DD842A}.message{min-height:22px;margin-top:14px;font-size:14px;font-weight:600}.privacy{font-size:12px;color:var(--muted);margin-top:8px}
+.faq{display:grid;gap:10px;max-width:800px;margin:auto}.faq details{border:1px solid var(--line);border-radius:14px;padding:16px 18px;background:#fff}.faq summary{cursor:pointer;font-weight:700;color:var(--brown-dark)}.faq p{color:var(--muted);font-size:14px;margin:10px 0 0}
+footer{padding:34px 0;border-top:1px solid var(--line);background:#fff}.footer{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;color:var(--muted);font-size:13px}.footer strong{color:var(--brown-dark)}
+</style>
+<link rel="stylesheet" href="assets/public-nav.css">
+<style id="hn-discovery-style">.hn-discovery{padding:28px 0 72px;background:#fff}.hn-discovery-box{background:#674C2E;border:1px solid #674C2E;border-radius:28px;padding:28px;box-shadow:0 16px 40px rgba(103,76,46,.08)}.hn-discovery-top{display:flex;justify-content:space-between;gap:20px;align-items:end;flex-wrap:wrap}.hn-discovery h2{margin:0 0 6px;color:#674C2E;font-size:clamp(24px,4vw,34px)}.hn-discovery p{margin:0;color:#674C2E}.hn-discovery-grid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:10px;margin-top:20px}.hn-discovery-grid input,.hn-discovery-grid select{width:100%;border:1px solid #674C2E;border-radius:14px;padding:14px 15px;background:#fff;color:#674C2E;outline:none}.hn-discovery-grid input:focus,.hn-discovery-grid select:focus{border-color:#DD842A;box-shadow:0 0 0 4px rgba(223,132,44,.1)}.hn-discovery-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}.hn-discovery-cats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:18px}.hn-discovery-cat{border:1px solid #674C2E;background:#fff;border-radius:16px;padding:14px;text-align:left;cursor:pointer;color:#674C2E;font-weight:700;transition:.18s}.hn-discovery-cat:hover{transform:translateY(-2px);border-color:#DD842A}.hn-discovery-cat small{display:block;color:#674C2E;font-weight:500;margin-top:3px}.hn-city-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.hn-city{border:1px solid #674C2E;background:#fff;border-radius:999px;padding:8px 12px;cursor:pointer;color:#674C2E}.hn-discovery-note{margin-top:12px;font-size:13px;color:#674C2E}@media(max-width:760px){.hn-discovery-grid{grid-template-columns:1fr}.hn-discovery-cats{grid-template-columns:repeat(2,1fr)}.hn-discovery-box{padding:20px}}@media(max-width:440px){.hn-discovery-cats{grid-template-columns:1fr}}</style>
+</head>
+<body>
+<header><div class="wrap nav"><a class="brand" href="/"><span class="mark">HN</span>Hijrah Netwerk</a><a class="navlink" href="#wat">Wat wordt HN?</a><a class="btn primary" href="#aanmelden">Blijf op de hoogte</a></div></header>
+<main>
+<section class="hero"><div class="wrap"><span class="eyebrow">Hijrah Netwerk komt eraan</span><h1>Van <span>oriëntatie</span> tot integratie.</h1><p>Een netwerk voor zusters die willen emigreren of al geëmigreerd zijn. Praktische informatie, echte ervaringen en hulpmiddelen op één plek.</p><div class="actions"><a class="btn primary" href="#aanmelden">Ik wil erbij zijn</a><a class="btn secondary" href="#wat">Ontdek het idee</a></div><div class="small">De website wordt stap voor stap geopend. Je hoeft niet te wachten tot alles tegelijk klaar is.</div></div></section>
+<section class="hn-discovery" id="hn-discovery">
+  <div class="wrap">
+    <div class="hn-discovery-box">
+      <div class="hn-discovery-top">
+        <div>
+          <span class="eyebrow">Start hier</span>
+          <h2>Waar ben je naar op zoek?</h2>
+          <p>Zoek direct in HN of kies eerst een onderwerp en stad.</p>
+        </div>
+      </div>
+      <div class="hn-discovery-grid">
+        <input id="hnHomeSearch" type="search" placeholder="Bijv. huisarts, school, huren, Tanger..." autocomplete="off">
+        <select id="hnHomeCountry"><option value="">Alle landen</option></select>
+        <select id="hnHomeCity"><option value="">Alle steden</option></select>
+      </div>
+      <div class="hn-discovery-actions">
+        <button class="btn primary" type="button" id="hnHomeSearchBtn">Zoeken in HN</button>
+        <a class="btn secondary" href="/landen">Een stad ontdekken</a>
+      </div>
+      <div class="hn-discovery-cats">
+        <button class="hn-discovery-cat" data-cat="Wonen">🏠 Wonen<small>Huur, woning, wijk</small></button>
+        <button class="hn-discovery-cat" data-cat="Onderwijs">🎓 Onderwijs<small>Scholen en kinderen</small></button>
+        <button class="hn-discovery-cat" data-cat="Zorg">🩺 Zorg<small>Artsen en zorg</small></button>
+        <button class="hn-discovery-cat" data-cat="Islamitisch leven">🕌 Islamitisch leven<small>Moskeeën en omgeving</small></button>
+        <button class="hn-discovery-cat" data-cat="Werk">💼 Werk<small>Werk en inkomen</small></button>
+        <button class="hn-discovery-cat" data-cat="Administratie">📄 Administratie<small>Documenten en procedures</small></button>
+        <button class="hn-discovery-cat" data-cat="Gezin & kinderen">👨‍👩‍👧 Gezin & kinderen<small>Praktisch voor gezinnen</small></button>
+        <button class="hn-discovery-cat" data-cat="Dagelijks leven">🛒 Dagelijks leven<small>Winkels en voorzieningen</small></button>
+      </div>
+      <div id="hnHomeCities" class="hn-city-row"></div>
+      <div class="hn-discovery-note">HN toont informatie uit artikelen, fiches en lokale informatie. Controleer altijd de vermelde bron en verificatiestatus.</div>
+    </div>
+  </div>
+</section>
+<section id="wat"><div class="wrap"><div class="head center"><span class="eyebrow">Waar HN voor staat</span><h2>Emigreren brengt veel vragen met zich mee.</h2><p>Waar begin je? Welke stad past bij je gezin? Waar vind je betrouwbare informatie? Hoe is het echt om ergens te wonen? HN brengt die zoektocht bij elkaar.</p></div><div class="grid three"><div class="card"><div class="icon">01</div><h3>Oriënteren</h3><p>Informatie om eerst rustig te ontdekken welke landen, steden en mogelijkheden bij jouw situatie passen.</p></div><div class="card"><div class="icon">02</div><h3>Voorbereiden</h3><p>Praktische stappen, documenten, huisvesting, onderwijs, zorg en andere zaken die je vooraf wilt uitzoeken.</p></div><div class="card"><div class="icon">03</div><h3>Integreren</h3><p>Ook na aankomst blijven er vragen. Daarom gaat HN verder dan alleen de voorbereiding.</p></div></div></div></section>
+<section class="cream"><div class="wrap"><div class="feature"><div><span class="eyebrow">Eén netwerk</span><div class="head"><h2>Niet meer verdwalen tussen losse groepjes, lijstjes en zoekopdrachten.</h2><p>HN wordt een plek waar praktische informatie, lokale kennis en ervaringen van emigranten samenkomen.</p></div><div class="list"><div><strong>Landen & steden</strong> om bestemmingen te verkennen.</div><div><strong>Hijrah Navigatie</strong> om lokaal informatie, plekken en ervaringen te vinden.</div><div><strong>HijrahTools</strong> om keuzes en voorbereiding overzichtelijker te maken.</div><div><strong>Community</strong> voor contact, ervaringen en herkenning.</div></div></div><div class="mock"><div class="mock-top"><span>Hijrah Netwerk</span><span>in ontwikkeling</span></div><div class="mock-box"><strong>Een stad ontdekken</strong><span>Wijken · scholen · zorg · moskeeën · winkels · ervaringen</span></div><div class="mock-box"><strong>Mijn Hijrah</strong><span>Je eigen stappen, notities, voortgang en plannen.</span></div><div class="mock-box"><strong>Van zuster tot zuster</strong><span>Ervaringen die je helpen om verder te kijken dan alleen informatie op papier.</span></div></div></div></div></section>
+<section><div class="wrap"><div class="head center"><span class="eyebrow">De route</span><h2>HN groeit mee met jouw reis.</h2><p>Je hoeft niet alles tegelijk te doen. De website wordt daarom ook stap voor stap gelanceerd.</p></div><div class="grid four steps"><div class="card step"><h3>Oriënteren</h3><p>Wat zoek ik eigenlijk en welke landen of steden wil ik onderzoeken?</p></div><div class="card step"><h3>Onderzoeken</h3><p>Informatie verzamelen, vergelijken en ervaringen naast elkaar leggen.</p></div><div class="card step"><h3>Voorbereiden</h3><p>Van documenten en woning tot onderwijs, zorg en dagelijkse zaken.</p></div><div class="card step"><h3>Aankomen & integreren</h3><p>Ook na vertrek blijft praktische lokale informatie belangrijk.</p></div></div></div></section>
+<section class="cream"><div class="wrap"><div class="head center"><span class="eyebrow">Waar de informatie vandaan komt</span><h2>Informatie uit de praktijk</h2><p>Gebaseerd op ervaringen van emigranten uit Nederland en België en anderen met eigen ervaring ter plaatse. Waar mogelijk aangevuld met officiële bronnen.</p></div><div class="head center" style="display:none"><span class="eyebrow">Wat je kunt verwachten</span><h2>Geen losse inspiratiepagina, maar een netwerk dat steeds verder wordt opgebouwd.</h2></div><div class="grid three"><div class="card"><div class="icon">A</div><h3>Praktische informatie</h3><p>Over wonen, onderwijs, zorg, dagelijks leven en andere onderwerpen die bij emigreren komen kijken.</p></div><div class="card"><div class="icon">B</div><h3>Lokale kennis</h3><p>Informatie per land, stad en wijk, opgebouwd met lokale kennis, bronnen en ervaringen van emigranten.</p></div><div class="card"><div class="icon">C</div><h3>Ervaringen</h3><p>Wat mensen zelf hebben meegemaakt, zodat je naast algemene en officiële informatie ook kunt zien hoe iets in de praktijk wordt ervaren.</p></div></div></div></section>
+<section id="over-ons"><div class="wrap"><div class="head center"><span class="eyebrow">Over Hijrah Netwerk</span><h2>Van oriëntatie tot integratie.</h2><p>Een netwerk waarin praktijkervaringen van emigranten uit Nederland en België worden verzameld en waar mogelijk aangevuld met officiële bronnen.</p></div></div></section><section><div class="wrap"><p class="quote">“Van zuster tot zuster. Van emigrant tot emigrant. Niet alles zelf opnieuw hoeven uitzoeken.”<small>Dat is het idee achter Hijrah Netwerk.</small></p></div></section>
+<section class="cream" id="aanmelden"><div class="wrap"><div class="wait"><span class="eyebrow">Eerste toegang</span><div class="head center"><h2>Wil je weten wanneer HN voor jou opengaat?</h2><p>Laat je e-mailadres achter. We houden je op de hoogte van de lancering en de onderdelen die stap voor stap beschikbaar komen.</p></div><form class="form" id="waitlistForm"><input id="waitlistEmail" type="email" autocomplete="email" placeholder="Jouw e-mailadres" required><button class="btn primary" type="submit">Houd mij op de hoogte</button></form><div class="interests" id="interests"><button type="button" class="interest" data-interest="Ik oriënteer me nog">Ik oriënteer me nog</button><button type="button" class="interest" data-interest="Ik bereid mijn vertrek voor">Ik bereid mijn vertrek voor</button><button type="button" class="interest" data-interest="Ik ben al geëmigreerd">Ik ben al geëmigreerd</button><button type="button" class="interest" data-interest="Informatie voor mijn gezin">Voor mijn gezin</button></div><div class="message" id="waitlistMessage" aria-live="polite"></div><div class="privacy">Je e-mailadres wordt gebruikt voor de HN-lancering. Geen dagelijkse mails.</div></div></div></section>
+<section><div class="wrap"><div class="head center"><span class="eyebrow">Veelgestelde vragen</span><h2>Wat betekent “stap voor stap”?</h2></div><div class="faq"><details><summary>Is Hijrah Netwerk al volledig open?</summary><p>Nee. We bouwen de website verder uit en openen onderdelen één voor één. Zo kunnen we elk onderdeel eerst goed testen en vullen.</p></details><details><summary>Kan ik nu al meedoen?</summary><p>Je kunt je aanmelden voor de lancering. Later komen er ook manieren om ervaringen, informatie en lokale kennis bij te dragen.</p></details><details><summary>Voor wie is HN?</summary><p>Voor zusters uit Nederland en België die zich oriënteren op emigratie of al in een ander land wonen.</p></details><details><summary>Gaat HN alleen over één land?</summary><p>Nee. HN is opgezet rond de volledige reis van oriëntatie tot integratie en kan informatie per verschillende landen en steden samenbrengen.</p></details></div></div></section>
+</main>
+<footer><div class="wrap footer"><span>© 2026 <strong>Hijrah Netwerk</strong></span><span>Van oriëntatie tot integratie.</span></div></footer>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="assets/config.js"></script>
+<script src="supabase-client.js"></script>
+<script>
+(function(){
+  var selected='';
+  document.querySelectorAll('.interest').forEach(function(btn){btn.addEventListener('click',function(){selected=this.dataset.interest||'';document.querySelectorAll('.interest').forEach(function(x){x.classList.remove('active')});this.classList.add('active')})});
+  var form=document.getElementById('waitlistForm'),email=document.getElementById('waitlistEmail'),message=document.getElementById('waitlistMessage');
+  form.addEventListener('submit',async function(e){
+    e.preventDefault();
+    var value=(email.value||'').trim().toLowerCase(); if(!value) return;
+    var db=window.hijrahSupabase;
+    if(!db){message.textContent='Er ging iets mis. Probeer het straks opnieuw.';message.style.color='#DD842A';return}
+    message.textContent='Even opslaan...';message.style.color='var(--muted)';
+    var result=await db.from('launch_waitlist').insert({email:value,interest:selected||null});
+    if(result.error){if(result.error.code==='23505'){message.textContent='Dit e-mailadres staat al op de lijst.';message.style.color='var(--brown)'}else{console.error(result.error);message.textContent='Er ging iets mis. Probeer het straks opnieuw.';message.style.color='#DD842A'}return}
+    form.reset();document.querySelectorAll('.interest').forEach(function(x){x.classList.remove('active')});selected='';message.textContent='Gelukt. Je staat op de lijst.';message.style.color='#674C2E';
+  });
+})();
+</script>
+<script src="assets/public-nav.js"></script>
+<script src="assets/hn-home-discovery.js"></script>
+</body>
+</html>

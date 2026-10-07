@@ -1,0 +1,5 @@
+insert into public.hn_site_pages (slug,title,description,page_type,status,seo_title,seo_description) values
+('home-oud','Home — oude versie','De teruggevonden uitgebreide oude Home van Hijrah Netwerk.','landing','published','Hijrah Netwerk — oude Home','De uitgebreide oude Home van Hijrah Netwerk.'),
+('home-huidig','Home — huidige versie','De huidige Home, apart opgeslagen zodat deze zelfstandig bewerkt en vergeleken kan worden.','landing','published','Hijrah Netwerk — huidige Home','De huidige Home van Hijrah Netwerk.'),
+('funnel','HN Funnel','Vrij bewerkbare funnelpagina voor campagnes, instroom en toekomstige lanceringen.','landing','draft','HN Funnel','HN Funnel')
+on conflict (slug) do update set title=excluded.title,description=excluded.description,page_type=excluded.page_type,seo_title=excluded.seo_title,seo_description=excluded.seo_description;
