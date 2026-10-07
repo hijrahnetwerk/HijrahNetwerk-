@@ -2,7 +2,7 @@
 'use strict';
 
 var db=null,pages=[],page=null,sections=[],live=[],selected=-1,selectedExisting=null,pendingType=null,drag=null;
-var overrides=[],layouts=[],versions=[];
+var overrides=[],layouts=[],versions=[],editorElements=[];
 var $=function(id){return document.getElementById(id);};
 var T={
   hero:"Hero",text:"Tekst",image:"Afbeelding",cards:"Kaarten",cta:"CTA",links:"Links",
@@ -23,6 +23,22 @@ function note(t,error){
   clearTimeout(note.timer);note.timer=setTimeout(function(){$("msg").hidden=true;},4200);
 }
 function routeKey(){return route(page&&page.slug||"");}
+function pageSettings(){return page&&page.settings&&typeof page.settings==="object"?page.settings:{};}
+function stableId(){return "hn-"+String(page.id||"page").replace(/[^a-zA-Z0-9]/g,"").slice(0,12)+"-"+Math.random().toString(36).slice(2,9);}
+function baseSelector(el,doc){var old=el.getAttribute("data-hn-id");if(old)el.removeAttribute("data-hn-id");var s=selector(el,doc);if(old)el.setAttribute("data-hn-id",old);return s;}
+function stableSelector(id){return '[data-hn-id="' + id.replace(/"/g,"\\\"") + '"]';}
+function ensureEditorElements(doc){
+  var saved=Array.isArray(pageSettings().editor_elements)?pageSettings().editor_elements:[];
+  var bySelector={};saved.forEach(function(x){if(x&&x.selector)bySelector[x.selector]=x;});
+  editorElements=[];
+  existing(doc).forEach(function(el){
+    var current=baseSelector(el,doc), found=bySelector[current], id=found&&found.id;
+    if(!id){id=stableId();found={id:id,selector:current,tag:el.tagName.toLowerCase(),text_signature:String(el.textContent||"").trim().slice(0,160)};saved.push(found);}
+    el.setAttribute("data-hn-id",id);editorElements.push(found);
+  });
+  page.settings=Object.assign({},page.settings||{}, {editor_elements:saved});
+}
+function elementId(el,doc){return el.getAttribute("data-hn-id")||((editorElements.find(function(x){return x.selector===baseSelector(el,doc);})||{}).id)||null;}
 
 async function admin(){
   db=window.hijrahSupabase;
@@ -98,6 +114,8 @@ async function loadPageData(){
   if(r.error){note(r.error.message,true);return false;}
   sections=r.data||[];
 
+  editorElements=Array.isArray(page.settings&&page.settings.editor_elements)?page.settings.editor_elements:[];
+
   var o=await db.from("hn_content_overrides").select("selector,element_type,original_text,content_text").eq("route",routeKey());
   if(!o.error)overrides=o.data||[];else overrides=[];
 
@@ -143,6 +161,8 @@ async function restoreVersion(id){
   sections=Array.isArray(snap.sections)?snap.sections:[];
   overrides=Array.isArray(snap.overrides)?snap.overrides:[];
   layouts=Array.isArray(snap.layouts)?snap.layouts:[];
+  editorElements=Array.isArray(snap.editor_elements)?snap.editor_elements:(Array.isArray(snap.page&&snap.page.settings&&snap.page.settings.editor_elements)?snap.page.settings.editor_elements:[]);
+  page.settings=Object.assign({},page.settings||{},{editor_elements:editorElements});
   selected=-1;selectedExisting=null;renderPreview();closeInspector();
   note("v"+r.data.version_number+" geladen als werkversie. Klik Opslaan als concept om deze toestand opnieuw vast te leggen.");
 }
@@ -262,7 +282,7 @@ function addButtons(doc){
 }
 
 function selectExisting(el,doc){
-  selected=-1;selectedExisting={selector:selector(el,doc),element:el,original:el.textContent||"",tag:el.tagName.toLowerCase()};
+  selected=-1;var id=elementId(el,doc);selectedExisting={id:id,selector:stableSelector(id),legacySelector:baseSelector(el,doc),element:el,original:el.textContent||"",tag:el.tagName.toLowerCase()};
   document.querySelectorAll(".hn-builder-preview").forEach(function(x){x.classList.remove("hn-builder-selected");});
   doc.querySelectorAll(".hn-editor-selected").forEach(function(x){x.classList.remove("hn-editor-selected");});
   el.classList.add("hn-editor-selected");
@@ -298,8 +318,8 @@ function drawExisting(doc){
 }
 
 function rebuildLayoutsFromDom(doc){
-  var root=rootOf(doc),els=existing(doc),map=[];
-  els.forEach(function(el,i){map.push({selector:selector(el,doc),sort_order:i,is_visible:!el.hidden,settings:{}});});
+  var els=existing(doc),map=[];
+  els.forEach(function(el,i){var id=elementId(el,doc);if(id)map.push({selector:stableSelector(id),sort_order:i,is_visible:!el.hidden,settings:{component_id:id}});});
   layouts=map;
 }
 
@@ -307,6 +327,7 @@ function renderPreview(){
   var f=$("liveFrame");if(!f||!f.contentDocument)return;
   var doc=f.contentDocument;
   clearPreview(doc);
+  ensureEditorElements(doc);
   applyOverrides(doc);applyLayouts(doc);renderSaved(doc);addButtons(doc);bindExisting(doc);bindPreview(doc);drawExisting(doc);
 }
 
@@ -336,7 +357,7 @@ function inspectExisting(){
   $("cards").value="";
   $("cardWrap").style.display="none";
   $("existingActions").hidden=false;
-  setSelection("existing","Bestaand element",selectedExisting.selector);
+  setSelection("existing","Bestaand element","Component-ID: "+selectedExisting.id);
 }
 
 function inspect(){
@@ -391,19 +412,20 @@ async function save(pub){
   page.seo_title=$("seoTitle").value.trim();
   page.seo_description=$("seoDesc").value.trim();
   page.description=$("desc").value.trim();
+  page.settings=Object.assign({},page.settings||{}, {editor_elements:editorElements});
   sections.forEach(function(s,i){s.sort_order=i;});
 
   var ss=await db.auth.getSession(),u=ss.data&&ss.data.session?ss.data.session.user.id:null;
   var last=await db.from("hn_site_page_versions").select("version_number").eq("page_id",page.id).order("version_number",{ascending:false}).limit(1).maybeSingle();
   var version=(last.data&&last.data.version_number||0)+1;
   var snapshotPage=Object.assign({},page,{status:pub?"published":"draft"});
-  var snapshot={page:snapshotPage,sections:sections,overrides:overrides,layouts:layouts};
+  var snapshot={page:snapshotPage,sections:sections,overrides:overrides,layouts:layouts,editor_elements:editorElements};
   var r=await db.from("hn_site_page_versions").insert({page_id:page.id,version_number:version,snapshot:snapshot,created_by:u});
   if(r.error){note(r.error.message,true);return;}
 
   if(!pub){note("Concept v"+version+" opgeslagen. De live pagina is niet gewijzigd.");loadVersions();return;}
 
-  r=await db.from("hn_site_pages").update({title:page.title,slug:page.slug,status:"published",seo_title:page.seo_title,seo_description:page.seo_description,description:page.description}).eq("id",page.id);
+  r=await db.from("hn_site_pages").update({title:page.title,slug:page.slug,status:"published",seo_title:page.seo_title,seo_description:page.seo_description,description:page.description,settings:page.settings||{}}).eq("id",page.id);
   if(r.error){note(r.error.message,true);return;}
 
   var old=await db.from("hn_site_sections").select("id").eq("page_id",page.id);
