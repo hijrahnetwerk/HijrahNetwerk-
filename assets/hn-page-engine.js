@@ -7,7 +7,30 @@ function esc(v){return String(v==null?"":v).replace(/[&<>"]/g,function(m){return
 function root(){return document.querySelector("main")||document.querySelector('[role="main"]')||document.body}
 function selector(el){var out=[];while(el&&el.nodeType===1&&el!==document.body){if(el.id){out.unshift("#"+CSS.escape(el.id));break}var n=1,s=el;while((s=s.previousElementSibling)){if(s.tagName===el.tagName)n++}out.unshift(el.tagName.toLowerCase()+":nth-of-type("+n+")");el=el.parentElement}return "body>"+out.join(">")}
 function baseBlocks(){var r=root();return [...r.children].filter(function(e){return !["SCRIPT","STYLE","NOSCRIPT","HEADER","FOOTER","NAV"].includes(e.tagName)&&e.getBoundingClientRect().height>5&&!e.classList.contains("hn-public-section")})}
-function render(s){
+async function fetchComponentData(c){
+ var source=c.data_source||(c.data&&c.data.source)||"";
+ if(!source)return [];
+ var table=source==="topics"||source==="articles"||source==="fiches"?"topic":source;
+ if(["cities","categories","topic"].indexOf(table)<0)return [];
+ var q=await db.from(table).select("*").limit(Math.min(Number(c.data_limit||c.data&&c.data.limit||6)||6,50));
+ if(q.error)return [];
+ var rows=q.data||[];
+ return rows.filter(function(x){if(table==="cities"&&x.is_active===false)return false;if(table==="categories"&&x.is_active===false)return false;if(table==="topic"&&x.published===false)return false;return true}).slice(0,Math.min(Number(c.data_limit||c.data&&c.data.limit||6)||6,50));
+}
+function rowTitle(x){
+ return x.name||x.title||x.topic||x.label||x.slug||"Informatie";
+}
+function rowText(x){
+ return x.description||x.summary||x.excerpt||x.content||x.type||"";
+}
+function rowUrl(x,source){
+ if(x.url)return x.url;
+ if(source==="cities")return "/stad/"+encodeURIComponent(x.slug||x.name||"");
+ if(source==="categories")return "/kennisbank/"+encodeURIComponent(x.slug||x.name||"");
+ if(x.slug)return "/artikels/"+encodeURIComponent(x.slug);
+ return "#";
+}
+async function render(s){
  var c=s.content||{}, body="";
  if(s.section_type==="image") body=c.image?'<img src="'+esc(c.image)+'" alt="'+esc(s.title||"")+'" style="max-width:100%;display:block;margin:auto">':"";
  else if(s.section_type==="cards") body='<div class="hn-public-cards">'+(c.cards||"").split("\n").filter(Boolean).map(function(x){var a=x.split("|");return '<article><strong>'+esc((a[0]||"").trim())+'</strong><p>'+esc((a[1]||"").trim())+'</p></article>'}).join("")+"</div>";
@@ -28,7 +51,7 @@ async function run(){
  if(!sections.error){
    var r=root();
    for(var s of sections.data||[]){
-     var el=render(s),target=null,ins=(s.content||{}).insert_before;
+     var el=await render(s),target=null,ins=(s.content||{}).insert_before;
      if(ins&&ins!=="__end__"){try{target=[...r.children].find(function(x){return selector(x)===ins})}catch(e){}}
      if(target)r.insertBefore(el,target);else r.appendChild(el);
    }
