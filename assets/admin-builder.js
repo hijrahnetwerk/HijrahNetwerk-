@@ -345,6 +345,7 @@ function bindComponentDrag(doc){
   });
 }
 function renderPreview(){
+  window.sections=sections;
   var f=$("liveFrame");if(!f||!f.contentDocument)return;
   var doc=f.contentDocument;
   clearPreview(doc);
