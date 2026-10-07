@@ -51,7 +51,7 @@
       <header class="hn-nav">
         <div class="hn-nav-inner">
           <a class="hn-brand" href="/" aria-label="Hijrah Netwerk">
-            <span class="hn-mark">HN</span>
+            <span class="hn-mark"><img src="/assets/logo-color.pngneddkleinn.png" alt="" aria-hidden="true"></span>
             <span>Hijrah Netwerk</span>
           </a>
           <nav class="hn-links" aria-label="Hoofdnavigatie">${renderLinks(items,false)}</nav>
