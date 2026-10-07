@@ -34,7 +34,20 @@ async function pick(id){
  $("title").value=page.title||"";$("slug").value=page.slug||"";$("status").value=page.status||"draft";
  $("seoTitle").value=page.seo_title||"";$("seoDesc").value=page.seo_description||"";$("desc").value=page.description||"";
  var r=await db.from("hn_site_sections").select("*").eq("page_id",id).order("sort_order");if(r.error){note(r.error.message,true);return;}
- sections=r.data||[];drawPages();closeInspector();loadLive();
+ sections=r.data||[];
+ var vr=await db.from("hn_site_page_versions").select("snapshot,version_number").eq("page_id",id).order("version_number",{ascending:false}).limit(1).maybeSingle();
+ if(!vr.error&&vr.data&&vr.data.snapshot&&Array.isArray(vr.data.snapshot.sections)){
+   sections=vr.data.snapshot.sections;
+   if(vr.data.snapshot.page){
+     var sp=vr.data.snapshot.page;
+     $("title").value=sp.title||$("title").value;
+     $("slug").value=sp.slug||$("slug").value;
+     $("seoTitle").value=sp.seo_title||$("seoTitle").value;
+     $("seoDesc").value=sp.seo_description||$("seoDesc").value;
+     $("desc").value=sp.description||$("desc").value;
+   }
+ }
+ drawPages();closeInspector();loadLive();
 }
 function defaults(type){
  var d={hero:["Nieuwe hero","Voeg hier je belangrijkste boodschap toe."],text:["Nieuwe tekst","Schrijf hier je inhoud."],image:["Nieuwe afbeelding",""],cards:["Uitgelicht","Titel | Beschrijving | /link"],cta:["Nieuwe CTA",""],links:["Handige links","Landen | /landen\nKennisbank | /kennisbank"],directory:["Overzicht","Dynamisch HN-overzicht"],articles:["Artikels","Relevante artikels uit HN."],fiches:["Fiches","Relevante lokale fiches uit HN."],divider:["",""],spacer:["",""]}[type]||["Blok",""];
@@ -98,22 +111,50 @@ function inspect(){
 function closeInspector(){$("blockInspector").hidden=true;selected=-1;}
 function edit(k,v){if(selected<0)return;var s=sections[selected];s.content=s.content||{};if(k==="title")s.title=v;else if(k==="type")s.section_type=v;else s.content[k]=v;renderPreview();inspect();}
 async function save(pub){
- if(!page)return;page.title=$("title").value.trim();page.slug=cleanSlug($("slug").value);page.status=pub?"published":$("status").value;page.seo_title=$("seoTitle").value.trim();page.seo_description=$("seoDesc").value.trim();page.description=$("desc").value.trim();
+ if(!page)return;
+ page.title=$("title").value.trim();
+ page.slug=cleanSlug($("slug").value);
+ page.seo_title=$("seoTitle").value.trim();
+ page.seo_description=$("seoDesc").value.trim();
+ page.description=$("desc").value.trim();
+ page.status=pub?"published":(page.status||"draft");
  sections.forEach(function(s,i){s.sort_order=i;});
  var ss=await db.auth.getSession(),u=ss.data&&ss.data.session?ss.data.session.user.id:null;
  var last=await db.from("hn_site_page_versions").select("version_number").eq("page_id",page.id).order("version_number",{ascending:false}).limit(1).maybeSingle();
  var version=(last.data&&last.data.version_number||0)+1;
- var r=await db.from("hn_site_page_versions").insert({page_id:page.id,version_number:version,snapshot:{page:page,sections:sections},created_by:u});
+ var snapshotPage=Object.assign({},page,{status:pub?"published":"draft"});
+ var r=await db.from("hn_site_page_versions").insert({page_id:page.id,version_number:version,snapshot:{page:snapshotPage,sections:sections},created_by:u});
  if(r.error){note(r.error.message,true);return;}
- r=await db.from("hn_site_pages").update({title:page.title,slug:page.slug,status:page.status,seo_title:page.seo_title,seo_description:page.seo_description,description:page.description}).eq("id",page.id);
+ if(!pub){
+   note("Concept opgeslagen. De live pagina is niet gewijzigd.");
+   return;
+ }
+ r=await db.from("hn_site_pages").update({title:page.title,slug:page.slug,status:"published",seo_title:page.seo_title,seo_description:page.seo_description,description:page.description}).eq("id",page.id);
  if(r.error){note(r.error.message,true);return;}
- var old=await db.from("hn_site_sections").select("id").eq("page_id",page.id);if(old.error){note(old.error.message,true);return;}
+ var old=await db.from("hn_site_sections").select("id").eq("page_id",page.id);
+ if(old.error){note(old.error.message,true);return;}
  var keep={};
- for(var i=0;i<sections.length;i++){var s=sections[i];var q;if(s.id){keep[s.id]=true;q=await db.from("hn_site_sections").update({section_type:s.section_type,title:s.title,content:s.content,sort_order:s.sort_order,is_visible:true}).eq("id",s.id);}else{q=await db.from("hn_site_sections").insert({page_id:page.id,section_type:s.section_type,title:s.title,content:s.content,sort_order:s.sort_order,is_visible:true}).select().single();if(!q.error){s.id=q.data.id;keep[s.id]=true;}}if(q.error){note(q.error.message,true);return;}}
- for(var j=0;j<(old.data||[]).length;j++){if(!keep[old.data[j].id]){q=await db.from("hn_site_sections").delete().eq("id",old.data[j].id);if(q.error){note(q.error.message,true);return;}}}
- note(pub?"Gepubliceerd.":"Concept opgeslagen.");drawPages();loadLive();
-}
-function bind(){
+ for(var i=0;i<sections.length;i++){
+   var s=sections[i],q;
+   if(s.id){
+     keep[s.id]=true;
+     q=await db.from("hn_site_sections").update({section_type:s.section_type,title:s.title,content:s.content,sort_order:s.sort_order,is_visible:true}).eq("id",s.id);
+   }else{
+     q=await db.from("hn_site_sections").insert({page_id:page.id,section_type:s.section_type,title:s.title,content:s.content,sort_order:s.sort_order,is_visible:true}).select().single();
+     if(!q.error){s.id=q.data.id;keep[s.id]=true;}
+   }
+   if(q.error){note(q.error.message,true);return;}
+ }
+ for(var j=0;j<(old.data||[]).length;j++){
+   if(!keep[old.data[j].id]){
+     q=await db.from("hn_site_sections").delete().eq("id",old.data[j].id);
+     if(q.error){note(q.error.message,true);return;}
+   }
+ }
+ note("Gepubliceerd.");
+ drawPages();
+ loadLive();
+}function bind(){
  palette();$("save").onclick=function(){save(false);};$("publish").onclick=function(){save(true);};$("open").onclick=function(){if(page)window.open(route(page.slug),"_blank");};
  $("desktop").onclick=function(){$("liveFrameWrap").className="desktop";$("desktop").classList.add("active");$("mobile").classList.remove("active");};
  $("mobile").onclick=function(){$("liveFrameWrap").className="mobile";$("mobile").classList.add("active");$("desktop").classList.remove("active");};

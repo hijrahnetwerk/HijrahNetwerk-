@@ -52,7 +52,7 @@
       <div class="toolbar-actions">
         <button id="desktop" class="active">Desktop</button>
         <button id="mobile">Mobiel</button>
-        <button id="open">Open ↗</button>
+        <button id="focus">Volledig scherm</button><button id="open">Open ↗</button>
       </div>
     </div>
     <div id="empty" class="empty">Kies een pagina.</div>
@@ -93,6 +93,14 @@
     </div>
 
     <div class="inspector-note">Sleep bestaande onderdelen rechtstreeks in de pagina. Gebruik de oranje <b>+</b> tussen onderdelen om iets nieuws precies daar toe te voegen.</div>
+<div id="hnAdvisor" class="hn-advisor">
+  <div class="hn-advisor-head"><strong>HN Check & Advies</strong><span>gratis</span></div>
+  <div id="hnChecks"></div>
+  <button id="runChecks" class="advisor-action">Controle uitvoeren</button>
+  <button id="copyAiPrompt" class="advisor-ai">AI-advies voorbereiden</button>
+  <small>Geen API nodig. De prompt wordt gekopieerd zodat je hem gratis in ChatGPT of Claude kunt gebruiken.</small>
+</div>
+<script src="/assets/hn-free-advisor.js" defer></script>
   </aside>
 </div>
 </main>
