@@ -187,7 +187,7 @@
                 </span>
 
                 <a
-                  href="/kennisbank?country=${encodeURIComponent(countryFilterId)}"
+                  href="/navigatie?country=${encodeURIComponent(countryFilterId)}"
                   class="country-link"
                 >
                   Bekijk land →
