@@ -2,7 +2,7 @@
 'use strict';
 function db(){return window.hijrahSupabase||null}
 function esc(v){return String(v==null?'':v).replace(/[&<>"]/g,function(m){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]})}
-function path(){return location.pathname.replace(/\\/$/,'')||'/'}
+function path(){return location.pathname.replace(/\/$/,'')||'/'}
 function root(){return document.querySelector('main')||document.querySelector('[role="main"]')||document.body}
 function applyText(row){
   try{
