@@ -1,0 +1,108 @@
+/* HN GLOBAL RESPONSIVE FOUNDATION */
+:root{
+  --hn-content-max:1180px;
+  --hn-gutter:clamp(14px,3vw,32px);
+  --hn-section-gap:clamp(48px,7vw,96px);
+}
+html{width:100%;max-width:100%;overflow-x:hidden;-webkit-text-size-adjust:100%}
+body{width:100%;max-width:100%;overflow-x:hidden}
+img,svg,video,canvas{max-width:100%;height:auto}
+iframe{max-width:100%;border:0}
+picture{display:block;max-width:100%}
+button,input,select,textarea{max-width:100%}
+textarea{resize:vertical}
+pre,code{max-width:100%;overflow:auto}
+table{max-width:100%}
+a{overflow-wrap:anywhere}
+
+/* Common HN containers */
+.container,.wrap,.hn-nav-inner{width:min(var(--hn-content-max),calc(100% - (var(--hn-gutter) * 2)));margin-inline:auto}
+.section,.hero{width:100%}
+.section-grid,.grid,.cards,.card-grid,.cities,.topics,.results,.results-grid,.directory-grid{
+  min-width:0;
+}
+.grid,.cards,.card-grid,.results-grid,.directory-grid{
+  grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));
+}
+.flex,.row,.hero-actions,.filter,.filters,.actions{
+  min-width:0;
+}
+.flex,.row,.hero-actions,.filter,.filters,.actions{flex-wrap:wrap}
+.card,.country-card,.topic-card,.result-card,.fiche-card,.article-card{min-width:0;overflow-wrap:anywhere}
+
+/* Long content never creates horizontal page scrolling */
+main,section,header,footer,article,aside,nav{min-width:0}
+h1,h2,h3,h4,h5,h6,p,li{overflow-wrap:anywhere}
+h1{font-size:clamp(2rem,6vw,4.75rem)}
+h2{font-size:clamp(1.55rem,4vw,2.75rem)}
+h3{font-size:clamp(1.15rem,2.5vw,1.55rem)}
+
+/* Forms */
+input,select,textarea{width:100%;min-width:0}
+.form-row,.form-grid,.fields,.field-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));
+  gap:14px;
+}
+label{min-width:0}
+button,.btn{touch-action:manipulation}
+
+/* Responsive media and maps */
+.map,.map-container,.map-wrap,.embed,.video,.media{
+  width:100%;
+  max-width:100%;
+  min-width:0;
+}
+.map iframe,.map-container iframe,.map-wrap iframe,.embed iframe,.video iframe{
+  width:100%;
+  min-height:min(70vh,620px);
+}
+
+/* Tables become usable on phones */
+.table-wrap{width:100%;max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.table-wrap table{min-width:620px}
+.responsive-table{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.responsive-table table{min-width:620px}
+
+/* Navigation and mobile UI */
+.hn-nav-inner{gap:12px}
+.hn-brand{min-width:0}
+.hn-brand span:last-child{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hn-mobile-panel{overflow-y:auto;-webkit-overflow-scrolling:touch}
+
+/* Cards/list layouts collapse naturally */
+.two,.three,.four,.columns,.content-grid,.split,.dashboard-grid{
+  min-width:0;
+}
+.two,.three,.four,.columns,.content-grid,.split,.dashboard-grid{
+  grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));
+}
+
+/* Prevent oversized fixed controls */
+[style*="width:100vw"],[style*="width: 100vw"]{max-width:100% !important}
+[style*="min-width"]{max-width:100%}
+
+/* Small screens */
+@media(max-width:700px){
+  :root{--hn-gutter:12px}
+  .desktop-only{display:none!important}
+  .mobile-full{width:100%!important}
+  .hide-mobile{display:none!important}
+  .stack-mobile{display:flex!important;flex-direction:column!important;align-items:stretch!important}
+  .stack-mobile>*{width:100%!important}
+  .hero-actions .btn,.hero-actions a,.actions .btn{max-width:100%}
+  .btn{min-height:44px}
+  .table-wrap,.responsive-table{margin-inline:calc(var(--hn-gutter) * -1);width:calc(100% + (var(--hn-gutter) * 2));padding-inline:var(--hn-gutter)}
+}
+@media(max-width:480px){
+  .container,.wrap,.hn-nav-inner{width:calc(100% - 20px)}
+  .hero{padding-top:48px;padding-bottom:48px}
+  .section{padding-top:46px;padding-bottom:46px}
+  .card,.country-card{padding:17px}
+  .hero h1{letter-spacing:-.04em}
+}
+
+/* Respect reduced motion */
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{scroll-behavior:auto!important;transition-duration:.01ms!important;animation-duration:.01ms!important;animation-iteration-count:1!important}
+}
