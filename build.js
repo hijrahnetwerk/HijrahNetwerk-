@@ -54,6 +54,8 @@ const translateTag = '<script src="/assets/hn-translate.js"></script>';
 const translateStyleTag = '<link rel="stylesheet" href="/assets/hn-translate.css">';
 const editProposalTag = '<script src="/assets/hn-edit-proposals.js"></script>';
 const fontsTag = '<link rel="stylesheet" href="/assets/fonts.css">';
+const globalResponsiveTag = '<link rel="stylesheet" href="/assets/hn-global-responsive.css">';
+const globalRuntimeTag = '<script src="/assets/hn-global-runtime.js"></script>';
 const adminBarTag = '<script src="/assets/hn-admin-bar.js"></script>';
 const adminBarStyleTag = '<link rel="stylesheet" href="/assets/hn-admin-bar.css">';
 const pageEngineTag = '<script src="/assets/hn-page-engine.js"></script>';
@@ -86,6 +88,8 @@ for (const file of htmlFiles) {
     !html.includes(translateStyleTag) ? translateStyleTag : '',
     !html.includes(editProposalTag) ? editProposalTag : '',
     !html.includes(fontsTag) ? fontsTag : '',
+    !html.includes(globalResponsiveTag) ? globalResponsiveTag : '',
+    !html.includes(globalRuntimeTag) ? globalRuntimeTag : '',
     !html.includes(adminBarTag) ? adminBarTag : '',
     !html.includes(adminBarStyleTag) ? adminBarStyleTag : ''
   ].filter(Boolean).join('\n') + '\n';
