@@ -1,6 +1,16 @@
 (function(){
   'use strict';
 
+  function loadSiteUX(){
+    if(!document.querySelector('link[data-hn-ux]')){
+      const link=document.createElement('link'); link.rel='stylesheet'; link.href='/assets/hn-ux.css'; link.dataset.hnUx='true'; document.head.appendChild(link);
+    }
+    if(!document.querySelector('script[data-hn-ux]')){
+      const script=document.createElement('script'); script.src='/assets/hn-ux.js'; script.defer=true; script.dataset.hnUx='true'; document.head.appendChild(script);
+    }
+  }
+  loadSiteUX();
+
   const fallbackItems = [
     {label:'Landen & Steden', href:'/landen'},
     {label:'Hijrah Navigatie', href:'/navigatie'},
