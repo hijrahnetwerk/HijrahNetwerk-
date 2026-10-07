@@ -51,3 +51,7 @@
 .component-meta div{display:flex;justify-content:space-between;gap:12px;padding:3px 0;font-size:12px}
 .component-meta span{color:#746b62}
 .component-meta code{color:#674C2E;word-break:break-all}
+
+
+/* HN Admin UX: restrained motion, focus states and reduced-motion support. */
+.builder :where(button,.page,.tool,input,textarea,select){transition:transform 160ms cubic-bezier(.22,.61,.36,1),box-shadow 160ms ease,border-color 160ms ease,background-color 160ms ease,color 160ms ease}.builder :where(button,.page,.tool):hover{transform:translateY(-1px)}.builder :where(button,.page,.tool):active{transform:translateY(0) scale(.985)}.builder :where(button,.page,.tool,input,textarea,select):focus-visible{outline:3px solid var(--g);outline-offset:2px}.builder .panel,.builder .inspector-section,.builder .selection-state,.builder .version-row{animation:hnAdminIn 260ms ease both}@keyframes hnAdminIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}@media(prefers-reduced-motion:reduce){.builder *,.builder *::before,.builder *::after{animation-duration:.001ms!important;transition-duration:.001ms!important}}
