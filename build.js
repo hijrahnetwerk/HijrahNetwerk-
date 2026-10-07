@@ -60,7 +60,7 @@ const adminBarTag = '<script src="/assets/hn-admin-bar.js"></script>';
 const adminBarStyleTag = '<link rel="stylesheet" href="/assets/hn-admin-bar.css">';
 const pageEngineTag = '<script src="/assets/hn-page-engine.js"></script>';
 const visualEditorTag = '<script src="/assets/hn-visual-editor-runtime.js"></script>';
-const faviconTag = '<link rel="icon" type="image/png" href="/assets/logo-color.pngneddkleinn.png">\n<link rel="apple-touch-icon" href="/assets/logo-color.pngneddkleinn.png">';
+const faviconTag = '<link rel="icon" type="image/png" href="/assets/EEN%20NETWERK%20VOOR%20EMIGRANTEN%20%283%29.png">\n<link rel="apple-touch-icon" href="/assets/EEN%20NETWERK%20VOOR%20EMIGRANTEN%20%283%29.png">';
 
 const htmlFiles = fs.readdirSync(__dirname).filter(name => name.endsWith('.html'));
 let processed = 0;
