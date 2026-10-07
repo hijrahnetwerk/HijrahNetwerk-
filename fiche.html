@@ -460,9 +460,26 @@ async function renderFiche(){
   ]);
 
   if((r.error||!r.data) && routeSlug && !legacyId){
-    let aliasQuery=db().from('topic').select(topicSelect).ilike('slug',decodeURIComponent(routeSlug)+'-%');
+    const requestedSlug=decodeURIComponent(routeSlug);
+    let aliasQuery=db().from('topic').select(topicSelect);
     if(!adminViewer)aliasQuery=aliasQuery.eq('published',true);
-    r=await aliasQuery.limit(1).maybeSingle();
+    const hierarchicalCity=(ci.data||[]).find(y=>slugify(y.name)===slugify(hierarchicalCitySlug));
+    const hierarchicalCategory=(ca.data||[]).find(y=>slugify(y.name)===slugify(hierarchicalCategorySlug));
+    if(hierarchicalCity?.id)aliasQuery=aliasQuery.eq('city_id',hierarchicalCity.id);
+    if(hierarchicalCategory?.id)aliasQuery=aliasQuery.eq('category_id',hierarchicalCategory.id);
+    const aliasResult=await aliasQuery.limit(200);
+    if(!aliasResult.error && Array.isArray(aliasResult.data)){
+      const requestedTokens=new Set(slugify(requestedSlug).split('-').filter(t=>t.length>2));
+      const ranked=aliasResult.data.map(topic=>{
+        const tokens=slugify(publicSlug(topic.slug||'')).split('-').filter(t=>t.length>2);
+        const matches=tokens.filter(t=>requestedTokens.has(t)).length;
+        const coverage=tokens.length?matches/tokens.length:0;
+        const prefix=requestedSlug.startsWith(String(topic.slug||'')) || String(topic.slug||'').startsWith(requestedSlug);
+        return {topic,matches,coverage,prefix};
+      }).filter(x=>x.matches>=2 && (x.coverage>=0.75 || x.prefix))
+        .sort((a,b)=>Number(b.prefix)-Number(a.prefix)||b.coverage-a.coverage||b.matches-a.matches);
+      if(ranked[0])r={data:ranked[0].topic,error:null};
+    }
   }
 
   if(r.error||!r.data){
@@ -475,6 +492,15 @@ async function renderFiche(){
 
   const x=r.data,d=data(x);
   const id=x.id;
+  const canonicalCityName=(ci.data||[]).find(y=>y.id===x.city_id)?.name||'';
+  const canonicalCategoryName=(ca.data||[]).find(y=>y.id===x.category_id)?.name||'';
+  const canonicalFichePath=hierarchicalFicheUrl(canonicalCityName,d.neighborhood,canonicalCategoryName,publicSlug(x.slug||x.id));
+  if(isHierarchicalRoute && slugify(routeSlug)!==slugify(publicSlug(x.slug||x.id))){
+    const canonicalUrl=canonicalFichePath;
+    if(location.pathname!==canonicalUrl){
+      history.replaceState({},'',canonicalUrl);
+    }
+  }
   const ficheSlug=publicSlug(x.slug||id);
   const country=(c.data||[]).find(y=>y.id===x.country_id)?.name||'';
   const city=(ci.data||[]).find(y=>y.id===x.city_id)?.name||'';
