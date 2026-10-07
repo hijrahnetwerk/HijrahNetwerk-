@@ -367,6 +367,10 @@ window.seedNajateHadiBoukoula=async()=>safe('Dr. Najate Hadi Boukoula',()=>seedD
 
 async function init(){
   wireNavigation();
+  $('closeSubmissionReview')?.addEventListener('click',()=>{const m=$('submissionReviewModal');if(m){m.hidden=true;document.body.style.overflow=''}currentSubmissionReview=null});
+  $('reviewApproveSubmission')?.addEventListener('click',()=>{if(currentSubmissionReview)approveSubmission(currentSubmissionReview.id)});
+  $('reviewRejectSubmission')?.addEventListener('click',async()=>{if(!currentSubmissionReview)return;const reason=window.prompt('Waarom wijs je deze inzending af? (optioneel)');if(reason===null)return;const r=await db().from('submissions').update({status:'rejected',reviewed_at:new Date().toISOString(),updated_at:new Date().toISOString(),admin_notes:reason||'Afgewezen door HN.'}).eq('id',currentSubmissionReview.id);if(r.error)return msg(r.error.message,'error');const m=$('submissionReviewModal');if(m){m.hidden=true;document.body.style.overflow=''}currentSubmissionReview=null;await loadSubmissions();msg('Inzending afgewezen.')});
+  if(!db()){msg('Supabase is niet beschikbaar.','error');return}
   if(!db()){msg('Supabase is niet beschikbaar.','error');return}
   try{
     if(!(await checkAdmin()))return;
