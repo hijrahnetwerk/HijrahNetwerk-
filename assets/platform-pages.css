@@ -1,7 +1,7 @@
 :root{
   --hn-brown:#674C2E;
   --hn-rust:#DD842A;
-  --hn-gold:#D4AF37;
+  --hn-gold:#C6A15B;
   --hn-white:#FFFFFF;
   --hn-max:1180px;
   --hn-radius:20px;
@@ -66,7 +66,7 @@ button,input,select,textarea{font:inherit}
   background:
     radial-gradient(circle at 88% 12%,rgba(212,175,55,.32),transparent 26%),
     radial-gradient(circle at 72% 90%,rgba(221,132,42,.22),transparent 30%),
-    linear-gradient(135deg,var(--hn-brown) 0%,#7b5931 42%,var(--hn-rust) 76%,var(--hn-gold) 100%);
+    linear-gradient(135deg,var(--hn-brown) 0%,#674C2E 42%,var(--hn-rust) 76%,var(--hn-gold) 100%);
   color:#fff;
 }
 .hero:after{
