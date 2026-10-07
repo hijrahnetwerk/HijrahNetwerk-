@@ -85,6 +85,20 @@ async function navigationMarkup(s){
  }).join(""):'<div class="hn-public-empty">Geen passende HN-informatie gevonden. Probeer een andere zoekterm of filter.</div>';
  return '<div class="hn-navigation-component"><form id="hn-navigation-form"><input id="hn-navigation-q" value="'+esc(q)+'" placeholder="Zoek een stad, onderwerp, school, zorg, wonen..."><select id="hn-navigation-city">'+optionsCity+'</select><select id="hn-navigation-category">'+optionsCat+'</select><button>Zoeken</button></form><div class="hn-navigation-results">'+cards+"</div></div>";
 }
+async function smartSearchMarkup(s){
+ var limit=Math.min(Math.max(Number((s.content||{}).data_limit)||12,1),30);
+ var r=await db.from("topic").select("id,title,slug,summary,information_type,city_id,country_id,category_id,content,visibility,cities(name),countries(name),categories(name),subcategories(name)").eq("published",true).order("updated_at",{ascending:false}).limit(100);
+ var rows=r.error?[]:(r.data||[]);
+ function norm(v){return String(v||"").toLowerCase().normalize("NFD").replace(/[\\u0300-\\u036f]/g,"");}
+ function card(x,q){
+   var words=norm(q).split(/\\s+/).filter(Boolean), text=norm([x.title,x.summary,x.information_type,x.content,x.cities&&x.cities.name,x.countries&&x.countries.name,x.categories&&x.categories.name,x.subcategories&&x.subcategories.name].join(" "));
+   var score=words.reduce(function(n,w){return n+(text.includes(w)?1:0)},0); return {x:x,score:score};
+ }
+ var q=new URLSearchParams(location.search).get("q")||"";
+ var results=q?rows.map(function(x){return card(x,q)}).filter(function(x){return x.score>0}).sort(function(a,b){return b.score-a.score}).slice(0,limit).map(function(x){return x.x}):[];
+ var chips=["huren in Tanger","scholen in Marokko","zorg in Tanger","verblijfsvergunning"];
+ return '<div class="hn-navigation-component"><form id="hn-smart-search-form"><input id="hn-smart-search-q" value="'+esc(q)+'" placeholder="Bijv. ik zoek een school in Tanger"><button>Zoeken</button></form><div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0">'+chips.map(function(x){return '<button type="button" class="hn-smart-chip" data-q="'+esc(x)+'">'+esc(x)+'</button>'}).join("")+'</div><div class="hn-navigation-results">'+(q?(results.length?results.map(function(x){return topicCard(x,x.visibility==="fiche_only"?"fiches":"articles")}).join(""):'<div class="hn-public-empty">Geen passende informatie gevonden. Probeer andere woorden.</div>'):'<div class="hn-public-empty">Typ hierboven wat je zoekt.</div>')+'</div></div>';
+}
 async function comparisonMarkup(){
  var cities=await fetchCities(30,{});
  var opts='<option value="">Kies een stad</option>'+cities.map(function(x){return '<option value="'+esc(x.id)+'">'+esc(x.name)+"</option>"}).join("");
@@ -100,6 +114,7 @@ async function stepsMarkup(){
 async function render(s){
  var c=s.content||{},body="",dataSource=c.data_source||(s.data&&s.data.source)||"";
  if(s.section_type==="navigation")body=await navigationMarkup(s);
+ else if(s.section_type==="smart_search")body=await smartSearchMarkup(s);
  else if(s.section_type==="directory"||s.section_type==="cities"){
    var rows=await fetchCities(c.data_limit,{});
    body='<div class="hn-public-data-grid">'+(rows.length?rows.map(function(x){return '<article><strong>'+esc(x.name)+'</strong>'+(x.description?'<p>'+esc(String(x.description).slice(0,240))+"</p>":"")+'<a href="/stad/'+encodeURIComponent(x.slug||x.id)+'">Stad bekijken →</a></article>'}).join(""):"<div class='hn-public-empty'>Er zijn nog geen steden beschikbaar.</div>")+"</div>";
@@ -124,6 +139,8 @@ async function render(s){
  el.innerHTML=(s.title?'<h2>'+esc(s.title)+"</h2>":"")+body;return el;
 }
 function bindInteractive(){
+ var sf=document.getElementById("hn-smart-search-form");if(sf)sf.addEventListener("submit",function(e){e.preventDefault();var q=document.getElementById("hn-smart-search-q").value.trim();var p=new URLSearchParams(location.search);if(q)p.set("q",q);else p.delete("q");location.search=p.toString()});
+ document.querySelectorAll(".hn-smart-chip").forEach(function(b){b.addEventListener("click",function(){var p=new URLSearchParams(location.search);p.set("q",b.dataset.q||"");location.search=p.toString()})});
  var f=document.getElementById("hn-navigation-form");if(f)f.addEventListener("submit",function(e){e.preventDefault();var p=new URLSearchParams(location.search);var q=document.getElementById("hn-navigation-q").value.trim(),c=document.getElementById("hn-navigation-city").value,k=document.getElementById("hn-navigation-category").value;if(q)p.set("q",q);else p.delete("q");if(c)p.set("city",c);else p.delete("city");if(k)p.set("category",k);else p.delete("category");location.search=p.toString()});
  document.querySelectorAll("[data-hn-step]").forEach(function(x){var k="hn-public-steps",s=JSON.parse(localStorage.getItem(k)||"{}");x.checked=!!s[x.dataset.hnStep];x.addEventListener("change",function(){s[x.dataset.hnStep]=x.checked;localStorage.setItem(k,JSON.stringify(s));});});
  document.querySelectorAll(".hn-comparison").forEach(function(box){var data=JSON.parse(box.getAttribute("data-cities")||"[]"),a=box.querySelector(".hn-compare-a"),b=box.querySelector(".hn-compare-b"),out=box.querySelector(".hn-comparison-output");function update(){var x=data.find(function(z){return z.id===a.value}),y=data.find(function(z){return z.id===b.value});if(!x||!y){out.innerHTML="<p>Kies twee steden om ze naast elkaar te bekijken.</p>";return}out.innerHTML="<table><thead><tr><th>Onderdeel</th><th>"+esc(x.name)+"</th><th>"+esc(y.name)+"</th></tr></thead><tbody><tr><td>Beschrijving</td><td>"+esc(x.description)+"</td><td>"+esc(y.description)+"</td></tr><tr><td>HN-opmerking</td><td>Vergelijk zelf de concrete fiches en ervaringen.</td><td>Vergelijk zelf de concrete fiches en ervaringen.</td></tr></tbody></table>"}a.addEventListener("change",update);b.addEventListener("change",update)});
