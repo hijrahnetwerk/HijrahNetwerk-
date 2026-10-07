@@ -40,3 +40,5 @@
 .hn-db-preview span{font-size:9px;letter-spacing:.08em;color:#9B7735;font-weight:800}
 .hn-db-preview b{font-size:13px;color:#674C2E}.hn-db-preview small{font-size:10px;color:#674C2E}
 .hn-builder-preview h2{color:#674C2E;margin:0 0 12px}
+
+.hn-builder-preview[data-hn-component-id]{cursor:grab;position:relative}.hn-builder-preview[data-hn-component-id]:active{cursor:grabbing}.hn-builder-preview.hn-component-dragging{opacity:.55}.hn-builder-preview.hn-component-drop{outline:3px dashed #DD842A!important;outline-offset:3px}.hn-builder-preview[data-hn-component-id]::before{content:"HN-component";position:absolute;left:0;top:0;z-index:3;font:700 9px Inter,Arial,sans-serif;color:#fff;background:#674C2E;padding:3px 6px;border-radius:0 0 5px 0}.hn-db-preview{cursor:default}
