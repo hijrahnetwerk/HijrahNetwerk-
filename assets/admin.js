@@ -235,6 +235,57 @@ function syncFicheForm(){
  if($('topicContent'))$('topicContent').required=!fiche;
  if($('topicFicheHint'))$('topicFicheHint').style.display=fiche?'block':'none';
  if(typeof syncTopicContentType==='function')syncTopicContentType();
+ if(!fiche)return;
+
+ const cat=($('topicCategory')?.selectedOptions?.[0]?.textContent||'').toLowerCase();
+ const sub=($('topicSubcategory')?.selectedOptions?.[0]?.textContent||'').toLowerCase();
+ const service=($('ficheServiceType')?.value||'').toLowerCase();
+ const title=($('topicTitle')?.value||'').toLowerCase();
+ const info=($('topicInformationType')?.value||'').toLowerCase();
+ const context=[cat,sub,service,title].join(' ');
+
+ const matches={
+   health:/gezondheid|zorg|arts|dokter|huisarts|ziekenhuis|kliniek|apotheek|tandarts|medisch|verlos|fysio|therap|laboratorium/.test(context),
+   education:/onderwijs|school|universiteit|opleiding|crèche|creche|kinderopvang|opvang|madrasa|madrasah/.test(context),
+   mosque:/moskee|masjid|islamitisch centrum|islamic center|qur.?an|koran|arabisch centrum/.test(context),
+   housing:/wonen|woning|huis|appartement|studio|huur|verhuur|vastgoed|immobilier|makelaar/.test(context),
+   shop:/winkel|supermarkt|boodschappen|restaurant|bakker|slager|markt|eten|food|shop/.test(context),
+   experience:/ervaring|review|aanbeveling|persoonlijke tip/.test(info)||/ervaring|review/.test(context)
+ };
+
+ const groups={
+   health:['doctor_name','specialties','additional_qualification','for_children','appointment','walk_in','home_visits','teleconsultation','emergency','insurance','equipment','accreditation'],
+   education:['school_ages','school_gender','school_curriculum','school_teaching_languages','school_fees','school_admission','school_transport'],
+   mosque:['mosque_women','mosque_friday','mosque_lessons','mosque_children','mosque_languages','mosque_parking'],
+   housing:['housing_type','housing_price','housing_furnished','housing_contract','housing_deposit','housing_utilities','housing_area'],
+   shop:['shop_products','shop_halal','shop_delivery','shop_payment','shop_notes'],
+   experience:['experience_situation','experience_date','experience_recommend','experience_rating','experience_pros','experience_cons']
+ };
+
+ const specific=new Set(Object.values(groups).flat());
+ ficheFields.forEach(k=>{
+   const el=$(ficheFieldId(k)); const wrap=el?.closest('.field');
+   if(wrap&&specific.has(k))wrap.style.display='none';
+ });
+ Object.keys(groups).forEach(group=>{
+   if(!matches[group])return;
+   groups[group].forEach(k=>{
+     const el=$(ficheFieldId(k)); const wrap=el?.closest('.field');
+     if(wrap)wrap.style.display='';
+   });
+ });
+
+ const headers=[...document.querySelectorAll('#ficheFields .form-grid > .field.full')];
+ headers.forEach(h=>h.style.display='none');
+ headers.forEach(h=>{
+   const t=(h.textContent||'').toLowerCase();
+   if((matches.education&&t.includes('onderwijs'))||(matches.mosque&&t.includes('moskee'))||(matches.housing&&t.includes('wonen'))||(matches.shop&&t.includes('winkel'))||(matches.experience&&t.includes('ervaring')))h.style.display='';
+ });
+
+ const hint=$('#ficheContextHint');
+ if(hint)hint.textContent=Object.values(matches).some(Boolean)
+   ? 'De specifieke velden hieronder zijn aangepast aan het gekozen onderwerp. Algemene gegevens blijven beschikbaar.'
+   : 'Kies een categorie of subcategorie om extra, onderwerp-specifieke velden te tonen.';
 }
 window.editTopic=id=>{const x=state.topics.find(x=>x.id===id);if(!x)return;$('topicId').value=x.id;$('topicTitle').value=x.title||'';$('topicContentType').value=x.visibility==='fiche_only'?'fiche':'article';$('topicCountry').value=x.country_id||'';refreshTopicSelects();$('topicCountry').value=x.country_id||'';$('topicCity').value=x.city_id||'';$('topicCategory').value=x.category_id||'';$('topicSubcategory').value=x.subcategory_id||'';$('topicInformationType').value=x.information_type||'Algemene informatie';$('topicVisibility').value=x.visibility||'public';$('topicStatus').value=x.status||'needs_research';$('topicReviewer').value=x.reviewer_id||'';$('topicSource').value=x.source||'';$('topicSourceUrl').value=x.source_url||'';$('topicSummary').value=x.summary||'';$('topicContent').value=x.content||'';setFicheData(x.card_data);syncFicheForm();$('topicPublished').checked=!!x.published;$('topicFormTitle').textContent='Topic bewerken';$('cancelTopic').hidden=false;showPage('topics')};
 window.previewTopic=id=>{const x=state.topics.find(x=>x.id===id);if(!x)return;window.open('/kennisbank?topic='+encodeURIComponent(id),'_blank','noopener');};
@@ -247,6 +298,10 @@ function syncTopicContentType(){
   if($('topicFicheHint'))$('topicFicheHint').style.display=fiche?'block':'none';
 }
 $('topicContentType')?.addEventListener('change',syncFicheForm);
+['topicCategory','topicSubcategory','topicInformationType','ficheServiceType','topicTitle'].forEach(id=>{
+ $(id)?.addEventListener('change',syncFicheForm);
+ $(id)?.addEventListener('input',syncFicheForm);
+});
 
 $('cancelTopic')?.addEventListener('click',()=>{$('topicForm').reset();$('topicId').value='';setFicheData({});syncFicheForm();$('topicFormTitle').textContent='Nieuw topic';$('cancelTopic').hidden=true});
 
