@@ -34,6 +34,8 @@ const adminBarTag = '<script src="/assets/hn-admin-bar.js"></script>';
 const adminBarStyleTag = '<link rel="stylesheet" href="/assets/hn-admin-bar.css">';
 const pageEngineTag = '<script src="/assets/hn-page-engine.js"></script>';
 const visualEditorTag = '<script src="/assets/hn-visual-editor-runtime.js"></script>';
+const visualPolishStyleTag = '<link rel="stylesheet" href="/assets/hn-visual-polish.css">';
+const motionTag = '<script src="/assets/hn-motion.js"></script>';
 
 // Altijd het echte HN-kleurenlogo gebruiken als favicon. De versieparameter
 // voorkomt dat browsers een oude favicon uit cache blijven tonen.
@@ -75,6 +77,8 @@ for (const file of htmlFiles) {
     !html.includes(globalRuntimeTag) ? globalRuntimeTag : '',
     !html.includes(adminBarTag) ? adminBarTag : '',
     !html.includes(adminBarStyleTag) ? adminBarStyleTag : '',
+    !html.includes(visualPolishStyleTag) ? visualPolishStyleTag : '',
+    !html.includes(motionTag) ? motionTag : '',
     faviconTag
   ].filter(Boolean).join('\\n') + '\\n';
 
