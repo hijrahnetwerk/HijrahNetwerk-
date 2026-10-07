@@ -1571,6 +1571,37 @@ th{
 
 </section>
 
+<!-- INZENDING REVIEW MODAL -->
+<div id="submissionReviewModal" hidden style="position:fixed;inset:0;z-index:2000;background:rgba(43,36,28,.48);padding:24px;overflow:auto;">
+  <div style="max-width:920px;margin:5vh auto;background:#fff;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.2);overflow:hidden;">
+    <div style="padding:20px 24px;border-bottom:1px solid #e8e1d8;display:flex;align-items:center;justify-content:space-between;gap:15px;">
+      <div><div style="font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#DD842A;">HN REVIEW</div><h3 id="submissionReviewTitle" style="margin:4px 0 0;">Inzending beoordelen</h3></div>
+      <button type="button" class="button button-secondary" id="closeSubmissionReview">Sluiten</button>
+    </div>
+    <div style="padding:24px;display:grid;gap:18px;">
+      <div id="submissionReviewMeta" style="padding:14px;background:#faf7f3;border:1px solid #e8e1d8;border-radius:10px;font-size:13px;line-height:1.6;"></div>
+      <div>
+        <label for="submissionOriginalText" style="display:block;font-weight:700;margin-bottom:7px;">Oorspronkelijke inzending</label>
+        <textarea id="submissionOriginalText" rows="7" readonly style="width:100%;box-sizing:border-box;padding:12px;border:1px solid #e8e1d8;border-radius:10px;background:#f7f5f2;line-height:1.55;"></textarea>
+      </div>
+      <div>
+        <label for="submissionPublicText" style="display:block;font-weight:700;margin-bottom:7px;">Openbare versie</label>
+        <div class="hint" style="margin-bottom:7px;">Deze tekst wordt zichtbaar in HN. Verwijder namen, telefoonnummers en andere herkenbare persoonsgegevens wanneer dat nodig is.</div>
+        <textarea id="submissionPublicText" rows="10" style="width:100%;box-sizing:border-box;padding:12px;border:1px solid #674C2E;border-radius:10px;line-height:1.55;"></textarea>
+      </div>
+      <div>
+        <label for="submissionAdminNotes" style="display:block;font-weight:700;margin-bottom:7px;">HN-notitie</label>
+        <textarea id="submissionAdminNotes" rows="4" placeholder="Bijvoorbeeld: bron gecontroleerd, locatie nog controleren, contact opgenomen..." style="width:100%;box-sizing:border-box;padding:12px;border:1px solid #e8e1d8;border-radius:10px;line-height:1.55;"></textarea>
+      </div>
+      <div id="submissionReviewContact" style="font-size:12px;color:#6f665d;"></div>
+      <div style="display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap;border-top:1px solid #e8e1d8;padding-top:18px;">
+        <button type="button" class="button button-danger" id="reviewRejectSubmission">Afwijzen</button>
+        <button type="button" class="button button-primary" id="reviewApproveSubmission">Goedkeuren & fiche maken</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- SYNC -->
 
 <section class="page" id="page-sync">
