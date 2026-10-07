@@ -784,7 +784,8 @@ window.HN_STAPPENPLAN_VERSION='1';
     if(document.getElementById('hnRelevancePanel')) load();
   },15000);
 })();
-\n
+
+
 
 /* HN Mijn Hijrah: persoonlijke situatie + persoonlijke route */
 (function(){
