@@ -571,7 +571,7 @@ function bind(){
   $("dataLimit").oninput=function(e){edit("data_limit",Math.max(1,Math.min(50,Number(e.target.value)||6)));};
   $("dup").onclick=function(){
     if(selected<0)return;
-    var clone=JSON.parse(JSON.stringify(sections[selected]));clone.id=null;clone.title=(clone.title||"Blok")+" kopie";clone.sort_order=sections.length;sections.push(clone);selected=sections.length-1;renderPreview();inspect();
+    var clone=JSON.parse(JSON.stringify(sections[selected]));clone.id=null;clone.component_id=stableId();clone.component_type=clone.component_type||clone.section_type;clone.content=clone.content||{};clone.content.component_id=clone.component_id;clone.title=(clone.title||"Blok")+" kopie";clone.sort_order=sections.length;sections.push(clone);selected=sections.length-1;renderPreview();inspect();
   };
   $("remove").onclick=function(){
     if(selected<0)return;
