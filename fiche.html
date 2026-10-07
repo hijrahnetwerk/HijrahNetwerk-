@@ -512,6 +512,18 @@ async function renderFiche(){
   const breadcrumbArea=d.neighborhood||breadcrumbLabel(hierarchicalAreaSlug);
   const breadcrumbCategory=cat||breadcrumbLabel(hierarchicalCategorySlug);
   const exps=Array.isArray(d.experiences)?d.experiences:[];
+  const experienceUserIds=[...new Set(exps.map(e=>e?.submitted_by||e?.user_id).filter(Boolean))];
+  const experienceProfiles={};
+  if(experienceUserIds.length){
+    const ep=await db().from('profiles').select('id,display_name,first_name,last_name,application_status,profile_visibility,show_contributions,show_status,hn_status').in('id',experienceUserIds).eq('application_status','approved').eq('profile_visibility',true).eq('show_contributions',true);
+    (ep.data||[]).forEach(p=>experienceProfiles[p.id]=p);
+  }
+  const experienceStatusSlugs=[...new Set(Object.values(experienceProfiles).map(p=>p.hn_status).filter(Boolean))];
+  const experienceStatusMap={};
+  if(experienceStatusSlugs.length){
+    const es=await db().from('hn_statuses').select('slug,name,show_on_profile').in('slug',experienceStatusSlugs).eq('active',true);
+    (es.data||[]).forEach(s=>experienceStatusMap[s.slug]=s);
+  }
   const infoType=x.information_type||'Praktische informatie';
 
   let practiceArticleId = null;
@@ -814,7 +826,12 @@ async function renderFiche(){
       const fullText=String(e.text||e.content||'').trim();
       const shortText=fullText.length>240?fullText.slice(0,240).trim()+'…':fullText;
       const more=fullText.length>240?'<details style="margin-top:8px"><summary style="cursor:pointer;font-size:12px;color:var(--brown-dark)">Lees volledige ervaring</summary><div class="exp-text" style="margin-top:8px">'+esc(fullText)+'</div></details>':'';
-      return '<div class="experience"><div class="stars">'+('★'.repeat(rating)+('☆'.repeat(5-rating)))+'</div><div class="exp-text">'+esc(shortText)+'</div>'+more+'<div class="exp-meta">Ingediend door: '+esc(e.name||'Anoniem')+(e.date?' · '+esc(e.date):'')+'</div></div>';
+      const authorId=e.submitted_by||e.user_id;
+      const author=authorId?experienceProfiles[authorId]:null;
+      const authorName=author?(author.display_name||[author.first_name,author.last_name].filter(Boolean).join(' ')||'HN-lid'):(e.name||'Anoniem');
+      const authorStatus=author&&author.show_status&&experienceStatusMap[author.hn_status]?.show_on_profile?'<span class="badge gray">'+esc(experienceStatusMap[author.hn_status].name)+'</span>':'';
+      const authorHtml=author?'<a href="/profiel?id='+encodeURIComponent(author.id)+'" style="color:inherit;font-weight:700">'+esc(authorName)+'</a>':esc(authorName);
+      return '<div class="experience"><div class="stars">'+('★'.repeat(rating)+('☆'.repeat(5-rating)))+'</div><div class="exp-text">'+esc(shortText)+'</div>'+more+'<div class="exp-meta">Gedeeld door: '+authorHtml+(authorStatus?' · '+authorStatus:'')+(e.date?' · '+esc(e.date):'')+'</div></div>';
     }).join('');
   }else{
     html+='<p class="empty-note">Er zijn nog geen ervaringen uit de HN-community toegevoegd.</p>';
