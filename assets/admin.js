@@ -297,7 +297,7 @@ async function finalizeSubmissionApproval(s,publicContent,adminNotes){
    const t=await db().from('topic').select('id,title,card_data').eq('id',s.target_topic_id).maybeSingle();
    if(t.error||!t.data){msg(t.error?.message||'De gekoppelde HN-vermelding bestaat niet meer.','error');return false}
    const card={...(t.data.card_data||{})};const experiences=Array.isArray(card.experiences)?card.experiences.slice():[];
-   experiences.push({text:publicContent.trim(),name:'Anoniem',date:new Date().toLocaleDateString('nl-NL'),source:'community',rating:Number(s.details?.expRating||0),details:s.details||{}});
+   experiences.push({text:publicContent.trim(),name:s.submitter_name||'HN-lid',submitter_id:s.submitted_by||null,date:new Date().toLocaleDateString('nl-NL'),source:'community',rating:Number(s.details?.expRating||0),details:s.details||{}});
    const upTopic=await db().from('topic').update({card_data:{...card,experiences},updated_at:new Date().toISOString()}).eq('id',t.data.id);
    if(upTopic.error){msg('Ervaring kon niet aan de fiche worden toegevoegd: '+upTopic.error.message,'error');return false}
    const up=await db().from('submissions').update({status:'approved',reviewed_at:new Date().toISOString(),updated_at:new Date().toISOString(),admin_notes:adminNotes||'Gepubliceerd als community-ervaring bij de gekoppelde HN-vermelding.'}).eq('id',s.id);
