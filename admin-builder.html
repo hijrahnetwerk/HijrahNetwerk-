@@ -90,6 +90,22 @@
       <label>Afbeelding URL<input id="img"></label>
       <label>Uitlijning<select id="align"><option value="left">Links</option><option value="center">Midden</option><option value="right">Rechts</option></select></label>
       <label id="cardWrap">Kaarten<textarea id="cards" rows="6" placeholder="Titel | tekst | /link, één per regel"></textarea></label>
+      <div id="dataWrap" class="data-settings" hidden>
+        <div class="section-heading">HN-data</div>
+        <label>Databron<select id="dataSource">
+          <option value="">Geen databron</option>
+          <option value="cities">Steden</option>
+          <option value="categories">Categorieën</option>
+          <option value="topics">Artikels / onderwerpen</option>
+        </select></label>
+        <label>Maximum aantal<input id="dataLimit" type="number" min="1" max="50" value="6"></label>
+        <label>Filters (optioneel, JSON)<textarea id="dataFilters" rows="4" placeholder='{"country":"marokko","city":"tanger"}'></textarea></label>
+        <small>Gebruik filters alleen met velden die in de gekoppelde HN-databron bestaan.</small>
+      </div>
+      <div id="componentMeta" class="component-meta" hidden>
+        <div><span>Component-ID</span><code id="componentId"></code></div>
+        <div><span>Type</span><code id="componentType"></code></div>
+      </div>
       <div class="block-actions"><button id="dup">Blok dupliceren</button><button id="remove" class="danger">Blok verwijderen</button></div>
     </div>
 
