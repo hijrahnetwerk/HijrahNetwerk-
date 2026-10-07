@@ -112,10 +112,10 @@
     inset:0;
     pointer-events:none;
     background-image:
-      #674C2E 1px,transparent 1px),
-      #674C2E 1px,transparent 1px);
+      linear-gradient(rgba(103,76,46,.06) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(103,76,46,.06) 1px,transparent 1px);
     background-size:44px 44px;
-    mask-image:#674C2E,transparent 88%);
+    mask-image:linear-gradient(to bottom,#674C2E,transparent 88%);
   }
 
   .map-layout{
@@ -769,7 +769,7 @@
     grid.innerHTML=list.map(c=>{
       const cs=countryCities(c.id);
       const code=isoCode(c);
-      return `<a class="country-card${String(c.id)===String(selectedId)?' active':''}" data-id="${esc(c.id)}" href="/navigatie?country=${encodeURIComponent(c.id)}" onclick="event.preventDefault();window.__hnSelectCountry('${String(c.id).replace(/'/g,"\\'")}');">
+      return `<article class="country-card${String(c.id)===String(selectedId)?' active':''}" data-id="${esc(c.id)}">`
         <div class="country-top">
           <div class="country-title-row">
             <div class="country-flag">${flagEmoji(code)}</div>
