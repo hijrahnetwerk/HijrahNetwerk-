@@ -476,7 +476,7 @@ async function renderFiche(){
         const coverage=tokens.length?matches/tokens.length:0;
         const prefix=requestedSlug.startsWith(String(topic.slug||'')) || String(topic.slug||'').startsWith(requestedSlug);
         return {topic,matches,coverage,prefix};
-      }).filter(x=>x.matches>=2 && (x.coverage>=0.75 || x.prefix))
+      }).filter(x=>x.matches>=2 && (x.coverage>=0.6 || x.prefix))
         .sort((a,b)=>Number(b.prefix)-Number(a.prefix)||b.coverage-a.coverage||b.matches-a.matches);
       if(ranked[0])r={data:ranked[0].topic,error:null};
     }
