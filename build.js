@@ -51,7 +51,7 @@ for (const file of htmlFiles) {
   const filePath = path.join(__dirname, file);
   let html = fs.readFileSync(filePath, 'utf8');
 
-  html = html.replace(/(href|src)=(['"])assets\\//g, '$1=$2/assets/');
+  html = html.replace(/(href|src)=(['"])assets\//g, '$1=$2/assets/');
   html = html.replace(/<script src="(?:\.\/)?(supabase-client|auth|site-app)\.js"><\/script>/g, '<script src="/$1.js"><\/script>');
   html = html.replace(/assets\/public-nav\.(css|js)(?:\?[^"']*)?/g, 'assets/public-nav.$1?v=20261007');
   html = html.replace(/<script src="\/assets\/private-preview\.js"><\/script>\s*/g, '');
@@ -59,8 +59,8 @@ for (const file of htmlFiles) {
   // Verwijder oude favicon-verwijzingen voordat de juiste HN-favicon opnieuw
   // wordt geplaatst. Hierdoor blijft een eerdere build niet naar een verkeerd
   // logo verwijzen.
-  html = html.replace(/<link[^>]+rel=["'](?:icon|shortcut icon|apple-touch-icon)["'][^>]*>\\s*/gi, '');
-  html = html.replace(/<link[^>]+rel=["'](?:apple-touch-icon|shortcut icon|icon)["'][^>]*>\\s*/gi, '');
+  html = html.replace(/<link[^>]+rel=["'](?:icon|shortcut icon|apple-touch-icon)["'][^>]*>\s*/gi, '');
+  html = html.replace(/<link[^>]+rel=["'](?:apple-touch-icon|shortcut icon|icon)["'][^>]*>\s*/gi, '');
 
   if (!html.includes('</body>')) {
     console.warn('[HN build] Geen </body> gevonden in ' + file + '; pagina overgeslagen.');
@@ -105,7 +105,7 @@ for (const file of htmlFiles) {
   }
 
   if (canonicalRoute && !html.includes('property="og:title"')) {
-    const titleMatch = html.match(/<title[^>]*>([\\s\\S]*?)<\\/title>/i);
+    const titleMatch = html.match(/<title[^>]*>([\s\S]*?)<\/title>/i);
     const descriptionMatch = html.match(/<meta[^>]+name=["']description["'][^>]+content=["']([^"']*)["']/i);
     const title = titleMatch ? titleMatch[1].replace(/<[^>]+>/g,'').trim() : 'Hijrah Netwerk';
     const description = descriptionMatch ? descriptionMatch[1].trim() : 'Hijrah Netwerk: praktische informatie en hulpmiddelen van oriëntatie tot integratie.';
@@ -126,11 +126,11 @@ for (const file of htmlFiles) {
 }
 
 function escXml(value) { return String(value || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;'); }
-function slugify(value) { return String(value || '').normalize('NFD').replace(/[\\u0300-\\u036f]/g, '').toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, ''); }
+function slugify(value) { return String(value || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, ''); }
 function publicSlug(value) { return String(value || '').replace(/-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i, ''); }
 
 async function fetchJson(table, query) {
-  const url = SUPABASE_URL.replace(/\\/$/, '') + '/rest/v1/' + table + '?' + query;
+  const url = SUPABASE_URL.replace(/\/$/, '') + '/rest/v1/' + table + '?' + query;
   const response = await fetch(url, {headers: {apikey: SUPABASE_ANON_KEY, Authorization: 'Bearer ' + SUPABASE_ANON_KEY}});
   if (!response.ok) throw new Error(table + ' sitemap query failed: ' + response.status);
   return response.json();
@@ -139,7 +139,7 @@ async function fetchJson(table, query) {
 async function buildSitemap() {
   const staticRoutes = ['/','/landen','/navigatie','/kennisbank','/smart-search','/community','/bijdragen','/orientatie','/orientatietest','/stappenplan','/voorbereiding','/vertrek','/integratie','/realiteitscheck','/verhalen','/stedengids','/vergelijken','/hulp'];
   const urls = new Map();
-  const add = (pathname, priority, changefreq) => { if (!pathname || pathname.includes('?')) return; const clean = pathname === '/' ? '/' : pathname.replace(/\\/$/, ''); urls.set(clean, {priority, changefreq}); };
+  const add = (pathname, priority, changefreq) => { if (!pathname || pathname.includes('?')) return; const clean = pathname === '/' ? '/' : pathname.replace(/\/$/, ''); urls.set(clean, {priority, changefreq}); };
   staticRoutes.forEach(route => add(route, route === '/' ? '1.0' : '0.7', route === '/' ? 'weekly' : 'monthly'));
   try {
     let cities = [], topics = [], categories = [];
