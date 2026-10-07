@@ -57,6 +57,7 @@ const fontsTag = '<link rel="stylesheet" href="/assets/fonts.css">';
 const adminBarTag = '<script src="/assets/hn-admin-bar.js"></script>';
 const adminBarStyleTag = '<link rel="stylesheet" href="/assets/hn-admin-bar.css">';
 const pageEngineTag = '<script src="/assets/hn-page-engine.js"></script>';
+const visualEditorTag = '<script src="/assets/hn-visual-editor-runtime.js"></script>';
 
 const htmlFiles = fs.readdirSync(__dirname).filter(name => name.endsWith('.html'));
 let processed = 0;
@@ -80,6 +81,7 @@ for (const file of htmlFiles) {
 
   const additions = [
     !html.includes(pageEngineTag) && !file.startsWith('admin') && !file.startsWith('login') && !file.startsWith('register') && !file.startsWith('reset-password') && !file.startsWith('update-password') && !file.startsWith('dashboard') && !file.startsWith('werkruimte') ? pageEngineTag : '',
+    !html.includes(visualEditorTag) && !file.startsWith('admin') && !file.startsWith('login') && !file.startsWith('register') && !file.startsWith('reset-password') && !file.startsWith('update-password') && !file.startsWith('dashboard') && !file.startsWith('werkruimte') ? visualEditorTag : '',
     !html.includes(translateTag) ? translateTag : '',
     !html.includes(translateStyleTag) ? translateStyleTag : '',
     !html.includes(editProposalTag) ? editProposalTag : '',
