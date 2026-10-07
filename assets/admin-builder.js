@@ -393,7 +393,7 @@ function inspect(){
   $("type").innerHTML=Object.keys(T).map(function(k){return'<option value="'+k+'">'+T[k]+"</option>";}).join("");
   $("type").value=s.section_type;
   $("bt").value=s.title||"";$("tx").value=c.text||"";$("url").value=c.url||"";
-  $("btn").value=c.button||"";$("img").value=c.image||"";$("align").value=c.align||"left";
+  $("btn").value=c.button||"";$("img").value=c.image||"";$("align").value=c.align||"left";$("visible").checked=s.is_visible!==false;
   $("cards").value=c.cards||"";$("cardWrap").style.display=s.section_type==="cards"?"block":"none";
   $("existingActions").hidden=true;
   $("dataWrap").hidden=!["directory","articles","fiches","cities","categories","navigation"].includes(s.section_type);
@@ -419,7 +419,7 @@ function edit(k,v){
   else if(k==="type"){s.section_type=v;s.component_type=v;}
   else if(k==="dataSource"){s.content.data_source=v;s.data.source=v;}
   else if(k==="dataLimit"){s.content.data_limit=Math.max(1,Math.min(50,Number(v)||6));s.data.limit=s.content.data_limit;}
-  else if(k==="dataFilters"){
+  else if(k==="visible"){s.is_visible=!!v;s.settings.visibility=!!v;} else if(k==="dataFilters"){
     try{s.content.data_filters=JSON.parse(v||"{}");}catch(e){s.content.data_filters={};note("Filters zijn geen geldige JSON.",true);return;}
     s.data.filters=s.content.data_filters;
   } else s.content[k]=v;
@@ -568,6 +568,7 @@ function bind(){
   $("url").oninput=function(e){edit("url",e.target.value);};
   $("btn").oninput=function(e){edit("button",e.target.value);};
   $("img").oninput=function(e){edit("image",e.target.value);};
+  $("visible").onchange=function(e){edit("visible",e.target.checked);};
   $("align").onchange=function(e){edit("align",e.target.value);};
   $("cards").oninput=function(e){edit("cards",e.target.value);};
   $("dataSource").oninput=function(e){edit("data_source",e.target.value);};
