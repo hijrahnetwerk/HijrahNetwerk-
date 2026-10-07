@@ -354,7 +354,7 @@ function renderPreview(){
 }
 
 function loadLive(){
-  var f=$("liveFrame");f.src=route(page.slug);
+  var f=$("liveFrame");var target=route(page.slug);target+=(target.indexOf("?")>=0?"&":"?")+"hn_builder_preview=1";f.src=target;
   f.onload=function(){setTimeout(renderPreview,250);};
 }
 
