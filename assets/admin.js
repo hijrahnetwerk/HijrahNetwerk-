@@ -275,7 +275,7 @@ function syncFicheForm(){
    });
  });
 
- const headers=[...document.querySelectorAll('#ficheFields .form-grid > .field.full')];
+ const headers=[...document.querySelectorAll('#ficheFields .form-grid > .field.full')].filter(h=>h.querySelector('strong'));
  headers.forEach(h=>h.style.display='none');
  headers.forEach(h=>{
    const t=(h.textContent||'').toLowerCase();
