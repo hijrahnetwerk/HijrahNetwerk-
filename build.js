@@ -158,6 +158,6 @@ async function buildSitemap() {
 }
 
 buildSitemap().catch(error => console.warn('[HN build] Sitemap-build mislukt:', error.message)).finally(() => {
-  console.log('[HN build] ' + processed + ' HTML-pagina\\'s gecontroleerd en productie-klaar gemaakt.');
+  console.log('[HN build] ' + processed + " HTML-pagina's gecontroleerd en productie-klaar gemaakt.");
   console.log('[HN build] assets/config.js succesvol aangemaakt.');
 });
