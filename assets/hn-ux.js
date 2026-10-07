@@ -12,9 +12,9 @@
     if(nav){
       const set=()=>nav.classList.toggle('hn-scrolled',window.scrollY>8);
       set();window.addEventListener('scroll',set,{passive:true});
-      const path=location.pathname.replace(/\\/$/,'')||'/';
+      const path=location.pathname.replace(/\/$/,'')||'/';
       nav.querySelectorAll('a[href]').forEach(a=>{
-        try{const u=new URL(a.href,location.origin);const p=u.pathname.replace(/\\/$/,'')||'/';if(p===path&&p!=='/')a.setAttribute('aria-current','page')}catch(e){}
+        try{const u=new URL(a.href,location.origin);const p=u.pathname.replace(/\/$/,'')||'/';if(p===path&&p!=='/')a.setAttribute('aria-current','page')}catch(e){}
       });
     }
     const candidates=document.querySelectorAll('main section,.card,.country-card,.step,.note,.cta,.story,.city,.topic-card,.result-card,.search-result');
