@@ -134,7 +134,7 @@ async function pick(id){
   $("empty").hidden=true;$("editor").hidden=false;
   $("heading").textContent=page.title||"Pagina";$("route").textContent=route(page.slug);
   $("title").value=page.title||"";$("slug").value=page.slug||"";$("status").value=page.status||"draft";
-  $("seoTitle").value=page.seo_title||"";$("seoDesc").value=page.seo_description||"";$("desc").value=page.description||"";
+  $("seoTitle").value=page.seo_title||"";$("seoDesc").value=page.seo_description||"";$("desc").value=page.description||"";$("cmsMode").checked=page.settings&&page.settings.builder_mode==="cms";
   var ok=await loadPageData();if(!ok)return;
   drawPages();closeInspector();loadLive();
 }
@@ -450,19 +450,19 @@ async function save(pub){
   sections=sections.map(function(s){return window.HNComponentRegistry?window.HNComponentRegistry.normalize(s):s;});
   sections.forEach(function(s,i){s.sort_order=i;s.component_id=s.component_id||(s.content&&s.content.component_id)||stableId();s.content=s.content||{};s.content.component_id=s.component_id;});
   var componentTree=window.HNComponentRegistry?window.HNComponentRegistry.tree(sections):sections.map(function(s,i){return {id:s.component_id,type:s.section_type,order:i,visible:s.is_visible!==false,content:s.content||{},data:s.data||{},settings:s.settings||{}};});
-  page.settings=Object.assign({},page.settings||{}, {editor_elements:editorElements,component_tree:componentTree});
+  page.settings=Object.assign({},page.settings||{}, {editor_elements:editorElements,component_tree:componentTree,builder_mode:$("cmsMode").checked?"cms":"legacy"});
 
   var ss=await db.auth.getSession(),u=ss.data&&ss.data.session?ss.data.session.user.id:null;
   var last=await db.from("hn_site_page_versions").select("version_number").eq("page_id",page.id).order("version_number",{ascending:false}).limit(1).maybeSingle();
   var version=(last.data&&last.data.version_number||0)+1;
-  var snapshotPage=Object.assign({},page,{status:pub?"published":"draft"});
+  var snapshotPage=Object.assign({},page,{status:pub?"published":"draft",settings:Object.assign({},page.settings,{builder_mode:$("cmsMode").checked?"cms":"legacy"})});
   var snapshot={page:snapshotPage,sections:sections,overrides:overrides,layouts:layouts,editor_elements:editorElements,component_tree:componentTree};
   var r=await db.from("hn_site_page_versions").insert({page_id:page.id,version_number:version,snapshot:snapshot,created_by:u});
   if(r.error){note(r.error.message,true);return;}
 
   if(!pub){note("Concept v"+version+" opgeslagen. De live pagina is niet gewijzigd.");loadVersions();return;}
 
-  r=await db.from("hn_site_pages").update({title:page.title,slug:page.slug,status:"published",seo_title:page.seo_title,seo_description:page.seo_description,description:page.description,settings:page.settings||{}}).eq("id",page.id);
+  r=await db.from("hn_site_pages").update({title:page.title,slug:page.slug,status:"published",seo_title:page.seo_title,seo_description:page.seo_description,description:page.description,settings:Object.assign({},page.settings||{},{builder_mode:$("cmsMode").checked?"cms":"legacy"})}).eq("id",page.id);
   if(r.error){note(r.error.message,true);return;}
 
   var old=await db.from("hn_site_sections").select("id").eq("page_id",page.id);
@@ -558,7 +558,7 @@ function bind(){
   $("mobile").onclick=function(){$("liveFrameWrap").className="mobile";$("mobile").classList.add("active");$("desktop").classList.remove("active");};
 
   $("new").onclick=async function(){
-    var r=await db.from("hn_site_pages").insert({slug:"nieuwe-pagina-"+Date.now(),title:"Nieuwe pagina",status:"draft"}).select().single();
+    var r=await db.from("hn_site_pages").insert({slug:"nieuwe-pagina-"+Date.now(),title:"Nieuwe pagina",status:"draft",settings:{builder_mode:"cms"}}).select().single();
     if(r.error){note(r.error.message,true);return;}pages.push(r.data);drawPages();pick(r.data.id);
   };
 
@@ -590,6 +590,7 @@ function bind(){
   };
   $("cancelExisting").onclick=function(){closeInspector();};
 
+  $("cmsMode").onchange=function(){if(!page)return;page.settings=Object.assign({},page.settings||{},{builder_mode:this.checked?"cms":"legacy"});note(this.checked?"CMS-opbouw actief. Bij publicatie wordt de componentstructuur de bron van de live pagina.":"Legacy-opbouw actief. De bestaande HTML blijft de bron van de live pagina.");};
   ["title","slug","seoTitle","seoDesc","desc"].forEach(function(id){
     $(id).oninput=function(){
       if(!page)return;
