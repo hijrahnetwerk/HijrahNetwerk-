@@ -1967,7 +1967,7 @@
         ${relatedFiches.length ? `
           <div class="related-grid" style="margin-top:14px">
             ${relatedFiches.map(r => `
-              <a class="related-card" href="${esc(ficheUrl(r.related_topic))}">
+              <a class="related-card" href="${esc("/locaties/"+slugify((cities.find(c=>c.id===r.related_topic.city_id)||{}).name||"")+"/"+slugify((categories.find(c=>c.id===r.related_topic.category_id)||{}).name||"informatie")+"/"+slugify(publicSlug(r.related_topic.slug||r.related_topic.id)))}">
                 <span class="tag">Fiche</span>
                 <h4>${esc(r.related_topic.title)}</h4>
                 <p>Bekijk de praktische fiche →</p>
