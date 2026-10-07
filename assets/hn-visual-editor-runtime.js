@@ -3,7 +3,7 @@
 function db(){return window.hijrahSupabase||null}
 function path(){return location.pathname.replace(/\/$/,'')||'/'}
 function root(){return document.querySelector('main')||document.querySelector('[role="main"]')||document.body}
-function routeForSlug(s){s=String(s||'').replace(/^\//,'').replace(/\.html$/i,'');var m={'':'/','home':'/','home-oud':'/home-oud','home-huidig':'/home-huidig','landen':'/landen','kennisbank':'/kennisbank','navigatie':'/navigatie','smart-search':'/smart-search','community':'/community','stappenplan':'/stappenplan','orientatie':'/orientatie','orientatietest':'/orientatietest','voorbereiding':'/voorbereiding','vertrek':'/vertrek','integratie':'/integratie','realiteitscheck':'/realiteitscheck','verhalen':'/verhalen','stedengids':'/stedengids','vergelijken':'/vergelijken','hulp':'/hulp','over-hn':'/over-hn'};return m[s]||('/pagina/'+encodeURIComponent(s))}
+function routeForSlug(s){s=String(s||'').replace(/^\//,'').replace(/\.html$/i,'');var m={'':'/','home':'/','landen':'/landen','kennisbank':'/kennisbank','navigatie':'/navigatie','smart-search':'/smart-search','community':'/community','stappenplan':'/stappenplan','orientatie':'/orientatie','orientatietest':'/orientatietest','voorbereiding':'/voorbereiding','vertrek':'/vertrek','integratie':'/integratie','realiteitscheck':'/realiteitscheck','verhalen':'/verhalen','stedengids':'/stedengids','vergelijken':'/vergelijken','hulp':'/hulp','over-hn':'/over-hn'};return m[s]||('/pagina/'+encodeURIComponent(s))}
 function applyStableIds(doc,settings){
   var items=settings&&Array.isArray(settings.editor_elements)?settings.editor_elements:[];
   items.forEach(function(item){
