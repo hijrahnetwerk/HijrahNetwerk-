@@ -18,8 +18,8 @@
 
   function normalizeItems(rows){
     const items=(rows||[])
-      .filter(x=>x && x.is_visible!==false && x.location==='main' && !x.parent_id)
-      .filter(x=>String(x.href||'')!=='/')
+       .filter(x=>x && x.is_visible!==false && x.location==='main' && !x.parent_id)
+      .filter(x=>String(x.href||'')!=='/' && !['/kennisbank','/kennisbank/','/artikels','/artikels/'].includes(String(x.href||'')))
       .sort((a,b)=>(a.sort_order||0)-(b.sort_order||0));
 
     return items.length ? items : fallbackItems;
