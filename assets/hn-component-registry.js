@@ -9,6 +9,7 @@ var defs={
   cta:{label:'CTA',group:'Inhoud',data:null,fields:['title','text','button','url']},
   links:{label:'Links',group:'Inhoud',data:null,fields:['title','text']},
   navigation:{label:'HN Navigatie',group:'HN',data:'navigation',fields:['title','text','data_limit']},
+  smart_search:{label:'HN Smart Search',group:'HN',data:'topics',fields:['title','text','data_limit']},
   directory:{label:'HN Overzicht',group:'HN',data:'cities',fields:['title','text','data_source','data_limit']},
   articles:{label:'HN Artikelen',group:'HN',data:'topics',fields:['title','text','data_source','data_limit']},
   fiches:{label:'HN Fiches',group:'HN',data:'fiches',fields:['title','text','data_source','data_limit']},
