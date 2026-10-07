@@ -66,6 +66,13 @@ for (const file of htmlFiles) {
     continue;
   }
 
+  // Favicon hoort in <head>. Eerder werd hij als onderdeel van de body-additions geplaatst,
+  // waardoor browsers hem niet betrouwbaar als favicon oppikten.
+  const hasFavicon = /<link[^>]+rel=["'](?:icon|shortcut icon|apple-touch-icon)["'][^>]*>/i.test(html);
+  if (!hasFavicon) {
+    html = html.replace('</head>', faviconTag + '\\n</head>');
+  }
+
   const additions = [
     !html.includes(pageEngineTag) && !file.startsWith('admin') && !file.startsWith('login') && !file.startsWith('register') && !file.startsWith('reset-password') && !file.startsWith('update-password') && !file.startsWith('dashboard') && !file.startsWith('werkruimte') ? pageEngineTag : '',
     !html.includes(visualEditorTag) && !file.startsWith('admin') && !file.startsWith('login') && !file.startsWith('register') && !file.startsWith('reset-password') && !file.startsWith('update-password') && !file.startsWith('dashboard') && !file.startsWith('werkruimte') ? visualEditorTag : '',
@@ -78,8 +85,7 @@ for (const file of htmlFiles) {
     !html.includes(adminBarTag) ? adminBarTag : '',
     !html.includes(adminBarStyleTag) ? adminBarStyleTag : '',
     !html.includes(visualPolishStyleTag) ? visualPolishStyleTag : '',
-    !html.includes(motionTag) ? motionTag : '',
-    faviconTag
+    !html.includes(motionTag) ? motionTag : ''
   ].filter(Boolean).join('\\n') + '\\n';
 
   const canonicalRoutes = {
