@@ -702,6 +702,7 @@ th{
     <a class="nav-button" href="/admin-bewerkvoorstellen">Bewerkvoorstellen</a>
     <a class="nav-button" href="/admin-hulp">Hulpcentrum</a>
     <a class="nav-button" href="/admin-kaart">HN-kaart</a>
+    <button class="nav-button" data-page="content">Contentbeheer</button>
     <button class="nav-button" data-page="sync">Sync Queue</button>
   </nav>
 
@@ -1672,6 +1673,24 @@ th{
     </div>
   </div>
 </div>
+
+<!-- CONTENTBEHEER -->
+<section class="page" id="page-content">
+<div class="intro"><h2>Contentbeheer</h2><p>Beheer relaties tussen artikels en fiches, zoektermen en ficheclaims/voorstellen.</p></div>
+<div class="panel"><h3>Topic-relatie toevoegen</h3><div class="form-grid">
+<div class="field"><label>Topic</label><select id="contentRelTopic"></select></div>
+<div class="field"><label>Gerelateerd topic</label><select id="contentRelRelated"></select></div>
+<div class="field"><label>Type</label><select id="contentRelType"><option value="related_article">Gerelateerd artikel</option><option value="related_content">Gerelateerde inhoud</option><option value="related_fiche">Gerelateerde fiche</option><option value="related_place">Gerelateerde plaats</option></select></div></div>
+<div class="form-actions"><button class="button button-primary" id="contentAddRelation">Relatie toevoegen</button></div></div>
+<div class="panel"><h3>Zoekterm toevoegen</h3><div class="form-grid">
+<div class="field"><label>Topic</label><select id="contentTermTopic"></select></div><div class="field"><label>Zoekterm</label><input id="contentTerm"></div>
+<div class="field"><label>Taal</label><input id="contentTermLanguage" value="nl"></div><div class="field"><label>Type</label><select id="contentTermType"><option value="keyword">Zoekterm</option><option value="synonym">Synoniem</option><option value="alias">Alias</option><option value="spelling">Spelling</option></select></div></div>
+<div class="form-actions"><button class="button button-primary" id="contentAddTerm">Zoekterm toevoegen</button></div></div>
+<div class="panel"><h3>Ficheclaims</h3><div class="table-wrap"><table><thead><tr><th>Fiche</th><th>Naam</th><th>Contact</th><th>Status</th><th>Datum</th><th>Actie</th></tr></thead><tbody id="contentClaimsTable"></tbody></table></div></div>
+<div class="panel"><h3>Fichevoorstellen</h3><div class="table-wrap"><table><thead><tr><th>Fiche</th><th>Voorstel</th><th>Status</th><th>Datum</th><th>Actie</th></tr></thead><tbody id="contentProposalsTable"></tbody></table></div></div>
+<div class="panel"><h3>Bestaande relaties</h3><div class="table-wrap"><table><thead><tr><th>Topic</th><th>Type</th><th>Gerelateerd</th><th>Actie</th></tr></thead><tbody id="contentRelationsTable"></tbody></table></div></div>
+<div class="panel"><h3>Bestaande zoektermen</h3><div class="table-wrap"><table><thead><tr><th>Topic</th><th>Term</th><th>Taal</th><th>Type</th><th>Actie</th></tr></thead><tbody id="contentTermsTable"></tbody></table></div></div>
+</section>
 
 <!-- SYNC -->
 
