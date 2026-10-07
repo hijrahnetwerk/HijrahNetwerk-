@@ -1,50 +1,24 @@
 /**
  * HN build script
  * Werkt met Vercel én Netlify.
- *
- * Leest:
- * VITE_SUPABASE_URL
- * VITE_SUPABASE_ANON_KEY
- *
- * Maakt:
- * - assets/config.js
- * - robots.txt
- * - sitemap.xml
- * - root-relative routes
- *
- * De sitemap wordt bij elke productie-build opnieuw opgebouwd vanuit
- * de publiek leesbare HN-data, zodat nieuwe steden en publicaties
- * automatisch vindbaar worden.
  */
 
 const fs = require('fs');
 const path = require('path');
 
-// De browser mag alleen een publieke Supabase key gebruiken. Als Vercel/Netlify
-// de environment variables niet injecteert, gebruiken we deze veilige fallback.
-// Dit voorkomt dat publieke pagina's eindeloos op "laden" blijven staan.
 const DEFAULT_SUPABASE_URL = 'https://dejmckimvstfjeickplx.supabase.co';
 const DEFAULT_SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_1PWjRBFubdwO43JBebGowg_R5_OEtFi';
-
 const envUrl = String(process.env.VITE_SUPABASE_URL || '').trim();
 const envKey = String(process.env.VITE_SUPABASE_ANON_KEY || '').trim();
 const SUPABASE_URL = envUrl && envUrl !== 'test' ? envUrl : DEFAULT_SUPABASE_URL;
 const SUPABASE_ANON_KEY = envKey && envKey !== 'test' ? envKey : DEFAULT_SUPABASE_PUBLISHABLE_KEY;
 const SITE_URL = 'https://hijrah-netwerk.vercel.app';
 
-console.log('\n[HN build] Supabase configuratie controleren...');
-
+console.log('\\n[HN build] Supabase configuratie controleren...');
 console.log('[HN build] Supabase URL: ' + SUPABASE_URL);
 console.log('[HN build] Supabase sleutel beschikbaar: ' + Boolean(SUPABASE_ANON_KEY));
 
-const configContent = `// AUTOMATISCH GEGENEREERD DOOR build.js.
-// NIET HANDMATIG BEWERKEN.
-
-window.__ENV = {
-  SUPABASE_URL: ${JSON.stringify(SUPABASE_URL)},
-  SUPABASE_ANON_KEY: ${JSON.stringify(SUPABASE_ANON_KEY)}
-};
-`;
+const configContent = `// AUTOMATISCH GEGENEREERD DOOR build.js.\n// NIET HANDMATIG BEWERKEN.\n\nwindow.__ENV = {\n  SUPABASE_URL: ${JSON.stringify(SUPABASE_URL)},\n  SUPABASE_ANON_KEY: ${JSON.stringify(SUPABASE_ANON_KEY)}\n};\n`;
 
 const assetsDir = path.join(__dirname, 'assets');
 fs.mkdirSync(assetsDir, { recursive: true });
@@ -60,7 +34,13 @@ const adminBarTag = '<script src="/assets/hn-admin-bar.js"></script>';
 const adminBarStyleTag = '<link rel="stylesheet" href="/assets/hn-admin-bar.css">';
 const pageEngineTag = '<script src="/assets/hn-page-engine.js"></script>';
 const visualEditorTag = '<script src="/assets/hn-visual-editor-runtime.js"></script>';
-const faviconTag = '<link rel="icon" type="image/png" href="/assets/logo-color.pngneddkleinn.png">\n<link rel="apple-touch-icon" href="/assets/logo-color.pngneddkleinn.png">';
+
+// Altijd het echte HN-kleurenlogo gebruiken als favicon. De versieparameter
+// voorkomt dat browsers een oude favicon uit cache blijven tonen.
+const faviconPath = '/assets/logo-color.pngneddkleinn.png?v=20261007';
+const faviconTag = '<link rel="icon" type="image/png" href="' + faviconPath + '">\\n' +
+  '<link rel="shortcut icon" type="image/png" href="' + faviconPath + '">\\n' +
+  '<link rel="apple-touch-icon" href="' + faviconPath + '">';
 
 const htmlFiles = fs.readdirSync(__dirname).filter(name => name.endsWith('.html'));
 let processed = 0;
@@ -69,13 +49,15 @@ for (const file of htmlFiles) {
   const filePath = path.join(__dirname, file);
   let html = fs.readFileSync(filePath, 'utf8');
 
-  // Use root-relative asset URLs so clean nested routes (/artikels/... and /locaties/...) load assets correctly.
-  html = html.replace(/(href|src)=(['"])assets\//g, '$1=$2/assets/');
+  html = html.replace(/(href|src)=(['"])assets\\//g, '$1=$2/assets/');
+  html = html.replace(/<script src="(?:\\./)?(supabase-client|auth|site-app)\\.js"><\\/script>/g, '<script src="/$1.js"><\\/script>');
+  html = html.replace(/<script src="\\/assets\\/private-preview\\.js"><\\/script>\\s*/g, '');
 
-  // Root-level scripts must also resolve from nested clean routes such as /artikels/... .
-  html = html.replace(/<script src="(?:\.\/)?(supabase-client|auth|site-app)\.js"><\/script>/g, '<script src="/$1.js"><\/script>');
-
-  html = html.replace(/<script src="\/assets\/private-preview\.js"><\/script>\s*/g, '');
+  // Verwijder oude favicon-verwijzingen voordat de juiste HN-favicon opnieuw
+  // wordt geplaatst. Hierdoor blijft een eerdere build niet naar een verkeerd
+  // logo verwijzen.
+  html = html.replace(/<link[^>]+rel=["'](?:icon|shortcut icon|apple-touch-icon)["'][^>]*>\\s*/gi, '');
+  html = html.replace(/<link[^>]+rel=["'](?:apple-touch-icon|shortcut icon|icon)["'][^>]*>\\s*/gi, '');
 
   if (!html.includes('</body>')) {
     console.warn('[HN build] Geen </body> gevonden in ' + file + '; pagina overgeslagen.');
@@ -93,68 +75,38 @@ for (const file of htmlFiles) {
     !html.includes(globalRuntimeTag) ? globalRuntimeTag : '',
     !html.includes(adminBarTag) ? adminBarTag : '',
     !html.includes(adminBarStyleTag) ? adminBarStyleTag : '',
-    !html.includes('rel="icon"') ? faviconTag : ''
-  ].filter(Boolean).join('\n') + '\n';
+    faviconTag
+  ].filter(Boolean).join('\\n') + '\\n';
 
   const canonicalRoutes = {
-    'index.html':'/',
-    'landen.html':'/landen',
-    'navigatie.html':'/navigatie',
-    'kennisbank.html':'/kennisbank',
-    'smart-search.html':'/smart-search',
-    'community.html':'/community',
-    'bijdragen.html':'/bijdragen',
-    'orientatie.html':'/orientatie',
-    'orientatietest.html':'/orientatietest',
-    'stappenplan.html':'/stappenplan',
-    'voorbereiding.html':'/voorbereiding',
-    'vertrek.html':'/vertrek',
-    'integratie.html':'/integratie',
-    'realiteitscheck.html':'/realiteitscheck',
-    'verhalen.html':'/verhalen',
-    'stedengids.html':'/stedengids',
-    'vergelijken.html':'/vergelijken',
-    'hulp.html':'/hulp',
-    'auteursrecht.html':'/auteursrecht'
+    'index.html':'/', 'landen.html':'/landen', 'navigatie.html':'/navigatie',
+    'kennisbank.html':'/kennisbank', 'smart-search.html':'/smart-search', 'community.html':'/community',
+    'bijdragen.html':'/bijdragen', 'orientatie.html':'/orientatie', 'orientatietest.html':'/orientatietest',
+    'stappenplan.html':'/stappenplan', 'voorbereiding.html':'/voorbereiding', 'vertrek.html':'/vertrek',
+    'integratie.html':'/integratie', 'realiteitscheck.html':'/realiteitscheck', 'verhalen.html':'/verhalen',
+    'stedengids.html':'/stedengids', 'vergelijken.html':'/vergelijken', 'hulp.html':'/hulp', 'auteursrecht.html':'/auteursrecht'
   };
 
-  const noindexFiles = new Set([
-    'login.html','register.html','reset-password.html','update-password.html',
-    'dashboard.html','mijn-kaart.html','admin.html','admin-hulp.html',
-    'admin-kaart.html','admin-wachtlijst.html','admin-bewerkvoorstellen.html',
-    'werkruimte.html'
-  ]);
-
+  const noindexFiles = new Set(['login.html','register.html','reset-password.html','update-password.html','dashboard.html','mijn-kaart.html','admin.html','admin-hulp.html','admin-kaart.html','admin-wachtlijst.html','admin-bewerkvoorstellen.html','werkruimte.html']);
   const canonicalRoute = canonicalRoutes[file];
   if (canonicalRoute && !html.includes('rel="canonical"')) {
-    html = html.replace('</head>',
-      '<link rel="canonical" href="' + SITE_URL + canonicalRoute + '">' + '\n' +
-      '</head>');
+    html = html.replace('</head>', '<link rel="canonical" href="' + SITE_URL + canonicalRoute + '">\\n</head>');
   }
 
   if (canonicalRoute && !html.includes('property="og:title"')) {
-    const titleMatch = html.match(/<title[^>]*>([\s\S]*?)<\/title>/i);
+    const titleMatch = html.match(/<title[^>]*>([\\s\\S]*?)<\\/title>/i);
     const descriptionMatch = html.match(/<meta[^>]+name=["']description["'][^>]+content=["']([^"']*)["']/i);
     const title = titleMatch ? titleMatch[1].replace(/<[^>]+>/g,'').trim() : 'Hijrah Netwerk';
     const description = descriptionMatch ? descriptionMatch[1].trim() : 'Hijrah Netwerk: praktische informatie en hulpmiddelen van oriëntatie tot integratie.';
-    const social = '<meta property="og:type" content="website">\\n' +
-      '<meta property="og:title" content="' + title.replace(/"/g,'&quot;') + '">\\n' +
-      '<meta property="og:description" content="' + description.replace(/"/g,'&quot;') + '">\\n' +
-      '<meta property="og:url" content="' + SITE_URL + canonicalRoute + '">\\n' +
-      '<meta name="twitter:card" content="summary">\\n' +
-      '<meta name="twitter:title" content="' + title.replace(/"/g,'&quot;') + '">\\n' +
-      '<meta name="twitter:description" content="' + description.replace(/"/g,'&quot;') + '">';
-    html = html.replace('</head>', social + '\n</head>');
+    const social = '<meta property="og:type" content="website">\\n<meta property="og:title" content="' + title.replace(/"/g,'&quot;') + '">\\n<meta property="og:description" content="' + description.replace(/"/g,'&quot;') + '">\\n<meta property="og:url" content="' + SITE_URL + canonicalRoute + '">\\n<meta name="twitter:card" content="summary">\\n<meta name="twitter:title" content="' + title.replace(/"/g,'&quot;') + '">\\n<meta name="twitter:description" content="' + description.replace(/"/g,'&quot;') + '">';
+    html = html.replace('</head>', social + '\\n</head>');
   }
 
   if (noindexFiles.has(file)) {
     const existingRobots = html.match(/<meta[^>]+name=["']robots["'][^>]*>/i);
     const tag = '<meta name="robots" content="noindex,nofollow">';
-    if (existingRobots) {
-      html = html.replace(existingRobots[0], tag);
-    } else {
-      html = html.replace('</head>', tag + '\n</head>');
-    }
+    if (existingRobots) html = html.replace(existingRobots[0], tag);
+    else html = html.replace('</head>', tag + '\\n</head>');
   }
 
   html = html.replace('</body>', additions + '</body>');
@@ -162,183 +114,39 @@ for (const file of htmlFiles) {
   processed++;
 }
 
-function escXml(value) {
-  return String(value || '')
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&apos;');
-}
-
-function slugify(value) {
-  return String(value || '')
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '');
-}
-
-function publicSlug(value) {
-  return String(value || '')
-    .replace(/-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i, '');
-}
+function escXml(value) { return String(value || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;'); }
+function slugify(value) { return String(value || '').normalize('NFD').replace(/[\\u0300-\\u036f]/g, '').toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, ''); }
+function publicSlug(value) { return String(value || '').replace(/-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i, ''); }
 
 async function fetchJson(table, query) {
-  const url = SUPABASE_URL.replace(/\/$/, '') + '/rest/v1/' + table + '?' + query;
-  const response = await fetch(url, {
-    headers: {
-      apikey: SUPABASE_ANON_KEY,
-      Authorization: 'Bearer ' + SUPABASE_ANON_KEY
-    }
-  });
-  if (!response.ok) {
-    throw new Error(table + ' sitemap query failed: ' + response.status);
-  }
+  const url = SUPABASE_URL.replace(/\\/$/, '') + '/rest/v1/' + table + '?' + query;
+  const response = await fetch(url, {headers: {apikey: SUPABASE_ANON_KEY, Authorization: 'Bearer ' + SUPABASE_ANON_KEY}});
+  if (!response.ok) throw new Error(table + ' sitemap query failed: ' + response.status);
   return response.json();
 }
 
 async function buildSitemap() {
-  const staticRoutes = [
-    '/',
-    '/landen',
-    '/navigatie',
-    '/kennisbank',
-    '/smart-search',
-    '/community',
-    '/bijdragen',
-    '/orientatie',
-    '/orientatietest',
-    '/stappenplan',
-    '/voorbereiding',
-    '/vertrek',
-    '/integratie',
-    '/realiteitscheck',
-    '/verhalen',
-    '/stedengids',
-    '/vergelijken',
-    '/hulp'
-  ];
-
+  const staticRoutes = ['/','/landen','/navigatie','/kennisbank','/smart-search','/community','/bijdragen','/orientatie','/orientatietest','/stappenplan','/voorbereiding','/vertrek','/integratie','/realiteitscheck','/verhalen','/stedengids','/vergelijken','/hulp'];
   const urls = new Map();
-  const add = (pathname, priority, changefreq) => {
-    if (!pathname || pathname.includes('?')) return;
-    const clean = pathname === '/' ? '/' : pathname.replace(/\/$/, '');
-    urls.set(clean, { priority, changefreq });
-  };
-
+  const add = (pathname, priority, changefreq) => { if (!pathname || pathname.includes('?')) return; const clean = pathname === '/' ? '/' : pathname.replace(/\\/$/, ''); urls.set(clean, {priority, changefreq}); };
   staticRoutes.forEach(route => add(route, route === '/' ? '1.0' : '0.7', route === '/' ? 'weekly' : 'monthly'));
-
   try {
-    let cities = [];
-    let topics = [];
-    let categories = [];
-
-    try {
-      cities = await fetchJson(
-        'cities',
-        'select=id,slug,name,country_id,is_active&is_active=eq.true&order=name'
-      );
-    } catch (error) {
-      console.warn('[HN build] Steden konden niet in sitemap worden geladen:', error.message);
-    }
-
-    try {
-      topics = await fetchJson(
-        'topic',
-        'select=slug,city_id,category_id,neighborhood,published,visibility,updated_at&published=eq.true&order=updated_at.desc'
-      );
-    } catch (error) {
-      console.warn('[HN build] Artikelen/fiches konden niet in sitemap worden geladen:', error.message);
-    }
-
-    try {
-      categories = await fetchJson(
-        'categories',
-        'select=id,slug,name,is_active&is_active=eq.true&order=name'
-      );
-    } catch (error) {
-      console.warn('[HN build] Categorieën konden niet in sitemap worden geladen:', error.message);
-    }
-
+    let cities = [], topics = [], categories = [];
+    try { cities = await fetchJson('cities','select=id,slug,name,country_id,is_active&is_active=eq.true&order=name'); } catch (error) { console.warn('[HN build] Steden konden niet in sitemap worden geladen:', error.message); }
+    try { topics = await fetchJson('topic','select=slug,city_id,category_id,neighborhood,published,visibility,updated_at&published=eq.true&order=updated_at.desc'); } catch (error) { console.warn('[HN build] Artikels/fiches konden niet in sitemap worden geladen:', error.message); }
+    try { categories = await fetchJson('categories','select=id,slug,name,is_active&is_active=eq.true&order=name'); } catch (error) { console.warn('[HN build] Categorieën konden niet in sitemap worden geladen:', error.message); }
     const cityById = new Map(cities.map(x => [x.id, x]));
-
-    cities.forEach(city => {
-      const citySlug = city.slug || slugify(city.name);
-      add('/stad/' + citySlug, '0.8', 'weekly');
-    });
-
+    cities.forEach(city => add('/stad/' + (city.slug || slugify(city.name)), '0.8', 'weekly'));
     const categoryById = new Map(categories.map(x => [x.id, x]));
-
-    topics.forEach(topic => {
-      const slug = publicSlug(topic.slug || '');
-      if (!slug) return;
-
-      const city = cityById.get(topic.city_id);
-      const category = categoryById.get(topic.category_id);
-      const categorySlug = category?.slug || slugify(category?.name || topic.visibility || 'informatie');
-
-      if (city) {
-        const citySlug = city.slug || slugify(city.name);
-        const area = topic.neighborhood ? slugify(topic.neighborhood) : '';
-        const parts = ['/locaties', citySlug];
-        if (area) parts.push(area);
-        parts.push(categorySlug, slug);
-        add(parts.join('/'), '0.8', 'weekly');
-      } else {
-        add('/artikels/' + slug, '0.7', 'monthly');
-      }
-    });
-  } catch (error) {
-    console.warn('[HN build] Sitemap-data kon niet volledig worden geladen:', error.message);
-  }
-
-  const body = Array.from(urls.entries())
-    .map(([loc, meta]) => {
-      return [
-        '  <url>',
-        '    <loc>' + escXml(SITE_URL + loc) + '</loc>',
-        '    <changefreq>' + meta.changefreq + '</changefreq>',
-        '    <priority>' + meta.priority + '</priority>',
-        '  </url>'
-      ].join('\n');
-    })
-    .join('\n');
-
-  const xml = '<?xml version="1.0" encoding="UTF-8"?>\n' +
-    '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
-    body + '\n</urlset>\n';
-
-  fs.writeFileSync(path.join(__dirname, 'sitemap.xml'), xml, 'utf8');
-
-  const robots = [
-    'User-agent: *',
-    'Allow: /',
-    '',
-    'Disallow: /admin',
-    'Disallow: /werkruimte',
-    'Disallow: /dashboard',
-    'Disallow: /mijn-kaart',
-    'Disallow: /login',
-    'Disallow: /register',
-    'Disallow: /reset-password',
-    'Disallow: /update-password',
-    '',
-    'Sitemap: ' + SITE_URL + '/sitemap.xml',
-    ''
-  ].join('\n');
-
-  fs.writeFileSync(path.join(__dirname, 'robots.txt'), robots, 'utf8');
+    topics.forEach(topic => { const slug = publicSlug(topic.slug || ''); if (!slug) return; const city = cityById.get(topic.city_id); const category = categoryById.get(topic.category_id); const categorySlug = category?.slug || slugify(category?.name || topic.visibility || 'informatie'); if (city) { const citySlug = city.slug || slugify(city.name); const area = topic.neighborhood ? slugify(topic.neighborhood) : ''; const parts = ['/locaties', citySlug]; if (area) parts.push(area); parts.push(categorySlug, slug); add(parts.join('/'), '0.8', 'weekly'); } else add('/artikels/' + slug, '0.7', 'monthly'); });
+  } catch (error) { console.warn('[HN build] Sitemap-data kon niet volledig worden geladen:', error.message); }
+  const body = Array.from(urls.entries()).map(([loc, meta]) => ['  <url>','    <loc>' + escXml(SITE_URL + loc) + '</loc>','    <changefreq>' + meta.changefreq + '</changefreq>','    <priority>' + meta.priority + '</priority>','  </url>'].join('\\n')).join('\\n');
+  fs.writeFileSync(path.join(__dirname, 'sitemap.xml'), '<?xml version="1.0" encoding="UTF-8"?>\\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\\n' + body + '\\n</urlset>\\n', 'utf8');
+  fs.writeFileSync(path.join(__dirname, 'robots.txt'), ['User-agent: *','Allow: /','','Disallow: /admin','Disallow: /werkruimte','Disallow: /dashboard','Disallow: /mijn-kaart','Disallow: /login','Disallow: /register','Disallow: /reset-password','Disallow: /update-password','','Sitemap: ' + SITE_URL + '/sitemap.xml',''].join('\\n'), 'utf8');
   console.log('[HN build] sitemap.xml: ' + urls.size + ' URL(s).');
 }
 
-buildSitemap()
-  .catch(error => {
-    console.warn('[HN build] Sitemap-build mislukt:', error.message);
-  })
-  .finally(() => {
-    console.log('[HN build] ' + processed + ' HTML-pagina\'s gecontroleerd en productie-klaar gemaakt.');
-    console.log('[HN build] assets/config.js succesvol aangemaakt.');
-  });
+buildSitemap().catch(error => console.warn('[HN build] Sitemap-build mislukt:', error.message)).finally(() => {
+  console.log('[HN build] ' + processed + ' HTML-pagina\\'s gecontroleerd en productie-klaar gemaakt.');
+  console.log('[HN build] assets/config.js succesvol aangemaakt.');
+});
