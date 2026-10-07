@@ -1,0 +1,2 @@
+alter table public.profiles drop constraint if exists profiles_hn_status_fkey;
+alter table public.profiles add constraint profiles_hn_status_fkey foreign key (hn_status) references public.hn_statuses(slug) on update cascade on delete restrict;
