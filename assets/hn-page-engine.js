@@ -95,7 +95,7 @@ async function stepsMarkup(){
  var r=await db.from("hijrah_steps").select("id,title,description,sort_order").order("sort_order");
  var rows=r.error?[]:(r.data||[]);
  if(!rows.length)return '<div class="hn-public-empty">Het stappenplan is nog niet beschikbaar.</div>';
- return '<div class="hn-step-list">'+rows.map(function(x){return '<label class="hn-step"><input type="checkbox" data-hn-step="'+esc(x.id)+'"><span><strong>'+esc(x.title||"Stap")+'</strong>'+(x.description?'<br><small>'+esc(x.description)+"</small>":"")+"</span></label>"}).join("")+'</div><script>(function(){var k="hn-public-steps";var s=JSON.parse(localStorage.getItem(k)||"{}");document.querySelectorAll("[data-hn-step]").forEach(function(x){x.checked=!!s[x.dataset.hnStep];x.onchange=function(){s[x.dataset.hnStep]=x.checked;localStorage.setItem(k,JSON.stringify(s));};});})();</script>';
+ return '<div class="hn-step-list">'+rows.map(function(x){return '<label class="hn-step"><input type="checkbox" data-hn-step="'+esc(x.id)+'"><span><strong>'+esc(x.title||"Stap")+'</strong>'+(x.description?'<br><small>'+esc(x.description)+"</small>":"")+"</span></label>"}).join("")+'</div>';
 }
 async function render(s){
  var c=s.content||{},body="",dataSource=c.data_source||(s.data&&s.data.source)||"";
@@ -125,6 +125,7 @@ async function render(s){
 }
 function bindInteractive(){
  var f=document.getElementById("hn-navigation-form");if(f)f.addEventListener("submit",function(e){e.preventDefault();var p=new URLSearchParams(location.search);var q=document.getElementById("hn-navigation-q").value.trim(),c=document.getElementById("hn-navigation-city").value,k=document.getElementById("hn-navigation-category").value;if(q)p.set("q",q);else p.delete("q");if(c)p.set("city",c);else p.delete("city");if(k)p.set("category",k);else p.delete("category");location.search=p.toString()});
+ document.querySelectorAll("[data-hn-step]").forEach(function(x){var k="hn-public-steps",s=JSON.parse(localStorage.getItem(k)||"{}");x.checked=!!s[x.dataset.hnStep];x.addEventListener("change",function(){s[x.dataset.hnStep]=x.checked;localStorage.setItem(k,JSON.stringify(s));});});
  document.querySelectorAll(".hn-comparison").forEach(function(box){var data=JSON.parse(box.getAttribute("data-cities")||"[]"),a=box.querySelector(".hn-compare-a"),b=box.querySelector(".hn-compare-b"),out=box.querySelector(".hn-comparison-output");function update(){var x=data.find(function(z){return z.id===a.value}),y=data.find(function(z){return z.id===b.value});if(!x||!y){out.innerHTML="<p>Kies twee steden om ze naast elkaar te bekijken.</p>";return}out.innerHTML="<table><thead><tr><th>Onderdeel</th><th>"+esc(x.name)+"</th><th>"+esc(y.name)+"</th></tr></thead><tbody><tr><td>Beschrijving</td><td>"+esc(x.description)+"</td><td>"+esc(y.description)+"</td></tr><tr><td>HN-opmerking</td><td>Vergelijk zelf de concrete fiches en ervaringen.</td><td>Vergelijk zelf de concrete fiches en ervaringen.</td></tr></tbody></table>"}a.addEventListener("change",update);b.addEventListener("change",update)});
 }
 async function run(){
