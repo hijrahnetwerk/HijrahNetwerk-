@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Hijrah Navigatie | Hijrah Netwerk</title>
-<meta name="description" content="Praktische informatie voor emigranten: fiches en artikelen over scholen, artsen, wijken, diensten en andere onderwerpen per land en stad.">
+<meta name="description" content="Zoek in Hijrah Netwerk naar concrete informatie per land en stad. Vind fiches én artikelen over scholen, artsen, wijken, moskeeën, diensten en meer.">
 <script src="assets/config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase-client.js"></script>
@@ -22,7 +22,12 @@ a{text-decoration:none;color:inherit}
 .navlinks a:hover{background:rgba(255,255,255,.12)}
 .wrap{max-width:1200px;margin:auto;padding:42px 22px 70px}
 .hero,.filters,.layout,.note{width:min(1120px,calc(100% - 80px));margin-left:auto;margin-right:auto}
-.hero{max-width:760px;margin-bottom:28px;width:min(1120px,calc(100% - 80px));padding:65px 0 35px}
+.hero{max-width:900px;margin-bottom:28px;width:min(1120px,calc(100% - 80px));padding:52px 0 35px}
+.search-hero-label{display:flex;align-items:center;gap:9px;margin-bottom:13px;color:var(--brown);font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+.search-hero-label span{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:9px;background:var(--brown);color:#fff;font-size:17px;letter-spacing:0}
+.hero-intro{max-width:720px}
+.hero-intro strong{color:var(--brown-dark)}
+.result-type{display:inline-block;margin-left:5px;padding:3px 7px;border-radius:999px;background:#f6eadb;color:var(--brown);font-size:10px;font-weight:800}
 .eyebrow{display:inline-block;background:#f3e5d4;color:var(--brown);font-size:12px;font-weight:700;padding:6px 10px;border-radius:20px;margin-bottom:12px}
 h1{font-size:36px;line-height:1.15;margin:0 0 12px;color:var(--brown-dark)}
 .hero p{color:var(--muted);font-size:16px;margin:0}
@@ -101,20 +106,23 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--orange);
 <script src="assets/public-nav.js"></script>
 
 <section class="hero">
+<div class="search-hero-label"><span>⌕</span>De zoekpagina van Hijrah Netwerk</div>
 <span class="eyebrow">Hijrah Navigatie</span>
-<h1>Praktische informatie per land en stad.</h1>
-<p>Zoek praktische informatie die je nodig hebt tijdens je hijrah. Van een arts of school tot een wijk, moskee, winkel of andere dienst. Per land, stad en onderwerp.</p>
+<h1>Zoek in HN.</h1>
+<p class="hero-intro">Vind concrete informatie per land en stad. Zoek een arts, school, moskee, wijk, winkel of andere dienst. <strong>Artikelen en fiches vind je hier samen.</strong></p>
 <div class="hero-search">
 <span class="hero-search-icon">⌕</span>
-<input id="heroQ" placeholder="Wat zoek je? Bijvoorbeeld huisarts Tanger, school, wijk..." aria-label="Zoek in Hijrah Navigatie">
+<input id="heroQ" placeholder="Bijvoorbeeld: huisarts in Tanger, school in Cairo..." aria-label="Zoek in Hijrah Navigatie">
 </div>
 <div class="quick-links">
+<a class="quick-link" href="/smart-search">Zoek uitgebreider</a>
 <a class="quick-link" data-category-name="zorg" href="/navigatie">Zorg</a>
 <a class="quick-link" data-category-name="onderwijs" href="/navigatie">Onderwijs</a>
 <a class="quick-link" data-category-name="wonen" href="/navigatie">Wonen</a>
 <a class="quick-link" data-category-name="moslimleven" href="/navigatie">Moslimleven</a>
 </div>
 <div class="trust">
+<span class="trust-badge">Fiches + artikelen</span>
 <span class="trust-badge">Officiële bronnen waar beschikbaar</span>
 <span class="trust-badge">Ervaringen apart herkenbaar</span>
 <span class="trust-badge">HN controleert inzendingen</span>
@@ -252,6 +260,7 @@ function render(){
    const cat=categories.find(y=>y.id===x.category_id)?.name||'';
    const location=[city,country].filter(Boolean).join(', ');
    const isFiche=x.visibility==='fiche_only';
+   const resultType=isFiche?'Fiche':'Artikel';
    const fiche=isFiche?x:findFicheForArticle(x);
    const article=isFiche?findArticleForFiche(x):x;
    const info=[
@@ -285,6 +294,7 @@ function render(){
     (city?'<a class="card-tag" href="'+cityHref+'">'+esc(city)+'</a>':'')+
     (country?'<a class="card-tag" href="'+countryHref+'">'+esc(country)+'</a>':'')+
     (x.information_type?'<span class="card-tag">'+esc(x.information_type)+'</span>':'')+
+    '<span class="result-type">'+resultType+'</span>'+
     '</div>'+
     '<h2><a class="card-title-link" href="'+detailHref+'">'+esc(x.title||'Zonder titel')+'</a></h2>'+
     '<p class="summary">'+esc(x.summary||d.short_description||'Praktische informatie voor emigranten.')+'</p>'+
@@ -350,12 +360,12 @@ async function init(){
     document.getElementById('heroQ').value=presetQ;
   }
   if(presetCountry) document.getElementById('country').value=presetCountry;
-  if(presetCity) document.getElementById('city').value=presetCity;
-  if(presetCategory) document.getElementById('category').value=presetCategory;
-  
   fillCityOptions();
+  if(presetCity) document.getElementById('city').value=presetCity;
   fill('category',categories,'Alle categorieën');
+  if(presetCategory) document.getElementById('category').value=presetCategory;
   catButtons();
+  syncCategorySidebar();
   render();
 }
 document.getElementById('heroQ').addEventListener('input',e=>{
