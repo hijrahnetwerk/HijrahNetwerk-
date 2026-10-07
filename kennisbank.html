@@ -1954,6 +1954,36 @@
         `
         : "";
 
+    const relationshipRows = await db().from("topic_relationships")
+      .select("relationship_type,related_topic_id,related_topic:topic!topic_relationships_related_topic_id_fkey(id,title,slug,visibility,published,city_id,category_id)")
+      .eq("topic_id", topic.id);
+    const relatedItems = (relationshipRows.data || []).filter(r => r.related_topic?.published && r.related_topic_id !== topic.id);
+    const relatedFiches = relatedItems.filter(r => r.related_topic.visibility === "fiche_only" && ["related_fiche","related_place"].includes(r.relationship_type));
+    const relatedArticles = relatedItems.filter(r => r.related_topic.visibility !== "fiche_only" && ["related_article","related_content"].includes(r.relationship_type));
+    const relationshipBlock = (relatedFiches.length || relatedArticles.length) ? `
+      <section class="related-section" style="margin-top:28px">
+        <h3>Gerelateerde informatie</h3>
+        <p class="muted">Fiches en artikelen die bij dit onderwerp horen.</p>
+        ${relatedFiches.length ? `
+          <div class="related-grid" style="margin-top:14px">
+            ${relatedFiches.map(r => `
+              <a class="related-card" href="${esc(ficheUrl(r.related_topic))}">
+                <span class="tag">Fiche</span>
+                <h4>${esc(r.related_topic.title)}</h4>
+                <p>Bekijk de praktische fiche →</p>
+              </a>`).join("")}
+          </div>` : ""}
+        ${relatedArticles.length ? `
+          <div class="related-grid" style="margin-top:14px">
+            ${relatedArticles.map(r => `
+              <a class="related-card" href="/artikels/${encodeURIComponent(publicSlug(r.related_topic.slug || r.related_topic.id))}">
+                <span class="tag">Artikel</span>
+                <h4>${esc(r.related_topic.title)}</h4>
+                <p>Lees het artikel →</p>
+              </a>`).join("")}
+          </div>` : ""}
+      </section>` : "";
+
     articleView.innerHTML = `
 
       <button
@@ -1999,6 +2029,8 @@
       <div class="article-content">
         ${formatArticleContent(topic.content)}
       </div>
+
+      ${relationshipBlock}
 
       ${topic.source || topic.source_url || topic.updated_at || topic.last_checked_at
         ? `
