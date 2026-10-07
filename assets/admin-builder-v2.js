@@ -61,7 +61,11 @@ async function loadVersions(){if(!page)return;const r=await db().from('hn_site_p
 async function restoreVersion(id){const r=await db().from('hn_site_page_versions').select('snapshot,version_number').eq('id',id).maybeSingle();if(r.error||!r.data)return msg('Versie kon niet worden geladen.',true);const s=r.data.snapshot||{};if(s.page)page={...page,...s.page};sections=(s.sections||[]).map(normalize);draw();await syncPageFields();note('v'+r.data.version_number+' geladen als werkversie. Sla op om te bewaren.')}
 async function syncPageFields(){draw()}
 async function save(publish=false){
- if(!page)return;const now=new Date().toISOString();
+ if(!page)return;
+ const isCms=page.settings?.builder_mode==='cms';
+ if(!isCms && sections.length===0){
+  return msg('Deze bestaande pagina gebruikt nog de bestaande HN-pagina-opbouw. Opslaan in deze bouwer zou de pagina leeg kunnen maken. Gebruik eerst de HN-beheermodus om bestaande onderdelen te wijzigen.',true);
+ }const now=new Date().toISOString();
  const payload={title:$('title').value.trim()||'Zonder titel',slug:slug($('slug').value||$('title').value),status:publish?'published':($('status').value||'draft'),description:$('desc').value.trim(),seo_title:$('seoTitle').value.trim(),seo_description:$('seoDesc').value.trim(),settings:{...(page.settings||{}),builder_mode:'cms',editor_version:2,updated_in_builder_at:now}};
  let r=await db().from('hn_site_pages').update(payload).eq('id',page.id);if(r.error)return msg(r.error.message,true);
  await db().from('hn_site_sections').delete().eq('page_id',page.id);
