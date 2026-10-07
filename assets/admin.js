@@ -119,6 +119,49 @@ function refreshTopicSelects(){
   options($('topicReviewer'),state.reviewers,'Geen reviewer');
 }
 $('topicCountry')?.addEventListener('change',()=>{const id=$('topicCountry').value;const cities=state.cities.filter(x=>!id||x.country_id===id);options($('topicCity'),cities,'Geen stad')});
+let taxonomyQuickType='';
+const taxonomyQuickConfig={
+ country:{label:'Land',table:'countries',name:'countryName',parent:null},
+ city:{label:'Stad',table:'cities',name:'cityName',parent:'country'},
+ category:{label:'Categorie',table:'categories',name:'categoryName',parent:null},
+ subcategory:{label:'Subcategorie',table:'subcategories',name:'subcategoryName',parent:'category'}
+};
+function openTaxonomyQuickAdd(type){
+ const c=taxonomyQuickConfig[type];if(!c)return;
+ taxonomyQuickType=type;
+ $('taxonomyQuickTitle').textContent='Nieuwe '+c.label.toLowerCase();
+ $('taxonomyQuickHint').textContent=type==='city'?'De stad wordt gekoppeld aan het gekozen land.':type==='subcategory'?'De subcategorie wordt gekoppeld aan de gekozen categorie.':'Deze optie wordt direct toegevoegd aan de centrale HN-database.';
+ $('taxonomyQuickName').value='';$('taxonomyQuickDescription').value='';
+ const pf=$('taxonomyQuickParentField');
+ if(c.parent){
+   pf.style.display='block';
+   const sel=$('taxonomyQuickParent');sel.innerHTML='';
+   if(type==='city') options(sel,state.countries,'Kies land');
+   if(type==='subcategory') options(sel,state.categories,'Kies categorie');
+ }else pf.style.display='none';
+ $('taxonomyQuickAdd').hidden=false;$('taxonomyQuickAdd').style.display='flex';$('taxonomyQuickName').focus();
+}
+function closeTaxonomyQuickAdd(){$('taxonomyQuickAdd').hidden=true;$('taxonomyQuickAdd').style.display='none'}
+document.querySelectorAll('[data-tax-add]').forEach(b=>b.addEventListener('click',()=>openTaxonomyQuickAdd(b.dataset.taxAdd)));
+$('taxonomyQuickCancel')?.addEventListener('click',closeTaxonomyQuickAdd);
+$('taxonomyQuickAdd')?.addEventListener('click',e=>{if(e.target.id==='taxonomyQuickAdd')closeTaxonomyQuickAdd()});
+$('taxonomyQuickSave')?.addEventListener('click',async()=>{
+ const type=taxonomyQuickType,c=taxonomyQuickConfig[type],name=$('taxonomyQuickName').value.trim(),description=$('taxonomyQuickDescription').value.trim()||null;
+ if(!name)return msg('Vul een naam in.','error');
+ const p={name,slug:slug(name),description};
+ if(type==='city'){p.country_id=$('taxonomyQuickParent').value;if(!p.country_id)return msg('Kies eerst een land.','error')}
+ if(type==='subcategory'){p.category_id=$('taxonomyQuickParent').value;if(!p.category_id)return msg('Kies eerst een categorie.','error');p.sort_order=0}
+ if(type==='category')p.sort_order=0;
+ if(type==='country')p.code=null;
+ const r=await db().from(c.table).insert(p);
+ if(r.error)return msg(r.error.message,'error');
+ const created=r.data?.[0];
+ if(type==='country'){await loadCountries();$('topicCountry').value=created?.id||''}
+ if(type==='city'){await loadCities();refreshTopicSelects();$('topicCountry').value=p.country_id;$('topicCity').value=created?.id||''}
+ if(type==='category'){await loadCategories();$('topicCategory').value=created?.id||'';await loadSubcategories()}
+ if(type==='subcategory'){await loadSubcategories();$('topicSubcategory').value=created?.id||''}
+ closeTaxonomyQuickAdd();msg(c.label+' toegevoegd. Je kunt deze nu direct gebruiken.','success');
+});
 
 async function loadTopics(){const r=await db().from('topic').select('*,countries(name),cities(name),categories(name),subcategories(name),reviewers(name)').order('updated_at',{ascending:false});if(r.error)throw r.error;state.topics=r.data||[];if($('topicCount'))$('topicCount').textContent=state.topics.filter(x=>x.visibility!=='fiche_only').length;renderTopics();await Promise.all(state.topics.filter(x=>x.visibility!=='fiche_only').map(ensureFicheProposal));await loadFicheProposals();await loadFicheClaims()}
 function renderTopics(){const t=$('topicsTable');if(!t)return;const q=($('topicFilter')?.value||'').toLowerCase();const list=state.topics.filter(x=>(x.title||'').toLowerCase().includes(q));t.innerHTML=list.length?list.map(x=>'<tr><td><b>'+esc(x.title)+'</b><div class="hint">'+esc(x.slug)+'</div></td><td>'+esc(x.cities?.name||'')+(x.countries?.name?' ('+esc(x.countries.name)+')':'')+'</td><td>'+esc(x.categories?.name)+(x.subcategories?.name?' / '+esc(x.subcategories.name):'')+'</td><td><span class="status '+(x.visibility==='fiche_only'?'status-draft':'')+'">'+(x.visibility==='fiche_only'?'Fiche':'Artikel')+'</span><div class="hint">'+esc(x.information_type)+'</div></td><td>'+esc(x.status)+'</td><td><span class="status '+(x.published?'status-published':'status-draft')+'">'+(x.published?'Gepubliceerd':'Concept')+'</span></td><td><div class="actions"><button class="button-secondary" onclick="editTopic(\''+x.id+'\')">Bewerken</button><button class="button-secondary" onclick="previewTopic(\''+x.id+'\')">Bekijken</button><button class="button-secondary" onclick="toggleTopicPublished(\''+x.id+'\','+!!x.published+')">'+(x.published?'Offline':'Publiceren')+'</button><button class="button-danger" onclick="deleteTopic(\''+x.id+'\')">Verwijderen</button></div></td></tr>').join(''):'<tr><td colspan="7" class="empty">Geen topics gevonden.</td></tr>'}
