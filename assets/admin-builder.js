@@ -157,7 +157,7 @@ async function restoreVersion(id){
   if(snap.page){
     page=Object.assign({},page,snap.page);
     $("title").value=page.title||"";$("slug").value=page.slug||"";
-    $("seoTitle").value=page.seo_title||"";$("seoDesc").value=page.seo_description||"";$("desc").value=page.description||"";
+    $("seoTitle").value=page.seo_title||"";$("seoDesc").value=page.seo_description||"";$("desc").value=page.description||"";$("cmsMode").checked=page.settings&&page.settings.builder_mode==="cms";
   }
   sections=Array.isArray(snap.sections)?snap.sections:[];
   overrides=Array.isArray(snap.overrides)?snap.overrides:[];
