@@ -78,3 +78,13 @@ on conflict(slug) do update set name=excluded.name,description=excluded.descript
 do $$ declare p record; begin for p in select id from public.profiles where application_status='approved' loop
  perform private.evaluate_badges(p.id,'profile_created'); perform private.evaluate_badges(p.id,'progress_completed'); perform private.evaluate_badges(p.id,'topic_submitted'); perform private.evaluate_badges(p.id,'experience_shared'); perform private.evaluate_badges(p.id,'review_shared'); perform private.evaluate_badges(p.id,'fiche_contribution'); perform private.evaluate_badges(p.id,'plan_started'); perform private.evaluate_badges(p.id,'circle_stage');
 end loop; end $$;
+
+-- Admin-only RPC for manual badge assignment.
+create or replace function public.award_hn_badge(p_user_id uuid,p_badge_slug text,p_source text default 'manual')
+returns boolean language plpgsql security definer set search_path=''
+as $$ begin
+ if (select auth.uid()) is null or not (select private.is_admin()) then return false; end if;
+ return private.award_badge(p_user_id,p_badge_slug,p_source);
+end $$;
+revoke execute on function public.award_hn_badge(uuid,text,text) from public,anon;
+grant execute on function public.award_hn_badge(uuid,text,text) to authenticated;
