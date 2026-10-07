@@ -14,7 +14,7 @@ const SUPABASE_URL = envUrl && envUrl !== 'test' ? envUrl : DEFAULT_SUPABASE_URL
 const SUPABASE_ANON_KEY = envKey && envKey !== 'test' ? envKey : DEFAULT_SUPABASE_PUBLISHABLE_KEY;
 const SITE_URL = 'https://hijrah-netwerk.vercel.app';
 
-console.log('\\n[HN build] Supabase configuratie controleren...');
+console.log('\n[HN build] Supabase configuratie controleren...');
 console.log('[HN build] Supabase URL: ' + SUPABASE_URL);
 console.log('[HN build] Supabase sleutel beschikbaar: ' + Boolean(SUPABASE_ANON_KEY));
 
@@ -40,8 +40,8 @@ const motionTag = '<script src="/assets/hn-motion.js"></script>';
 // Altijd het echte HN-kleurenlogo gebruiken als favicon. De versieparameter
 // voorkomt dat browsers een oude favicon uit cache blijven tonen.
 const faviconPath = '/assets/logo-color.pngneddkleinn.png?v=20261007';
-const faviconTag = '<link rel="icon" type="image/png" href="' + faviconPath + '">\\n' +
-  '<link rel="shortcut icon" type="image/png" href="' + faviconPath + '">\\n' +
+const faviconTag = '<link rel="icon" type="image/png" href="' + faviconPath + '">\n' +
+  '<link rel="shortcut icon" type="image/png" href="' + faviconPath + '">\n' +
   '<link rel="apple-touch-icon" href="' + faviconPath + '">';
 
 const htmlFiles = fs.readdirSync(__dirname).filter(name => name.endsWith('.html'));
@@ -51,16 +51,16 @@ for (const file of htmlFiles) {
   const filePath = path.join(__dirname, file);
   let html = fs.readFileSync(filePath, 'utf8');
 
-  html = html.replace(/(href|src)=(['"])assets\\//g, '$1=$2/assets/');
+  html = html.replace(/(href|src)=(['"])assets\//g, '$1=$2/assets/');
   html = html.replace(/<script src="(?:\.\/)?(supabase-client|auth|site-app)\.js"><\/script>/g, '<script src="/$1.js"><\/script>');
-  html = html.replace(/assets\\/public-nav\\.(css|js)(?:\\?[^"\']*)?/g, 'assets/public-nav.$1?v=20261007');
-  html = html.replace(/<script src="\\/assets\\/private-preview\\.js"><\\/script>\\s*/g, '');
+  html = html.replace(/assets\/public-nav\.(css|js)(?:\?[^"\']*)?/g, 'assets/public-nav.$1?v=20261007');
+  html = html.replace(/<script src="\/assets\/private-preview\.js"><\/script>\s*/g, '');
 
   // Verwijder oude favicon-verwijzingen voordat de juiste HN-favicon opnieuw
   // wordt geplaatst. Hierdoor blijft een eerdere build niet naar een verkeerd
   // logo verwijzen.
-  html = html.replace(/<link[^>]+rel=["'](?:icon|shortcut icon|apple-touch-icon)["'][^>]*>\\s*/gi, '');
-  html = html.replace(/<link[^>]+rel=["'](?:apple-touch-icon|shortcut icon|icon)["'][^>]*>\\s*/gi, '');
+  html = html.replace(/<link[^>]+rel=["'](?:icon|shortcut icon|apple-touch-icon)["'][^>]*>\s*/gi, '');
+  html = html.replace(/<link[^>]+rel=["'](?:apple-touch-icon|shortcut icon|icon)["'][^>]*>\s*/gi, '');
 
   if (!html.includes('</body>')) {
     console.warn('[HN build] Geen </body> gevonden in ' + file + '; pagina overgeslagen.');
@@ -71,7 +71,7 @@ for (const file of htmlFiles) {
   // waardoor browsers hem niet betrouwbaar als favicon oppikten.
   const hasFavicon = /<link[^>]+rel=["'](?:icon|shortcut icon|apple-touch-icon)["'][^>]*>/i.test(html);
   if (!hasFavicon) {
-    html = html.replace('</head>', faviconTag + '\\n</head>');
+    html = html.replace('</head>', faviconTag + '\n</head>');
   }
 
   const additions = [
@@ -87,7 +87,7 @@ for (const file of htmlFiles) {
     !html.includes(adminBarStyleTag) ? adminBarStyleTag : '',
     !html.includes(visualPolishStyleTag) ? visualPolishStyleTag : '',
     !html.includes(motionTag) ? motionTag : ''
-  ].filter(Boolean).join('\\n') + '\\n';
+  ].filter(Boolean).join('\n') + '\n';
 
   const canonicalRoutes = {
     'index.html':'/', 'landen.html':'/landen', 'navigatie.html':'/navigatie',
@@ -101,23 +101,23 @@ for (const file of htmlFiles) {
   const noindexFiles = new Set(['login.html','register.html','reset-password.html','update-password.html','dashboard.html','mijn-kaart.html','admin.html','admin-hulp.html','admin-kaart.html','admin-wachtlijst.html','admin-bewerkvoorstellen.html','werkruimte.html']);
   const canonicalRoute = canonicalRoutes[file];
   if (canonicalRoute && !html.includes('rel="canonical"')) {
-    html = html.replace('</head>', '<link rel="canonical" href="' + SITE_URL + canonicalRoute + '">\\n</head>');
+    html = html.replace('</head>', '<link rel="canonical" href="' + SITE_URL + canonicalRoute + '">\n</head>');
   }
 
   if (canonicalRoute && !html.includes('property="og:title"')) {
-    const titleMatch = html.match(/<title[^>]*>([\\s\\S]*?)<\\/title>/i);
+    const titleMatch = html.match(/<title[^>]*>([\s\S]*?)<\/title>/i);
     const descriptionMatch = html.match(/<meta[^>]+name=["']description["'][^>]+content=["']([^"']*)["']/i);
     const title = titleMatch ? titleMatch[1].replace(/<[^>]+>/g,'').trim() : 'Hijrah Netwerk';
     const description = descriptionMatch ? descriptionMatch[1].trim() : 'Hijrah Netwerk: praktische informatie en hulpmiddelen van oriëntatie tot integratie.';
-    const social = '<meta property="og:type" content="website">\\n<meta property="og:title" content="' + title.replace(/"/g,'&quot;') + '">\\n<meta property="og:description" content="' + description.replace(/"/g,'&quot;') + '">\\n<meta property="og:url" content="' + SITE_URL + canonicalRoute + '">\\n<meta name="twitter:card" content="summary">\\n<meta name="twitter:title" content="' + title.replace(/"/g,'&quot;') + '">\\n<meta name="twitter:description" content="' + description.replace(/"/g,'&quot;') + '">';
-    html = html.replace('</head>', social + '\\n</head>');
+    const social = '<meta property="og:type" content="website">\n<meta property="og:title" content="' + title.replace(/"/g,'&quot;') + '">\n<meta property="og:description" content="' + description.replace(/"/g,'&quot;') + '">\n<meta property="og:url" content="' + SITE_URL + canonicalRoute + '">\n<meta name="twitter:card" content="summary">\n<meta name="twitter:title" content="' + title.replace(/"/g,'&quot;') + '">\n<meta name="twitter:description" content="' + description.replace(/"/g,'&quot;') + '">';
+    html = html.replace('</head>', social + '\n</head>');
   }
 
   if (noindexFiles.has(file)) {
     const existingRobots = html.match(/<meta[^>]+name=["']robots["'][^>]*>/i);
     const tag = '<meta name="robots" content="noindex,nofollow">';
     if (existingRobots) html = html.replace(existingRobots[0], tag);
-    else html = html.replace('</head>', tag + '\\n</head>');
+    else html = html.replace('</head>', tag + '\n</head>');
   }
 
   html = html.replace('</body>', additions + '</body>');
@@ -126,11 +126,11 @@ for (const file of htmlFiles) {
 }
 
 function escXml(value) { return String(value || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;'); }
-function slugify(value) { return String(value || '').normalize('NFD').replace(/[\\u0300-\\u036f]/g, '').toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, ''); }
+function slugify(value) { return String(value || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, ''); }
 function publicSlug(value) { return String(value || '').replace(/-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i, ''); }
 
 async function fetchJson(table, query) {
-  const url = SUPABASE_URL.replace(/\\/$/, '') + '/rest/v1/' + table + '?' + query;
+  const url = SUPABASE_URL.replace(/\/$/, '') + '/rest/v1/' + table + '?' + query;
   const response = await fetch(url, {headers: {apikey: SUPABASE_ANON_KEY, Authorization: 'Bearer ' + SUPABASE_ANON_KEY}});
   if (!response.ok) throw new Error(table + ' sitemap query failed: ' + response.status);
   return response.json();
@@ -139,7 +139,7 @@ async function fetchJson(table, query) {
 async function buildSitemap() {
   const staticRoutes = ['/','/landen','/navigatie','/kennisbank','/smart-search','/community','/bijdragen','/orientatie','/orientatietest','/stappenplan','/voorbereiding','/vertrek','/integratie','/realiteitscheck','/verhalen','/stedengids','/vergelijken','/hulp'];
   const urls = new Map();
-  const add = (pathname, priority, changefreq) => { if (!pathname || pathname.includes('?')) return; const clean = pathname === '/' ? '/' : pathname.replace(/\\/$/, ''); urls.set(clean, {priority, changefreq}); };
+  const add = (pathname, priority, changefreq) => { if (!pathname || pathname.includes('?')) return; const clean = pathname === '/' ? '/' : pathname.replace(/\/$/, ''); urls.set(clean, {priority, changefreq}); };
   staticRoutes.forEach(route => add(route, route === '/' ? '1.0' : '0.7', route === '/' ? 'weekly' : 'monthly'));
   try {
     let cities = [], topics = [], categories = [];
@@ -151,13 +151,13 @@ async function buildSitemap() {
     const categoryById = new Map(categories.map(x => [x.id, x]));
     topics.forEach(topic => { const slug = publicSlug(topic.slug || ''); if (!slug) return; const city = cityById.get(topic.city_id); const category = categoryById.get(topic.category_id); const categorySlug = category?.slug || slugify(category?.name || topic.visibility || 'informatie'); if (city) { const citySlug = city.slug || slugify(city.name); const area = topic.neighborhood ? slugify(topic.neighborhood) : ''; const parts = ['/locaties', citySlug]; if (area) parts.push(area); parts.push(categorySlug, slug); add(parts.join('/'), '0.8', 'weekly'); } else add('/artikels/' + slug, '0.7', 'monthly'); });
   } catch (error) { console.warn('[HN build] Sitemap-data kon niet volledig worden geladen:', error.message); }
-  const body = Array.from(urls.entries()).map(([loc, meta]) => ['  <url>','    <loc>' + escXml(SITE_URL + loc) + '</loc>','    <changefreq>' + meta.changefreq + '</changefreq>','    <priority>' + meta.priority + '</priority>','  </url>'].join('\\n')).join('\\n');
-  fs.writeFileSync(path.join(__dirname, 'sitemap.xml'), '<?xml version="1.0" encoding="UTF-8"?>\\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\\n' + body + '\\n</urlset>\\n', 'utf8');
-  fs.writeFileSync(path.join(__dirname, 'robots.txt'), ['User-agent: *','Allow: /','','Disallow: /admin','Disallow: /werkruimte','Disallow: /dashboard','Disallow: /mijn-kaart','Disallow: /login','Disallow: /register','Disallow: /reset-password','Disallow: /update-password','','Sitemap: ' + SITE_URL + '/sitemap.xml',''].join('\\n'), 'utf8');
+  const body = Array.from(urls.entries()).map(([loc, meta]) => ['  <url>','    <loc>' + escXml(SITE_URL + loc) + '</loc>','    <changefreq>' + meta.changefreq + '</changefreq>','    <priority>' + meta.priority + '</priority>','  </url>'].join('\n')).join('\n');
+  fs.writeFileSync(path.join(__dirname, 'sitemap.xml'), '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + body + '\n</urlset>\n', 'utf8');
+  fs.writeFileSync(path.join(__dirname, 'robots.txt'), ['User-agent: *','Allow: /','','Disallow: /admin','Disallow: /werkruimte','Disallow: /dashboard','Disallow: /mijn-kaart','Disallow: /login','Disallow: /register','Disallow: /reset-password','Disallow: /update-password','','Sitemap: ' + SITE_URL + '/sitemap.xml',''].join('\n'), 'utf8');
   console.log('[HN build] sitemap.xml: ' + urls.size + ' URL(s).');
 }
 
 buildSitemap().catch(error => console.warn('[HN build] Sitemap-build mislukt:', error.message)).finally(() => {
-  console.log('[HN build] ' + processed + ' HTML-pagina\\'s gecontroleerd en productie-klaar gemaakt.');
+  console.log('[HN build] ' + processed + ' HTML-pagina\'s gecontroleerd en productie-klaar gemaakt.');
   console.log('[HN build] assets/config.js succesvol aangemaakt.');
 });
