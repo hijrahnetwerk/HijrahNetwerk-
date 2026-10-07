@@ -379,6 +379,8 @@ function inspectExisting(){
   $("cards").value="";
   $("cardWrap").style.display="none";
   $("existingActions").hidden=false;
+  $("dataWrap").hidden=true;
+  $("componentMeta").hidden=true;
   setSelection("existing","Bestaand element","Component-ID: "+selectedExisting.id);
 }
 
