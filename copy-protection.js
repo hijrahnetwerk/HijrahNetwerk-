@@ -1,9 +1,7 @@
 (function () {
   "use strict";
 
-  let adminCopyAllowed = false;
-
-  async function checkAdmin() {
+  function isAdminPage() {\n    const p = (window.location.pathname || "").replace(/\\/$/, "");\n    return p === "/admin" || p.startsWith("/admin/") || p.startsWith("/admin-");\n  }\n\n  if (isAdminPage()) return;\n\n  let adminCopyAllowed = false;\n\n  async function checkAdmin() {
     try {
       if (!window.hijrahSupabase) return;
       const { data: { user } } = await window.hijrahSupabase.auth.getUser();
@@ -31,7 +29,7 @@
     );
   }
 
-  document.addEventListener("contextmenu", function (event) {
+  checkAdmin();\n\n  document.addEventListener("contextmenu", function (event) {
     if (!isEditable(event.target)) {
       event.preventDefault();
     }
