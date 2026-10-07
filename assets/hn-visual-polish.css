@@ -1,0 +1,27 @@
+/* HN visual polish */
+:root{--hn-brown:#674C2E;--hn-rust:#DD842A;--hn-gold:#C6A15B;--hn-muted:#766b60;--hn-line:rgba(103,76,46,.16);--hn-shadow:0 10px 30px rgba(103,76,46,.08);--hn-shadow-hover:0 18px 42px rgba(103,76,46,.14);--hn-radius:18px}
+html{scroll-behavior:smooth}
+body{background:linear-gradient(180deg,#fff 0%,#fff 72%,#faf8f5 100%);color:#4d3926}
+button,.btn,.button,a.button{border-radius:12px;transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease}
+button:hover,.btn:hover,.button:hover,a.button:hover{transform:translateY(-2px);box-shadow:0 7px 18px rgba(103,76,46,.12)}
+input,select,textarea{border:1px solid var(--hn-line)!important;border-radius:12px!important;transition:border-color .2s ease,box-shadow .2s ease}
+input:focus,select:focus,textarea:focus{border-color:var(--hn-rust)!important;box-shadow:0 0 0 4px rgba(221,132,42,.12)!important;outline:none}
+.card,.panel,.country-card,.topic-card,.result-card,.fiche-card,.article-card,.plan-box,.monitor-box,.overview-card{border:1px solid var(--hn-line)!important;border-radius:var(--hn-radius)!important;box-shadow:var(--hn-shadow);transition:transform .28s ease,box-shadow .28s ease,border-color .28s ease}
+.card:hover,.panel:hover,.country-card:hover,.topic-card:hover,.result-card:hover,.fiche-card:hover,.article-card:hover,.plan-box:hover,.monitor-box:hover{transform:translateY(-3px);box-shadow:var(--hn-shadow-hover);border-color:rgba(198,161,91,.6)!important}
+.status,.notification-badge{border-radius:999px}
+.hn-reveal{opacity:0;transform:translateY(18px);transition:opacity .65s ease,transform .65s ease}
+.hn-reveal.hn-visible{opacity:1;transform:none}
+.hn-stagger>*{opacity:0;transform:translateY(14px);transition:opacity .5s ease,transform .5s ease}
+.hn-stagger.hn-visible>*{opacity:1;transform:none}
+.hn-stagger.hn-visible>*:nth-child(2){transition-delay:.06s}.hn-stagger.hn-visible>*:nth-child(3){transition-delay:.12s}.hn-stagger.hn-visible>*:nth-child(4){transition-delay:.18s}.hn-stagger.hn-visible>*:nth-child(5){transition-delay:.24s}
+.hn-builder{min-height:100vh;background:linear-gradient(180deg,#fff 0%,#faf8f5 100%);padding:clamp(18px,3vw,34px);font-family:Inter,Arial,sans-serif}
+.hn-builder .builder-top{width:min(1180px,100%);margin:0 auto 24px;display:flex;align-items:center;justify-content:space-between;gap:20px;padding:22px 24px;background:#fff;border:1px solid var(--hn-line);border-radius:22px;box-shadow:var(--hn-shadow)}
+.hn-builder .builder-top h1{margin:5px 0 4px;color:var(--hn-brown);font-size:clamp(25px,4vw,38px);letter-spacing:-.035em}
+.hn-builder .builder-top p{margin:0;color:var(--hn-muted);font-size:14px}.hn-builder .builder-top a{color:var(--hn-rust);font-weight:700;text-decoration:none}
+.hn-builder .panel{width:min(1180px,100%);margin:0 auto;background:#fff;padding:clamp(18px,3vw,28px)}
+.hn-builder .editorbar{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;padding-bottom:15px;border-bottom:1px solid var(--hn-line)}
+.hn-builder .editorbar h2{margin:0;color:var(--hn-brown);font-size:20px}.hn-builder .muted{color:var(--hn-muted);line-height:1.6}
+#items{display:grid;gap:10px;margin-top:18px}.hn-builder #items>*{border:1px solid var(--hn-line);border-radius:14px;background:#fff;padding:14px;transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease}.hn-builder #items>*:hover{transform:translateX(3px);box-shadow:0 8px 22px rgba(103,76,46,.09);border-color:rgba(198,161,91,.7)}
+.sidebar{box-shadow:8px 0 28px rgba(103,76,46,.1)}.nav-button{border-radius:12px!important}.nav-button:hover,.nav-button.active{background:rgba(255,255,255,.14)!important;transform:translateX(3px)}.topbar{box-shadow:0 4px 18px rgba(103,76,46,.05);position:sticky;top:0;z-index:30}.content{max-width:1500px;margin:0 auto}
+@media(max-width:700px){.hn-builder{padding:12px}.hn-builder .builder-top{padding:17px;border-radius:17px;align-items:flex-start}.hn-builder .builder-top .button{width:100%}.hn-builder .panel{border-radius:17px}.hn-builder #items>*{padding:12px}.content{padding:14px!important}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.hn-reveal,.hn-stagger>*{transition:none!important;transform:none!important}.card,.panel,.button,button{transition:none!important}}
