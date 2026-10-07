@@ -1,3 +1,6 @@
+
+/* Sitewide UX foundation is loaded here as well for pages that use platform-pages without the public nav script. */
+@import url('/assets/hn-ux.css');
 :root{
   --hn-brown:#674C2E;
   --hn-rust:#DD842A;
