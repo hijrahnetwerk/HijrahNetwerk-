@@ -1178,22 +1178,34 @@ th{
 
         <div class="field">
           <label>Land</label>
-          <select id="topicCountry"></select>
+          <div style="display:flex;gap:7px;align-items:center;">
+            <select id="topicCountry" style="flex:1;"></select>
+            <button type="button" class="button button-secondary" data-tax-add="country" title="Nieuwe land toevoegen">+</button>
+          </div>
         </div>
 
         <div class="field">
           <label>Stad</label>
-          <select id="topicCity"></select>
+          <div style="display:flex;gap:7px;align-items:center;">
+            <select id="topicCity" style="flex:1;"></select>
+            <button type="button" class="button button-secondary" data-tax-add="city" title="Nieuwe stad toevoegen">+</button>
+          </div>
         </div>
 
         <div class="field">
           <label>Categorie</label>
-          <select id="topicCategory"></select>
+          <div style="display:flex;gap:7px;align-items:center;">
+            <select id="topicCategory" style="flex:1;"></select>
+            <button type="button" class="button button-secondary" data-tax-add="category" title="Nieuwe categorie toevoegen">+</button>
+          </div>
         </div>
 
         <div class="field">
           <label>Subcategorie</label>
-          <select id="topicSubcategory"></select>
+          <div style="display:flex;gap:7px;align-items:center;">
+            <select id="topicSubcategory" style="flex:1;"></select>
+            <button type="button" class="button button-secondary" data-tax-add="subcategory" title="Nieuwe subcategorie toevoegen">+</button>
+          </div>
         </div>
 
         <div class="field">
@@ -1702,5 +1714,17 @@ th{
 
 <script src="assets/admin.js"></script>\n<script src="assets/hn-admin-center.js"></script>
 
-</body>
+<div id="taxonomyQuickAdd" hidden style="position:fixed;inset:0;background:rgba(40,30,20,.45);z-index:1000;display:none;align-items:center;justify-content:center;padding:20px;">
+  <div style="background:#fff;border:1px solid #674C2E;border-radius:12px;width:min(520px,100%);padding:22px;">
+    <h3 id="taxonomyQuickTitle" style="margin:0 0 8px;">Nieuwe optie</h3>
+    <p id="taxonomyQuickHint" class="hint"></p>
+    <div class="field" style="margin-top:15px;"><label>Naam</label><input id="taxonomyQuickName" maxlength="150"></div>
+    <div class="field" id="taxonomyQuickParentField" style="margin-top:15px;display:none;"><label id="taxonomyQuickParentLabel">Bovenliggende optie</label><select id="taxonomyQuickParent"></select></div>
+    <div class="field" style="margin-top:15px;"><label>Beschrijving <span class="hint">(optioneel)</span></label><textarea id="taxonomyQuickDescription" rows="3"></textarea></div>
+    <div class="form-actions">
+      <button type="button" class="button button-primary" id="taxonomyQuickSave">Toevoegen</button>
+      <button type="button" class="button button-secondary" id="taxonomyQuickCancel">Annuleren</button>
+    </div>
+  </div>
+</div></body>
 </html>
