@@ -768,6 +768,11 @@ async function renderFiche(){
     html+='</div></section>';
   }
 
+  const relationshipRows=await db().from('topic_relationships').select('relationship_type,related_topic_id,related_topic:topic!topic_relationships_related_topic_id_fkey(id,title,slug,visibility,city_id,category_id,published)').eq('topic_id',id);
+  const relatedItems=(relationshipRows.data||[]).filter(r=>r.related_topic?.published&&r.related_topic_id!==id);
+  const relatedArticles=relatedItems.filter(r=>r.related_topic.visibility!=='fiche_only'&&['related_article','related_content'].includes(r.relationship_type));
+  const relatedFiches=relatedItems.filter(r=>r.related_topic.visibility==='fiche_only'&&['related_fiche','related_place'].includes(r.relationship_type));
+
   if(x.content || practiceArticleId){
     const articleId = practiceArticleId || id;
     const articleLabel = practiceArticleId
@@ -777,6 +782,29 @@ async function renderFiche(){
       ? 'Deze fiche houdt de belangrijkste gegevens van deze arts overzichtelijk. Voor achtergrondinformatie over Cabinet Médical Ibn Zuhr en beide artsen kun je het uitgebreide artikel lezen.'
       : 'De fiche geeft je de belangrijkste gegevens. Voor achtergrondinformatie en uitgebreide informatie kun je het volledige artikel in de Kennisbank lezen.'
     )+'</p><div class="hero-actions"><a class="button primary" href="/artikels/'+encodeURIComponent(String(practiceArticleSlug||articleId).replace(/-([0-9a-f]{8})-([0-9a-f]{4})-([0-9a-f]{4})-([0-9a-f]{4})-([0-9a-f]{12})$/i,''))+'">'+articleLabel+'</a></div></section>';
+  }
+
+  if(relatedArticles.length||relatedFiches.length){
+    html+='<section class="card"><h2>Gerelateerde informatie</h2><p class="card-sub">Informatie die bij deze fiche hoort of je kan helpen bij het verder zoeken.</p>';
+    if(relatedArticles.length){
+      html+='<div style="margin:0 0 18px"><div class="info-label">Artikelen</div><div class="info-grid">';
+      relatedArticles.forEach(r=>{
+        const t=r.related_topic;
+        html+='<div class="info-item"><div class="info-value"><a href="/artikels/'+encodeURIComponent(publicSlug(t.slug||t.id))+'">'+esc(t.title)+'</a></div></div>';
+      });
+      html+='</div></div>';
+    }
+    if(relatedFiches.length){
+      html+='<div><div class="info-label">Gerelateerde fiches</div><div class="info-grid">';
+      relatedFiches.forEach(r=>{
+        const t=r.related_topic;
+        const tc=(ci.data||[]).find(y=>y.id===t.city_id)?.name||city;
+        const tcat=(ca.data||[]).find(y=>y.id===t.category_id)?.name||cat;
+        html+='<div class="info-item"><div class="info-value"><a href="'+esc(hierarchicalFicheUrl(tc,'',tcat,publicSlug(t.slug||t.id)))+'">'+esc(t.title)+'</a></div></div>';
+      });
+      html+='</div></div>';
+    }
+    html+='</section>';
   }
 
   html+='<section class="card"><h2>Ervaringen uit de praktijk</h2><p class="card-sub">Gebaseerd op ervaringen van emigranten uit Nederland en België en anderen met eigen ervaring ter plaatse. Waar mogelijk aangevuld met officiële bronnen. Een ervaring blijft persoonlijk en kan per persoon, gezin, wijk, situatie en periode verschillen.</p><div class="source-explainer" style="margin:0 0 16px"><strong>Let op</strong><div>Een persoonlijke ervaring is geen garantie dat dezelfde situatie voor iedereen geldt. Ervaringen zijn een aanvulling op andere bronnen en worden duidelijk onderscheiden van officiële informatie en gecontroleerde informatie.</div></div>';
