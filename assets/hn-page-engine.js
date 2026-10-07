@@ -9,13 +9,24 @@ function selector(el){var out=[];while(el&&el.nodeType===1&&el!==document.body){
 function baseBlocks(){var r=root();return [...r.children].filter(function(e){return !["SCRIPT","STYLE","NOSCRIPT","HEADER","FOOTER","NAV"].includes(e.tagName)&&e.getBoundingClientRect().height>5&&!e.classList.contains("hn-public-section")})}
 async function fetchComponentData(c){
  var source=c.data_source||(c.data&&c.data.source)||"";
- if(!source)return [];
- var table=source==="topics"||source==="articles"||source==="fiches"?"topic":source;
- if(["cities","categories","topic"].indexOf(table)<0)return [];
- var q=await db.from(table).select("*").limit(Math.min(Number(c.data_limit||c.data&&c.data.limit||6)||6,50));
+ var table=source==="cities"?"cities":source==="categories"?"categories":(["topics","articles","fiches","topic"].indexOf(source)>=0?"topic":"");
+ if(!table)return [];
+ var limit=Math.min(Math.max(Number(c.data_limit||c.data&&c.data.limit||6)||6,1),50);
+ var q=await db.from(table).select("*").limit(limit);
  if(q.error)return [];
- var rows=q.data||[];
- return rows.filter(function(x){if(table==="cities"&&x.is_active===false)return false;if(table==="categories"&&x.is_active===false)return false;if(table==="topic"&&x.published===false)return false;return true}).slice(0,Math.min(Number(c.data_limit||c.data&&c.data.limit||6)||6,50));
+ var filters=c.data_filters||(c.data&&c.data.filters)||{};
+ var rows=(q.data||[]).filter(function(x){
+   if(table==="cities"&&x.is_active===false)return false;
+   if(table==="categories"&&x.is_active===false)return false;
+   if(table==="topic"&&x.published===false)return false;
+   return Object.keys(filters).every(function(k){
+     if(filters[k]===null||filters[k]==="")return true;
+     var actual=x[k];
+     if(Array.isArray(filters[k]))return filters[k].map(String).includes(String(actual));
+     return String(actual==null?"":actual).toLowerCase().includes(String(filters[k]).toLowerCase());
+   });
+ });
+ return rows.slice(0,limit);
 }
 function rowTitle(x){
  return x.name||x.title||x.topic||x.label||x.slug||"Informatie";
@@ -31,15 +42,29 @@ function rowUrl(x,source){
  return "#";
 }
 async function render(s){
- var c=s.content||{}, body="";
- if(s.section_type==="image") body=c.image?'<img src="'+esc(c.image)+'" alt="'+esc(s.title||"")+'" style="max-width:100%;display:block;margin:auto">':"";
+ var c=s.content||{},body="";
+ var dataSource=c.data_source||(s.data&&s.data.source)||"";
+ var dataTypes=["directory","articles","fiches","cities","categories","navigation"];
+ if(dataTypes.includes(s.section_type)&&dataSource){
+   var rows=await fetchComponentData(c);
+   body='<div class="hn-public-data-grid">'+rows.map(function(x){
+     var title=rowTitle(x),text=rowText(x),url=rowUrl(x,dataSource);
+     return '<article><strong>'+esc(title)+'</strong>'+(text?'<p>'+esc(String(text).slice(0,240))+'</p>':"")+(url&&url!="#"?'<a href="'+esc(url)+'">Bekijk informatie →</a>':"")+'</article>';
+   }).join("")+'</div>';
+   if(!rows.length)body='<p class="hn-public-empty">Er is momenteel geen informatie gevonden voor deze selectie.</p>';
+ } else if(s.section_type==="image") body=c.image?'<img src="'+esc(c.image)+'" alt="'+esc(s.title||"")+'" style="max-width:100%;display:block;margin:auto">':"";
  else if(s.section_type==="cards") body='<div class="hn-public-cards">'+(c.cards||"").split("\n").filter(Boolean).map(function(x){var a=x.split("|");return '<article><strong>'+esc((a[0]||"").trim())+'</strong><p>'+esc((a[1]||"").trim())+'</p></article>'}).join("")+"</div>";
- else if(s.section_type==="links") body=(c.text||"").split("\n").filter(Boolean).map(function(x){var a=x.split("|");return '<a href="'+esc((a[1]||"#").trim())+'">'+esc((a[0]||a[1]||"").trim())+"</a>" }).join("");
- else if(s.section_type==="cta") body=c.button?'<a class="hn-public-cta" href="'+esc(c.url||"#")+'">'+esc(c.button)+"</a>":"";
- else if(s.section_type==="divider") body='<hr>';
+ else if(s.section_type==="links"||s.section_type==="navigation") body=(c.text||"").split("\n").filter(Boolean).map(function(x){var a=x.split("|");return '<a href="'+esc((a[1]||"#").trim())+'">'+esc((a[0]||a[1]||"").trim())+"</a>" }).join("");
+ else if(s.section_type==="cta"||["comparison","steps","community"].includes(s.section_type)){
+   var target=s.section_type==="comparison"?"/vergelijken":s.section_type==="steps"?"/stappenplan":s.section_type==="community"?"/community":(c.url||"#");
+   var label=c.button||(s.section_type==="comparison"?"Vergelijken":s.section_type==="steps"?"Bekijk het stappenplan":s.section_type==="community"?"Naar de community":"Bekijk meer");
+   body='<a class="hn-public-cta" href="'+esc(target)+'">'+esc(label)+'</a>';
+ } else if(s.section_type==="divider") body='<hr>';
  else if(s.section_type==="spacer") body='<div style="height:80px"></div>';
  else body='<p>'+esc(c.text||"")+"</p>";
  var el=document.createElement("section");el.className="hn-public-section";if(s.id)el.dataset.hnSectionId=s.id;
+ el.dataset.hnComponentId=s.component_id||(c.component_id)||"";
+ el.dataset.hnComponentType=s.component_type||s.section_type;
  el.innerHTML=(s.title?'<h2>'+esc(s.title)+"</h2>":"")+body;return el;
 }
 async function run(){
