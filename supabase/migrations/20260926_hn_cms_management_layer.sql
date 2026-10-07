@@ -49,5 +49,5 @@ drop trigger if exists trg_hn_site_blocks_updated_at on public.hn_site_blocks;
 create trigger trg_hn_site_blocks_updated_at before update on public.hn_site_blocks for each row execute function public.hn_touch_updated_at();
 insert into public.hn_site_settings(key,value) values
 ('site','{"name":"Hijrah Netwerk","tagline":"Een netwerk voor emigranten, van oriëntatie tot integratie."}'::jsonb),
-('design','{"primary":"#674C2E","accent":"#DD842A","gold":"#D4AF37","background":"#FFFFFF"}'::jsonb)
+('design','{"primary":"#674C2E","accent":"#DD842A","gold":"#C6A15B","background":"#FFFFFF"}'::jsonb)
 on conflict (key) do nothing;
