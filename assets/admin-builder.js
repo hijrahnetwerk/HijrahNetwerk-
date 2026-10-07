@@ -5,10 +5,10 @@ var db=null,pages=[],page=null,sections=[],live=[],selected=-1,selectedExisting=
 var overrides=[],layouts=[],versions=[],editorElements=[];
 var $=function(id){return document.getElementById(id);};
 var T={
-  hero:"Hero",intro:"Intro",text:"Tekst",image:"Afbeelding",cards:"Kaarten",cta:"CTA",links:"Links",navigation:"HN Navigatie",
+  hero:"Hero",intro:"Intro",text:"Tekst",image:"Afbeelding",cards:"Kaarten",cta:"CTA",links:"Links",navigation:"HN Navigatie",smart_search:"HN Smart Search",
   directory:"HN Overzicht",articles:"HN Artikelen",fiches:"HN Fiches",cities:"HN Steden",categories:"HN Categorieën",comparison:"HN Vergelijking",steps:"HN Stappen",community:"HN Community",divider:"Scheidingslijn",spacer:"Ruimte"
 };
-var icons={hero:"H",intro:"I",text:"T",image:"I",cards:"K",cta:"B",links:"L",navigation:"N",directory:"O",articles:"A",fiches:"F",cities:"S",categories:"C",comparison:"V",steps:"ST",community:"CO",divider:"—",spacer:"↕"};
+var icons={hero:"H",intro:"I",text:"T",image:"I",cards:"K",cta:"B",links:"L",navigation:"N",smart_search:"SS",directory:"O",articles:"A",fiches:"F",cities:"S",categories:"C",comparison:"V",steps:"ST",community:"CO",divider:"—",spacer:"↕"};
 
 function esc(v){return String(v==null?"":v).replace(/[&<>"']/g,function(m){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m];});}
 function cleanSlug(v){return String(v||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().trim().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"");}
@@ -602,5 +602,5 @@ function bind(){
   });
 }
 
-admin().then(function(ok){if(ok){bind();load();}});
+admin().then(async function(ok){if(ok){if(window.HNComponentRegistry&&window.HNComponentRegistry.load){await window.HNComponentRegistry.load();}bind();palette();load();}});
 })();
