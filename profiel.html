@@ -7,7 +7,7 @@ body{margin:0;background:#fff;color:#674C2E;font-family:Arial,sans-serif}.wrap{m
 </main>
 <script src="/assets/config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/supabase-client.js"></script>
 <script>
-const db=()=>window.hijrahSupabase,$=x=>document.getElementById(x),esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]);
+const db=()=>window.hijrahSupabase,$=x=>document.getElementById(x),esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
 const id=new URLSearchParams(location.search).get('id');
 let statusMap={};
 async function init(){
