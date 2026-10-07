@@ -182,14 +182,6 @@
       "destination": "/home.html"
     },
     {
-      "source": "/home-oud",
-      "destination": "/home-oud.html"
-    },
-    {
-      "source": "/home-huidig",
-      "destination": "/home-huidig.html"
-    },
-    {
       "source": "/admin-navigation",
       "destination": "/admin-navigation.html"
     },
