@@ -208,6 +208,8 @@ function sectionHtml(s){
 }
 
 function selector(el,doc){
+  var stable=el&&el.getAttribute&&el.getAttribute("data-hn-id");
+  if(stable)return stableSelector(stable);
   var out=[];
   while(el&&el.nodeType===1&&el!==doc.body){
     if(el.id){out.unshift("#"+CSS.escape(el.id));break;}
