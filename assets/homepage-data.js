@@ -13,7 +13,7 @@
 
     const { data, error } = await db
       .from("countries")
-      .select("*")
+      .select("id,name,slug,code,description,is_active")
       .eq("is_active", true)
       .order("name", { ascending: true });
 
@@ -49,7 +49,7 @@
 
             <div class="country-footer">
               <span class="badge">Actief</span>
-              <a href="#" class="country-link">
+              <a href="/navigatie?country=${encodeURIComponent(country.slug || country.id)}" class="country-link">
                 Bekijk land →
               </a>
             </div>
