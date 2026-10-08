@@ -1,0 +1,2608 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Artikels — Hijrah Netwerk</title>
+  <meta
+    name="description"
+    content="Doorzoek de artikels op land, stad en onderwerp."
+  >
+
+  <style>
+    :root {
+      --brown: #674C2E;
+      --brown-dark: #674C2E;
+      --orange: #DD842A;
+      --gold: #C6A15B;
+      --cream: #FFFFFF;
+      --white: #ffffff;
+      --ink: #674C2E;
+      --muted: #6f665b;
+      --line: #ece5da;
+      --success: #3f744b;
+      --success-bg: #e8f3ea;
+      --shadow: 0 10px 30px rgba(104, 74, 37, 0.08);
+      --radius: 18px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Arial,
+        sans-serif;
+      color: var(--ink);
+      background: var(--cream);
+      line-height: 1.55;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    main.wrap {
+      width: min(1120px, calc(100% - 80px)) !important;
+      max-width: 1120px !important;
+      margin: 0 auto !important;
+      padding: 0 0 60px !important;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .nav {
+      min-height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .brand {
+      font-weight: 800;
+      color: var(--brown-dark);
+      font-size: 19px;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .nav-links a {
+      padding: 9px 12px;
+      border-radius: 999px;
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .nav-links a:hover {
+      background: #f5efe7;
+      color: var(--brown-dark);
+    }
+
+    .hero {
+      padding: 65px clamp(28px, 5vw, 64px) 35px;
+    }
+
+    .eyebrow {
+      display: inline-block;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: #FFFFFF;
+      color: #a55e16;
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .hero h1 {
+      margin: 15px 0 12px;
+      color: var(--brown-dark);
+      font-size: clamp(34px, 5vw, 50px);
+      line-height: 1.1;
+    }
+
+    .hero p {
+      max-width: 720px;
+      margin: 0;
+      color: var(--muted);
+      font-size: 17px;
+    }
+
+    .search-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 25px;
+      max-width: 900px;
+    }
+
+    .search-row input {
+      flex: 1;
+      min-width: 0;
+      padding: 15px 18px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #fff;
+      color: var(--ink);
+      outline: none;
+    }
+
+    .search-row input:focus {
+      border-color: var(--orange);
+      box-shadow: 0 0 0 4px rgba(223, 132, 44, 0.1);
+    }
+
+    .btn {
+      border: 0;
+      border-radius: 999px;
+      padding: 11px 17px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background: var(--orange);
+      color: white;
+    }
+
+    .btn-secondary {
+      background: #f2ece4;
+      color: var(--brown-dark);
+    }
+
+    .btn-saved {
+      background: var(--success-bg);
+      color: var(--success);
+    }
+
+    .filters {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      padding: 18px;
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    select {
+      width: 100%;
+      padding: 11px 12px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: white;
+      color: var(--ink);
+    }
+
+    .results-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+      margin: 30px 0 15px;
+    }
+
+    .results-header h2 {
+      margin: 0;
+      color: var(--brown-dark);
+      font-size: 23px;
+    }
+
+    .muted {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .results {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      padding-bottom: 50px;
+    }
+
+    .article-card {
+      display: flex;
+      flex-direction: column;
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 21px;
+      box-shadow: 0 1px 2px rgba(43, 36, 28, 0.04);
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 13px;
+    }
+
+    .tag {
+      display: inline-flex;
+      padding: 5px 9px;
+      border-radius: 999px;
+      background: #f6f0e8;
+      color: var(--brown);
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .article-card-title {
+      display: block;
+      color: inherit;
+    }
+
+    .article-card-title:hover h3 {
+      color: var(--orange);
+    }
+
+    .article-card h3 {
+      margin: 0 0 9px;
+      color: var(--brown-dark);
+      font-size: 18px;
+      line-height: 1.3;
+    }
+
+    .article-card p {
+      margin: 0 0 17px;
+      color: var(--muted);
+      font-size: 14px;
+      flex: 1;
+    }
+
+    .card-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .empty {
+      grid-column: 1 / -1;
+      padding: 38px;
+      text-align: center;
+      border: 1px dashed var(--line);
+      border-radius: var(--radius);
+      color: var(--muted);
+      background: white;
+    }
+
+    .article-view {
+      display: none;
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 38px;
+      margin: 25px 0 50px;
+    }
+
+    .article-view h2 {
+      margin: 10px 0 12px;
+      color: var(--brown-dark);
+      font-size: clamp(28px, 4vw, 38px);
+      line-height: 1.15;
+    }
+
+    .article-content {
+      margin-top: 25px;
+      color: #3f382f;
+      line-height: 1.75;
+    }
+
+    .article-content h3 {
+      margin: 34px 0 11px;
+      color: var(--brown-dark);
+      font-size: 22px;
+      line-height: 1.28;
+      letter-spacing: -0.01em;
+    }
+
+    .article-content h3:first-child { margin-top: 0; }
+
+    .article-content h4 {
+      margin: 25px 0 9px;
+      color: var(--brown-dark);
+      font-size: 17px;
+      line-height: 1.35;
+      font-weight: 750;
+    }
+
+    .article-content p { margin: 0 0 17px; }
+    .article-content ul { margin: 0 0 20px 20px; padding: 0; }
+    .article-content li { margin: 7px 0; }
+
+    .article-source{
+      margin-top:34px;
+      padding:15px 0 0;
+      border-top:1px solid var(--line);
+      color:var(--muted);
+      font-size:12px;
+    }
+    .source-meta{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+    .source-meta-copy{
+      min-width:0;
+      display:flex;
+      align-items:center;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+    .source-meta-title{font-weight:600;color:var(--muted)}
+    .source-meta-updated{color:#9a9187}
+    .source-link{
+      color:#8a6a45;
+      font-size:11px;
+      font-weight:600;
+      text-decoration:none;
+      border:1px solid #674C2E;
+      background:#FFFFFF;
+      padding:6px 9px;
+      border-radius:999px;
+      white-space:nowrap;
+    }
+    .source-link:hover{
+      color:var(--brown-dark);
+      border-color:#d8c8b4;
+      background:#f6efe7;
+    }
+    @media(max-width:650px){
+      .source-meta{
+        align-items:flex-start;
+        flex-direction:column;
+      }
+    }
+
+    .hn-article-breadcrumb{
+      margin:34px 0 20px;
+      padding:15px 17px;
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:14px;
+      color:var(--muted);
+      font-size:12px;
+    }
+    .hn-article-breadcrumb-title{
+      display:block;
+      margin-bottom:7px;
+      color:var(--brown-dark);
+      font-size:11px;
+      font-weight:800;
+      letter-spacing:.06em;
+      text-transform:uppercase;
+    }
+    .hn-article-breadcrumb nav{
+      display:flex;
+      flex-wrap:wrap;
+      align-items:center;
+      gap:6px;
+      line-height:1.5;
+    }
+    .hn-article-breadcrumb a{color:var(--brown);font-weight:700}
+    .hn-article-breadcrumb a:hover{color:var(--orange)}
+    .hn-article-breadcrumb strong{color:var(--muted);font-weight:600}
+    .hn-article-breadcrumb span{color:#b6aa9b}
+    .notice {
+      display: none;
+      margin: 15px 0;
+      padding: 12px 14px;
+      border-radius: 10px;
+      background: #FFFFFF;
+      color: var(--brown-dark);
+    }
+
+    .notice.show {
+      display: block;
+    }
+
+    @media (max-width: 950px) {
+      .filters {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .results {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 650px) {
+      main.wrap {
+        width: calc(100% - 48px) !important;
+        max-width: none !important;
+        margin: 0 auto !important;
+        padding-bottom: 40px !important;
+      }
+
+      .nav {
+        align-items: flex-start;
+        flex-direction: column;
+        padding: 14px 0;
+      }
+
+      .hero {
+        padding: 40px 20px 28px;
+      }
+
+      .search-row {
+        flex-direction: column;
+      }
+
+      .filters,
+      .results {
+        grid-template-columns: 1fr;
+      }
+
+      .article-view {
+        padding: 24px 20px;
+      }
+    }
+  
+    .article-toolbar{
+      display:flex;
+      flex-wrap:wrap;
+      gap:9px;
+      margin-top:22px;
+    }
+
+    .save-action{
+      margin-top:22px;
+      padding:16px 18px;
+      border:1px solid var(--line);
+      border-radius:16px;
+      background:#fff;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:18px;
+    }
+
+    .save-action-copy{
+      min-width:0;
+    }
+
+    .save-action-copy strong{
+      display:block;
+      color:var(--brown-dark);
+      margin-bottom:3px;
+      font-size:15px;
+    }
+
+    .save-action-copy span{
+      display:block;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.45;
+    }
+
+    .save-action .heart-btn{
+      flex:0 0 auto;
+      min-height:44px;
+      padding:11px 17px;
+      background:#f7f1e8;
+      border-color:#dfd1bd;
+    }
+
+    .save-action .heart-btn.saved{
+      background:var(--success-bg);
+      border-color:#cfe2d2;
+    }
+
+    .heart-btn{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      border:1px solid var(--line);
+      background:#fff;
+      color:var(--brown-dark);
+      border-radius:999px;
+      padding:10px 15px;
+      font-weight:700;
+      cursor:pointer;
+    }
+
+    .heart-btn .heart{
+      font-size:19px;
+      line-height:1;
+    }
+
+    .heart-btn.saved{
+      background:var(--success-bg);
+      border-color:#cfe2d2;
+      color:var(--success);
+    }
+
+    .fiche-cta{
+      margin-top:24px;
+      padding:19px 20px;
+      border:1px solid #eadcca;
+      background:#fff8ef;
+      border-radius:16px;
+    }
+
+    .fiche-cta strong{
+      display:block;
+      margin-bottom:5px;
+      color:var(--brown-dark);
+    }
+
+    .article-bottom{
+      margin-top:34px;
+      padding-top:28px;
+      border-top:1px solid var(--line);
+    }
+
+    .article-bottom h3{
+      margin:0 0 14px;
+      color:var(--brown-dark);
+      font-size:20px;
+    }
+
+    .share-row,
+    .article-nav,
+    .related-grid{
+      display:grid;
+      gap:10px;
+    }
+
+    .share-row{
+      grid-template-columns:repeat(4,auto);
+      justify-content:start;
+    }
+
+    .share-btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-height:40px;
+      padding:9px 13px;
+      border:1px solid var(--line);
+      border-radius:999px;
+      background:#fff;
+      color:var(--brown-dark);
+      font-size:13px;
+      font-weight:700;
+    }
+
+    .share-btn:hover{
+      border-color:var(--orange);
+      color:var(--orange-dark);
+    }
+
+    .submission-cta{
+      margin-top:28px;
+      padding:22px;
+      border-radius:18px;
+      background:var(--brown-dark);
+      color:#fff;
+    }
+
+    .submission-cta h3{
+      color:#fff;
+      margin-bottom:7px;
+    }
+
+    .submission-cta p{
+      color:#674C2E;
+      margin:0 0 15px;
+    }
+
+    .article-nav{
+      grid-template-columns:1fr 1fr;
+      margin-top:28px;
+    }
+
+    .article-nav-link{
+      display:block;
+      padding:16px;
+      border:1px solid var(--line);
+      border-radius:14px;
+      background:#fff;
+    }
+
+    .article-nav-link.next{
+      text-align:right;
+    }
+
+    .article-nav-label{
+      display:block;
+      color:var(--muted);
+      font-size:12px;
+      margin-bottom:5px;
+    }
+
+    .article-nav-title{
+      color:var(--brown-dark);
+      font-weight:750;
+    }
+
+    .related-grid{
+      grid-template-columns:repeat(3,1fr);
+      margin-top:12px;
+    }
+
+    .related-card{
+      display:block;
+      padding:17px;
+      border:1px solid var(--line);
+      border-radius:14px;
+      background:#fff;
+    }
+
+    .related-card:hover{
+      border-color:#dfc9ac;
+      box-shadow:var(--shadow);
+    }
+
+    .related-card h4{
+      margin:7px 0 6px;
+      color:var(--brown-dark);
+      line-height:1.35;
+    }
+
+    .related-card p{
+      margin:0;
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    @media(max-width:850px){
+      .related-grid{grid-template-columns:1fr 1fr}
+    }
+
+      .community-submit{
+        align-items:stretch;
+        flex-direction:column;
+      }
+
+      .community-submit .btn{
+        width:100%;
+        text-align:center;
+      }
+
+    @media(max-width:650px){      .save-action{
+        flex-direction:column;
+        align-items:stretch;
+      }
+
+      .save-action .heart-btn{
+        width:100%;
+        justify-content:center;
+      }
+
+      .share-row{grid-template-columns:1fr 1fr}
+      .article-nav{grid-template-columns:1fr}
+      .article-nav-link.next{text-align:left}
+      .related-grid{grid-template-columns:1fr}
+    }
+
+
+.mobile-menu-toggle{display:none;align-items:center;justify-content:center;flex-direction:column;gap:4px;width:42px;height:42px;border:1px solid var(--line,#674C2E);border-radius:10px;background:#fff;cursor:pointer}
+.mobile-menu-toggle span{display:block;width:18px;height:2px;border-radius:2px;background:var(--brown,#674C2E)}
+.desktop-only{display:flex}
+.mobile-nav{position:fixed;inset:0;z-index:999;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .2s ease,visibility .2s ease}
+.mobile-nav.open{opacity:1;visibility:visible;pointer-events:auto}
+.mobile-nav-backdrop{position:absolute;inset:0;background:rgba(43,36,28,.4)}
+.mobile-nav-panel{position:absolute;right:0;top:0;height:100%;width:min(88vw,360px);background:#fff;padding:20px;box-shadow:-10px 0 30px rgba(0,0,0,.12);display:flex;flex-direction:column;gap:5px;transform:translateX(100%);transition:transform .25s ease}
+.mobile-nav.open .mobile-nav-panel{transform:translateX(0)}
+.mobile-nav-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.mobile-nav-close{width:38px;height:38px;border:1px solid var(--line,#674C2E);background:#fff;border-radius:50%;font-size:24px;line-height:1;cursor:pointer;color:var(--brown-dark,#674C2E)}
+.mobile-nav-panel>a{padding:13px 11px;border-radius:10px;color:var(--brown-dark,#674C2E);font-weight:600}
+.mobile-nav-panel>a:hover{background:#f5efe8}
+.mobile-nav-divider{height:1px;background:var(--line,#674C2E);margin:8px 0}
+.mobile-nav-panel .mobile-nav-primary{background:var(--orange,#DD842A);color:#fff;text-align:center}
+@media(max-width:680px){
+  .desktop-only{display:none!important}
+  .mobile-menu-toggle{display:flex}
+}
+</style>
+</head>
+
+<body>
+<link rel="stylesheet" href="assets/public-nav.css">
+<script src="assets/public-nav.js"></script>
+
+<main class="wrap">
+
+  <section class="hero">
+    <span class="eyebrow">Artikels</span>
+
+    <h1>Vind praktische informatie.</h1>
+
+    <p>
+      Zoek praktische artikels over landen, steden en onderwerpen.
+    </p>
+    <p class="muted" style="margin:10px auto 0;max-width:700px">Gebaseerd op ervaringen van emigranten uit Nederland en België en anderen met eigen ervaring ter plaatse. Waar mogelijk aangevuld met officiële bronnen.</p>
+
+    <form id="searchForm" class="search-row">
+      <input
+        id="searchInput"
+        type="search"
+        placeholder="Zoek bijvoorbeeld: huren in Tanger"
+        autocomplete="off"
+      >
+
+      <button class="btn btn-primary" type="submit">
+        Zoeken
+      </button>
+    </form>
+  </section>
+
+  <div id="notice" class="notice"></div>
+
+  <section class="filters">
+
+    <select id="countryFilter">
+      <option value="">Alle landen</option>
+    </select>
+
+    <select id="cityFilter">
+      <option value="">Alle steden</option>
+    </select>
+
+    <select id="categoryFilter">
+      <option value="">Alle categorieën</option>
+    </select>
+
+    <select id="subcategoryFilter">
+      <option value="">Alle subcategorieën</option>
+    </select>
+
+  </section>
+
+  <section id="articleView" class="article-view"></section>
+
+  <section id="listView">
+
+    <div class="results-header">
+      <h2>Artikelen</h2>
+
+      <span id="resultCount" class="muted">
+        Laden…
+      </span>
+    </div>
+
+    <div id="results" class="results"></div>
+
+  </section>
+
+</main>
+
+<script src="assets/config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-client.js"></script>
+<script src="auth.js"></script>
+<script type="module" src="assets/speed-insights-init.js"></script>
+<script type="module" src="assets/analytics-init.js"></script>
+
+<script>
+
+  const db = () => window.hijrahSupabase;
+
+  let topics = [];
+  let countries = [];
+  let cities = [];
+  let categories = [];
+  let subcategories = [];
+  let savedTopics = new Set();
+
+  const params =
+    new URLSearchParams(
+      window.location.search
+    );
+
+  function slugify(value) {
+    return String(value || "")
+      .normalize("NFD")
+      .replace(/[\\u0300-\\u036f]/g, "")
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "");
+  }
+
+  function publicSlug(value) {
+    return String(value || "").replace(/-([0-9a-f]{8})-([0-9a-f]{4})-([0-9a-f]{4})-([0-9a-f]{4})-([0-9a-f]{12})$/i, "");
+  }
+
+  function articleUrl(topicId) {
+    const topic = topics.find(item => item.id === topicId);
+    if (!topic?.slug) {
+      return window.location.origin + "/kennisbank?topic=" + encodeURIComponent(topicId);
+    }
+    return window.location.origin + "/artikels/" + encodeURIComponent(publicSlug(topic.slug));
+  }
+
+  function ficheUrl(topic) {
+    if (!topic?.slug) return "";
+    const city = topic.cities?.name || "";
+    const category = topic.categories?.name || topic.information_type || "informatie";
+    const parts = ["/locaties"];
+    if (city) parts.push(slugify(city));
+    if (category) parts.push(slugify(category));
+    parts.push(slugify(publicSlug(topic.slug)));
+    return parts.join("/");
+  }
+
+
+  /* =========================
+     ALGEMENE FUNCTIES
+  ========================= */
+
+  function esc(value) {
+
+    if (value == null) {
+      return "";
+    }
+
+    return String(value)
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+  }
+
+  function normalize(value) {
+
+    return String(value || "")
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "");
+
+  }
+
+  function formatArticleDate(value) {
+    if (!value) return "";
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return "";
+    return date.toLocaleDateString("nl-NL", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric"
+    });
+  }
+  function showNotice(text) {
+
+    const element =
+      document.getElementById("notice");
+
+    element.textContent = text;
+    element.classList.add("show");
+
+    clearTimeout(
+      window.__noticeTimer
+    );
+
+    window.__noticeTimer =
+      setTimeout(() => {
+
+        element.classList.remove(
+          "show"
+        );
+
+      }, 4000);
+
+  }
+
+  function fillSelect(
+    id,
+    items,
+    label
+  ) {
+
+    const select =
+      document.getElementById(id);
+
+    select.innerHTML =
+      `<option value="">${label}</option>` +
+      items
+        .map(
+          item =>
+            `<option value="${esc(item.id)}">${esc(item.name)}</option>`
+        )
+        .join("");
+
+  }
+
+
+  /* =========================
+     ACTIVITEIT LOGGEN
+  ========================= */
+
+  async function logUserActivity(
+    activityType,
+    description,
+    details = null
+  ) {
+
+    try {
+
+      const {
+        data: sessionData,
+        error: sessionError
+      } = await db()
+        .auth
+        .getSession();
+
+      if (
+        sessionError ||
+        !sessionData?.session
+      ) {
+        return;
+      }
+
+      const user =
+        sessionData.session.user;
+
+      if (!user) {
+        return;
+      }
+
+      const { error } =
+        await db()
+          .from("user_activity")
+          .insert({
+            user_id: user.id,
+            activity_type: activityType,
+            description: description,
+            details: details
+          });
+
+      if (error) {
+
+        console.warn(
+          "Activiteit kon niet worden opgeslagen:",
+          error.message
+        );
+
+      }
+
+    } catch (error) {
+
+      console.warn(
+        "Activiteit logging mislukt:",
+        error
+      );
+
+    }
+
+  }
+
+
+  /* =========================
+     FILTERS
+  ========================= */
+
+  function getFilteredTopics() {
+
+    const query =
+      normalize(
+        document
+          .getElementById("searchInput")
+          .value
+      );
+
+    const countryId =
+      document
+        .getElementById("countryFilter")
+        .value;
+
+    const cityId =
+      document
+        .getElementById("cityFilter")
+        .value;
+
+    const categoryId =
+      document
+        .getElementById("categoryFilter")
+        .value;
+
+    const subcategoryId =
+      document
+        .getElementById("subcategoryFilter")
+        .value;
+
+    return topics.filter(topic => {
+
+      if (
+        countryId &&
+        topic.country_id !== countryId
+      ) {
+        return false;
+      }
+
+      if (
+        cityId &&
+        topic.city_id !== cityId
+      ) {
+        return false;
+      }
+
+      if (
+        categoryId &&
+        topic.category_id !== categoryId
+      ) {
+        return false;
+      }
+
+      if (
+        subcategoryId &&
+        topic.subcategory_id !== subcategoryId
+      ) {
+        return false;
+      }
+
+      if (!query) {
+        return true;
+      }
+
+      const searchable =
+        normalize([
+          topic.title,
+          topic.summary,
+          topic.content,
+          topic.information_type,
+          topic.countries?.name,
+          topic.cities?.name,
+          topic.categories?.name,
+          topic.subcategories?.name
+        ].join(" "));
+
+      return query
+        .split(/\s+/)
+        .filter(Boolean)
+        .every(
+          word =>
+            searchable.includes(word)
+        );
+
+    });
+
+  }
+
+
+  /* =========================
+     RESULTATEN
+  ========================= */
+
+
+  function hasFiche(topic) {
+    const card = topic?.card_data;
+    return !!(
+      card &&
+      typeof card === "object" &&
+      (
+        card.doctor_name ||
+        card.full_name ||
+        card.service_type ||
+        card.address ||
+        card.phone
+      )
+    );
+  }
+
+  function setMeta(name, content) {
+    let element = document.querySelector(
+      'meta[name="' + name + '"]'
+    );
+
+    if (!element) {
+      element = document.createElement("meta");
+      element.setAttribute("name", name);
+      document.head.appendChild(element);
+    }
+
+    element.setAttribute("content", content);
+  }
+
+  function setProperty(property, content) {
+    let element = document.querySelector(
+      'meta[property="' + property + '"]'
+    );
+
+    if (!element) {
+      element = document.createElement("meta");
+      element.setAttribute("property", property);
+      document.head.appendChild(element);
+    }
+
+    element.setAttribute("content", content);
+  }
+
+  function setCanonical(url) {
+    let link = document.querySelector('link[rel="canonical"]');
+
+    if (!link) {
+      link = document.createElement("link");
+      link.setAttribute("rel", "canonical");
+      document.head.appendChild(link);
+    }
+
+    link.setAttribute("href", url);
+  }
+
+  function updateArticleSeo(topic) {
+    const title = topic?.title
+      ? topic.title + " — Hijrah Netwerk"
+      : "Artikels — Hijrah Netwerk";
+
+    const description = (
+      topic?.summary ||
+      "Praktische informatie uit de Hijrah Netwerk kennisbank."
+    )
+      .replace(/\\n/g, " ")
+      .replace(/\s+/g, " ")
+      .trim()
+      .slice(0, 155);
+
+    const url = articleUrl(topic.id);
+
+    document.title = title;
+    setMeta("description", description);
+    setMeta("robots", "index,follow");
+    setProperty("og:title", title);
+    setProperty("og:description", description);
+    setProperty("og:url", url);
+    setProperty("og:type", "article");
+    setMeta("twitter:card", "summary");
+    setMeta("twitter:title", title);
+    setMeta("twitter:description", description);
+    setCanonical(url);
+
+    const existing = document.getElementById("hnArticleJsonLd");
+    if (existing) existing.remove();
+
+    const script = document.createElement("script");
+    script.id = "hnArticleJsonLd";
+    script.type = "application/ld+json";
+
+    const articleSchema = {
+      "@context":"https://schema.org",
+      "@type":"Article",
+      "headline":String(topic.title || "").slice(0,180),
+      "description":description,
+      "url":url,
+      "dateModified":topic.updated_at || topic.last_checked_at || undefined,
+      "publisher":{
+        "@type":"Organization",
+        "name":"Hijrah Netwerk",
+        "url":window.location.origin
+      }
+    };
+
+    const breadcrumbSchema = {
+      "@context":"https://schema.org",
+      "@type":"BreadcrumbList",
+      "itemListElement":[
+        {"@type":"ListItem","position":1,"name":"Home","item":window.location.origin+"/"},
+        {"@type":"ListItem","position":2,"name":"Hijrah Navigatie","item":window.location.origin+"/navigatie"},
+        topic.countries?.name ? {"@type":"ListItem","position":3,"name":topic.countries.name} : null,
+        topic.cities?.name ? {"@type":"ListItem","position":topic.countries?.name?4:3,"name":topic.cities.name,"item":window.location.origin+"/stad/"+encodeURIComponent(topic.cities.slug||slugify(topic.cities.name))} : null,
+        topic.categories?.name ? {"@type":"ListItem","position":topic.countries?.name&&topic.cities?.name?5:(topic.countries?.name||topic.cities?.name?4:3),"name":topic.categories.name} : null,
+        {"@type":"ListItem","position":topic.countries?.name&&topic.cities?.name&&topic.categories?.name?6:(topic.countries?.name&&topic.cities?.name?5:(topic.countries?.name||topic.cities?.name?4:3)),"name":topic.title}
+      ].filter(Boolean)
+    };
+
+    script.textContent = JSON.stringify([articleSchema,breadcrumbSchema]);
+    document.head.appendChild(script);
+  }
+
+  function clearArticleSeo() {
+    document.title = "Artikels — Hijrah Netwerk";
+    setMeta(
+      "description",
+      "Doorzoek de artikels op land, stad en onderwerp."
+    );
+    setMeta("robots", "index,follow");
+
+    document
+      .querySelectorAll(
+        'meta[property^="og:"], meta[name^="twitter:"]'
+      )
+      .forEach(element => element.remove());
+
+    const canonical = document.querySelector('link[rel="canonical"]');
+    if (canonical) {
+      canonical.remove();
+    }
+
+    const jsonLd = document.getElementById("hnArticleJsonLd");
+    if (jsonLd) jsonLd.remove();
+  }
+
+  function shareArticle(topic, channel) {
+    const url = articleUrl(topic.id);
+    const title = String(topic.title || "Hijrah Netwerk");
+    const text = title + " — Hijrah Netwerk";
+
+    if (channel === "copy") {
+      navigator.clipboard?.writeText(url)
+        .then(() => showNotice("Link gekopieerd."))
+        .catch(() => showNotice("De link kon niet automatisch worden gekopieerd."));
+      return;
+    }
+
+    const links = {
+      whatsapp:
+        "https://wa.me/?text=" +
+        encodeURIComponent(text + " " + url),
+      facebook:
+        "https://www.facebook.com/sharer/sharer.php?u=" +
+        encodeURIComponent(url),
+      x:
+        "https://twitter.com/intent/tweet?text=" +
+        encodeURIComponent(text) +
+        "&url=" +
+        encodeURIComponent(url)
+    };
+
+    if (links[channel]) {
+      window.open(
+        links[channel],
+        "_blank",
+        "noopener,noreferrer,width=720,height=650"
+      );
+    }
+  }
+
+  function formatArticleContent(value) {
+    const raw = value == null ? "" : String(value);
+    const text = raw
+      .replace(/\\r/g, "")
+      .replace(/\\n/g, "\n")
+      .replace(/\r/g, "")
+      .trim();
+
+    if (!text) return "<p>Geen inhoud beschikbaar.</p>";
+
+    const lines = text.split(/\n+/).map(line => line.trim()).filter(Boolean);
+    const sections = [];
+    let heading = "";
+    let sectionHeadingLevel = 3;
+    let body = [];
+
+    const pushSection = () => {
+      if (heading || body.length) sections.push({
+        heading,
+        headingLevel: sectionHeadingLevel,
+        body:[...body]
+      });
+      heading = "";
+      sectionHeadingLevel = 3;
+      body = [];
+    };
+
+    lines.forEach(line => {
+      const mainHeading = line.match(/^#{1,2}\s+(.+)$/);
+      const subHeading = line.match(/^###\s+(.+)$/);
+
+      if (mainHeading) {
+        pushSection();
+        heading = mainHeading[1].trim();
+        sectionHeadingLevel = 3;
+      } else if (subHeading) {
+        pushSection();
+        heading = subHeading[1].trim();
+        sectionHeadingLevel = 4;
+      } else {
+        body.push(line);
+      }
+    });
+    pushSection();
+
+    return sections.map(section => {
+      const parts = [];
+      let bullets = [];
+
+      const flushBullets = () => {
+        if (!bullets.length) return;
+        parts.push("<ul>" + bullets.map(item => "<li>" + esc(item.replace(/^•\s*/, "")) + "</li>").join("") + "</ul>");
+        bullets = [];
+      };
+
+      section.body.forEach(line => {
+        if (/^•\s*/.test(line)) {
+          bullets.push(line);
+          return;
+        }
+        flushBullets();
+        const clean = line.replace(/\s+/g, " ").trim();
+        if (clean) parts.push("<p>" + esc(clean) + "</p>");
+      });
+
+      flushBullets();
+      if (!parts.length && !section.heading) return "";
+
+      const headingHtml = section.heading
+        ? (section.headingLevel === 4
+            ? "<h4>" + esc(section.heading) + "</h4>"
+            : "<h3>" + esc(section.heading) + "</h3>")
+        : "";
+      return headingHtml + parts.join("");
+    }).join("");
+  }
+
+
+  function renderResults() {
+
+    const list =
+      getFilteredTopics();
+
+    document
+      .getElementById("resultCount")
+      .textContent =
+      `${list.length} artikel${list.length === 1 ? "" : "en"}`;
+
+    const results =
+      document.getElementById("results");
+
+    if (!list.length) {
+      results.innerHTML = `
+        <div class="empty">
+          Geen passende informatie gevonden.
+          Probeer een andere zoekterm of filter.
+        </div>
+      `;
+      return;
+    }
+
+    results.innerHTML =
+      list
+        .map(topic => {
+          const isSaved = savedTopics.has(topic.id);
+          const ficheAvailable = hasFiche(topic);
+          const topicHref = articleUrl(topic.id).replace(window.location.origin, "");
+          const ficheHref = ficheAvailable ? ficheUrl(topic) : "";
+
+          return `
+            <article class="article-card">
+
+              <div class="tags">
+                ${topic.countries?.name
+                  ? `<a class="tag" href="/kennisbank?country=${encodeURIComponent(topic.country_id)}" onclick="event.stopPropagation()">${esc(topic.countries.name)}</a>`
+                  : ""}
+                ${topic.cities?.name
+                  ? `<a class="tag" href="/kennisbank?country=${encodeURIComponent(topic.country_id || "")}&city=${encodeURIComponent(topic.city_id)}" onclick="event.stopPropagation()">${esc(topic.cities.name)}</a>`
+                  : ""}
+                ${topic.categories?.name
+                  ? `<a class="tag" href="/kennisbank?category=${encodeURIComponent(topic.category_id)}" onclick="event.stopPropagation()">${esc(topic.categories.name)}</a>`
+                  : ""}
+                ${topic.subcategories?.name
+                  ? `<a class="tag" href="/kennisbank?subcategory=${encodeURIComponent(topic.subcategory_id)}" onclick="event.stopPropagation()">${esc(topic.subcategories.name)}</a>`
+                  : ""}
+                ${topic.information_type
+                  ? `<span class="tag">${esc(topic.information_type)}</span>`
+                  : ""}
+              </div>
+
+              <a class="article-card-title" href="${topicHref}">
+                <h3>${esc(topic.title)}</h3>
+              </a>
+
+              <p>${esc(
+                topic.summary ||
+                "Bekijk de volledige informatie in dit artikel."
+              )}</p>
+
+              <div class="card-actions">
+
+                ${ficheAvailable
+                  ? `
+                    <a
+                      class="btn btn-secondary"
+                      href="${ficheHref}"
+                    >
+                      Snel bekijken
+                    </a>
+                  `
+                  : ""
+                }
+
+                <a
+                  class="btn btn-primary"
+                  href="${topicHref}"
+                >
+                  Meer lezen
+                </a>
+
+                <button
+                  class="heart-btn ${isSaved ? "saved" : ""}"
+                  aria-label="${isSaved ? "Artikel verwijderen uit opgeslagen informatie" : "Artikel opslaan"}"
+                  onclick="event.stopPropagation(); toggleSaved('${esc(topic.id)}')"
+                >
+                  <span class="heart">${isSaved ? "♥" : "♡"}</span>
+                  <span>${isSaved ? "Opgeslagen" : "Opslaan"}</span>
+                </button>
+
+              </div>
+
+            </article>
+          `;
+        })
+        .join("");
+
+  }
+
+
+  /* =========================
+     OPGESLAGEN ARTIKELEN
+  ========================= */
+
+  async function loadSavedArticles() {
+
+    const {
+      data: sessionData
+    } = await db()
+      .auth
+      .getSession();
+
+    const session =
+      sessionData?.session;
+
+    if (!session) {
+      return;
+    }
+
+    const {
+      data,
+      error
+    } = await db()
+      .from("saved_articles")
+      .select("topic_id")
+      .eq(
+        "user_id",
+        session.user.id
+      );
+
+    if (error) {
+
+      console.warn(
+        "saved_articles:",
+        error
+      );
+
+      return;
+    }
+
+    savedTopics =
+      new Set(
+        (data || [])
+          .map(row => row.topic_id)
+      );
+
+  }
+
+
+  async function toggleSaved(
+    topicId
+  ) {
+
+    const {
+      data: sessionData
+    } = await db()
+      .auth
+      .getSession();
+
+    const session =
+      sessionData?.session;
+
+    if (!session) {
+
+      window.location.href =
+        "login.html";
+
+      return;
+    }
+
+    const topic =
+      topics.find(
+        item =>
+          item.id === topicId
+      );
+
+    if (
+      savedTopics.has(topicId)
+    ) {
+
+      const {
+        error
+      } = await db()
+        .from("saved_articles")
+        .delete()
+        .eq(
+          "user_id",
+          session.user.id
+        )
+        .eq(
+          "topic_id",
+          topicId
+        );
+
+      if (error) {
+
+        showNotice(
+          error.message
+        );
+
+        return;
+      }
+
+      savedTopics.delete(
+        topicId
+      );
+
+      await logUserActivity(
+        "saved_article_removed",
+        "Kennisbankartikel verwijderd uit opgeslagen informatie",
+        {
+          topic_id: topicId,
+          title:
+            topic?.title || null
+        }
+      );
+
+      showNotice(
+        "Artikel verwijderd uit je opgeslagen informatie."
+      );
+
+    } else {
+
+      const {
+        error
+      } = await db()
+        .from("saved_articles")
+        .insert({
+          user_id:
+            session.user.id,
+          topic_id:
+            topicId
+        });
+
+      if (error) {
+
+        showNotice(
+          error.message
+        );
+
+        return;
+      }
+
+      savedTopics.add(
+        topicId
+      );
+
+      await logUserActivity(
+        "saved_article_added",
+        "Kennisbankartikel opgeslagen",
+        {
+          topic_id: topicId,
+          title:
+            topic?.title || null
+        }
+      );
+
+      showNotice(
+        "Opgeslagen in Mijn Hijrah."
+      );
+
+    }
+
+    renderResults();
+
+    /*
+      Wanneer iemand het artikel al open heeft,
+      moet de knop daar ook meteen veranderen.
+    */
+
+    const articleView =
+      document.getElementById(
+        "articleView"
+      );
+
+    if (
+      articleView.style.display ===
+        "block"
+    ) {
+
+      openArticle(
+        topicId,
+        false
+      );
+
+    }
+
+  }
+
+
+  /* =========================
+     ARTIKEL OPENEN
+  ========================= */
+
+  function getCommunityItemText(item) {
+    const experiences = item?.card_data && Array.isArray(item.card_data.experiences)
+      ? item.card_data.experiences
+      : [];
+    return experiences[0]?.text || item.content || item.summary || "";
+  }
+
+  function getCommunityItemName(item) {
+    const experiences = item?.card_data && Array.isArray(item.card_data.experiences)
+      ? item.card_data.experiences
+      : [];
+    return experiences[0]?.name || "Anoniem";
+  }
+
+  async function loadCommunityExperiences(topic) {
+    const box = document.getElementById("communityExperiences");
+    if (!box) return;
+
+    box.innerHTML = `<div class="community-empty">Community-ervaringen laden…</div>`;
+
+    try {
+      const { data, error } = await db()
+        .from("topic")
+        .select("id,title,summary,content,information_type,card_data,created_at,city_id,country_id,category_id,published,source_type")
+        .eq("published", true)
+        .eq("source_type", "community")
+        .in("information_type", ["Ervaring", "Review"])
+        .order("created_at", { ascending: false })
+        .limit(50);
+
+      if (error) {
+        console.warn("Community-ervaringen konden niet worden geladen:", error.message);
+        box.innerHTML = `<div class="community-empty">Community-ervaringen konden momenteel niet worden geladen.</div>`;
+        return;
+      }
+
+      const matches = (data || [])
+        .filter(item => item.id !== topic.id)
+        .filter(item => {
+          const cityMatch = topic.city_id && item.city_id === topic.city_id;
+          const countryMatch = topic.country_id && item.country_id === topic.country_id;
+          const categoryMatch = topic.category_id && item.category_id === topic.category_id;
+          return cityMatch || countryMatch || categoryMatch;
+        })
+        .slice(0, 5);
+
+      if (!matches.length) {
+        box.innerHTML = `<div class="community-empty">Er zijn nog geen goedgekeurde community-ervaringen voor deze informatie.</div>`;
+        return;
+      }
+
+      box.innerHTML = matches.map(item => `
+        <article class="community-item">
+          <p class="community-item-text">${esc(getCommunityItemText(item))}</p>
+          <div class="community-item-meta">
+            ${esc(getCommunityItemName(item))}
+            ${item.information_type === "Review" ? " · Review" : " · Ervaring"}
+            ${item.created_at ? " · " + esc(formatArticleDate(item.created_at)) : ""}
+          </div>
+        </article>
+      `).join("");
+    } catch (error) {
+      console.warn("Community-ervaringen laden mislukt:", error);
+      box.innerHTML = `<div class="community-empty">Community-ervaringen konden momenteel niet worden geladen.</div>`;
+    }
+  }
+  function getPlannedArticles(topic) {
+    const city = topic?.cities?.name || "deze stad";
+    const country = topic?.countries?.name || "dit land";
+    const category = normalize(topic?.categories?.name || "");
+
+    if (category.includes("gezondheid")) {
+      return [
+        "Huisartsen en medische praktijken in " + city,
+        "Ziekenhuizen en klinieken in " + city,
+        "Spoedzorg en medische hulp in " + city,
+        "Zorgverzekering en medische kosten in " + country,
+        "Apotheken en medicijnen in " + city
+      ];
+    }
+
+    if (category.includes("huisvesting")) {
+      return [
+        "Huren in " + city,
+        "Wijken en buurten in " + city,
+        "Huurcontracten en borg in " + country,
+        "Een woning kopen in " + city
+      ];
+    }
+
+    if (category.includes("onderwijs")) {
+      return [
+        "Scholen in " + city,
+        "Onderwijs voor kinderen in " + country,
+        "Islamitisch onderwijs in " + city,
+        "Taalonderwijs en taalscholen in " + city
+      ];
+    }
+
+    if (category.includes("juridisch") || category.includes("immigratie")) {
+      return [
+        "Verblijfsvergunning in " + country,
+        "Benodigde documenten voor " + country,
+        "Inschrijving en officiële procedures in " + country,
+        "Verblijven met kinderen in " + country
+      ];
+    }
+
+    if (category.includes("werk") || category.includes("ondernemen")) {
+      return [
+        "Werk vinden in " + city,
+        "Werken op afstand vanuit " + country,
+        "Ondernemen en registreren in " + country,
+        "Belastingen en administratie in " + country
+      ];
+    }
+
+    return [
+      "Dagelijks leven in " + city,
+      "Kosten van levensonderhoud in " + city,
+      "Praktische zaken na aankomst in " + country,
+      "Ervaringen van zusters in " + country
+    ];
+  }
+
+  async function openArticle(
+    topicId,
+    updateUrl = true
+  ) {
+
+    const topic =
+      topics.find(
+        item => item.id === topicId
+      );
+
+    if (!topic) {
+      return;
+    }
+
+    const articleView =
+      document.getElementById("articleView");
+
+    document.getElementById("listView").style.display = "none";
+    articleView.style.display = "block";
+
+    updateArticleSeo(topic);
+
+    const currentIndex = topics.findIndex(
+      item => item.id === topic.id
+    );
+
+    const previous =
+      currentIndex > 0
+        ? topics[currentIndex - 1]
+        : null;
+
+    const next =
+      currentIndex < topics.length - 1
+        ? topics[currentIndex + 1]
+        : null;
+
+    const related = topics
+      .filter(item => item.id !== topic.id)
+      .map(item => {
+        let score = 0;
+
+        if (
+          topic.category_id &&
+          item.category_id === topic.category_id
+        ) score += 4;
+
+        if (
+          topic.city_id &&
+          item.city_id === topic.city_id
+        ) score += 3;
+
+        if (
+          topic.country_id &&
+          item.country_id === topic.country_id
+        ) score += 2;
+
+        return {item,score};
+      })
+      .filter(x => x.score > 0)
+      .sort((a,b) => b.score - a.score)
+      .slice(0,3)
+      .map(x => x.item);
+
+    const fallbackRelated = related.length
+      ? related
+      : topics
+          .filter(item => item.id !== topic.id)
+          .slice(0,3);
+
+    const saved = savedTopics.has(topic.id);
+    const publicArticleUrl = articleUrl(topic.id);
+    const articleBreadcrumb = `
+      <section class="hn-article-breadcrumb" aria-label="Broodkruimelpad">
+        <span class="hn-article-breadcrumb-title">Jij bent nu hier</span>
+        <nav>
+          <a href="/">Home</a><span>›</span>
+          <a href="/navigatie">Hijrah Navigatie</a>
+          ${topic.countries?.name ? `<span>›</span><span>${esc(topic.countries.name)}</span>` : ""}
+          ${topic.cities?.name ? `<span>›</span><a href="/stad/${encodeURIComponent(topic.cities.slug || slugify(topic.cities.name))}">${esc(topic.cities.name)}</a>` : ""}
+          ${topic.categories?.name ? `<span>›</span><span>${esc(topic.categories.name)}</span>` : ""}
+          <span>›</span><strong>${esc(topic.title)}</strong>
+        </nav>
+      </section>`;
+
+    const ficheBlock = hasFiche(topic)
+      ? `
+        <div class="fiche-cta">
+          <strong>Deze informatie heeft een aparte fiche</strong>
+          <div class="muted">
+            Bekijk de praktische gegevens, contactinformatie, locatie en HN-status op één plek.
+          </div>
+          <div class="article-toolbar">
+            <a
+              class="btn btn-primary"
+              href="${ficheUrl(topic)}"
+            >
+              Bekijk volledige fiche →
+            </a>
+          </div>
+        </div>
+      `
+      : "";
+
+    const articleNavigation = previous || next
+      ? `
+        <div class="article-nav">
+          ${previous
+            ? `
+              <a class="article-nav-link" href="${articleUrl(previous.id).replace(window.location.origin, "")}">
+                <span class="article-nav-label">← Vorige</span>
+                <span class="article-nav-title">${esc(previous.title)}</span>
+              </a>
+            `
+            : "<div></div>"
+          }
+
+          ${next
+            ? `
+              <a class="article-nav-link next" href="${articleUrl(next.id).replace(window.location.origin, "")}">
+                <span class="article-nav-label">Volgende →</span>
+                <span class="article-nav-title">${esc(next.title)}</span>
+              </a>
+            `
+            : "<div></div>"
+          }
+        </div>
+      `
+      : "";
+
+    const plannedArticles = getPlannedArticles(topic);
+
+    const relatedBlock =
+      (fallbackRelated.length || plannedArticles.length)
+        ? `
+          <div class="article-bottom">
+
+            ${fallbackRelated.length
+              ? `
+                <h3>Andere artikelen</h3>
+                <div class="related-grid">
+                  ${fallbackRelated.map(item => `
+                    <a class="related-card" href="${articleUrl(item.id).replace(window.location.origin, "")}">
+                      <div class="tags">
+                        ${item.cities?.name ? `<span class="tag">${esc(item.cities.name)}</span>` : ""}
+                        ${item.categories?.name ? `<span class="tag">${esc(item.categories.name)}</span>` : ""}
+                      </div>
+                      <h4>${esc(item.title)}</h4>
+                      <p>${esc(item.summary || "Bekijk dit artikel.")}</p>
+                    </a>
+                  `).join("")}
+                </div>
+              `
+              : ""
+            }
+
+            ${plannedArticles.length
+              ? `
+                <div style="margin-top:30px">
+                  <h3>Nog te maken voor dit onderwerp</h3>
+                  <p class="muted" style="margin:0 0 14px">
+                    Deze onderwerpen staan nog op de HN-planning. Ze zijn nog niet gepubliceerd.
+                  </p>
+                  <div class="related-grid">
+                    ${plannedArticles.slice(0,4).map(title => `
+                      <div class="related-card" style="background:#FFFFFF">
+                        <span class="tag">Binnenkort</span>
+                        <h4>${esc(title)}</h4>
+                        <p>Nog in ontwikkeling binnen de artikels.</p>
+                      </div>
+                    `).join("")}
+                  </div>
+                </div>
+              `
+              : ""
+            }
+
+          </div>
+        `
+        : "";
+
+    const relationshipRows = await db().from("topic_relationships")
+      .select("relationship_type,related_topic_id,related_topic:topic!topic_relationships_related_topic_id_fkey(id,title,slug,visibility,published,city_id,category_id)")
+      .eq("topic_id", topic.id);
+    const relatedItems = (relationshipRows.data || []).filter(r => r.related_topic?.published && r.related_topic_id !== topic.id);
+    const relatedFiches = relatedItems.filter(r => r.related_topic.visibility === "fiche_only" && ["related_fiche","related_place"].includes(r.relationship_type));
+    const relatedArticles = relatedItems.filter(r => r.related_topic.visibility !== "fiche_only" && ["related_article","related_content"].includes(r.relationship_type));
+    const relationshipBlock = (relatedFiches.length || relatedArticles.length) ? `
+      <section class="related-section" style="margin-top:28px">
+        <h3>Gerelateerde informatie</h3>
+        <p class="muted">Fiches en artikelen die bij dit onderwerp horen.</p>
+        ${relatedFiches.length ? `
+          <div class="related-grid" style="margin-top:14px">
+            ${relatedFiches.map(r => `
+              <a class="related-card" href="${esc("/locaties/"+slugify((cities.find(c=>c.id===r.related_topic.city_id)||{}).name||"")+"/"+slugify((categories.find(c=>c.id===r.related_topic.category_id)||{}).name||"informatie")+"/"+slugify(publicSlug(r.related_topic.slug||r.related_topic.id)))}">
+                <span class="tag">Fiche</span>
+                <h4>${esc(r.related_topic.title)}</h4>
+                <p>Bekijk de praktische fiche →</p>
+              </a>`).join("")}
+          </div>` : ""}
+        ${relatedArticles.length ? `
+          <div class="related-grid" style="margin-top:14px">
+            ${relatedArticles.map(r => `
+              <a class="related-card" href="/artikels/${encodeURIComponent(publicSlug(r.related_topic.slug || r.related_topic.id))}">
+                <span class="tag">Artikel</span>
+                <h4>${esc(r.related_topic.title)}</h4>
+                <p>Lees het artikel →</p>
+              </a>`).join("")}
+          </div>` : ""}
+      </section>` : "";
+
+    articleView.innerHTML = `
+
+      <button
+        class="btn btn-secondary"
+        onclick="closeArticle()"
+      >
+        ← Terug naar artikels
+      </button>
+
+      <div class="tags" style="margin-top:20px">
+        ${topic.countries?.name ? `<span class="tag">${esc(topic.countries.name)}</span>` : ""}
+        ${topic.cities?.name ? `<span class="tag">${esc(topic.cities.name)}</span>` : ""}
+        ${topic.categories?.name ? `<span class="tag">${esc(topic.categories.name)}</span>` : ""}
+        ${topic.subcategories?.name ? `<span class="tag">${esc(topic.subcategories.name)}</span>` : ""}
+        ${topic.information_type ? `<span class="tag">${esc(topic.information_type)}</span>` : ""}
+      </div>
+
+      <h2>${esc(topic.title)}</h2>
+
+      ${topic.summary
+        ? `<p class="muted">${esc(topic.summary)}</p>`
+        : ""
+      }
+
+      <div class="save-action">
+        <div class="save-action-copy">
+          <strong>Artikel opslaan</strong>
+          <span>Bewaar dit artikel in Mijn Hijrah zodat je het later snel kunt terugvinden.</span>
+        </div>
+
+        <button
+          class="heart-btn ${saved ? "saved" : ""}"
+          aria-label="${saved ? "Artikel verwijderen uit opgeslagen informatie" : "Artikel opslaan"}"
+          onclick="toggleSaved('${esc(topic.id)}')"
+        >
+          <span class="heart">${saved ? "♥" : "♡"}</span>
+          <span>${saved ? "Opgeslagen" : "Opslaan"}</span>
+        </button>
+      </div>
+
+      ${ficheBlock}
+
+      <div class="article-content">
+        ${formatArticleContent(topic.content)}
+      </div>
+
+      ${relationshipBlock}
+
+      ${topic.source || topic.source_url || topic.updated_at || topic.last_checked_at
+        ? `
+          <div class="article-source">
+            <div class="source-meta">
+              <div class="source-meta-copy">
+                <span class="source-meta-title">
+                  ${topic.source ? `Bron: ${esc(topic.source)}` : "Broninformatie"}
+                </span>
+                ${topic.updated_at || topic.last_checked_at
+                  ? `<span class="source-meta-updated">Laatst bijgewerkt: ${esc(formatArticleDate(topic.updated_at || topic.last_checked_at))}</span>`
+                  : ""
+                }
+              </div>
+
+              ${topic.source_url
+                ? `
+                  <a class="source-link" href="${esc(topic.source_url)}" target="_blank" rel="noopener noreferrer">Bron openen ↗</a>
+                `
+                : ""
+              }
+            </div>
+          </div>
+        `
+        : ""
+      }
+      <div class="community-section">
+        <h3>Community-ervaringen</h3>
+        <p class="community-intro">
+          Ervaringen van zusters die deze plek of dienst zelf hebben meegemaakt. Nieuwe inzendingen verschijnen hier na controle door HN.
+        </p>
+
+        <div id="communityExperiences" class="community-list">
+          <div class="community-empty">Community-ervaringen laden…</div>
+        </div>
+
+        <div class="community-submit">
+          <p>Heb jij hier zelf ervaring mee?</p>
+          <a
+            class="btn btn-primary"
+            href="/bijdragen?type=experience&title=${encodeURIComponent(topic.title)}&country=${encodeURIComponent(topic.country_id || "")}&city=${encodeURIComponent(topic.city_id || "")}&category=${encodeURIComponent(topic.category_id || "")}&subcategory=${encodeURIComponent(topic.subcategory_id || "")}"
+          >
+            Ervaring insturen →
+          </a>
+        </div>
+      </div>
+      <div class="article-bottom">
+
+        <h3>Deel dit artikel</h3>
+
+        <div class="share-row">
+          <a
+            class="share-btn"
+            href="https://wa.me/?text=${encodeURIComponent(String(topic.title || "Hijrah Netwerk") + " — " + publicArticleUrl)}"
+            target="_blank"
+            rel="noopener noreferrer"
+          >WhatsApp</a>
+
+          <a
+            class="share-btn"
+            href="https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(publicArticleUrl)}"
+            target="_blank"
+            rel="noopener noreferrer"
+          >Facebook</a>
+
+          <a
+            class="share-btn"
+            href="https://twitter.com/intent/tweet?text=${encodeURIComponent(String(topic.title || "Hijrah Netwerk"))}&url=${encodeURIComponent(publicArticleUrl)}"
+            target="_blank"
+            rel="noopener noreferrer"
+          >X</a>
+
+          <button
+            class="share-btn"
+            type="button"
+            onclick="shareArticle(topics.find(x => x.id === '${esc(topic.id)}'),'copy')"
+          >Link kopiëren</button>
+        </div>
+
+        <div class="submission-cta">
+          <h3>Klopt iets niet of heb je iets toe te voegen?</h3>
+          <p>Stuur een correctie, ervaring, review, aanbeveling of andere praktische informatie naar HN.</p>
+          <a class="btn btn-primary" href="/bijdragen?title=${encodeURIComponent(topic.title)}">
+            Informatie insturen →
+          </a>
+        </div>
+
+        ${articleBreadcrumb}
+      ${articleNavigation}
+      </div>
+
+      ${relatedBlock}
+
+    `;
+
+    loadCommunityExperiences(topic);
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+
+    if (updateUrl) {
+      history.replaceState(
+        {},
+        "",
+        `/artikels/${encodeURIComponent(topics.find(item => item.id === topicId)?.slug || topicId)}`
+      );
+    }
+
+  }
+
+
+  /* =========================
+     ARTIKEL SLUITEN
+  ========================= */
+
+  function closeArticle() {
+
+    document.getElementById(
+      "articleView"
+    ).style.display = "none";
+
+    clearArticleSeo();
+
+    document.getElementById(
+      "listView"
+    ).style.display = "block";
+
+    const query =
+      document
+        .getElementById("searchInput")
+        .value
+        .trim();
+
+    const country =
+      document
+        .getElementById("countryFilter")
+        .value;
+
+    const queryParams =
+      new URLSearchParams();
+
+    if (query) {
+      queryParams.set(
+        "q",
+        query
+      );
+    }
+
+    if (country) {
+      queryParams.set(
+        "country",
+        country
+      );
+    }
+
+    const queryString =
+      queryParams.toString();
+
+    history.replaceState(
+      {},
+      "",
+      queryString
+        ? `/kennisbank?${queryString}`
+        : "kennisbank.html"
+    );
+
+  }
+
+
+  /* =========================
+     DATA LADEN
+  ========================= */
+
+  async function loadData() {
+
+    let canPreviewDrafts = false;
+
+    try {
+      const { data: sessionData } = await db().auth.getSession();
+      const user = sessionData?.session?.user;
+
+      if (user) {
+        const { data: profile } = await db()
+          .from("profiles")
+          .select("role")
+          .eq("id", user.id)
+          .maybeSingle();
+
+        canPreviewDrafts = profile?.role === "admin";
+      }
+    } catch (error) {
+      console.warn("HN Kennisbank admin-preview:", error);
+    }
+
+    const [
+      countriesResult,
+      citiesResult,
+      categoriesResult,
+      subcategoriesResult,
+      topicsResult
+    ] = await Promise.all([
+
+      db()
+        .from("countries")
+        .select(
+          "id,name,slug,is_active"
+        )
+        .eq(
+          "is_active",
+          true
+        )
+        .order("name"),
+
+      db()
+        .from("cities")
+        .select(
+          "id,name,slug,country_id,is_active"
+        )
+        .eq(
+          "is_active",
+          true
+        )
+        .order("name"),
+
+      db()
+        .from("categories")
+        .select(
+          "id,name,slug,is_active"
+        )
+        .eq(
+          "is_active",
+          true
+        )
+        .order("sort_order")
+        .order("name"),
+
+      db()
+        .from("subcategories")
+        .select(
+          "id,name,category_id,is_active"
+        )
+        .eq(
+          "is_active",
+          true
+        )
+        .order("sort_order")
+        .order("name"),
+
+      db()
+        .from("topic")
+        .select(`
+          *,
+          countries(name),
+          cities(name),
+          categories(name),
+          subcategories(name)
+        `)
+        
+        .neq(
+          "visibility",
+          "fiche_only"
+        )
+        .order(
+          "updated_at",
+          {
+            ascending: false
+          }
+        )
+
+    ]);
+
+    const results = [
+      countriesResult,
+      citiesResult,
+      categoriesResult,
+      subcategoriesResult,
+      topicsResult
+    ];
+
+    const firstError =
+      results.find(
+        result =>
+          result.error
+      );
+
+    if (firstError) {
+      throw firstError.error;
+    }
+
+    countries =
+      countriesResult.data || [];
+
+    cities =
+      citiesResult.data || [];
+
+    categories =
+      categoriesResult.data || [];
+
+    subcategories =
+      subcategoriesResult.data || [];
+
+    topics =
+      (topicsResult.data || []).filter(topic =>
+        canPreviewDrafts ? true : topic.published === true
+      );
+
+    fillSelect(
+      "countryFilter",
+      countries,
+      "Alle landen"
+    );
+
+    fillSelect(
+      "cityFilter",
+      cities,
+      "Alle steden"
+    );
+
+    fillSelect(
+      "categoryFilter",
+      categories,
+      "Alle categorieën"
+    );
+
+    fillSelect(
+      "subcategoryFilter",
+      subcategories,
+      "Alle subcategorieën"
+    );
+
+    await loadSavedArticles();
+
+    if (params.get("q")) {
+
+      document.getElementById(
+        "searchInput"
+      ).value =
+        params.get("q");
+
+    }
+
+    if (params.get("country")) {
+
+      document.getElementById(
+        "countryFilter"
+      ).value =
+        params.get("country");
+
+    }
+
+    if (params.get("city")) {
+
+      document.getElementById(
+        "cityFilter"
+      ).value =
+        params.get("city");
+
+    }
+
+    if (params.get("category")) {
+
+      document.getElementById(
+        "categoryFilter"
+      ).value =
+        params.get("category");
+
+    }
+
+    if (params.get("subcategory")) {
+
+      document.getElementById(
+        "subcategoryFilter"
+      ).value =
+        params.get("subcategory");
+
+    }
+
+    renderResults();
+
+    const routeTopicId = params.get("topic");
+    const routeTopicSlug = params.get("slug");
+    if (routeTopicId) {
+      openArticle(routeTopicId);
+    } else if (routeTopicSlug) {
+      const routedTopic = topics.find(item => publicSlug(item.slug) === routeTopicSlug || item.slug === routeTopicSlug);
+      if (routedTopic) openArticle(routedTopic.id, false);
+    }
+
+  }
+
+
+  /* =========================
+     ZOEKEN
+  ========================= */
+
+  document
+    .getElementById("searchForm")
+    .addEventListener(
+      "submit",
+      event => {
+
+        event.preventDefault();
+
+        const query =
+          document
+            .getElementById(
+              "searchInput"
+            )
+            .value
+            .trim();
+
+        const country =
+          document
+            .getElementById(
+              "countryFilter"
+            )
+            .value;
+
+        const queryParams =
+          new URLSearchParams();
+
+        if (query) {
+
+          queryParams.set(
+            "q",
+            query
+          );
+
+        }
+
+        if (country) {
+
+          queryParams.set(
+            "country",
+            country
+          );
+
+        }
+
+        const city =
+          document
+            .getElementById(
+              "cityFilter"
+            )
+            .value;
+
+        const category =
+          document
+            .getElementById(
+              "categoryFilter"
+            )
+            .value;
+
+        const subcategory =
+          document
+            .getElementById(
+              "subcategoryFilter"
+            )
+            .value;
+
+        if (city) {
+          queryParams.set("city", city);
+        }
+
+        if (category) {
+          queryParams.set("category", category);
+        }
+
+        if (subcategory) {
+          queryParams.set("subcategory", subcategory);
+        }
+
+        const queryString =
+          queryParams.toString();
+
+        history.replaceState(
+          {},
+          "",
+          queryString
+            ? `/kennisbank?${queryString}`
+            : "kennisbank.html"
+        );
+
+        renderResults();
+
+      }
+    );
+
+
+  /* =========================
+     FILTERS
+  ========================= */
+
+  [
+    "searchInput",
+    "countryFilter",
+    "cityFilter",
+    "categoryFilter",
+    "subcategoryFilter"
+  ].forEach(id => {
+
+    document
+      .getElementById(id)
+      .addEventListener(
+        "input",
+        renderResults
+      );
+
+    document
+      .getElementById(id)
+      .addEventListener(
+        "change",
+        renderResults
+      );
+
+  });
+
+
+  /* =========================
+     START
+  ========================= */
+
+  loadData()
+    .catch(error => {
+
+      console.error(
+        "HN Kennisbank:",
+        error
+      );
+
+      showNotice(
+        "De artikels konden niet worden geladen: " +
+        error.message
+      );
+
+      document.getElementById(
+        "results"
+      ).innerHTML = `
+        <div class="empty">
+          De artikels konden momenteel niet worden geladen.
+        </div>
+      `;
+
+    });
+
+</script>
+
+<script src="assets/scroll-reveal.js"></script>
+
+<script>
+function toggleMobileNav(open){
+  var nav=document.getElementById('mobileNav');
+  var button=document.querySelector('.mobile-menu-toggle');
+  if(!nav)return;
+  if(open){
+    nav.classList.add('open');
+    nav.setAttribute('aria-hidden','false');
+    if(button)button.setAttribute('aria-expanded','true');
+    document.body.style.overflow='hidden';
+  }else{
+    nav.classList.remove('open');
+    nav.setAttribute('aria-hidden','true');
+    if(button)button.setAttribute('aria-expanded','false');
+    document.body.style.overflow='';
+  }
+}
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape')toggleMobileNav(false);
+});
+</script>
+<script src="/copy-protection.js"></script>
+</body>
+</html>
