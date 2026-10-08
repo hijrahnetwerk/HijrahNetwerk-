@@ -1,13 +1,28 @@
 User-agent: *
-Allow: /
 
+# Admin-pagina's niet indexeren
 Disallow: /admin
+Disallow: /admin-cms
+Disallow: /admin-builder
+Disallow: /admin-navigation
+Disallow: /admin-kaart
+Disallow: /admin-wachtlijst
+Disallow: /admin-bewerkvoorstellen
 Disallow: /werkruimte
-Disallow: /dashboard
-Disallow: /mijn-kaart
+Disallow: /admin-hulp
+
+# Auth-pagina's niet indexeren
 Disallow: /login
 Disallow: /register
 Disallow: /reset-password
 Disallow: /update-password
+Disallow: /dashboard
+
+# API en config niet indexeren
+Disallow: /assets/config.js
+Disallow: /supabase-client.js
+Disallow: /auth.js
+
+Allow: /
 
 Sitemap: https://hijrah-netwerk.vercel.app/sitemap.xml
