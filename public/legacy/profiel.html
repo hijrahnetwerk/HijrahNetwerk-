@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="nl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>HN Profiel</title>
+<style>
+body{margin:0;background:#fff;color:#674C2E;font-family:Arial,sans-serif}.wrap{max-width:900px;margin:auto;padding:28px 18px}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}.top a{color:#674C2E}.hero{border:1px solid #674C2E;border-radius:16px;padding:24px}.name{font-size:28px;font-weight:700}.muted{color:#756d63}.pill{display:inline-block;border-radius:20px;padding:5px 9px;background:#f3eee8;margin:4px 4px 0 0;font-size:12px}.verified{background:#e6f2e9}.section{border:1px solid #674C2E;border-radius:12px;padding:20px;margin-top:18px}.items{display:grid;gap:10px}.item{padding:12px;background:#faf7f3;border-radius:10px}.item a{color:#674C2E;font-weight:700}.empty{color:#756d63}.hidden{display:none}
+</style></head><body><main class="wrap">
+<div class="top"><a href="/dashboard">← Mijn Hijrah</a><span class="muted">HN Profiel</span></div><div id="app">Laden…</div>
+</main>
+<script src="/assets/config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/supabase-client.js"></script>
+<script>
+const db=()=>window.hijrahSupabase,$=x=>document.getElementById(x),esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+const id=new URLSearchParams(location.search).get('id');
+let statusMap={};
+async function init(){
+ const s=await db().auth.getSession();if(!s.data.session){location='/login?next='+encodeURIComponent(location.pathname+location.search);return}
+ if(!id){$('app').innerHTML='<div class="hero">Geen profiel geselecteerd.</div>';return}
+ const r=await db().rpc('hn_public_profile',{p_id:id}).maybeSingle();
+ if(r.error||!r.data){$('app').innerHTML='<div class="hero">Profiel niet gevonden of niet zichtbaar.</div>';return}
+ const p=r.data;if(p.application_status!=='approved'||!p.profile_visibility){$('app').innerHTML='<div class="hero">Dit profiel is niet beschikbaar.</div>';return}
+ const sr=await db().from('hn_statuses').select('slug,name,show_on_profile').eq('active',true);statusMap=Object.fromEntries((sr.data||[]).map(x=>[x.slug,x])); const name=p.display_name||[p.first_name,p.last_name].filter(Boolean).join(' ')||'HN-lid';
+ const locIds=[p.current_country_id,p.current_city_id].filter(Boolean);
+ let country=null,city=null;
+ if(p.show_location&&locIds.length){const [c,s]=await Promise.all([p.current_country_id?db().from('countries').select('name').eq('id',p.current_country_id).maybeSingle():Promise.resolve({data:null}),p.current_city_id?db().from('cities').select('name').eq('id',p.current_city_id).maybeSingle():Promise.resolve({data:null})]);country=c.data?.name;city=s.data?.name}
+ let contributions=[];
+ if(p.show_contributions){
+   const q=await db().from('topic').select('id,title,slug,information_type,visibility,published,source_type,created_at').eq('submitted_by',p.id).eq('published',true).order('created_at',{ascending:false}).limit(30);
+   contributions=q.data||[];
+ }
+ $('app').innerHTML='<section class="hero"><div class="name">'+esc(name)+'</div><div style="margin-top:8px">'+(p.show_status&&statusMap[p.hn_status]?.show_on_profile?'<span class="pill">'+esc(statusMap[p.hn_status].name)+'</span>':'')+(p.verification_status==='verified'?'<span class="pill verified">Geverifieerd lid</span>':'')+'</div>'+(p.bio?'<p style="line-height:1.6">'+esc(p.bio)+'</p>':'')+((p.show_location&&(city||country))?'<div class="muted">Ervaring / locatie: '+esc([city,country].filter(Boolean).join(', '))+'</div>':'')+'</section><section class="section"><h2>HN Paspoort</h2><div id="badges" class="items"><div class="empty">Laden…</div></div></section><section class="section"><h2>Bijdragen aan HN</h2><div id="contribs" class="items">'+(p.show_contributions?(contributions.length?contributions.map(x=>'<div class="item"><a href="/fiche?id='+encodeURIComponent(x.id)+'">'+esc(x.title||'HN-bijdrage')+'</a><div class="muted">'+esc(x.information_type||'Bijdrage')+'</div></div>').join(''):'<div class="empty">Nog geen openbare bijdragen.</div>'):'<div class="empty">Deze gebruiker heeft ervoor gekozen bijdragen niet op het profiel te tonen.</div>')+'</div></section>';
+}
+init();
+async function loadBadges(){const s=await db().auth.getSession();if(!s.data.session||!id)return;const r=await db().from('hn_user_badges').select('earned_at,badge:hn_badges(name,description,icon,show_on_profile)').eq('user_id',id).order('earned_at',{ascending:false});const el=$('badges');if(r.error||!el)return;const rows=(r.data||[]).filter(x=>x.badge?.show_on_profile);el.innerHTML=rows.length?rows.map(x=>'<div class="item"><b>'+esc(x.badge.icon||'✦')+' '+esc(x.badge.name)+'</b><div class="muted">'+esc(x.badge.description||'')+'</div></div>').join(''):'<div class="empty">Nog geen zichtbare HN-stempels.</div>'}loadBadges();
+</script></body></html>
