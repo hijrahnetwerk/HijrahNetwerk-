@@ -6,17 +6,21 @@
 const fs = require('fs');
 const path = require('path');
 
-const DEFAULT_SUPABASE_URL = 'https://dejmckimvstfjeickplx.supabase.co';
-const DEFAULT_SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_1PWjRBFubdwO43JBebGowg_R5_OEtFi';
 const envUrl = String(process.env.VITE_SUPABASE_URL || '').trim();
 const envKey = String(process.env.VITE_SUPABASE_ANON_KEY || '').trim();
-const SUPABASE_URL = envUrl && envUrl !== 'test' ? envUrl : DEFAULT_SUPABASE_URL;
-const SUPABASE_ANON_KEY = envKey && envKey !== 'test' ? envKey : DEFAULT_SUPABASE_PUBLISHABLE_KEY;
-const SITE_URL = 'https://hijrah-netwerk.vercel.app';
+const configuredUrl = envUrl && envUrl !== 'test' ? envUrl : '';
+const configuredKey = envKey && envKey !== 'test' ? envKey : '';
+if (!configuredUrl || !configuredKey) {
+  throw new Error('[HN build] VITE_SUPABASE_URL en VITE_SUPABASE_ANON_KEY zijn verplicht. Geen fallback-credentials toegestaan.');
+}
+const SUPABASE_URL = configuredUrl;
+const SUPABASE_ANON_KEY = configuredKey;
+const vercelProductionUrl = String(process.env.VERCEL_PROJECT_PRODUCTION_URL || '').trim();
+const configuredSiteUrl = String(process.env.HN_SITE_URL || '').trim();
+const SITE_URL = (configuredSiteUrl || (vercelProductionUrl ? 'https://' + vercelProductionUrl : 'https://hijrah-netwerk.vercel.app')).replace(/\/$/, '');
 
-console.log('\n[HN build] Supabase configuratie controleren...');
-console.log('[HN build] Supabase URL: ' + SUPABASE_URL);
-console.log('[HN build] Supabase sleutel beschikbaar: ' + Boolean(SUPABASE_ANON_KEY));
+console.log('\n[HN build] Supabase configuratie gecontroleerd.');
+console.log('[HN build] Supabase configuratie aanwezig: true');
 
 const configContent = `// AUTOMATISCH GEGENEREERD DOOR build.js.\n// NIET HANDMATIG BEWERKEN.\n\nwindow.__ENV = {\n  SUPABASE_URL: ${JSON.stringify(SUPABASE_URL)},\n  SUPABASE_ANON_KEY: ${JSON.stringify(SUPABASE_ANON_KEY)}\n};\n`;
 
@@ -53,7 +57,16 @@ for (const file of htmlFiles) {
   let html = fs.readFileSync(filePath, 'utf8');
 
   html = html.replace(/(href|src)=(['"])assets\//g, '$1=$2/assets/');
-  html = html.replace(/<script src="(?:\.\/)?(supabase-client|auth|site-app)\.js"><\/script>/g, '<script src="/$1.js"><\/script>');
+  for (const scriptName of ['supabase-client', 'auth', 'site-app']) {
+    const scriptTags = [
+      '<script src="' + scriptName + '.js"></script>',
+      '<script src="./' + scriptName + '.js"></script>',
+      '<script src="/' + scriptName + '.js"></script>'
+    ];
+    for (const tag of scriptTags) {
+      html = html.replace(tag, '<script src="/' + scriptName + '.js"></script>');
+    }
+  }
   html = html.replace(/assets\/public-nav\.(css|js)(?:\?[^"\']*)?/g, 'assets/public-nav.$1?v=20261007');
   html = html.replace(/<script src="\/assets\/private-preview\.js"><\/script>\s*/g, '');
 
@@ -146,7 +159,7 @@ async function fetchJson(table, query) {
 }
 
 async function buildSitemap() {
-  const staticRoutes = ['/','/landen','/navigatie','/kennisbank','/smart-search','/community','/bijdragen','/orientatie','/orientatietest','/stappenplan','/voorbereiding','/vertrek','/integratie','/realiteitscheck','/verhalen','/stedengids','/vergelijken','/hulp'];
+  const staticRoutes = ['/','/landen','/navigatie','/kennisbank','/smart-search','/community','/bijdragen','/orientatie','/orientatietest','/stappenplan','/voorbereiding','/vertrek','/integratie','/realiteitscheck','/verhalen','/stedengids','/vergelijken','/hulp','/auteursrecht'];
   const urls = new Map();
   const add = (pathname, priority, changefreq) => { if (!pathname || pathname.includes('?')) return; const clean = pathname === '/' ? '/' : pathname.replace(/\/$/, ''); urls.set(clean, {priority, changefreq}); };
   staticRoutes.forEach(route => add(route, route === '/' ? '1.0' : '0.7', route === '/' ? 'weekly' : 'monthly'));
@@ -162,7 +175,23 @@ async function buildSitemap() {
   } catch (error) { console.warn('[HN build] Sitemap-data kon niet volledig worden geladen:', error.message); }
   const body = Array.from(urls.entries()).map(([loc, meta]) => ['  <url>','    <loc>' + escXml(SITE_URL + loc) + '</loc>','    <changefreq>' + meta.changefreq + '</changefreq>','    <priority>' + meta.priority + '</priority>','  </url>'].join('\n')).join('\n');
   fs.writeFileSync(path.join(__dirname, 'sitemap.xml'), '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + body + '\n</urlset>\n', 'utf8');
-  fs.writeFileSync(path.join(__dirname, 'robots.txt'), ['User-agent: *','Allow: /','','Disallow: /admin','Disallow: /werkruimte','Disallow: /dashboard','Disallow: /mijn-kaart','Disallow: /login','Disallow: /register','Disallow: /reset-password','Disallow: /update-password','','Sitemap: ' + SITE_URL + '/sitemap.xml',''].join('\n'), 'utf8');
+  fs.writeFileSync(path.join(__dirname, 'robots.txt'), [
+    'User-agent: *',
+    'Allow: /',
+    '',
+    'Disallow: /admin',
+    'Disallow: /admin-',
+    'Disallow: /werkruimte',
+    'Disallow: /dashboard',
+    'Disallow: /mijn-kaart',
+    'Disallow: /login',
+    'Disallow: /register',
+    'Disallow: /reset-password',
+    'Disallow: /update-password',
+    '',
+    'Sitemap: ' + SITE_URL + '/sitemap.xml',
+    ''
+  ].join('\n'), 'utf8');
   console.log('[HN build] sitemap.xml: ' + urls.size + ' URL(s).');
 }
 
