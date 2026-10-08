@@ -1,0 +1,3412 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mijn Hijrah Netwerk</title>
+
+<script src="assets/config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-client.js"></script>
+<script src="auth.js"></script>
+<script src="assets/hijrah-stappenplan.js"></script>\n<script src="assets/hn-passport.js"></script>
+<script type="module" src="assets/speed-insights-init.js"></script>
+<script type="module" src="assets/analytics-init.js"></script>
+
+<style>
+:root{
+  --brown:#674C2E;
+  --orange:#DD842A;
+  --gold:#C6A15B;
+  --cream:#FFFFFF;
+  --text:#674C2E;
+  --muted:#756d63;
+  --border:#674C2E;
+  --white:#fff;
+  --success:#674C2E;
+  --danger:#a63b3b
+}
+
+/* Modern Mijn Hijrah dashboard UI */
+body{
+  background:
+    radial-gradient(circle at 8% 0%,rgba(198,161,91,.13),transparent 28%),
+    radial-gradient(circle at 92% 8%,rgba(223,132,44,.10),transparent 25%),
+    var(--cream);
+}
+.top{
+  background:#674C2E;
+  box-shadow:0 3px 18px rgba(60,38,18,.16);
+}
+.nav{max-width:1240px;padding:16px 22px}
+.brand{letter-spacing:.1px}
+.wrap{max-width:1240px;padding:30px 22px 70px}
+.hero{
+  position:relative;
+  overflow:hidden;
+  margin:0 0 22px;
+  padding:30px;
+  border-radius:24px;
+  color:#fff;
+  background:#674C2E;
+  box-shadow:0 14px 35px rgba(86,55,25,.16);
+}
+.hero:after{
+  content:"";
+  position:absolute;
+  width:260px;height:260px;
+  right:-90px;top:-110px;
+  border:1px solid rgba(255,255,255,.18);
+  border-radius:50%;
+  box-shadow:0 0 0 45px rgba(255,255,255,.035),0 0 0 90px rgba(255,255,255,.025);
+}
+.hero h1{font-size:34px;margin:0 0 7px;position:relative;z-index:1}
+.hero p{color:rgba(255,255,255,.78);position:relative;z-index:1}
+.grid{grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:6px}
+.card{
+  position:relative;
+  padding:18px 20px;
+  border-radius:18px;
+  box-shadow:0 5px 18px rgba(70,45,25,.045);
+  transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease;
+}
+.card:hover{transform:translateY(-3px);box-shadow:0 10px 24px rgba(70,45,25,.10);border-color:#dcc9b5}
+.value{font-size:27px}
+.panel{
+  padding:20px;
+  border-radius:20px;
+  box-shadow:0 7px 25px rgba(70,45,25,.055);
+}
+.tabs{
+  padding:5px;
+  background:#f7f2ec;
+  border:1px solid #eee4d9;
+  border-radius:14px;
+  gap:4px;
+}
+.tab{
+  border:0;
+  background:transparent;
+  border-radius:10px;
+  padding:10px 14px;
+  transition:background .18s ease,color .18s ease,transform .18s ease;
+}
+.tab:hover{background:#fff;transform:translateY(-1px)}
+.tab.active{background:#674C2E;box-shadow:0 3px 10px rgba(103,76,46,.18)}
+.summary-box{gap:12px}
+.summary-item{
+  background:#674C2E;
+  border-radius:14px;
+  transition:transform .18s ease,border-color .18s ease;
+}
+.summary-item:hover{transform:translateY(-2px);border-color:#dcc9b5}
+.button,.hnbtn{transition:transform .16s ease,box-shadow .16s ease}
+.button:hover,.hnbtn:hover{transform:translateY(-1px);box-shadow:0 5px 13px rgba(80,50,20,.12)}
+.plan-section{
+  border-top-color:#eee5db;
+  padding-top:26px;
+}
+.next-step{
+  background:#674C2E;
+  border-color:#e6d5c2;
+}
+.task,.item,.checklist-row{
+  transition:background .18s ease,border-color .18s ease,transform .18s ease;
+}
+.task:hover,.item:hover{background:#FFFFFF;border-color:#dcc9b5;transform:translateY(-1px)}
+/* Countdown */
+.hn-countdown{
+  margin-top:22px;
+  display:grid;
+  grid-template-columns:minmax(220px,1.35fr) repeat(3,minmax(90px,.5fr));
+  gap:10px;
+  position:relative;
+  z-index:2;
+}
+.hn-countdown-main,.hn-countdown-box{
+  border:1px solid rgba(255,255,255,.16);
+  background:rgba(255,255,255,.10);
+  backdrop-filter:blur(8px);
+  border-radius:15px;
+  padding:14px 16px;
+}
+.hn-countdown-main .small,.hn-countdown-box .small{
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  color:rgba(255,255,255,.68);
+}
+.hn-countdown-main strong{display:block;font-size:19px;margin-top:5px}
+.hn-countdown-box{text-align:center}
+.hn-countdown-box strong{display:block;font-size:27px;line-height:1.1;margin-top:4px}
+.hn-countdown-message{font-size:13px;color:rgba(255,255,255,.78);margin-top:5px}
+@media(max-width:900px){
+  .grid{grid-template-columns:repeat(2,1fr)}
+  .hn-countdown{grid-template-columns:1fr 1fr 1fr}
+  .hn-countdown-main{grid-column:1/-1}
+}
+@media(max-width:650px){
+  .grid{grid-template-columns:1fr 1fr}
+  .hero{padding:23px;border-radius:20px}
+  .hero h1{font-size:28px}
+  .hn-countdown{grid-template-columns:1fr 1fr}
+  .hn-countdown-main{grid-column:1/-1}
+  .panel{padding:15px}
+  .tabs{overflow-x:auto;flex-wrap:nowrap}
+  .tab{white-space:nowrap}
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  background:var(--cream);
+  color:var(--text);
+  font-family:Arial,sans-serif
+}
+
+.top{
+  background:var(--brown);
+  color:#fff
+}
+
+.nav{
+  max-width:1180px;
+  margin:auto;
+  padding:18px 22px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:18px
+}
+
+.brand{
+  font-weight:700;
+  font-size:20px
+}
+
+.nav-actions{
+  display:flex;
+  gap:8px
+}
+
+.nav button{
+  border:1px solid rgba(255,255,255,.3);
+  background:transparent;
+  color:#fff;
+  border-radius:8px;
+  padding:9px 12px;
+  cursor:pointer
+}
+
+.wrap{
+  max-width:1180px;
+  margin:auto;
+  padding:32px 22px 60px
+}
+
+.hero{
+  margin-bottom:25px
+}
+
+.hero h1{
+  margin:0 0 8px;
+  font-size:30px
+}
+
+.hero p{
+  margin:0;
+  color:var(--muted)
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:16px
+}
+
+.card,.panel{
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:14px
+}
+
+.card{
+  padding:20px
+}
+
+.label{
+  color:var(--muted);
+  font-size:13px;
+  margin-bottom:8px
+}
+
+.value{
+  font-size:30px;
+  font-weight:700;
+  color:var(--brown)
+}
+
+.panel{
+  padding:22px;
+  margin-top:20px
+}
+
+.panel h2{
+  font-size:19px;
+  margin:0 0 14px
+}
+
+.panel h3{
+  margin-top:25px
+}
+
+.tabs{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-bottom:18px
+}
+
+.tab{
+  border:1px solid var(--border);
+  background:#fff;
+  padding:9px 13px;
+  border-radius:8px;
+  cursor:pointer
+}
+
+.tab.active{
+  background:var(--brown);
+  color:#fff;
+  border-color:var(--brown)
+}
+
+.tabview{
+  display:none
+}
+
+.tabview.active{
+  display:block
+}
+
+.row{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px
+}
+
+.field{
+  display:flex;
+  flex-direction:column;
+  gap:7px;
+  margin-bottom:15px
+}
+
+.field.full{
+  grid-column:1/-1
+}
+
+label{
+  font-size:13px;
+  font-weight:600
+}
+
+input,select,textarea{
+  font:inherit;
+  border:1px solid var(--border);
+  border-radius:8px;
+  padding:10px;
+  background:#fff
+}
+
+textarea{
+  min-height:150px;
+  resize:vertical
+}
+
+.button{
+  border:0;
+  border-radius:8px;
+  padding:10px 14px;
+  cursor:pointer
+}
+
+.primary{
+  background:var(--orange);
+  color:#fff
+}
+
+.secondary{
+  background:#FFFFFF;
+  color:var(--brown)
+}
+
+.danger{
+  background:#FFFFFF;
+  color:var(--danger)
+}
+
+.saved-actions{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  flex-wrap:wrap;
+}
+
+.saved-actions .button{
+  text-decoration:none;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.saved-view{
+  background:#FFFFFF;
+  color:var(--brown);
+}
+
+.saved-open{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  margin-top:12px;
+  color:var(--brown);
+  font-weight:700;
+  font-size:13px;
+  text-decoration:none;
+}
+
+.saved-open:hover{
+  color:var(--orange);
+  text-decoration:underline;
+}
+
+@media(max-width:650px){
+  .item-head{
+    flex-direction:column;
+  }
+
+  .saved-actions{
+    width:100%;
+  }
+
+  .saved-actions .button{
+    flex:1;
+  }
+}
+
+.list{
+  display:grid;
+  gap:10px
+}
+
+.item{
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:15px
+}
+
+.item-head{
+  display:flex;
+  justify-content:space-between;
+  gap:15px;
+  align-items:flex-start
+}
+
+.item h3{
+  margin:0 0 6px;
+  font-size:16px
+}
+
+.meta{
+  font-size:12px;
+  color:var(--muted)
+}
+
+.empty{
+  padding:20px;
+  text-align:center;
+  color:var(--muted)
+}
+
+.progressbar{
+  height:12px;
+  background:#674C2E;
+  border-radius:99px;
+  overflow:hidden;
+  margin:12px 0
+}
+
+.progressfill{
+  height:100%;
+  background:var(--orange);
+  width:0;
+  transition:width .25s ease
+}
+
+.check{
+  display:flex;
+  gap:10px;
+  align-items:flex-start;
+  padding:10px 0
+}
+
+.check input{
+  margin-top:3px
+}
+
+.message{
+  padding:11px 13px;
+  border-radius:8px;
+  margin-bottom:18px;
+  display:none
+}
+
+.message.show{
+  display:block
+}
+
+.message.success{
+  background:#FFFFFF;
+  color:var(--success)
+}
+
+.message.error{
+  background:#FFFFFF;
+  color:var(--danger)
+}
+
+.muted{
+  color:var(--muted)
+}
+
+.summary-box{
+  margin-top:20px;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px
+}
+
+.summary-item{
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:14px;
+  background:#FFFFFF
+}
+
+.summary-label{
+  font-size:12px;
+  color:var(--muted);
+  margin-bottom:6px
+}
+
+.summary-value{
+  white-space:pre-wrap;
+  line-height:1.5
+}
+
+.plan-section{
+  margin-top:25px;
+  padding-top:22px;
+  border-top:1px solid var(--border)
+}
+
+.plan-section:first-of-type{
+  margin-top:15px;
+  padding-top:0;
+  border-top:0
+}
+
+.section-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:15px;
+  margin-bottom:12px
+}
+
+.section-head h3{
+  margin:0
+}
+
+.save-status{
+  font-size:12px;
+  color:var(--muted);
+  min-height:18px
+}
+
+.next-step{
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:17px;
+  background:#FFFFFF
+}
+
+.next-step-title{
+  color:var(--brown);
+  font-size:17px;
+  font-weight:700;
+  margin-bottom:6px
+}
+
+.task-add{
+  display:grid;
+  grid-template-columns:2fr 1fr 1fr auto;
+  gap:8px;
+  margin-bottom:14px
+}
+
+.task-list{
+  display:grid;
+  gap:8px
+}
+
+.task{
+  display:grid;
+  grid-template-columns:auto 1fr auto auto;
+  gap:10px;
+  align-items:center;
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:11px
+}
+
+.task.completed{
+  opacity:.65
+}
+
+.task.completed .task-title{
+  text-decoration:line-through
+}
+
+.task-title{
+  font-size:14px
+}
+
+.priority{
+  font-size:11px;
+  border-radius:20px;
+  padding:5px 8px;
+  background:#FFFFFF;
+  color:var(--brown)
+}
+
+.task-date{
+  font-size:12px;
+  color:var(--muted)
+}
+
+.delete-small{
+  border:0;
+  background:transparent;
+  color:var(--danger);
+  cursor:pointer;
+  padding:5px
+}
+
+.budget-total{
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:15px;
+  background:#FFFFFF;
+  margin-bottom:12px
+}
+
+.budget-number{
+  font-size:24px;
+  font-weight:700;
+  color:var(--brown)
+}
+
+.checklist{
+  display:grid;
+  gap:7px
+}
+
+.checklist-row{
+  display:flex;
+  gap:10px;
+  align-items:center;
+  padding:9px 0;
+  border-bottom:1px solid #f0ebe5
+}
+
+.checklist-row:last-child{
+  border-bottom:0
+}
+
+.question-row{
+  display:flex;
+  gap:8px;
+  margin-bottom:8px
+}
+
+.question-row input{
+  flex:1
+}
+
+.auto-note{
+  font-size:12px;
+  color:var(--muted);
+  margin-top:8px
+}
+
+@media(max-width:900px){
+  .grid{
+    grid-template-columns:repeat(2,1fr)
+  }
+
+  .task-add{
+    grid-template-columns:1fr 1fr
+  }
+}
+
+@media(max-width:650px){
+  .grid,.row,.summary-box{
+    grid-template-columns:1fr
+  }
+
+  .nav{
+    align-items:flex-start;
+    flex-direction:column
+  }
+
+  .wrap{
+    padding:24px 16px 50px
+  }
+
+  .task-add{
+    grid-template-columns:1fr
+  }
+
+  .task{
+    grid-template-columns:auto 1fr auto
+  }
+
+  .task .task-date{
+    grid-column:2
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header class="top">
+  <div class="nav">
+    <div class="brand">Hijrah Netwerk</div>
+
+    <div class="nav-actions">
+      <button id="homeBtn">Website</button>
+      <button id="adminBtn" style="display:none">Admin</button>
+      <button id="logoutBtn">Uitloggen</button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+<div id="message" class="message"></div>
+
+<section class="hero">
+
+  <h1>Mijn Hijrah Netwerk</h1>
+
+  <p id="welcome">
+    Je persoonlijke omgeving.
+  </p>
+
+  <div class="hn-countdown" id="hnDepartureCountdown">
+    <div class="hn-countdown-main">
+      <div class="small">Mijn vertrek</div>
+      <strong id="hnCountdownDate">Nog geen vertrekdatum ingesteld</strong>
+      <div class="hn-countdown-message" id="hnCountdownMessage">Stel je vertrekdatum in bij Mijn Hijrah Plan.</div>
+    </div>
+    <div class="hn-countdown-box"><div class="small">Dagen</div><strong id="hnCountdownDays">—</strong></div>
+    <div class="hn-countdown-box"><div class="small">Uren</div><strong id="hnCountdownHours">—</strong></div>
+    <div class="hn-countdown-box"><div class="small">Minuten</div><strong id="hnCountdownMinutes">—</strong></div>
+  </div>
+
+</section>
+
+<section class="grid">
+
+  <div class="card">
+    <div class="label">Opgeslagen</div>
+    <div class="value" id="savedCount">0</div>
+  </div>
+
+  <div class="card">
+    <div class="label">Voortgang</div>
+    <div class="value" id="progressCount">0%</div>
+  </div>
+
+  <div class="card">
+    <div class="label">Plan</div>
+    <div class="value" id="planStatus">Nieuw</div>
+  </div>
+
+  <div class="card">
+    <div class="label">Account</div>
+    <div class="value" id="accountStatus">Actief</div>
+  </div>
+
+</section>
+
+<section class="panel">
+
+  <div class="tabs">
+
+    <button class="tab active" data-tab="home">
+      Overzicht
+    </button>
+
+    <button class="tab" data-tab="saved">
+      Opgeslagen
+    </button>
+
+    <button class="tab" data-tab="progress">
+      Voortgang
+    </button>
+
+    <button class="tab" data-tab="plan">
+      Mijn Hijrah Plan
+    </button>
+
+    <button class="tab" data-tab="profile">
+      Mijn profiel
+    </button>
+
+  </div>
+
+  <!-- OVERZICHT -->
+
+  <div id="tab-home" class="tabview active">
+
+    <h2>Welkom</h2>
+
+    <p class="muted">
+      Hier zie je jouw belangrijkste gegevens en voortgang.
+    </p>
+
+    <div class="summary-box">
+
+      <div class="summary-item">
+        <div class="summary-label">Gewenst land</div>
+        <div class="summary-value" id="summaryCountry">
+          Nog niet ingevuld
+        </div>
+      </div>
+
+      <div class="summary-item">
+        <div class="summary-label">Gewenste stad</div>
+        <div class="summary-value" id="summaryCity">
+          Nog niet ingevuld
+        </div>
+      </div>
+
+      <div class="summary-item">
+        <div class="summary-label">Gewenste datum</div>
+        <div class="summary-value" id="summaryDate">
+          Nog niet ingevuld
+        </div>
+      </div>
+
+      <div class="summary-item">
+        <div class="summary-label">Volgende stap</div>
+        <div class="summary-value" id="summaryNextStep">
+          Nog geen stap bepaald.
+        </div>
+      </div>
+
+      <div class="summary-item">
+        <div class="summary-label">Taken</div>
+        <div class="summary-value" id="summaryTasks">
+          0 taken
+        </div>
+      </div>
+
+      <div class="summary-item">
+        <div class="summary-label">Budget</div>
+        <div class="summary-value" id="summaryBudget">
+          Nog niet ingevuld
+        </div>
+      </div>
+
+      <div
+        class="summary-item"
+        style="grid-column:1/-1"
+      >
+        <div class="summary-label">Mijn notities</div>
+        <div class="summary-value" id="summaryNotes">
+          Nog geen notities.
+        </div>
+      </div>
+
+    </div>
+
+    <button
+      class="button primary"
+      style="margin-top:16px"
+      onclick="openPlanTab()"
+    >
+      Mijn Hijrah Plan openen
+    </button>
+
+  </div>
+
+  <!-- OPGESLAGEN -->
+
+  <div id="tab-saved" class="tabview">
+
+    <h2>Opgeslagen informatie</h2>
+
+    <div id="savedList" class="list"></div>
+
+  </div>
+
+  <!-- VOORTGANG -->
+
+  <div id="tab-progress" class="tabview">
+
+    <h2>Mijn voortgang</h2>
+
+    <p class="muted">
+      Je voortgang wordt automatisch aan je account gekoppeld.
+    </p>
+
+    <div class="progressbar">
+      <div
+        id="progressFill"
+        class="progressfill"
+      ></div>
+    </div>
+
+    <p id="progressText" class="muted">
+      0 van 0 items afgerond.
+    </p>
+
+    <div id="progressList"></div>
+
+  </div>
+
+  <!-- MIJN HIJRAH PLAN -->
+
+  <div id="tab-plan" class="tabview">
+
+    <h2>Mijn Hijrah Plan</h2>
+
+    <p class="muted">
+      Een persoonlijke plek om je emigratie voor te bereiden. Wijzigingen worden automatisch opgeslagen.
+    </p>
+
+    <div class="save-status" id="planSaveStatus"></div>
+
+    <div class="plan-section">
+
+      <div class="section-head">
+        <h3>Mijn doel</h3>
+      </div>
+
+      <div class="row">
+
+        <div class="field">
+          <label>Gewenst land</label>
+          <select id="planCountry"></select>
+        </div>
+
+        <div class="field">
+          <label>Gewenste stad</label>
+          <select id="planCity"></select>
+        </div>
+
+        <div class="field">
+          <label>Gewenste vertrekdatum</label>
+          <input id="planDate" type="date">
+        </div>
+
+        <div class="field">
+          <label>Mijn notities</label>
+          <textarea
+            id="planNotes"
+            placeholder="Bijvoorbeeld waarom je wilt emigreren of wat voor jou belangrijk is."
+            style="min-height:105px"
+          ></textarea>
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="plan-section">
+
+      <div class="section-head">
+        <h3>Mijn volgende stap</h3>
+      </div>
+
+      <div class="next-step">
+
+        <div
+          class="next-step-title"
+          id="nextStepTitle"
+        >
+          Je volgende stap
+        </div>
+
+        <div
+          class="muted"
+          id="nextStepDescription"
+        >
+          Vink je voortgang af om te zien wat je volgende stap is.
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="plan-section" id="moduleWorkspaceSection">
+
+      <div class="section-head">
+        <h3>Mijn Stappenplan-modules</h3>
+      </div>
+
+      <p class="muted">Hier werk je de modules uit. Je antwoorden, notities en afvinkpunten blijven bij jouw Mijn Hijrah Plan. In je algemene voortgang zie je alleen hoeveel modules je hebt afgerond.</p>
+
+      <div id="moduleWorkspace"></div>
+
+    </div>
+
+    <div class="plan-section">
+
+      <div class="section-head">
+        <h3>Mijn taken</h3>
+      </div>
+
+      <div class="task-add">
+
+        <input
+          id="taskTitle"
+          placeholder="Nieuwe taak..."
+        >
+
+        <input
+          id="taskDate"
+          type="date"
+        >
+
+        <select id="taskPriority">
+          <option value="normaal">Normaal</option>
+          <option value="hoog">Hoog</option>
+          <option value="laag">Laag</option>
+        </select>
+
+        <button
+          class="button primary"
+          type="button"
+          id="addTaskBtn"
+        >
+          Toevoegen
+        </button>
+
+      </div>
+
+      <div
+        id="taskList"
+        class="task-list"
+      ></div>
+
+    </div>
+
+    <div class="plan-section">
+
+      <div class="section-head">
+        <h3>Mijn budget</h3>
+      </div>
+
+      <div class="row">
+
+        <div class="field">
+          <label>Eenmalige kosten</label>
+          <input
+            id="budgetOneTime"
+            type="number"
+            min="0"
+            step="0.01"
+            placeholder="Bijvoorbeeld 5000"
+          >
+        </div>
+
+        <div class="field">
+          <label>Geschatte maandelijkse kosten</label>
+          <input
+            id="budgetMonthly"
+            type="number"
+            min="0"
+            step="0.01"
+            placeholder="Bijvoorbeeld 1500"
+          >
+        </div>
+
+      </div>
+
+      <div class="budget-total">
+
+        <div class="summary-label">
+          Totaal eenmalig
+        </div>
+
+        <div
+          class="budget-number"
+          id="budgetTotal"
+        >
+          € 0
+        </div>
+
+        <div class="auto-note">
+          Dit is een persoonlijke schatting. HN gebruikt dit niet als officiële kostenberekening.
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="plan-section">
+
+      <div class="section-head">
+        <h3>Mijn documenten</h3>
+      </div>
+
+      <div
+        id="documentChecklist"
+        class="checklist"
+      ></div>
+
+    </div>
+
+    <div class="plan-section">
+
+      <div class="section-head">
+        <h3>Mijn vragen</h3>
+      </div>
+
+      <p class="muted">
+        Bewaar hier dingen die je nog wilt uitzoeken.
+      </p>
+
+      <div id="questionList"></div>
+
+      <div class="question-row">
+        <input
+          id="questionInput"
+          placeholder="Wat wil je nog weten?"
+        >
+
+        <button
+          class="button primary"
+          type="button"
+          id="addQuestionBtn"
+        >
+          Toevoegen
+        </button>
+      </div>
+
+    </div>
+
+    <div class="plan-section">
+
+      <div class="section-head">
+        <h3>Vertrekchecklist</h3>
+      </div>
+
+      <div
+        id="departureChecklist"
+        class="checklist"
+      ></div>
+
+    </div>
+
+    <div class="plan-section">
+
+      <div class="section-head">
+        <h3>Extra aandachtspunten</h3>
+      </div>
+
+      <textarea
+        id="planDataText"
+        placeholder="Schrijf hier zaken die je niet wilt vergeten..."
+      ></textarea>
+
+      <div class="auto-note">
+        Alles wordt automatisch opgeslagen.
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- PROFIEL -->
+
+  <div id="tab-profile" class="tabview">
+
+    <h2>Mijn profiel</h2>
+
+    <p class="muted">
+      Je accountgegevens worden automatisch vanuit je account geladen.
+    </p>
+
+    <div class="row">
+
+      <div class="field">
+        <label>E-mail</label>
+        <input
+          id="profileEmail"
+          readonly
+        >
+      </div>
+
+      <div class="field">
+        <label>Account aangemaakt</label>
+        <input
+          id="profileCreated"
+          readonly
+        >
+      </div>
+
+    </div>
+
+    <h3>Mijn voorkeuren</h3>
+
+    <p class="muted">
+      Deze voorkeuren kunnen later gebruikt worden om relevante HN-informatie aan je te tonen.
+    </p>
+
+    <div class="row">
+
+      <div class="field">
+        <label>Voorkeursland</label>
+        <select id="prefCountry"></select>
+      </div>
+
+      <div class="field">
+        <label>Voorkeursstad</label>
+        <select id="prefCity"></select>
+      </div>
+
+    </div>
+
+    <div
+      class="save-status"
+      id="profileSaveStatus"
+    ></div>
+
+  </div>
+
+</section>
+
+</main>
+
+<script>
+
+const db=()=>window.hijrahSupabase;
+
+let user=null;
+let countries=[];
+let cities=[];
+let saved=[];
+let progress=[];
+let steps=[];
+let plan=null;
+
+let presenceTimer=null;
+let presenceSessionStarted=null;
+let presenceAvailable=true;
+
+let planSaveTimer=null;
+let profileSaveTimer=null;
+
+const PRESENCE_TIMEOUT=90000;
+const PRESENCE_INTERVAL=30000;
+
+const DOCUMENT_ITEMS=[
+  'Paspoort / identiteitsdocument gecontroleerd',
+  'Geboorteakte geregeld',
+  'Huwelijksdocumenten geregeld indien van toepassing',
+  'Diploma’s en belangrijke certificaten verzameld',
+  'Documenten gelegaliseerd indien nodig',
+  'Medische documenten verzameld',
+  'Schooldocumenten van kinderen verzameld indien van toepassing',
+  'Belangrijke verzekeringsdocumenten gecontroleerd'
+];
+
+const DEPARTURE_ITEMS=[
+  'Belangrijke documenten bij de hand',
+  'Reis en tickets gecontroleerd',
+  'Bagage geregeld',
+  'Geld en betaalmogelijkheden geregeld',
+  'Telefoon en internet voorbereid',
+  'Verzekeringen gecontroleerd',
+  'Belangrijke contacten opgeslagen',
+  'Laatste praktische zaken geregeld'
+];
+
+const $=id=>document.getElementById(id);
+
+
+/* =========================
+   ALGEMEEN
+========================= */
+
+function message(text,type='success'){
+
+  const e=$('message');
+
+  e.textContent=text;
+
+  e.className='message show '+type;
+
+  clearTimeout(window.__mt);
+
+  window.__mt=setTimeout(
+    ()=>{
+      e.className='message';
+    },
+    4500
+  );
+
+}
+
+function esc(v){
+
+  return v==null
+    ? ''
+    : String(v)
+        .replace(/&/g,'&amp;')
+        .replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;')
+        .replace(/"/g,'&quot;')
+        .replace(/'/g,'&#039;');
+
+}
+
+function options(el,items,placeholder){
+
+  const current=el.value;
+
+  el.innerHTML=
+    '<option value="">'+
+    placeholder+
+    '</option>'+
+    items
+      .filter(x=>x.is_active!==false)
+      .map(
+        x=>
+          '<option value="'+
+          x.id+
+          '">'+
+          esc(x.name)+
+          '</option>'
+      )
+      .join('');
+
+  if(current){
+    el.value=current;
+  }
+
+}
+
+function tabs(){
+
+  document
+    .querySelectorAll('.tab')
+    .forEach(b=>{
+
+      b.onclick=()=>{
+
+        document
+          .querySelectorAll('.tab')
+          .forEach(
+            x=>x.classList.remove('active')
+          );
+
+        document
+          .querySelectorAll('.tabview')
+          .forEach(
+            x=>x.classList.remove('active')
+          );
+
+        b.classList.add('active');
+
+        $('tab-'+b.dataset.tab)
+          .classList.add('active');
+
+      };
+
+    });
+
+}
+
+function openPlanTab(){
+
+  const button=
+    document.querySelector(
+      '.tab[data-tab="plan"]'
+    );
+
+  if(button){
+    button.click();
+  }
+
+}
+
+
+/* =========================
+   ACCOUNT
+========================= */
+
+async function requireUser(){
+
+  const {data,error}=await db()
+    .auth
+    .getSession();
+
+  if(error){
+
+    console.error(
+      'Supabase sessiefout:',
+      error
+    );
+
+    location.href='/login';
+
+    return false;
+  }
+
+  if(!data.session){
+
+    location.href='/login';
+
+    return false;
+  }
+
+  user=data.session.user;
+
+  const profileResult=await db()
+    .from('profiles')
+    .select('role')
+    .eq('id',user.id)
+    .maybeSingle();
+
+  if(!profileResult.error && profileResult.data?.role==='admin'){
+    const adminBtn=$('adminBtn');
+    if(adminBtn){
+      adminBtn.style.display='inline-block';
+      adminBtn.onclick=()=>location.href='/admin';
+    }
+  }
+
+  $('welcome').textContent=
+    'Ingelogd als '+
+    (
+      user.email||
+      'lid'
+    )+
+    '.';
+
+  $('profileEmail').value=
+    user.email||'';
+
+  $('profileCreated').value=
+    user.created_at
+      ? new Date(
+          user.created_at
+        ).toLocaleString('nl-NL')
+      : '';
+
+  return true;
+
+}
+
+
+/* =========================
+   ACTIVITEIT LOGGEN
+========================= */
+
+async function logUserActivity(
+  activityType,
+  description,
+  details=null
+){
+
+  if(!user){
+    return false;
+  }
+
+  const payload={
+    user_id:user.id,
+    activity_type:activityType,
+    description:description,
+    details:details
+  };
+
+  try{
+
+    const result=await db()
+      .from('user_activity')
+      .insert(payload);
+
+    if(result.error){
+
+      console.error(
+        'ACTIVITEIT LOGGING FOUT:',
+        result.error
+      );
+
+      return false;
+    }
+
+    console.log(
+      'HN activiteit opgeslagen:',
+      activityType
+    );
+
+    return true;
+
+  }catch(error){
+
+    console.error(
+      'ACTIVITEIT LOGGING EXCEPTION:',
+      error
+    );
+
+    return false;
+
+  }
+
+}
+
+
+/* =========================
+   ONLINE / PRESENCE
+   Alleen voor admin-monitoring.
+   Niet zichtbaar voor leden.
+========================= */
+
+function setPresenceText(text){
+  // Presence wordt bewust niet aan leden getoond.
+  // De gegevens blijven wel op de achtergrond
+  // naar user_presence gaan voor admin-monitoring.
+}
+
+function getSessionStart(data){
+
+  const now=new Date();
+
+  if(
+    !data||
+    !data.last_seen_at
+  ){
+    return now;
+  }
+
+  const lastSeen=
+    new Date(
+      data.last_seen_at
+    );
+
+  if(
+    Number.isNaN(lastSeen.getTime())||
+    now.getTime()-
+    lastSeen.getTime()>
+    PRESENCE_TIMEOUT
+  ){
+    return now;
+  }
+
+  if(data.session_started_at){
+
+    const start=
+      new Date(
+        data.session_started_at
+      );
+
+    if(
+      !Number.isNaN(
+        start.getTime()
+      )
+    ){
+      return start;
+    }
+
+  }
+
+  return now;
+
+}
+
+async function startPresence(){
+
+  if(!user){
+    return false;
+  }
+
+  try{
+
+    const {data,error}=await db()
+      .from('user_presence')
+      .select(
+        'session_started_at,last_seen_at,session_seconds'
+      )
+      .eq(
+        'user_id',
+        user.id
+      )
+      .maybeSingle();
+
+    if(error){
+
+      presenceAvailable=false;
+
+      console.error(
+        'PRESENCE LADEN FOUT:',
+        error
+      );
+
+      return false;
+    }
+
+    presenceAvailable=true;
+
+    presenceSessionStarted=
+      getSessionStart(data);
+
+    const updated=
+      await updatePresence();
+
+    if(!updated){
+      return false;
+    }
+
+    clearInterval(
+      presenceTimer
+    );
+
+    presenceTimer=
+      setInterval(
+        updatePresence,
+        PRESENCE_INTERVAL
+      );
+
+    return true;
+
+  }catch(error){
+
+    presenceAvailable=false;
+
+    console.error(
+      'PRESENCE STARTEN FOUT:',
+      error
+    );
+
+    return false;
+
+  }
+
+}
+
+async function updatePresence(){
+
+  if(
+    !user||
+    !presenceSessionStarted||
+    !presenceAvailable
+  ){
+    return false;
+  }
+
+  const now=new Date();
+
+  const sessionSeconds=
+    Math.max(
+      0,
+      Math.floor(
+        (
+          now.getTime()-
+          presenceSessionStarted.getTime()
+        )/1000
+      )
+    );
+
+  const payload={
+
+    user_id:user.id,
+
+    session_started_at:
+      presenceSessionStarted.toISOString(),
+
+    last_seen_at:
+      now.toISOString(),
+
+    session_seconds:
+      sessionSeconds,
+
+    updated_at:
+      now.toISOString()
+
+  };
+
+  const {error}=await db()
+    .from('user_presence')
+    .upsert(
+      payload,
+      {
+        onConflict:'user_id'
+      }
+    );
+
+  if(error){
+
+    presenceAvailable=false;
+
+    console.error(
+      'PRESENCE UPDATE FOUT:',
+      error
+    );
+
+    return false;
+  }
+
+  return true;
+
+}
+
+document.addEventListener(
+  'visibilitychange',
+  async()=>{
+
+    if(
+      document.visibilityState==='visible'&&
+      user
+    ){
+
+      await updatePresence();
+
+    }
+
+  }
+);
+
+
+/* =========================
+   BASISDATA
+========================= */
+
+async function loadBase(){
+
+  const [co,ci]=await Promise.all([
+
+    db()
+      .from('countries')
+      .select(
+        'id,name,is_active'
+      )
+      .order('name'),
+
+    db()
+      .from('cities')
+      .select(
+        'id,name,country_id,is_active'
+      )
+      .order('name')
+
+  ]);
+
+  if(co.error){
+
+    message(
+      co.error.message,
+      'error'
+    );
+
+    return;
+  }
+
+  if(ci.error){
+
+    message(
+      ci.error.message,
+      'error'
+    );
+
+    return;
+  }
+
+  countries=co.data||[];
+  cities=ci.data||[];
+
+  options(
+    $('planCountry'),
+    countries,
+    'Kies land'
+  );
+
+  options(
+    $('prefCountry'),
+    countries,
+    'Kies land'
+  );
+
+  fillCity(
+    'planCity',
+    null,
+    null
+  );
+
+  fillCity(
+    'prefCity',
+    null,
+    null
+  );
+
+}
+
+function fillCity(
+  id,
+  countryId,
+  current
+){
+
+  const el=$(id);
+
+  const list=
+    cities.filter(
+      c=>
+        c.is_active!==false&&
+        (
+          !countryId||
+          c.country_id===countryId
+        )
+    );
+
+  el.innerHTML=
+    '<option value="">Kies stad</option>'+
+    list
+      .map(
+        x=>
+          '<option value="'+
+          x.id+
+          '">'+
+          esc(x.name)+
+          '</option>'
+      )
+      .join('');
+
+  if(current){
+    el.value=current;
+  }
+
+}
+
+$('planCountry').onchange=()=>{
+
+  fillCity(
+    'planCity',
+    $('planCountry').value,
+    null
+  );
+
+  schedulePlanSave();
+
+};
+
+$('prefCountry').onchange=()=>{
+
+  fillCity(
+    'prefCity',
+    $('prefCountry').value,
+    null
+  );
+
+  scheduleProfileSave();
+
+};
+
+
+/* =========================
+   OPGESLAGEN INFORMATIE
+========================= */
+
+async function loadSaved(){
+
+  const {data,error}=await db()
+    .from('saved_articles')
+    .select(
+      'id,topic_id,created_at,'+
+      'topic:topic_id('+
+      'id,title,summary,status,'+
+      'countries(name),cities(name)'+
+      ')'
+    )
+    .order(
+      'created_at',
+      {
+        ascending:false
+      }
+    );
+
+  if(error){
+
+    message(
+      error.message,
+      'error'
+    );
+
+    return;
+  }
+
+  saved=data||[];
+
+  $('savedCount').textContent=
+    saved.length;
+
+  renderSaved();
+
+}
+
+function renderSaved(){
+
+  const box=$('savedList');
+
+  if(!saved.length){
+
+    box.innerHTML=
+      '<div class="empty">'+
+      'Je hebt nog niets opgeslagen.'+
+      '</div>';
+
+    return;
+  }
+
+  box.innerHTML=
+    saved.map(
+      x=>
+
+        '<div class="item">'+
+
+          '<div class="item-head">'+
+
+            '<div>'+
+
+              '<h3>'+
+              esc(x.topic?.title)+
+              '</h3>'+
+
+              '<div class="meta">'+
+                esc(
+                  x.topic?.cities?.name||''
+                )+
+                (
+                  x.topic?.countries?.name
+                  ? ' · '+
+                    esc(
+                      x.topic.countries.name
+                    )
+                  : ''
+                )+
+              '</div>'+
+
+            '</div>'+
+
+            '<div class="saved-actions">'+
+              '<a class="button saved-view" '+
+                'href="/artikels/'+encodeURIComponent((x.topic&&x.topic.slug)||x.topic_id||'')+'">'+
+                'Artikel bekijken'+
+              '</a>'+
+              '<button '+
+                'class="button danger" '+
+                'onclick="removeSaved(\''+
+                esc(x.id)+
+                '\')">'+
+                'Verwijderen'+
+              '</button>'+
+            '</div>'+
+
+          '</div>'+
+
+          '<p class="muted">'+
+            esc(
+              x.topic?.summary||''
+            )+
+          '</p>'+
+          '<a class="saved-open" '+
+            'href="/artikels/'+encodeURIComponent((x.topic&&x.topic.slug)||x.topic_id||'')+'">'+
+            'Artikel bekijken →'+
+          '</a>'+
+
+        '</div>'
+
+    ).join('');
+
+}
+
+async function removeSaved(id){
+
+  const item=
+    saved.find(
+      x=>x.id===id
+    );
+
+  const {error}=await db()
+    .from('saved_articles')
+    .delete()
+    .eq('id',id);
+
+  if(error){
+
+    message(
+      error.message,
+      'error'
+    );
+
+    return;
+  }
+
+  await logUserActivity(
+    'saved_article_removed',
+    'Opgeslagen informatie verwijderd',
+    {
+      saved_article_id:id,
+      topic_id:
+        item?.topic_id||null,
+      title:
+        item?.topic?.title||null
+    }
+  );
+
+  await loadSaved();
+
+  message(
+    'Opgeslagen item verwijderd.'
+  );
+
+}
+
+
+/* =========================
+   VOORTGANG
+========================= */
+
+async function loadProgress(){
+
+  steps=window.HN_STAPPENPLAN_MODULES||[];
+
+  for(const step of steps){
+
+    const {error}=await db()
+      .from('member_progress')
+      .upsert(
+        {
+          user_id:user.id,
+          item_key:step.key,
+          title:step.title,
+          completed:false
+        },
+        {
+          onConflict:
+            'user_id,item_key',
+          ignoreDuplicates:true
+        }
+      );
+
+    if(error){
+
+      console.warn(
+        'Voortgangsitem kon niet worden aangemaakt:',
+        error.message
+      );
+
+    }
+
+  }
+
+  const {data,error}=await db()
+    .from('member_progress')
+    .select(
+      'id,user_id,topic_id,item_key,title,completed,completed_at,created_at'
+    )
+    .eq(
+      'user_id',
+      user.id
+    )
+    .order('created_at');
+
+  if(error){
+
+    message(
+      error.message,
+      'error'
+    );
+
+    return;
+  }
+
+  progress=(data||[]).filter(x=>
+    steps.some(step=>step.key===x.item_key)
+  );
+
+  const total=progress.length;
+
+  const done=
+    progress.filter(
+      x=>x.completed===true
+    ).length;
+
+  const pct=
+    total
+      ? Math.round(
+          done/total*100
+        )
+      : 0;
+
+  $('progressCount').textContent=
+    pct+'%';
+
+  $('progressFill').style.width=
+    pct+'%';
+
+  $('progressText').textContent=
+    done+
+    ' van '+
+    total+
+    ' items afgerond.';
+
+  renderProgress();
+  renderNextStep();
+  renderPlanSummary();
+  startDepartureCountdown();
+
+}
+
+function renderProgress(){
+
+  const box=$('progressList');
+
+  if(!progress.length){
+
+    box.innerHTML=
+      '<div class="empty">'+
+      'Er zijn nog geen voortgangsitems toegevoegd.'+
+      '</div>';
+
+    return;
+  }
+
+  box.innerHTML=
+    progress.map(
+      x=>
+
+        '<label class="check">'+
+
+          '<input '+
+            'type="checkbox" '+
+            (
+              x.completed
+                ? 'checked'
+                : ''
+            )+
+            ' onchange="toggleProgress(\''+
+            esc(x.id)+
+            '\',this.checked)">'+
+
+          '<span>'+
+
+            '<b>'+
+              esc(
+                x.title||
+                x.item_key
+              )+
+            '</b>'+
+
+            '<br>'+
+
+            '<span class="meta">'+
+              esc(x.item_key)+
+            '</span>'+
+
+          '</span>'+
+
+        '</label>'
+
+    ).join('');
+
+}
+
+async function toggleProgress(
+  id,
+  completed
+){
+
+  const item=
+    progress.find(
+      x=>x.id===id
+    );
+
+  const {error}=await db()
+    .from('member_progress')
+    .update(
+      {
+        completed:completed,
+
+        completed_at:
+          completed
+            ? new Date().toISOString()
+            : null
+      }
+    )
+    .eq(
+      'id',
+      id
+    )
+    .eq(
+      'user_id',
+      user.id
+    );
+
+  if(error){
+
+    message(
+      error.message,
+      'error'
+    );
+
+    return;
+  }
+
+  const moduleKey=item?.item_key;
+  if(moduleKey && getModuleByKey(moduleKey)){
+    const data=getPlanData();
+    const md=getModuleData(moduleKey);
+    md.completed=completed;
+    data.modules[moduleKey]=md;
+    await savePlan(true);
+  }
+
+  await logUserActivity(
+    'progress_updated',
+    completed
+      ? 'Voortgangsitem afgerond'
+      : 'Voortgangsitem opnieuw geopend',
+    {
+      progress_id:id,
+      item_key:
+        item?.item_key||null,
+      title:
+        item?.title||null,
+      completed:completed
+    }
+  );
+
+  await loadProgress();
+
+}
+
+
+/* =========================
+   PLAN DATA
+========================= */
+
+function defaultPlanData(){
+
+  return {
+    text:'',
+    tasks:[],
+    modules:{},
+    budget:{
+      one_time:'',
+      monthly:''
+    },
+    documents:
+      DOCUMENT_ITEMS.map(
+        x=>({
+          label:x,
+          completed:false
+        })
+      ),
+    questions:[],
+    departure:
+      DEPARTURE_ITEMS.map(
+        x=>({
+          label:x,
+          completed:false
+        })
+      )
+  };
+
+}
+
+function normalizePlanData(data){
+
+  let base=defaultPlanData();
+
+  if(
+    data&&
+    typeof data==='object'
+  ){
+
+    base={
+      ...base,
+      ...data
+    };
+
+    base.budget={
+      ...defaultPlanData().budget,
+      ...(data.budget||{})
+    };
+
+    if(!Array.isArray(base.tasks)){
+      base.tasks=[];
+    }
+
+    if(!base.modules || typeof base.modules!=='object' || Array.isArray(base.modules)){
+      base.modules={};
+    }
+
+    if(!Array.isArray(base.questions)){
+      base.questions=[];
+    }
+
+    if(!Array.isArray(base.documents)){
+      base.documents=
+        defaultPlanData().documents;
+    }
+
+    if(!Array.isArray(base.departure)){
+      base.departure=
+        defaultPlanData().departure;
+    }
+
+  }
+
+  return base;
+
+}
+
+function getPlanData(){
+
+  return normalizePlanData(
+    plan?.plan_data
+  );
+
+}
+
+
+/* =========================
+   MIJN HIJRAH PLAN
+========================= */
+
+function getCountryName(id){
+
+  return countries.find(
+    x=>x.id===id
+  )?.name||'Nog niet ingevuld';
+
+}
+
+function getCityName(id){
+
+  return cities.find(
+    x=>x.id===id
+  )?.name||'Nog niet ingevuld';
+
+}
+
+function getProgressPercentage(){
+
+  const total=progress.length;
+
+  const done=
+    progress.filter(
+      x=>x.completed===true
+    ).length;
+
+  return total
+    ? Math.round(done/total*100)
+    : 0;
+
+}
+
+function getNextProgressItem(){
+
+  return progress.find(
+    x=>x.completed!==true
+  )||null;
+
+}
+
+function renderNextStep(){
+
+  const next=
+    getNextProgressItem();
+
+  if(!next){
+
+    $('nextStepTitle').textContent=
+      progress.length
+        ? 'Alle stappen afgerond'
+        : 'Je volgende stap';
+
+    $('nextStepDescription').textContent=
+      progress.length
+        ? 'Je hebt alle huidige HN-stappen afgerond.'
+        : 'Je voortgangsstappen worden hier getoond.';
+
+    return;
+  }
+
+  $('nextStepTitle').textContent=
+    next.title||
+    next.item_key||
+    'Volgende stap';
+
+  $('nextStepDescription').textContent=
+    next.completed
+      ? 'Deze stap is afgerond.'
+      : 'Dit is de eerstvolgende stap die nog openstaat.';
+
+}
+
+function renderPlanSummary(){
+
+  const targetCountry=
+    plan?.target_country_id||
+    $('planCountry')?.value||
+    null;
+
+  const targetCity=
+    plan?.target_city_id||
+    $('planCity')?.value||
+    null;
+
+  const targetDate=
+    plan?.target_date||
+    $('planDate')?.value||
+    null;
+
+  $('summaryCountry').textContent=
+    getCountryName(
+      targetCountry
+    );
+
+  $('summaryCity').textContent=
+    getCityName(
+      targetCity
+    );
+
+  $('summaryDate').textContent=
+    targetDate
+      ? new Date(
+          targetDate+
+          'T00:00:00'
+        ).toLocaleDateString(
+          'nl-NL'
+        )
+      : 'Nog niet ingevuld';
+
+  $('summaryNotes').textContent=
+    plan?.notes||
+    $('planNotes')?.value||
+    'Nog geen notities.';
+
+  const data=getPlanData();
+
+  $('summaryTasks').textContent=
+    data.tasks.length+
+    (
+      data.tasks.length===1
+        ? ' taak'
+        : ' taken'
+    );
+
+  const budget=
+    Number(data.budget.one_time)||0;
+
+  $('summaryBudget').textContent=
+    budget>0
+      ? '€ '+formatMoney(budget)
+      : 'Nog niet ingevuld';
+
+  const next=
+    getNextProgressItem();
+
+  $('summaryNextStep').textContent=
+    next?.title||
+    (
+      progress.length
+        ? 'Alle stappen afgerond'
+        : 'Nog niet bepaald'
+    );
+
+}
+
+function formatMoney(value){
+
+  return new Intl.NumberFormat(
+    'nl-NL',
+    {
+      minimumFractionDigits:2,
+      maximumFractionDigits:2
+    }
+  ).format(
+    Number(value)||0
+  );
+
+}
+
+async function loadPlan(){
+
+  const {data,error}=await db()
+    .from('hijrah_plans')
+    .select('*')
+    .eq(
+      'user_id',
+      user.id
+    )
+    .maybeSingle();
+
+  if(error){
+
+    message(
+      error.message,
+      'error'
+    );
+
+    return;
+  }
+
+  plan=data;
+
+  if(!data){
+
+    $('planStatus').textContent=
+      'Nieuw';
+
+    renderPlanDataUI(
+      defaultPlanData()
+    );
+
+    renderPlanSummary();
+
+    return;
+  }
+
+  $('planStatus').textContent=
+    'Opgeslagen';
+
+  $('planCountry').value=
+    data.target_country_id||'';
+
+  fillCity(
+    'planCity',
+    data.target_country_id,
+    data.target_city_id||''
+  );
+
+  $('planDate').value=
+    data.target_date||'';
+
+  $('planNotes').value=
+    data.notes||'';
+
+  renderPlanDataUI(
+    normalizePlanData(
+      data.plan_data
+    )
+  );
+
+  renderPlanSummary();
+
+}
+
+function renderPlanDataUI(data){
+
+  $('planDataText').value=
+    data.text||'';
+
+  $('budgetOneTime').value=
+    data.budget?.one_time||'';
+
+  $('budgetMonthly').value=
+    data.budget?.monthly||'';
+
+  renderTasks(data.tasks);
+  renderModuleWorkspace();
+  renderDocuments(data.documents);
+  renderQuestions(data.questions);
+  renderDeparture(data.departure);
+  updateBudget();
+
+}
+
+function renderTasks(tasks){
+
+  const box=$('taskList');
+
+  if(!tasks.length){
+
+    box.innerHTML=
+      '<div class="empty">'+
+      'Je hebt nog geen persoonlijke taken toegevoegd.'+
+      '</div>';
+
+    return;
+  }
+
+  box.innerHTML=
+    tasks.map(
+      (task,index)=>{
+
+        const priorityLabel=
+          task.priority==='hoog'
+            ? 'Hoog'
+            : task.priority==='laag'
+              ? 'Laag'
+              : 'Normaal';
+
+        return `
+          <div class="task ${task.completed?'completed':''}">
+            <input
+              type="checkbox"
+              ${task.completed?'checked':''}
+              onchange="toggleTask(${index},this.checked)"
+            >
+
+            <div>
+              <div class="task-title">
+                ${esc(task.title)}
+              </div>
+
+              ${
+                task.date
+                  ? '<div class="task-date">'+
+                    formatDate(task.date)+
+                    '</div>'
+                  : ''
+              }
+            </div>
+
+            <span class="priority">
+              ${esc(priorityLabel)}
+            </span>
+
+            <button
+              class="delete-small"
+              type="button"
+              onclick="removeTask(${index})"
+            >
+              Verwijderen
+            </button>
+          </div>
+        `;
+
+      }
+    ).join('');
+
+}
+
+function formatDate(date){
+
+  if(!date){
+    return '';
+  }
+
+  return new Date(
+    date+'T00:00:00'
+  ).toLocaleDateString(
+    'nl-NL'
+  );
+
+}
+
+function renderDocuments(items){
+
+  const box=$('documentChecklist');
+
+  box.innerHTML=
+    items.map(
+      (item,index)=>
+        `
+        <label class="checklist-row">
+          <input
+            type="checkbox"
+            ${item.completed?'checked':''}
+            onchange="toggleDocument(${index},this.checked)"
+          >
+          <span>${esc(item.label)}</span>
+        </label>
+        `
+    ).join('');
+
+}
+
+function renderDeparture(items){
+
+  const box=$('departureChecklist');
+
+  box.innerHTML=
+    items.map(
+      (item,index)=>
+        `
+        <label class="checklist-row">
+          <input
+            type="checkbox"
+            ${item.completed?'checked':''}
+            onchange="toggleDeparture(${index},this.checked)"
+          >
+          <span>${esc(item.label)}</span>
+        </label>
+        `
+    ).join('');
+
+}
+
+function renderQuestions(questions){
+
+  const box=$('questionList');
+
+  if(!questions.length){
+
+    box.innerHTML=
+      '<div class="empty">'+
+      'Nog geen vragen toegevoegd.'+
+      '</div>';
+
+    return;
+  }
+
+  box.innerHTML=
+    questions.map(
+      (question,index)=>
+        `
+        <div class="question-row">
+          <input
+            value="${esc(question)}"
+            onchange="updateQuestion(${index},this.value)"
+          >
+          <button
+            class="button danger"
+            type="button"
+            onclick="removeQuestion(${index})"
+          >
+            Verwijderen
+          </button>
+        </div>
+        `
+    ).join('');
+
+}
+
+function updateBudget(){
+
+  const oneTime=
+    Number(
+      $('budgetOneTime').value
+    )||0;
+
+  $('budgetTotal').textContent=
+    '€ '+formatMoney(oneTime);
+
+}
+
+function getModuleByKey(key){
+  return (window.HN_STAPPENPLAN_MODULES||[]).find(x=>x.key===key)||null;
+}
+
+function getActiveModuleKey(){
+  return new URLSearchParams(location.search).get('module')||null;
+}
+
+function getModuleData(key){
+  const data=getPlanData();
+  if(!data.modules[key]){
+    const module=getModuleByKey(key);
+    data.modules[key]={
+      completed:false,
+      notes:'',
+      answers:{},
+      checklist:module?module.checklist.map(()=>false):[]
+    };
+  }
+  return data.modules[key];
+}
+
+function renderModuleWorkspace(){
+  const box=$('moduleWorkspace');
+  if(!box) return;
+  const modules=window.HN_STAPPENPLAN_MODULES||[];
+  const active=getActiveModuleKey();
+
+  if(!active){
+    box.innerHTML=modules.map((m,i)=>{
+      const md=getModuleData(m.key);
+      const done=progress.find(x=>x.item_key===m.key)?.completed===true || md.completed===true;
+      return '<div class="item" style="margin-bottom:8px">'+
+        '<div class="item-head"><div><h3>Module '+String(i+1).padStart(2,'0')+' · '+esc(m.title)+'</h3><div class="meta">'+esc(m.phase)+'</div></div>'+
+        '<div class="saved-actions"><span class="priority">'+(done?'Afgerond':'Nog open')+'</span><a class="button saved-view" href="/dashboard?module='+encodeURIComponent(m.key)+'">Openen</a></div></div></div>';
+    }).join('');
+    return;
+  }
+
+  const m=getModuleByKey(active);
+  if(!m){
+    box.innerHTML='<div class="empty">Deze module bestaat niet.</div>';
+    return;
+  }
+
+  const md=getModuleData(m.key);
+  box.innerHTML='<div class="next-step">'+
+    '<div class="next-step-title">'+esc(m.title)+'</div>'+
+    '<div class="muted" style="margin-bottom:16px">'+esc(m.intro)+'</div>'+
+    m.sections.map(s=>'<div style="margin:16px 0"><strong>'+esc(s[0])+'</strong><div class="muted" style="margin-top:5px;line-height:1.6">'+esc(s[1])+'</div></div>').join('')+
+    '<div class="row" style="margin-top:20px">'+
+      '<div class="field full"><label>Mijn notities</label><textarea id="moduleNotes" placeholder="Wat heb je uit deze module gehaald? Welke informatie heb je gevonden? Wat wil je onthouden?">'+esc(md.notes||'')+'</textarea></div>'+ 
+    '</div>'+ 
+    '<h3 style="margin-top:24px">Mijn antwoorden</h3>'+ 
+    m.questions.map((q,i)=>'<div class="field"><label>'+esc(q)+'</label><textarea id="moduleAnswer_'+i+'" data-question-index="'+i+'" placeholder="Schrijf hier jouw antwoord...">'+esc(md.answers?.[i]||'')+'</textarea></div>').join('')+
+    '<h3 style="margin-top:24px">Module afronden</h3>'+ 
+    m.checklist.map((item,i)=>'<label class="checklist-row"><input type="checkbox" id="moduleCheck_'+i+'" '+(md.checklist?.[i]?'checked':'')+'><span>'+esc(item)+'</span></label>').join('')+
+    '<div class="actions" style="margin-top:18px"><button class="button primary" type="button" onclick="saveActiveModule()">Opslaan</button><button class="button secondary" type="button" onclick="completeActiveModule()">'+(md.completed?'Module opnieuw openen':'Module als afgerond markeren')+'</button><a class="button secondary" href="/dashboard">Terug naar Mijn Hijrah</a></div>'+ 
+    '<div class="save-status" id="moduleSaveStatus" style="margin-top:10px"></div>'+ 
+    '</div>';
+}
+
+async function saveActiveModule(markCompleted=null){
+  const key=getActiveModuleKey();
+  const m=getModuleByKey(key);
+  if(!key||!m) return false;
+  const data=getPlanData();
+  const md=getModuleData(key);
+  md.notes=$('moduleNotes')?.value.trim()||'';
+  md.answers={};
+  m.questions.forEach((q,i)=>{ md.answers[i]=$('moduleAnswer_'+i)?.value.trim()||''; });
+  md.checklist=m.checklist.map((x,i)=>!!$('moduleCheck_'+i)?.checked);
+  if(markCompleted!==null) md.completed=markCompleted;
+  data.modules[key]=md;
+  await savePlan(true);
+  const {error}=await db().from('member_progress').upsert({user_id:user.id,item_key:key,title:m.title,completed:!!md.completed,completed_at:md.completed?new Date().toISOString():null},{onConflict:'user_id,item_key'});
+  if(error){ message(error.message,'error'); return false; }
+  await loadProgress();
+  renderModuleWorkspace();
+  if($('moduleSaveStatus')) $('moduleSaveStatus').textContent='✓ Opgeslagen';
+  return true;
+}
+
+async function completeActiveModule(){
+  const key=getActiveModuleKey();
+  const md=getModuleData(key);
+  await saveActiveModule(!md.completed);
+}
+
+function renderDepartureCountdown(){
+  const dateInput=$('planDate');
+  const dateValue=dateInput?.value||plan?.target_date||'';
+  const dateEl=$('hnCountdownDate');
+  const daysEl=$('hnCountdownDays');
+  const hoursEl=$('hnCountdownHours');
+  const minutesEl=$('hnCountdownMinutes');
+  const msgEl=$('hnCountdownMessage');
+  if(!dateEl||!daysEl||!hoursEl||!minutesEl||!msgEl)return;
+  if(!dateValue){
+    dateEl.textContent='Nog geen vertrekdatum ingesteld';
+    msgEl.textContent='Stel je vertrekdatum in bij Mijn Hijrah Plan.';
+    daysEl.textContent=hoursEl.textContent=minutesEl.textContent='—';
+    return;
+  }
+  const target=new Date(dateValue+'T00:00:00');
+  const now=new Date();
+  const diff=target.getTime()-now.getTime();
+  dateEl.textContent=target.toLocaleDateString('nl-BE',{day:'numeric',month:'long',year:'numeric'});
+  if(diff<=0){
+    daysEl.textContent='0'; hoursEl.textContent='0'; minutesEl.textContent='0';
+    msgEl.textContent=diff>-86400000?'Vandaag is je geplande vertrekdatum.':'Je geplande vertrekdatum is voorbij.';
+    return;
+  }
+  const totalMinutes=Math.floor(diff/60000);
+  const days=Math.floor(totalMinutes/1440);
+  const hours=Math.floor((totalMinutes%1440)/60);
+  const minutes=totalMinutes%60;
+  daysEl.textContent=days;
+  hoursEl.textContent=String(hours).padStart(2,'0');
+  minutesEl.textContent=String(minutes).padStart(2,'0');
+  msgEl.textContent=days===1?'Nog 1 dag tot je geplande vertrek.':'Nog '+days+' dagen tot je geplande vertrek.';
+}
+let hnCountdownTimer=null;
+function startDepartureCountdown(){
+  renderDepartureCountdown();
+  clearInterval(hnCountdownTimer);
+  hnCountdownTimer=setInterval(renderDepartureCountdown,60000);
+}
+
+async function savePlan(silent=true){
+
+  if(!user){
+    return false;
+  }
+
+  const data=getPlanData();
+
+  const activeModule=getActiveModuleKey();
+  if(activeModule && $('moduleNotes')){
+    const m=getModuleByKey(activeModule);
+    const md=getModuleData(activeModule);
+    md.notes=$('moduleNotes').value.trim()||'';
+    md.answers={};
+    (m?.questions||[]).forEach((q,i)=>{ md.answers[i]=$('moduleAnswer_'+i)?.value.trim()||''; });
+    md.checklist=(m?.checklist||[]).map((x,i)=>!!$('moduleCheck_'+i)?.checked);
+    data.modules[activeModule]=md;
+  }
+
+  data.text=
+    $('planDataText').value.trim();
+
+  data.budget={
+    one_time:
+      $('budgetOneTime').value||'',
+    monthly:
+      $('budgetMonthly').value||''
+  };
+
+  const payload={
+
+    user_id:user.id,
+
+    target_country_id:
+      $('planCountry').value||
+      null,
+
+    target_city_id:
+      $('planCity').value||
+      null,
+
+    target_date:
+      $('planDate').value||
+      null,
+
+    notes:
+      $('planNotes').value.trim()||
+      null,
+
+    plan_data:data
+
+  };
+
+  $('planSaveStatus').textContent=
+    'Opslaan...';
+
+  const {error}=await db()
+    .from('hijrah_plans')
+    .upsert(
+      payload,
+      {
+        onConflict:'user_id'
+      }
+    );
+
+  if(error){
+
+    console.error(
+      'HIJRAH PLAN OPSLAAN FOUT:',
+      error
+    );
+
+    $('planSaveStatus').textContent=
+      'Opslaan mislukt.';
+
+    message(
+      error.message,
+      'error'
+    );
+
+    return false;
+  }
+
+  plan=payload;
+
+  $('planStatus').textContent=
+    'Opgeslagen';
+
+  $('planSaveStatus').textContent=
+    '✓ Automatisch opgeslagen';
+
+  renderPlanSummary();
+
+  return true;
+
+}
+
+function schedulePlanSave(){
+
+  clearTimeout(
+    planSaveTimer
+  );
+
+  $('planSaveStatus').textContent=
+    'Wijziging wordt opgeslagen...';
+
+  planSaveTimer=
+    setTimeout(
+      async()=>{
+        const savedOk=
+          await savePlan(true);
+
+        if(savedOk){
+          await logUserActivity(
+            'plan_updated',
+            'Mijn Hijrah Plan aangepast',
+            {
+              target_country_id:
+                $('planCountry').value||null,
+              target_city_id:
+                $('planCity').value||null,
+              target_date:
+                $('planDate').value||null
+            }
+          );
+        }
+      },
+      800
+    );
+
+}
+
+$('planDate').onchange=()=>{
+  schedulePlanSave();
+  renderDepartureCountdown();
+};
+
+$('planNotes').oninput=
+schedulePlanSave;
+
+$('planDataText').oninput=
+schedulePlanSave;
+
+$('budgetOneTime').oninput=()=>{
+  updateBudget();
+  schedulePlanSave();
+};
+
+$('budgetMonthly').oninput=
+schedulePlanSave;
+
+async function addTask(){
+
+  const title=
+    $('taskTitle').value.trim();
+
+  if(!title){
+    return;
+  }
+
+  const data=getPlanData();
+
+  data.tasks.push({
+    id:
+      'task_'+
+      Date.now(),
+    title:title,
+    date:
+      $('taskDate').value||'',
+    priority:
+      $('taskPriority').value||'normaal',
+    completed:false
+  });
+
+  $('taskTitle').value='';
+  $('taskDate').value='';
+  $('taskPriority').value='normaal';
+
+  renderTasks(data.tasks);
+
+  await savePlan();
+
+}
+
+$('addTaskBtn').onclick=
+addTask;
+
+$('taskTitle').addEventListener(
+  'keydown',
+  e=>{
+    if(e.key==='Enter'){
+      e.preventDefault();
+      addTask();
+    }
+  }
+);
+
+async function toggleTask(index,completed){
+
+  const data=getPlanData();
+
+  if(!data.tasks[index]){
+    return;
+  }
+
+  data.tasks[index].completed=
+    completed;
+
+  renderTasks(data.tasks);
+
+  await savePlan();
+
+}
+
+async function removeTask(index){
+
+  const data=getPlanData();
+
+  data.tasks.splice(
+    index,
+    1
+  );
+
+  renderTasks(data.tasks);
+
+  await savePlan();
+
+}
+
+async function toggleDocument(
+  index,
+  completed
+){
+
+  const data=getPlanData();
+
+  if(!data.documents[index]){
+    return;
+  }
+
+  data.documents[index].completed=
+    completed;
+
+  await savePlan();
+
+}
+
+async function toggleDeparture(
+  index,
+  completed
+){
+
+  const data=getPlanData();
+
+  if(!data.departure[index]){
+    return;
+  }
+
+  data.departure[index].completed=
+    completed;
+
+  await savePlan();
+
+}
+
+async function addQuestion(){
+
+  const input=$('questionInput');
+
+  const question=
+    input.value.trim();
+
+  if(!question){
+    return;
+  }
+
+  const data=getPlanData();
+
+  data.questions.push(
+    question
+  );
+
+  input.value='';
+
+  renderQuestions(
+    data.questions
+  );
+
+  await savePlan();
+
+}
+
+$('addQuestionBtn').onclick=
+addQuestion;
+
+$('questionInput').addEventListener(
+  'keydown',
+  e=>{
+    if(e.key==='Enter'){
+      e.preventDefault();
+      addQuestion();
+    }
+  }
+);
+
+async function updateQuestion(
+  index,
+  value
+){
+
+  const data=getPlanData();
+
+  if(!data.questions[index]){
+    return;
+  }
+
+  data.questions[index]=
+    value.trim();
+
+  await savePlan();
+
+}
+
+async function removeQuestion(index){
+
+  const data=getPlanData();
+
+  data.questions.splice(
+    index,
+    1
+  );
+
+  renderQuestions(
+    data.questions
+  );
+
+  await savePlan();
+
+}
+
+
+/* =========================
+   VOORKEUREN / PROFIEL
+========================= */
+
+async function loadPreferences(){
+
+  const {data,error}=await db()
+    .from('member_preferences')
+    .select('*')
+    .eq(
+      'user_id',
+      user.id
+    )
+    .maybeSingle();
+
+  if(error){
+
+    message(
+      error.message,
+      'error'
+    );
+
+    return;
+  }
+
+  if(data){
+
+    $('prefCountry').value=
+      data.preferred_country_id||'';
+
+    fillCity(
+      'prefCity',
+      data.preferred_country_id,
+      data.preferred_city_id||''
+    );
+
+  }
+
+}
+
+async function savePreferences(){
+
+  const payload={
+
+    user_id:user.id,
+
+    preferred_country_id:
+      $('prefCountry').value||
+      null,
+
+    preferred_city_id:
+      $('prefCity').value||
+      null,
+
+    updated_at:
+      new Date().toISOString()
+
+  };
+
+  $('profileSaveStatus').textContent=
+    'Opslaan...';
+
+  const {error}=await db()
+    .from('member_preferences')
+    .upsert(
+      payload,
+      {
+        onConflict:'user_id'
+      }
+    );
+
+  if(error){
+
+    console.error(
+      'VOORKEUREN OPSLAAN FOUT:',
+      error
+    );
+
+    $('profileSaveStatus').textContent=
+      'Opslaan mislukt.';
+
+    message(
+      error.message,
+      'error'
+    );
+
+    return false;
+  }
+
+  $('profileSaveStatus').textContent=
+    '✓ Automatisch opgeslagen';
+
+  return true;
+
+}
+
+function scheduleProfileSave(){
+
+  clearTimeout(
+    profileSaveTimer
+  );
+
+  $('profileSaveStatus').textContent=
+    'Wijziging wordt opgeslagen...';
+
+  profileSaveTimer=
+    setTimeout(
+      async()=>{
+        const savedOk=
+          await savePreferences();
+
+        if(savedOk){
+
+          await logUserActivity(
+            'preferences_updated',
+            'Voorkeuren aangepast',
+            {
+              preferred_country_id:
+                $('prefCountry').value||null,
+              preferred_city_id:
+                $('prefCity').value||null
+            }
+          );
+
+        }
+
+      },
+      800
+    );
+
+}
+
+$('prefCity').onchange=
+scheduleProfileSave;
+
+
+/* =========================
+   UITLOGGEN / WEBSITE
+========================= */
+
+$('logoutBtn').onclick=
+async()=>{
+
+  if(user){
+
+    await updatePresence();
+
+    await logUserActivity(
+      'logout',
+      'Gebruiker heeft uitgelogd'
+    );
+
+  }
+
+  clearInterval(
+    presenceTimer
+  );
+
+  await db()
+    .auth
+    .signOut();
+
+  location.href='/login';
+
+};
+
+$('homeBtn').onclick=
+()=>location.href='/';
+
+
+/* =========================
+   INIT
+========================= */
+
+async function init(){
+
+  tabs();
+
+  if(!(await requireUser())){
+    return;
+  }
+
+  const presenceStarted=
+    await startPresence();
+
+  await logUserActivity(
+    'dashboard_opened',
+    'Gebruiker heeft het dashboard geopend',
+    {
+      presence_started:
+        presenceStarted
+    }
+  );
+
+  await loadBase();
+
+  await Promise.all([
+    loadSaved(),
+    loadProgress(),
+    loadPlan(),
+    loadPreferences()
+  ]);
+
+  renderNextStep();
+  renderPlanSummary();
+
+  if(getActiveModuleKey()){
+    openPlanTab();
+  }
+
+}
+
+init();
+
+</script>
+
+<script src="assets/hn-my-hijrah.js"></script>
+<script src="assets/hn-work-tracker.js"></script>
+<script src="assets/hn-dashboard-complete.js"></script>
+
+<script src="/copy-protection.js"></script>
+</body>
+</html>
