@@ -52,6 +52,11 @@
       "permanent": true
     },
     {
+      "source": "/admin-beloningen.html",
+      "destination": "/admin-beloningen",
+      "permanent": true
+    },
+    {
       "source": "/vergelijken.html",
       "destination": "/vergelijken",
       "permanent": true
@@ -243,6 +248,10 @@
     {
       "source": "/admin",
       "destination": "/admin.html"
+    },
+    {
+      "source": "/admin-beloningen",
+      "destination": "/admin-beloningen.html"
     },
     {
       "source": "/vergelijken",
