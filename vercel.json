@@ -52,6 +52,11 @@
       "permanent": true
     },
     {
+      "source": "/admin-profielen.html",
+      "destination": "/admin-profielen",
+      "permanent": true
+    },
+    {
       "source": "/admin-beloningen.html",
       "destination": "/admin-beloningen",
       "permanent": true
@@ -258,6 +263,10 @@
     {
       "source": "/admin",
       "destination": "/admin.html"
+    },
+    {
+      "source": "/admin-profielen",
+      "destination": "/admin-profielen.html"
     },
     {
       "source": "/admin-beloningen",
