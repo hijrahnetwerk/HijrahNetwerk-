@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lokale informatie | Hijrah Netwerk</title>
+<meta name="description" content="Praktische lokale informatie over een plek, dienst of organisatie binnen Hijrah Netwerk.">
+<meta name="robots" content="index,follow">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="Lokale informatie | Hijrah Netwerk">
+<meta property="og:description" content="Praktische lokale informatie binnen Hijrah Netwerk.">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Lokale informatie | Hijrah Netwerk">
+<meta name="twitter:description" content="Praktische lokale informatie binnen Hijrah Netwerk.">
+<script id="structured-data" type="application/ld+json">{}</script>
+<script src="assets/config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-client.js"></script>
+<style>
+:root{
+  --brown:#674C2E;--brown-dark:#674C2E;--orange:#DD842A;--gold:#C6A15B;
+  --cream:#FFFFFF;--text:#674C2E;--muted:#674C2E;--border:#674C2E;
+  --soft:#f5efe8;--white:#fff;--green:#2f7650;--green-bg:#edf6f0;
+  --shadow:0 4px 18px rgba(103,76,46,.06);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--cream);color:var(--text);font-family:Arial,sans-serif;line-height:1.55}
+a{text-decoration:none;color:inherit}
+.top{background:#fff;border-bottom:1px solid var(--border)}
+.nav{max-width:1160px;margin:auto;padding:14px 22px;display:flex;justify-content:space-between;align-items:center;gap:18px}
+.brand{font-weight:800;font-size:20px;color:var(--brown-dark)}
+.navlinks{display:flex;flex-wrap:wrap;gap:4px}
+.navlinks a{padding:8px 10px;border-radius:8px;color:var(--brown);font-size:14px}
+.navlinks a:hover{background:var(--soft)}
+.wrap{max-width:1160px;margin:auto;padding:28px 22px 72px}
+.back{display:inline-block;margin-bottom:15px;color:var(--brown);font-weight:700;font-size:14px}
+.hero{background:#fff;border:1px solid var(--border);border-radius:18px;padding:28px;box-shadow:var(--shadow)}
+.badges{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:11px}
+.fiche-tags{display:flex;flex-wrap:wrap;gap:7px;margin:14px 0 2px}
+.fiche-tag{display:inline-flex;align-items:center;padding:6px 10px;border-radius:999px;background:#f3e5d4;color:var(--brown);font-size:12px;font-weight:600;text-decoration:none}
+.fiche-tag:hover{background:#ead7bf;color:var(--brown-dark)}.fiche-tag:focus-visible{outline:2px solid var(--orange);outline-offset:2px}.fiche-meta{display:grid;gap:11px;margin-top:16px;padding:13px 15px;background:#fbfaf8;border:1px solid var(--border);border-radius:12px}.fiche-meta-row{display:grid;grid-template-columns:94px minmax(0,1fr);gap:12px;align-items:start}.fiche-meta-label{padding-top:5px;font-size:12px;font-weight:700;color:var(--muted)}.fiche-meta .fiche-tags{margin:0}.fiche-tag.location-tag{background:#e9f1f3;color:#34535c}.fiche-meta-badges{display:flex;flex-wrap:wrap;gap:7px}.badge.official{background:#e7f0f8;color:#2c5872}@media(max-width:560px){.fiche-meta-row{grid-template-columns:1fr;gap:4px}.fiche-meta-label{padding-top:0}}
+.badge{display:inline-flex;align-items:center;padding:6px 10px;border-radius:999px;background:#f2e7da;color:var(--brown);font-size:12px;font-weight:700}
+.badge.green{background:var(--green-bg);color:var(--green)}
+.badge.gray{background:#f1efec;color:#666}
+.hero-grid{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:22px;align-items:end}
+h1{font-size:clamp(30px,4vw,42px);line-height:1.1;color:var(--brown-dark);margin:0 0 9px}
+.summary{font-size:17px;color:var(--muted);max-width:820px;margin:0}
+.location{display:flex;align-items:center;gap:7px;color:var(--muted);font-size:14px;margin-top:14px}
+.hero-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.button{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:42px;padding:10px 14px;border-radius:9px;font-size:13px;font-weight:700;border:1px solid transparent}
+.primary{background:var(--orange);color:#fff}
+.secondary{background:var(--soft);color:var(--brown)}
+.outline{background:#fff;color:var(--brown);border-color:var(--border)}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 310px;gap:18px;align-items:start;margin-top:18px;width:100%}
+.main,.side{min-width:0;width:100%;overflow:visible}
+.card{background:#fff;border:1px solid var(--border);border-radius:16px;padding:23px;box-shadow:var(--shadow)}
+.card+.card{margin-top:18px}
+.card h2{margin:0 0 14px;font-size:19px;color:var(--brown-dark)}
+.card-sub{margin:-5px 0 16px;color:var(--muted);font-size:13px}
+.content{font-size:15px}
+.content p{margin:0 0 14px}
+.content p:last-child{margin-bottom:0}
+.content h3{font-size:16px;color:var(--brown-dark);margin:21px 0 8px}
+.content h3:first-child{margin-top:0}
+.content ul{margin:7px 0 15px;padding-left:22px}
+.content li{margin:5px 0}
+.practical-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.practical-block{border:1px solid var(--border);border-radius:13px;padding:15px;background:#fff;min-width:0}
+.practical-block.full{grid-column:1/-1}
+.practical-title{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:800;color:var(--brown-dark);margin:0 0 11px}
+.practical-title .mini-icon{width:17px;height:17px;display:inline-flex;color:var(--orange)}
+.practical-title .mini-icon svg{width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.info-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:8px;width:100%}
+.info-item{border:1px solid var(--border);border-radius:9px;padding:11px;background:#fbfaf8;min-width:0}
+.info-label{font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:4px}
+.info-value{font-size:14px;word-break:break-word;white-space:pre-wrap}
+.info-value a,.source a,.contact-value a{color:var(--orange);font-weight:700}
+.hours-list{display:grid;gap:7px}
+.hours-row{padding:10px 12px;border:1px solid var(--border);border-radius:9px;background:#fbfaf8;font-size:14px;line-height:1.45}
+.warning{margin-top:15px;background:#fff7e9;border:1px solid #f1d6a7;border-radius:11px;padding:13px;font-size:13px}
+.contact-card{display:grid;gap:10px}
+.contact-row{border:1px solid var(--border);border-radius:11px;padding:12px 13px;background:#fff}
+.contact-label{font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:3px}
+.contact-value{font-size:14px;font-weight:700}
+.meta-box{display:grid;gap:10px}
+.meta-row{padding:11px 12px;border-radius:11px;background:#fbf9f6;border:1px solid var(--border)}
+.meta-label{font-size:11px;color:var(--muted);margin-bottom:2px}
+.meta-value{font-size:13px;font-weight:700;color:var(--brown-dark)}
+.experience{padding:16px 0;border-top:1px solid var(--border)}
+.experience:first-child{padding-top:0;border-top:0}
+.stars{color:var(--gold);letter-spacing:2px}
+.exp-text{font-size:14px;margin-top:7px}
+.exp-meta{font-size:12px;color:var(--muted);margin-top:7px}
+.empty-note{font-size:13px;color:var(--muted);margin:0}
+.source-row{display:flex;gap:7px;align-items:flex-start;font-size:13px;color:var(--muted);margin-bottom:9px}
+.note{font-size:12px;color:var(--muted);margin:14px 0 0}
+.language-list{display:grid;gap:7px}
+.language-row{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:7px 9px;border:1px solid var(--border);border-radius:8px;background:#fff}
+.source-badge{display:inline-flex;align-items:center;white-space:nowrap;padding:3px 7px;border-radius:999px;background:#f1efec;color:#665f58;font-size:10px;font-weight:700}
+.source-badge.official{background:var(--green-bg);color:var(--green)}
+.source-explainer{margin-top:14px;padding:12px;border:1px solid var(--border);border-radius:11px;background:#fbfaf8;font-size:11px;color:var(--muted);line-height:1.55}
+.source-explainer strong{display:block;color:var(--brown-dark);font-size:12px;margin-bottom:6px}
+.source-explainer div+div{margin-top:4px}
+.icon{display:inline-flex;width:16px;height:16px;flex:0 0 16px}
+.icon svg{width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.error,.empty{text-align:center;padding:30px;background:#fff;border:1px solid var(--border);border-radius:14px;color:var(--muted)}
+@media(max-width:960px){
+  .layout{grid-template-columns:1fr}
+  .side{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;width:100%}
+  .side .card+.card{margin-top:0}
+}
+@media(max-width:680px){
+  body{font-size:14px}
+  .top{position:sticky;top:0;z-index:20}
+  .nav{display:block;padding:11px 14px}
+  .brand{font-size:18px}
+  .navlinks{
+    margin-top:8px;
+    display:flex;
+    flex-wrap:nowrap;
+    overflow-x:auto;
+    gap:5px;
+    padding-bottom:3px;
+    scrollbar-width:none;
+    -webkit-overflow-scrolling:touch
+  }
+  .navlinks::-webkit-scrollbar{display:none}
+  .navlinks a{flex:0 0 auto;white-space:nowrap;padding:7px 9px;font-size:12px}
+  .wrap{padding:17px 20px 42px}
+  .back{margin-bottom:12px;font-size:13px}
+  .hero{
+    padding:18px 16px;
+    border-radius:14px;
+    width:100%;
+    height:auto;
+    min-height:0;
+    overflow:visible
+  }
+  .badges{margin-bottom:9px;gap:5px}
+  .badge{font-size:11px;padding:5px 8px}
+  .hero-grid{grid-template-columns:1fr}
+  h1{font-size:29px;line-height:1.12;margin-bottom:8px}
+  .summary{font-size:15px;line-height:1.5}
+  .location{font-size:13px;margin-top:11px}
+  .hero-actions{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:8px;
+    margin-top:15px
+  }
+  .hero-actions .button{
+    width:100%;
+    min-width:0;
+    min-height:42px;
+    padding:9px 8px;
+    font-size:12px;
+    text-align:center
+  }
+  .layout{grid-template-columns:1fr;margin-top:13px;width:100%}
+  .main,.side{width:100%}
+  .side{display:block;width:100%}
+  .side .card+.card{margin-top:13px}
+  .card{
+    padding:17px 15px;
+    border-radius:14px;
+    width:100%;
+    height:auto;
+    min-height:0;
+    overflow:visible
+  }
+  .card+.card{margin-top:13px}
+  .card h2{font-size:18px;margin-bottom:11px}
+  .card-sub{font-size:12px;margin:-3px 0 13px}
+  .practical-grid{grid-template-columns:1fr;gap:9px}
+  .practical-block.full{grid-column:auto}
+  .info-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;width:100%}
+  .info-item{padding:11px 10px;border-radius:9px}
+  .info-label{font-size:9px}
+  .info-value{font-size:13px;line-height:1.45}
+  .hours-row{font-size:13px;padding:10px}
+  .content{font-size:14px}
+  .content h3{font-size:15px;margin:18px 0 7px}
+  .content p{margin-bottom:12px}
+  .content ul{padding-left:19px;margin:6px 0 13px}
+  .contact-row{padding:10px 11px}
+  .contact-label{font-size:9px}
+  .contact-value{font-size:13px}
+  .meta-row{padding:10px 11px}
+  .meta-label{font-size:10px}
+  .meta-value{font-size:12px}
+  .warning{font-size:12px;padding:11px}
+  .source-row{font-size:12px}
+  .note{font-size:11px}
+}
+@media(max-width:430px){
+  .info-grid{grid-template-columns:1fr}
+  .hero-actions{grid-template-columns:1fr 1fr}
+  h1{font-size:27px}
+}
+
+.hn-breadcrumb{margin-top:18px;padding:16px 18px;background:#fff;border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow);font-size:12px;color:var(--muted)}
+.hn-breadcrumb-title{display:block;margin-bottom:8px;font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--brown-dark)}
+.hn-breadcrumb nav{display:flex;align-items:center;flex-wrap:wrap;gap:6px;line-height:1.5}
+.hn-breadcrumb a{color:var(--brown);font-weight:700}
+.hn-breadcrumb a:hover{color:var(--orange)}
+.hn-breadcrumb .sep{color:#b6aa9b}
+.hn-breadcrumb .current{color:var(--muted)}
+@media(max-width:680px){.hn-breadcrumb{padding:13px 14px;font-size:11px}.hn-breadcrumb-title{font-size:10px}.hn-breadcrumb nav{gap:5px}}
+.mobile-menu-toggle{display:none;align-items:center;justify-content:center;flex-direction:column;gap:4px;width:42px;height:42px;border:1px solid var(--line,#674C2E);border-radius:10px;background:#fff;cursor:pointer}
+.mobile-menu-toggle span{display:block;width:18px;height:2px;border-radius:2px;background:var(--brown,#674C2E)}
+.desktop-only{display:flex}
+.mobile-nav{position:fixed;inset:0;z-index:999;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .2s ease,visibility .2s ease}
+.mobile-nav.open{opacity:1;visibility:visible;pointer-events:auto}
+.mobile-nav-backdrop{position:absolute;inset:0;background:rgba(43,36,28,.4)}
+.mobile-nav-panel{position:absolute;right:0;top:0;height:100%;width:min(88vw,360px);background:#fff;padding:20px;box-shadow:-10px 0 30px rgba(0,0,0,.12);display:flex;flex-direction:column;gap:5px;transform:translateX(100%);transition:transform .25s ease}
+.mobile-nav.open .mobile-nav-panel{transform:translateX(0)}
+.mobile-nav-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.mobile-nav-close{width:38px;height:38px;border:1px solid var(--line,#674C2E);background:#fff;border-radius:50%;font-size:24px;line-height:1;cursor:pointer;color:var(--brown-dark,#674C2E)}
+.mobile-nav-panel>a{padding:13px 11px;border-radius:10px;color:var(--brown-dark,#674C2E);font-weight:600}
+.mobile-nav-panel>a:hover{background:#f5efe8}
+.mobile-nav-divider{height:1px;background:var(--line,#674C2E);margin:8px 0}
+.mobile-nav-panel .mobile-nav-primary{background:var(--orange,#DD842A);color:#fff;text-align:center}
+@media(max-width:680px){
+  .desktop-only{display:none!important}
+  .mobile-menu-toggle{display:flex}
+}
+</style>
+</head>
+<body>
+<link rel="stylesheet" href="assets/public-nav.css">
+<script src="assets/public-nav.js"></script>
+<main class="wrap">
+  <a class="back" href="/navigatie">← Terug naar Hijrah Navigatie</a>
+  <div id="app"><div class="empty">Fiche wordt geladen...</div></div>
+</main>
+
+<script>
+const db=()=>window.hijrahSupabase;
+const esc=v=>v==null?'':String(v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+const data=x=>x&&x.card_data&&typeof x.card_data==='object'?x.card_data:{};
+const params=new URLSearchParams(location.search);
+const legacyId=params.get('id')||'';
+const pathParts=location.pathname.split('/').filter(Boolean).map(x=>decodeURIComponent(x));
+const isLocationPath=pathParts[0]==='locaties';
+const pathRouteSlug=isLocationPath?pathParts[pathParts.length-1]:'';
+const routeSlug=location.pathname.match(/^\/fiche\/([^/]+)\/?$/)?.[1]||params.get('slug')||pathRouteSlug||'';
+const hierarchicalCitySlug=params.get('city_slug')|| (isLocationPath?pathParts[1]||'':'');
+const hierarchicalAreaSlug=params.get('area_slug')|| (isLocationPath && pathParts.length===4?pathParts[2]||'':'');
+const hierarchicalCategorySlug=params.get('category_slug')|| (isLocationPath?(pathParts.length===4?pathParts[3]:pathParts[2])||'':'');
+const isHierarchicalRoute=Boolean(isLocationPath&&routeSlug&&hierarchicalCitySlug);
+
+const icon={
+  pin:'<span class="icon"><svg viewBox="0 0 24 24"><path d="M12 21s7-6.2 7-12A7 7 0 1 0 5 9c0 5.8 7 12 7 12Z"/><circle cx="12" cy="9" r="2.3"/></svg></span>',
+  phone:'<span class="icon"><svg viewBox="0 0 24 24"><path d="M6.6 3.5 9.1 7 7.3 9.2c1.1 2.3 2.9 4.1 5.2 5.2l2.2-1.8 3.5 2.5c.6.4.8 1.2.5 1.8l-.9 1.7c-.3.6-1 .9-1.7.8C9.6 18.3 5.7 14.4 4.6 8c-.1-.7.2-1.4.8-1.7l1.7-.9c.3-.2.6-.2.9.1Z"/></svg></span>',
+  web:'<span class="icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.2 3 14.8 0 18M12 3c-3 3.2-3 14.8 0 18"/></svg></span>',
+  map:'<span class="icon"><svg viewBox="0 0 24 24"><path d="m9 18-6 3V6l6-3 6 3 6-3v15l-6 3-6-3Z"/><path d="M9 3v15M15 6v15"/></svg></span>'
+};
+
+function formatContent(value,summary){
+  const raw=value==null?'':String(value);
+  const text=raw
+    .replace(/\\r/g,'')
+    .replace(/\\n/g,'\n')
+    .replace(/\r/g,'')
+    .trim();
+
+  if(!text)return '';
+
+  const duplicateSections=new Set([
+    'consultaties',
+    'afspraken',
+    'huisbezoeken',
+    'teleconsultatie',
+    'belangrijk'
+  ]);
+
+  const summaryClean=String(summary||'')
+    .replace(/\\r/g,'')
+    .replace(/\\n/g,' ')
+    .replace(/\s+/g,' ')
+    .trim()
+    .toLowerCase();
+
+  const headingPattern=/^(Opleiding en professionele achtergrond|Over het cabinet|Consultaties|Afspraken|Huisbezoeken|Teleconsultatie|Belangrijk)$/i;
+  const lines=text.split(/\n+/).map(x=>x.trim()).filter(Boolean);
+
+  const sections=[];
+  let heading='';
+  let body=[];
+
+  const pushSection=()=>{
+    if(heading||body.length){
+      sections.push({heading,body:[...body]});
+    }
+    heading='';
+    body=[];
+  };
+
+  lines.forEach(line=>{
+    if(headingPattern.test(line)){
+      pushSection();
+      heading=line;
+    }else{
+      body.push(line);
+    }
+  });
+  pushSection();
+
+  let out='';
+
+  sections.forEach(section=>{
+    const headingClean=section.heading.trim().toLowerCase();
+    if(duplicateSections.has(headingClean))return;
+
+    const parts=[];
+    let bullets=[];
+
+    const flushBullets=()=>{
+      if(!bullets.length)return;
+      parts.push('<ul>'+bullets.map(x=>'<li>'+esc(x.replace(/^•\s*/,''))+'</li>').join('')+'</ul>');
+      bullets=[];
+    };
+
+    section.body.forEach(line=>{
+      if(/^•\s*/.test(line)){
+        bullets.push(line);
+      }else{
+        flushBullets();
+        const clean=line.replace(/\s+/g,' ').trim();
+        if(clean)parts.push('<p>'+esc(clean)+'</p>');
+      }
+    });
+    flushBullets();
+
+    const combinedText=section.body
+      .filter(x=>!/^•\s*/.test(x))
+      .join(' ')
+      .replace(/\s+/g,' ')
+      .trim()
+      .toLowerCase();
+
+    const onlySummary=summaryClean && combinedText===summaryClean && !section.heading;
+    if(onlySummary)return;
+
+    if(!parts.length)return;
+
+    if(section.heading){
+      out+='<h3>'+esc(section.heading)+'</h3>';
+    }
+    out+=parts.join('');
+  });
+
+  return out;
+}
+
+function item(label,value,html){
+  if(value==null || String(value).trim()==='')return '';
+  return '<div class="info-item"><div class="info-label">'+esc(label)+'</div><div class="info-value">'+(html||esc(value))+'</div></div>';
+}
+
+function sourceLabel(value){
+  const key=String(value||'').trim().toLowerCase();
+  const labels={
+    official:'Officiële informatie',
+    community:'Community-ervaring',
+    review:'Review',
+    recommendation:'Aanbeveling',
+    warning:'Waarschuwing',
+    personal_tip:'Persoonlijke tip'
+  };
+  return labels[key]||String(value||'');
+}
+
+function sourceBadge(source){
+  const label=sourceLabel(source);
+  if(!label)return '';
+  const cls=String(source||'').toLowerCase()==='official'?'source-badge official':'source-badge';
+  return '<span class="'+cls+'">'+esc(label)+'</span>';
+}
+
+function renderLanguages(value){
+  if(value==null)return '';
+  let list=[];
+  if(Array.isArray(value)){
+    list=value.map(x=>typeof x==='string'?{language:x,source:'official'}:x||{});
+  }else{
+    const raw=String(value).trim();
+    if(!raw)return '';
+    list=raw.split(/\r?\n|;/).map(x=>x.trim()).filter(Boolean).map(line=>{
+      const parts=line.split(/\s*[|·]\s*/);
+      return {language:parts[0],source:parts[1]||'official'};
+    });
+  }
+  return list.map(x=>{
+    const language=x.language||x.name||x.value||'';
+    if(!language)return '';
+    return '<div class="language-row"><span>'+esc(language)+'</span>'+sourceBadge(x.source||x.source_type)+'</div>';
+  }).join('');
+}
+
+function telHref(value){
+  return value?'tel:'+String(value).replace(/[^+\d]/g,''):'';
+}
+
+function mapsHref(d,pageTitle,loc){
+  if(d.maps_url)return d.maps_url;
+  const query=[d.address||'',loc||''].filter(Boolean).join(', ');
+  return query?'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(query):'';
+}
+
+function slugify(value){
+  return String(value||'').toLowerCase().trim()
+    .normalize('NFD').replace(/[\\u0300-\\u036f]/g,'')
+    .replace(/&/g,' en ')
+    .replace(/[^a-z0-9]+/g,'-')
+    .replace(/^-+|-+$/g,'');
+}
+
+function hierarchicalFicheUrl(cityName,areaName,categoryName,slug){
+  const citySlug=slugify(cityName), categorySlug=slugify(categoryName), itemSlug=slugify(slug);
+  if(!citySlug||!itemSlug)return '/fiche/'+encodeURIComponent(slug||'');
+  const parts=['/locaties',citySlug];
+  if(categorySlug)parts.push(categorySlug);
+  parts.push(itemSlug);
+  return parts.join('/');
+}
+
+function publicSlug(value){
+  return String(value||'').replace(/-([0-9a-f]{8})-([0-9a-f]{4})-([0-9a-f]{4})-([0-9a-f]{4})-([0-9a-f]{12})$/i,'');
+}
+
+function breadcrumbLabel(value){
+  return decodeURIComponent(String(value||'')).replace(/[-_]+/g,' ').replace(/\\s+/g,' ').trim().replace(/\\b\\w/g,ch=>ch.toUpperCase());
+}
+
+async function renderFiche(){
+  if(!legacyId && !routeSlug){
+    document.getElementById('app').innerHTML='<div class="error">Geen fiche geselecteerd.</div>';
+    return;
+  }
+
+  const adminViewer=await isAdminViewer();
+  const topicSelect='id,title,slug,summary,content,information_type,country_id,city_id,category_id,published,visibility,card_data,source,source_url,source_type,updated_at,last_checked_at,next_review_at,verified_at,submitted_by,verification_status';
+  let topicQuery=db().from('topic').select(topicSelect);
+  if(!adminViewer)topicQuery=topicQuery.eq('published',true);
+
+  if(routeSlug){
+    topicQuery=topicQuery.eq('slug',decodeURIComponent(routeSlug));
+  }else{
+    topicQuery=topicQuery.eq('id',legacyId);
+  }
+
+  let [r,c,ci,ca]=await Promise.all([
+    topicQuery.maybeSingle(),
+    db().from('countries').select('id,name').order('name'),
+    db().from('cities').select('id,name,slug,country_id').order('name'),
+    db().from('categories').select('id,name').order('name')
+  ]);
+
+  if((r.error||!r.data) && routeSlug && !legacyId){
+    const requestedSlug=decodeURIComponent(routeSlug);
+    let aliasQuery=db().from('topic').select(topicSelect);
+    if(!adminViewer)aliasQuery=aliasQuery.eq('published',true);
+    const hierarchicalCity=(ci.data||[]).find(y=>slugify(y.name)===slugify(hierarchicalCitySlug));
+    const hierarchicalCategory=(ca.data||[]).find(y=>slugify(y.name)===slugify(hierarchicalCategorySlug));
+    if(hierarchicalCity?.id)aliasQuery=aliasQuery.eq('city_id',hierarchicalCity.id);
+    if(hierarchicalCategory?.id)aliasQuery=aliasQuery.eq('category_id',hierarchicalCategory.id);
+    const aliasResult=await aliasQuery.limit(200);
+    if(!aliasResult.error && Array.isArray(aliasResult.data)){
+      const requestedTokens=new Set(slugify(requestedSlug).split('-').filter(t=>t.length>2));
+      const ranked=aliasResult.data.map(topic=>{
+        const tokens=slugify(publicSlug(topic.slug||'')).split('-').filter(t=>t.length>2);
+        const matches=tokens.filter(t=>requestedTokens.has(t)).length;
+        const coverage=tokens.length?matches/tokens.length:0;
+        const prefix=requestedSlug.startsWith(String(topic.slug||'')) || String(topic.slug||'').startsWith(requestedSlug);
+        return {topic,matches,coverage,prefix};
+      }).filter(x=>x.matches>=2 && (x.coverage>=0.6 || x.prefix))
+        .sort((a,b)=>Number(b.prefix)-Number(a.prefix)||b.coverage-a.coverage||b.matches-a.matches);
+      if(ranked[0])r={data:ranked[0].topic,error:null};
+    }
+  }
+
+  if(r.error||!r.data){
+    const reason=r.error&&r.error.message?String(r.error.message):'De fiche bestaat niet, is nog niet gepubliceerd of kon niet uit de database worden opgehaald.';
+    document.getElementById('app').innerHTML=adminViewer
+      ? '<div class="error"><strong>Fiche kon niet worden geladen.</strong><div style="margin-top:12px;padding:11px 12px;background:#fbfaf8;border:1px solid var(--border);border-radius:9px;text-align:left;font-size:12px;color:var(--muted)"><strong style="color:var(--brown-dark)">Reden:</strong><br>'+esc(reason)+'</div></div>'
+      : '<div class="error"><strong>Deze informatie wordt momenteel bijgewerkt.</strong><br><span style="display:block;margin-top:7px">Probeer het later opnieuw.</span></div>';
+    return;
+  }
+
+  const x=r.data,d=data(x);
+  const id=x.id;
+  const canonicalCityName=(ci.data||[]).find(y=>y.id===x.city_id)?.name||'';
+  const canonicalCategoryName=(ca.data||[]).find(y=>y.id===x.category_id)?.name||'';
+  const canonicalFichePath=hierarchicalFicheUrl(canonicalCityName,d.neighborhood,canonicalCategoryName,publicSlug(x.slug||x.id));
+  if(isHierarchicalRoute && slugify(routeSlug)!==slugify(publicSlug(x.slug||x.id))){
+    const canonicalUrl=canonicalFichePath;
+    if(location.pathname!==canonicalUrl){
+      history.replaceState({},'',canonicalUrl);
+    }
+  }
+  const ficheSlug=publicSlug(x.slug||id);
+  const country=(c.data||[]).find(y=>y.id===x.country_id)?.name||'';
+  const city=(ci.data||[]).find(y=>y.id===x.city_id)?.name||'';
+  const loc=[city,country].filter(Boolean).join(', ');
+  const cat=(ca.data||[]).find(y=>y.id===x.category_id)?.name||'';
+  const hierarchicalCity=(ci.data||[]).find(y=>slugify(y.name)===slugify(hierarchicalCitySlug));
+  const breadcrumbCity=hierarchicalCity?.name||city||breadcrumbLabel(hierarchicalCitySlug);
+  const breadcrumbCountry=(c.data||[]).find(y=>y.id===hierarchicalCity?.country_id)?.name||country;
+  const breadcrumbArea=d.neighborhood||breadcrumbLabel(hierarchicalAreaSlug);
+  const breadcrumbCategory=cat||breadcrumbLabel(hierarchicalCategorySlug);
+  const exps=Array.isArray(d.experiences)?d.experiences:[];
+  const experienceUserIds=[...new Set(exps.map(e=>e?.submitted_by||e?.user_id).filter(Boolean))];
+  const experienceProfiles={};
+  if(experienceUserIds.length){
+    const ep=await db().rpc('hn_public_profiles',{p_ids:experienceUserIds});
+    (ep.data||[]).forEach(p=>experienceProfiles[p.id]=p);
+  }
+  const experienceStatusSlugs=[...new Set(Object.values(experienceProfiles).map(p=>p.hn_status).filter(Boolean))];
+  const experienceStatusMap={};
+  if(experienceStatusSlugs.length){
+    const es=await db().from('hn_statuses').select('slug,name,show_on_profile').in('slug',experienceStatusSlugs).eq('active',true);
+    (es.data||[]).forEach(s=>experienceStatusMap[s.slug]=s);
+  }
+  const infoType=x.information_type||'Praktische informatie';
+
+  let practiceArticleId = null;
+  let practiceArticleSlug = null;
+  if (d.practice_name || d.article_id || d.article_slug) {
+    const articleRows = await db().from('topic')
+      .select('id,slug,title,visibility,card_data,city_id')
+      .eq('published',true)
+      .neq('visibility','fiche_only')
+      .neq('id',id)
+      .eq('city_id',x.city_id)
+      .limit(100);
+
+    if (!articleRows.error && Array.isArray(articleRows.data)) {
+      const practiceName = String(d.practice_name || '').trim().toLowerCase();
+      const articleId = String(d.article_id || '').trim();
+      const articleSlug = String(d.article_slug || '').trim();
+
+      const match = articleRows.data.find(article => {
+        const ad = data(article);
+        const title = String(article.title || '').trim().toLowerCase();
+        const slug = String(article.slug || '').trim();
+
+        if (articleId && article.id === articleId) return true;
+        if (articleSlug && slug === articleSlug) return true;
+        if (practiceName && (title === practiceName || title.includes(practiceName) || practiceName.includes(title))) return true;
+        return false;
+      });
+
+      if (match) {
+        practiceArticleId = match.id;
+        practiceArticleSlug = match.slug || null;
+      }
+    }
+  }
+
+  const practiceKey=String(d.practice_name||d.website||d.address||'').trim().toLowerCase();
+  const practiceWebsite=String(d.website||'').trim().toLowerCase();
+  const practiceAddress=String(d.address||'').trim().toLowerCase();
+  let relatedDoctors=[];
+  if(practiceKey){
+    const related=await db().from('topic')
+      .select('id,title,slug,card_data')
+      .eq('published',true)
+      .neq('id',id)
+      .eq('city_id',x.city_id)
+      .limit(100);
+    if(!related.error && Array.isArray(related.data)){
+      relatedDoctors=related.data.filter(t=>{
+        const rd=data(t);
+        const key=String(rd.practice_name||rd.website||rd.address||'').trim().toLowerCase();
+        const isDoctor=String(rd.doctor_name||'').trim()!=='';
+        const samePractice=(practiceKey&&key===practiceKey)||(practiceWebsite&&String(rd.website||'').trim().toLowerCase()===practiceWebsite)||(practiceAddress&&String(rd.address||'').trim().toLowerCase()===practiceAddress);
+        return isDoctor && samePractice;
+      });
+    }
+  }
+  const verified=x.verified_at||x.last_checked_at;
+  const verificationStatus=x.verification_status||'';
+  const pageTitle=x.title||'Hijrah Netwerk';
+  const isYohan=/yohan\s+guazzi/i.test(pageTitle)||/yohan\s+guazzi/i.test(String(d.doctor_name||''));
+  const displayTitle=isYohan?'Dr. Yohan Guazzi':(d.doctor_name||d.full_name||pageTitle).replace(/\s*\|.*$/,'').trim();
+  const mapsData=isYohan ? {...d, maps_url:d.maps_url||'https://maps.app.goo.gl/rApDJVfsvFuSYmib6'} : d;
+  const languageData=isYohan && (!d.languages || (Array.isArray(d.languages)&&!d.languages.length)) ? [
+    {language:'Frans',source:'official',note:'Vermeld in openbare medische informatie.'},
+    {language:'Engels',source:'community',note:'Gemeld via community-ervaring.'},
+    {language:'Arabisch',source:'community',note:'Gemeld via community-ervaring.'}
+  ] : d.languages;
+
+  document.title=pageTitle;
+  const mapsUrl=mapsHref(mapsData,pageTitle,loc);
+
+  const seoDescription=(x.summary||d.short_description||('Praktische informatie over '+pageTitle+(loc?' in '+loc:''))) .replace(/\s+/g,' ').trim();
+  const canonicalUrl=isHierarchicalRoute
+    ? 'https://hijrah-netwerk.vercel.app'+location.pathname
+    : 'https://hijrah-netwerk.vercel.app/fiche/'+encodeURIComponent(ficheSlug);
+  const setMeta=(selector,attribute,value)=>{
+    const el=document.querySelector(selector);
+    if(el)el.setAttribute(attribute,value);
+  };
+  setMeta('meta[name="description"]','content',seoDescription);
+  setMeta('meta[property="og:title"]','content',pageTitle);
+  setMeta('meta[property="og:description"]','content',seoDescription);
+  setMeta('meta[property="og:url"]','content',canonicalUrl);
+  setMeta('meta[name="twitter:title"]','content',pageTitle);
+  setMeta('meta[name="twitter:description"]','content',seoDescription);
+
+  const canonical=document.querySelector('link[rel="canonical"]');
+  if(canonical)canonical.href=canonicalUrl;
+
+  const isPhysician=Boolean(d.doctor_name||/huisarts|arts|physician|médecin|dokter/i.test(String(cat||"")+" "+String(d.service_type||"")));
+  const schemaType=isPhysician?"Physician":"LocalBusiness";
+  const structuredData={
+    "@context":"https://schema.org",
+    "@type":schemaType,
+    "@id":canonicalUrl+"#place",
+    "name":String(d.doctor_name||d.full_name||pageTitle).replace(/\s*\|.*$/,"").replace(/^Dr\.\s*/,"").trim(),
+    "url":canonicalUrl,
+    "description":seoDescription,
+  };
+  if(isPhysician)structuredData.medicalSpecialty="GeneralPractice";
+  if(d.phone)structuredData.telephone=d.phone;
+  if(d.email)structuredData.email=d.email;
+  if(d.website)structuredData.sameAs=[d.website];
+  if(d.address){
+    structuredData.address={
+      "@type":"PostalAddress",
+      "streetAddress":d.address,
+      ...(loc?{"addressLocality":city||loc}:{}),
+      ...(country?{"addressCountry":country}:{})
+    };
+  }
+  if(mapsUrl)structuredData.hasMap=mapsUrl;
+  if(d.for_children)structuredData.description=seoDescription+' '+String(d.for_children);
+
+  const breadcrumbItems=[
+    {"@type":"ListItem","position":1,"name":"Home","item":"https://hijrah-netwerk.vercel.app/"},
+    breadcrumbCountry?{"@type":"ListItem","position":2,"name":breadcrumbCountry,"item":"https://hijrah-netwerk.vercel.app/landen"}:null,
+    breadcrumbCity?{"@type":"ListItem","position":breadcrumbCountry?3:2,"name":breadcrumbCity,"item":"https://hijrah-netwerk.vercel.app/stad/"+encodeURIComponent(hierarchicalCity?.slug||slugify(breadcrumbCity))}:null,
+    breadcrumbArea?{"@type":"ListItem","position":breadcrumbCountry&&breadcrumbCity?4:3,"name":breadcrumbArea}:null,
+    breadcrumbCategory?{"@type":"ListItem","position":breadcrumbCountry&&breadcrumbCity&&breadcrumbArea?5:(breadcrumbCountry&&breadcrumbCity?4:3),"name":breadcrumbCategory}:null,
+    {"@type":"ListItem","position":breadcrumbCountry&&breadcrumbCity&&breadcrumbArea&&breadcrumbCategory?6:(breadcrumbCountry&&breadcrumbCity&&breadcrumbArea?5:(breadcrumbCountry&&breadcrumbCity?4:3)),"name":pageTitle}
+  ].filter(Boolean);
+
+  const schemaPayload=isHierarchicalRoute
+    ? [structuredData,{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":breadcrumbItems}]
+    : structuredData;
+
+  const schemaEl=document.getElementById('structured-data');
+  if(schemaEl)schemaEl.textContent=JSON.stringify(schemaPayload);
+
+  let html='';
+
+  html+='<section class="hero">';
+  html+='<div class="hero-grid"><div>';
+  html+='<h1>'+esc(displayTitle)+'</h1>';
+  if(x.summary||d.short_description)html+='<p class="summary">'+esc(x.summary||d.short_description)+'</p>';
+  const locationTags=[];
+  if(country)locationTags.push('<a class="fiche-tag location-tag" href="/navigatie?country='+encodeURIComponent(x.country_id)+'" title="Bekijk fiches in '+esc(country)+'">'+esc(country)+'</a>');
+  if(city)locationTags.push('<a class="fiche-tag location-tag" href="/navigatie?city='+encodeURIComponent(x.city_id)+'" title="Bekijk fiches in '+esc(city)+'">'+esc(city)+'</a>');
+  if(d.neighborhood)locationTags.push('<a class="fiche-tag location-tag" href="/navigatie?q='+encodeURIComponent(d.neighborhood)+'" title="Bekijk fiches in '+esc(d.neighborhood)+'">'+esc(d.neighborhood)+'</a>');
+  const subjectTags=[];
+  if(cat)subjectTags.push('<a class="fiche-tag" href="/navigatie?category='+encodeURIComponent(x.category_id)+'" title="Bekijk fiches over '+esc(cat)+'">'+esc(cat)+'</a>');
+  if(d.specialties){
+    const specialties=Array.isArray(d.specialties)?d.specialties:[String(d.specialties)];
+    specialties.filter(Boolean).forEach(s=>subjectTags.push('<a class="fiche-tag" href="/navigatie?q='+encodeURIComponent(s)+'" title="Bekijk fiches over '+esc(s)+'">'+esc(s)+'</a>'));
+  }
+  html+='<div class="fiche-meta">';
+  if(locationTags.length)html+='<div class="fiche-meta-row"><div class="fiche-meta-label">Locatie</div><nav class="fiche-tags" aria-label="Verken fiches op deze locatie">'+locationTags.join('')+'</nav></div>';
+  if(subjectTags.length)html+='<div class="fiche-meta-row"><div class="fiche-meta-label">Onderwerpen</div><nav class="fiche-tags" aria-label="Verken fiches over deze onderwerpen">'+subjectTags.join('')+'</nav></div>';
+  html+='<div class="fiche-meta-row"><div class="fiche-meta-label">HN-status</div><div class="fiche-meta-badges">';
+  html+=verificationStatus==='official' || x.verified_at ? '<span class="badge green">✓ HN gecontroleerd</span>' : verified ? '<span class="badge green">✓ Recent gecontroleerd</span>' : '<span class="badge gray">Nog niet gecontroleerd</span>';
+  const sourceTypeLabel=sourceLabel(x.source_type);
+  html+='<span class="badge official">'+esc(sourceTypeLabel||infoType)+'</span>';
+  if(sourceTypeLabel&&infoType&&sourceTypeLabel.toLocaleLowerCase()!==String(infoType).toLocaleLowerCase())html+='<span class="badge gray">'+esc(infoType)+'</span>';
+  html+='</div></div></div>';
+  html+='<div class="hero-actions">';
+  if(d.phone)html+='<a class="button primary" href="'+esc(telHref(d.phone))+'">'+icon.phone+'Bel</a>';
+  if(mapsUrl)html+='<a class="button secondary" target="_blank" rel="noopener" href="'+esc(safeHref(mapsUrl))+'">'+icon.map+'Google Maps</a>';
+  if(d.website)html+='<a class="button outline" target="_blank" rel="noopener" href="'+esc(safeHref(d.website))+'">'+icon.web+'Website</a>';
+  html+='<a class="button primary" href="/bijdragen?type=experience&topic='+encodeURIComponent(id)+'&title='+encodeURIComponent(pageTitle)+'">Ervaring delen</a>';
+  html+='</div>';
+  html+='</div></div></section>';
+
+  html+='<div class="layout">';
+
+  html+='<div class="main">';
+
+  const basis=[
+    item('Type',d.service_type),
+    item('Specialisatie',d.specialties),
+    item('Praktijk',d.practice_name),
+    item('Voor kinderen',d.for_children),
+    d.languages?item('Talen',d.languages,'<div class="language-list">'+renderLanguages(d.languages)+'</div>'):''
+  ];
+  const contact=[
+    item('Telefoon',d.phone,'<a href="'+esc(telHref(d.phone))+'">'+esc(d.phone)+'</a>'),
+    item('E-mail',d.email,'<a href="mailto:'+esc(d.email)+'">'+esc(d.email)+'</a>'),
+    item('Website',d.website,'<a href="'+esc(safeHref(d.website))+'" target="_blank" rel="noopener">Officiële website</a>')
+  ];
+  const locatie=[
+    item('Adres',d.address),
+    item('Wijk',d.neighborhood)
+  ];
+  const openingHoursHtml=(value)=>{
+    if(value==null || String(value).trim()==='')return '';
+    let raw=String(value)
+      .replace(/\\r/g,'')
+      .replace(/\\n/g,'\\n')
+      .trim();
+
+    if(!raw)return '';
+
+    const dayPattern='Maandag|Dinsdag|Woensdag|Donderdag|Vrijdag|Zaterdag|Zondag|Ma|Di|Wo|Do|Vr|Za|Zo';
+    const parts=raw.includes('\\n')
+      ? raw.split(/\\n+/)
+      : raw.split(new RegExp('(?=(?:'+dayPattern+')\\b)', 'i'));
+
+    const rows=parts
+      .map(v=>v.replace(/^[-•\\s]+/,'').trim())
+      .filter(Boolean);
+
+    return '<div class="hours-list">'+rows.map(v=>'<div class="hours-row">'+esc(v)+'</div>').join('')+'</div>';
+  };
+
+  const afspraken=[
+    item('Afspraak nodig',d.appointment),
+    item('Huisbezoeken',d.home_visits),
+    item('Teleconsultatie',d.teleconsultation)
+  ];
+  const kosten=[
+    item('Prijs / kosten',d.price),
+    item('Verzekering / CNSS',d.insurance)
+  ];
+  const zorg=[item('Spoed',d.emergency)];
+
+  const block=(title,iconMarkup,items)=>{
+    if(!items.some(Boolean))return '';
+    return '<div class="practical-block"><h3 class="practical-title">'+iconMarkup+esc(title)+'</h3><div class="info-grid">'+items.join('')+'</div></div>';
+  };
+
+  const pinIcon='<span class="mini-icon">'+icon.pin+'</span>';
+  const phoneIcon='<span class="mini-icon">'+icon.phone+'</span>';
+  const webIcon='<span class="mini-icon">'+icon.web+'</span>';
+  const clockIcon='<span class="mini-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>';
+  const moneyIcon='<span class="mini-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v10M15 9.5c-.7-.7-1.6-1-2.7-1-1.4 0-2.3.7-2.3 1.7 0 2.7 5 1.1 5 4 0 1.1-1 1.8-2.5 1.8-1.2 0-2.2-.4-2.9-1.1"/></svg></span>';
+  const careIcon='<span class="mini-icon"><svg viewBox="0 0 24 24"><path d="M12 21s7-4.2 7-10V5l-7-3-7 3v6c0 5.8 7 10 7 10Z"/><path d="M12 8v6M9 11h6"/></svg></span>';
+
+  const locationItems=locatie.slice();
+  if(mapsUrl)locationItems.push(item('Google Maps','', '<a href="'+esc(safeHref(mapsUrl))+'" target="_blank" rel="noopener">Bekijk locatie op Google Maps →</a>'));
+
+  const practicalBlocks=
+    block('Snelle info',webIcon,basis)+
+    block('Contact',phoneIcon,contact)+
+    block('Locatie',pinIcon,locationItems)+
+    (d.opening_hours ? '<div class="practical-block full"><h3 class="practical-title">'+clockIcon+'Openingstijden</h3>'+openingHoursHtml(d.opening_hours)+'</div>' : '')+
+    block('Afspraken',clockIcon,afspraken)+
+    block('Kosten & verzekering',moneyIcon,kosten)+
+    block('Zorg & spoed',careIcon,zorg);
+
+  if(practicalBlocks){
+    html+='<section class="card"><h2>Praktische gegevens</h2><p class="card-sub">De belangrijkste informatie kort en overzichtelijk bij elkaar.</p><div class="practical-grid">'+practicalBlocks+'</div>';
+    if(d.warning)html+='<div class="warning">⚠️ '+esc(d.warning)+'</div>';
+    html+='</section>';
+  }
+
+  if(relatedDoctors.length){
+    html+='<section class="card"><h2>Andere artsen bij deze praktijk</h2><p class="card-sub">Deze arts werkt ook bij dezelfde praktijk.</p><div class="info-grid">';
+    relatedDoctors.forEach(t=>{
+      const rd=data(t);
+      const href=hierarchicalFicheUrl(city,d.neighborhood||'',cat,t.slug||t.id);
+      html+='<div class="info-item"><div class="info-label">Arts</div><div class="info-value"><a href="'+esc(href)+'">'+esc(t.title)+'</a></div></div>';
+    });
+    html+='</div></section>';
+  }
+
+  const relationshipRows=await db().from('topic_relationships').select('relationship_type,related_topic_id,related_topic:topic!topic_relationships_related_topic_id_fkey(id,title,slug,visibility,city_id,category_id,published)').eq('topic_id',id);
+  const relatedItems=(relationshipRows.data||[]).filter(r=>r.related_topic?.published&&r.related_topic_id!==id);
+  const relatedArticles=relatedItems.filter(r=>r.related_topic.visibility!=='fiche_only'&&['related_article','related_content'].includes(r.relationship_type));
+  const relatedFiches=relatedItems.filter(r=>r.related_topic.visibility==='fiche_only'&&['related_fiche','related_place'].includes(r.relationship_type));
+
+  if(x.content || practiceArticleId){
+    const articleId = practiceArticleId || id;
+    const articleLabel = practiceArticleId
+      ? 'Lees het uitgebreide artikel over de praktijk →'
+      : 'Lees meer in de Kennisbank →';
+    html+='<section class="card"><h2>Meer informatie</h2><p class="card-sub">'+(practiceArticleId
+      ? 'Deze fiche houdt de belangrijkste gegevens van deze arts overzichtelijk. Voor achtergrondinformatie over Cabinet Médical Ibn Zuhr en beide artsen kun je het uitgebreide artikel lezen.'
+      : 'De fiche geeft je de belangrijkste gegevens. Voor achtergrondinformatie en uitgebreide informatie kun je het volledige artikel in de Kennisbank lezen.'
+    )+'</p><div class="hero-actions"><a class="button primary" href="/artikels/'+encodeURIComponent(String(practiceArticleSlug||articleId).replace(/-([0-9a-f]{8})-([0-9a-f]{4})-([0-9a-f]{4})-([0-9a-f]{4})-([0-9a-f]{12})$/i,''))+'">'+articleLabel+'</a></div></section>';
+  }
+
+  if(relatedArticles.length||relatedFiches.length){
+    html+='<section class="card"><h2>Gerelateerde informatie</h2><p class="card-sub">Informatie die bij deze fiche hoort of je kan helpen bij het verder zoeken.</p>';
+    if(relatedArticles.length){
+      html+='<div style="margin:0 0 18px"><div class="info-label">Artikelen</div><div class="info-grid">';
+      relatedArticles.forEach(r=>{
+        const t=r.related_topic;
+        html+='<div class="info-item"><div class="info-value"><a href="/artikels/'+encodeURIComponent(publicSlug(t.slug||t.id))+'">'+esc(t.title)+'</a></div></div>';
+      });
+      html+='</div></div>';
+    }
+    if(relatedFiches.length){
+      html+='<div><div class="info-label">Gerelateerde fiches</div><div class="info-grid">';
+      relatedFiches.forEach(r=>{
+        const t=r.related_topic;
+        const tc=(ci.data||[]).find(y=>y.id===t.city_id)?.name||city;
+        const tcat=(ca.data||[]).find(y=>y.id===t.category_id)?.name||cat;
+        html+='<div class="info-item"><div class="info-value"><a href="'+esc(hierarchicalFicheUrl(tc,'',tcat,publicSlug(t.slug||t.id)))+'">'+esc(t.title)+'</a></div></div>';
+      });
+      html+='</div></div>';
+    }
+    html+='</section>';
+  }
+
+  html+='<section class="card"><h2>Ervaringen uit de praktijk</h2><p class="card-sub">Gebaseerd op ervaringen van emigranten uit Nederland en België en anderen met eigen ervaring ter plaatse. Waar mogelijk aangevuld met officiële bronnen. Een ervaring blijft persoonlijk en kan per persoon, gezin, wijk, situatie en periode verschillen.</p><div class="source-explainer" style="margin:0 0 16px"><strong>Let op</strong><div>Een persoonlijke ervaring is geen garantie dat dezelfde situatie voor iedereen geldt. Ervaringen zijn een aanvulling op andere bronnen en worden duidelijk onderscheiden van officiële informatie en gecontroleerde informatie.</div></div>';
+  if(exps.length){
+    html+=exps.map(e=>{
+      const rating=Math.min(5,Math.max(0,Number(e.rating)||0));
+      const fullText=String(e.text||e.content||'').trim();
+      const shortText=fullText.length>240?fullText.slice(0,240).trim()+'…':fullText;
+      const more=fullText.length>240?'<details style="margin-top:8px"><summary style="cursor:pointer;font-size:12px;color:var(--brown-dark)">Lees volledige ervaring</summary><div class="exp-text" style="margin-top:8px">'+esc(fullText)+'</div></details>':'';
+      const authorId=e.submitted_by||e.user_id;
+      const author=authorId?experienceProfiles[authorId]:null;
+      const authorName=author?(author.display_name||[author.first_name,author.last_name].filter(Boolean).join(' ')||'HN-lid'):(e.name||'Anoniem');
+      const authorStatus=author&&author.show_status&&experienceStatusMap[author.hn_status]?.show_on_profile?'<span class="badge gray">'+esc(experienceStatusMap[author.hn_status].name)+'</span>':'';
+      const authorHtml=author?'<a href="/profiel?id='+encodeURIComponent(author.id)+'" style="color:inherit;font-weight:700">'+esc(authorName)+'</a>':esc(authorName);
+      return '<div class="experience"><div class="stars">'+('★'.repeat(rating)+('☆'.repeat(5-rating)))+'</div><div class="exp-text">'+esc(shortText)+'</div>'+more+'<div class="exp-meta">Gedeeld door: '+authorHtml+(authorStatus?' · '+authorStatus:'')+(e.date?' · '+esc(e.date):'')+'</div></div>';
+    }).join('');
+  }else{
+    html+='<p class="empty-note">Er zijn nog geen ervaringen uit de HN-community toegevoegd.</p>';
+  }
+  html+='<div class="hero-actions"><a class="button primary" href="/bijdragen?type=experience&topic='+encodeURIComponent(id)+'&title='+encodeURIComponent(pageTitle)+'">Ervaring delen</a></div></section>';
+
+  html+='</div>';
+
+  html+='<aside class="side">';
+  html+='<section class="card"><h2>Bron & controle</h2><div class="meta-box">';
+  if(x.source)html+='<div class="meta-row"><div class="meta-label">Bron</div><div class="meta-value">'+esc(x.source)+'</div></div>';
+  if(x.source_url)html+='<div class="meta-row"><div class="meta-label">Officiële bron</div><div class="meta-value"><a href="'+esc(x.source_url)+'" target="_blank" rel="noopener">Officiële bron bekijken</a></div></div>';
+  if(verified)html+='<div class="meta-row"><div class="meta-label">Laatst gecontroleerd</div><div class="meta-value">'+new Date(verified).toLocaleDateString('nl-NL')+'</div></div>';
+  html+='</div>';
+  html+='<div class="source-explainer"><strong>Wat betekent dit?</strong><div><b>Officiële informatie</b> · afkomstig van de officiële website, de aanbieder of een officiële bron.</div><div><b>Community-ervaring</b> · gedeeld door iemand uit de HN-community op basis van eigen ervaring en niet officieel bevestigd.</div><div><b>Review</b> · een beoordeling of ervaring van een gebruiker.</div><div><b>Aanbeveling</b> · een tip vanuit de community.</div><div><b>Waarschuwing</b> · een gemeld aandachtspunt dat niet automatisch als officieel bevestigd geldt.</div></div>';
+  html+='<p class="note">Belangrijke gegevens zoals openingstijden, tarieven en beschikbaarheid kunnen veranderen. Controleer ze bij de bron voordat je vertrekt.</p></section>';
+  html+='</aside></div>';
+
+  html+='<section class="card" style="margin-top:18px"><h2>Informatie corrigeren</h2><p class="empty-note">Zie je iets dat niet klopt of verouderd is? Stuur de correctie naar HN. Niets wordt automatisch aangepast.</p><div class="hero-actions"><a class="button secondary" href="/bijdragen?type=correction&title='+encodeURIComponent(pageTitle)+'">Correctie insturen</a><a class="button outline" href="#claim" onclick="var x=document.getElementById(\'claim\');if(x)x.open=true">Vermelding claimen</a></div></section>';
+
+  html+='<details class="card" id="claim" style="margin-top:18px"><summary style="cursor:pointer;font-weight:700;color:var(--brown-dark)">Ben jij eigenaar of beheerder?</summary><div style="padding-top:12px"><h2 style="display:none">Ben jij eigenaar of beheerder?</h2><p class="card-sub">Je kunt bij HN aangeven dat je deze vermelding beheert. HN controleert de aanvraag eerst. Een claim betekent niet automatisch dat de gegevens worden aangepast of dat de vermelding wordt overgenomen.</p><form id="claimForm" class="form-grid" style="margin-top:14px"><div><label style="display:block;font-size:12px;margin-bottom:5px;color:var(--muted)">Naam</label><input id="claimName" required style="width:100%;padding:11px;border:1px solid var(--border);border-radius:9px"></div><div><label style="display:block;font-size:12px;margin-bottom:5px;color:var(--muted)">Rol</label><input id="claimRole" placeholder="Bijv. eigenaar, arts, medewerker" style="width:100%;padding:11px;border:1px solid var(--border);border-radius:9px"></div><div><label style="display:block;font-size:12px;margin-bottom:5px;color:var(--muted)">E-mail</label><input id="claimEmail" type="email" required style="width:100%;padding:11px;border:1px solid var(--border);border-radius:9px"></div><div><label style="display:block;font-size:12px;margin-bottom:5px;color:var(--muted)">Telefoon</label><input id="claimPhone" type="tel" style="width:100%;padding:11px;border:1px solid var(--border);border-radius:9px"></div><div style="grid-column:1/-1"><label style="display:block;font-size:12px;margin-bottom:5px;color:var(--muted)">Bericht</label><textarea id="claimMessage" rows="3" placeholder="Hoe kunnen we controleren dat je deze vermelding beheert?"></textarea></div><div style="grid-column:1/-1"><button class="button primary" type="submit">Claimaanvraag versturen</button><span id="claimResult" class="note" style="display:inline-block;margin-left:10px"></span></div></form></div></details>';
+
+  if(isHierarchicalRoute){
+    const crumbs=[];
+    crumbs.push('<a href="/">Home</a>');
+    if(breadcrumbCountry)crumbs.push('<a href="/landen">'+esc(breadcrumbCountry)+'</a>');
+    if(breadcrumbCity)crumbs.push('<a href="/stad/'+encodeURIComponent(hierarchicalCity?.id||x.city_id||'')+'">'+esc(breadcrumbCity)+'</a>');
+    if(breadcrumbArea)crumbs.push('<span>'+esc(breadcrumbArea)+'</span>');
+    if(breadcrumbCategory)crumbs.push('<span>'+esc(breadcrumbCategory)+'</span>');
+    crumbs.push('<span class="current">'+esc(pageTitle)+'</span>');
+    html+='<section class="hn-breadcrumb" aria-label="Broodkruimelpad"><span class="hn-breadcrumb-title">Jij bent nu hier</span><nav>'+crumbs.map((item,index)=>index?'<span class="sep">›</span>'+item:item).join('')+'</nav></section>';
+  }
+
+  document.getElementById('app').innerHTML=html;
+  const claimForm=document.getElementById('claimForm');
+  if(claimForm){
+    claimForm.addEventListener('submit',async e=>{
+      e.preventDefault();
+      const result=document.getElementById('claimResult');
+      result.textContent='Aanvraag wordt verstuurd...';
+      const claim=await db().from('hn_fiche_claims').insert({
+        topic_id:id,
+        name:document.getElementById('claimName').value.trim(),
+        role:document.getElementById('claimRole').value.trim()||null,
+        email:document.getElementById('claimEmail').value.trim(),
+        phone:document.getElementById('claimPhone').value.trim()||null,
+        message:document.getElementById('claimMessage').value.trim()||null
+      });
+      if(claim.error){result.textContent='Versturen mislukt. Probeer opnieuw.';return;}
+      claimForm.reset();
+      result.textContent='Ontvangen. HN controleert de aanvraag eerst.';
+    });
+  }
+}
+
+async function waitForDatabase(timeout=10000){
+  const start=Date.now();
+  while(Date.now()-start<timeout){
+    if(window.hijrahSupabase)return window.hijrahSupabase;
+    await new Promise(resolve=>setTimeout(resolve,100));
+  }
+  throw new Error('De HN-database kon niet worden geïnitialiseerd.');
+}
+
+async function isAdminViewer(){
+  try{
+    const client=window.hijrahSupabase;
+    if(!client)return false;
+    const session=await client.auth.getSession();
+    const user=session&&session.data&&session.data.session&&session.data.session.user;
+    if(!user)return false;
+
+    const rpc=await client.rpc('is_admin');
+    if(!rpc.error && rpc.data===true)return true;
+
+    const profile=await client.from('profiles').select('role').eq('id',user.id).maybeSingle();
+    return !profile.error && profile.data && profile.data.role==='admin';
+  }catch(e){
+    console.error('HN admincontrole mislukt:',e);
+    return false;
+  }
+}
+
+async function init(){
+  const app=document.getElementById('app');
+  try{
+    await waitForDatabase();
+    await renderFiche();
+  }catch(error){
+    console.error('HN fiche laden mislukt:',error);
+    if(await isAdminViewer()){
+      const reason=error&&error.message?String(error.message):'Onbekende fout';
+      app.innerHTML='<div class="error"><strong>Fiche kon niet worden geladen.</strong><br><span style="display:block;margin-top:7px">De verbinding met HN kon niet goed worden gemaakt.</span><div style="margin-top:14px;padding:11px 12px;background:#fbfaf8;border:1px solid var(--border);border-radius:9px;text-align:left;font-size:12px;color:var(--muted)"><strong style="color:var(--brown-dark)">Reden:</strong><br>'+esc(reason)+'</div><span style="display:block;margin-top:10px;font-size:12px">Ververs de pagina. Als dezelfde reden terugkomt, kunnen we gericht de oorzaak oplossen.</span></div>';
+    }else{
+      app.innerHTML='<div class="error"><strong>Deze informatie wordt momenteel bijgewerkt.</strong><br><span style="display:block;margin-top:7px">Probeer het later opnieuw.</span></div>';
+    }
+  }
+}
+
+init();
+</script>
+  <script src="assets/scroll-reveal.js"></script>
+<script>
+function toggleMobileNav(open){
+  var nav=document.getElementById('mobileNav');
+  var button=document.querySelector('.mobile-menu-toggle');
+  if(!nav)return;
+  if(open){
+    nav.classList.add('open');
+    nav.setAttribute('aria-hidden','false');
+    if(button)button.setAttribute('aria-expanded','true');
+    document.body.style.overflow='hidden';
+  }else{
+    nav.classList.remove('open');
+    nav.setAttribute('aria-hidden','true');
+    if(button)button.setAttribute('aria-expanded','false');
+    document.body.style.overflow='';
+  }
+}
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape')toggleMobileNav(false);
+});
+</script>
+<script src="assets/hn-save-personal.js"></script>
+</body>
+</html>
