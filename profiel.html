@@ -13,7 +13,7 @@ let statusMap={};
 async function init(){
  const s=await db().auth.getSession();if(!s.data.session){location='/login?next='+encodeURIComponent(location.pathname+location.search);return}
  if(!id){$('app').innerHTML='<div class="hero">Geen profiel geselecteerd.</div>';return}
- const r=await db().from('profiles').select('id,display_name,first_name,last_name,bio,application_status,verification_status,profile_visibility,show_location,show_contributions,show_status,current_country_id,current_city_id,hn_status').eq('id',id).maybeSingle();
+ const r=await db().rpc('hn_public_profile',{p_id:id}).maybeSingle();
  if(r.error||!r.data){$('app').innerHTML='<div class="hero">Profiel niet gevonden of niet zichtbaar.</div>';return}
  const p=r.data;if(p.application_status!=='approved'||!p.profile_visibility){$('app').innerHTML='<div class="hero">Dit profiel is niet beschikbaar.</div>';return}
  const sr=await db().from('hn_statuses').select('slug,name,show_on_profile').eq('active',true);statusMap=Object.fromEntries((sr.data||[]).map(x=>[x.slug,x])); const name=p.display_name||[p.first_name,p.last_name].filter(Boolean).join(' ')||'HN-lid';
