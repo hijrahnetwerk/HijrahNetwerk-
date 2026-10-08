@@ -68,12 +68,12 @@ function filter(btn,type){
 }
 async function loadMap(){
  const db=window.hijrahSupabase;if(!db)return;
- const topicR=await db.from('topic').select('*').eq('source_type','hn_map').eq('status','published').order('created_at',{ascending:true});
+ const topicR=await db.from('topic').select('id,title,slug,summary,content,status,source_type,city_id,country_id,category_id,card_data,updated_at').eq('source_type','hn_map').eq('status','published').order('created_at',{ascending:true});
  if(!topicR.error) mapRows=topicR.data||[];
  const userR=await db.auth.getUser();
  const user=userR.data?.user||null;
  if(user){
-   const personalR=await db.from('hn_personal_items').select('*').eq('user_id',user.id).eq('item_type','place').order('created_at',{ascending:false});
+   const personalR=await db.from('hn_personal_items').select('id,user_id,item_type,title,description,metadata,due_date,created_at,updated_at').eq('user_id',user.id).eq('item_type','place').order('created_at',{ascending:false});
    if(!personalR.error){
      const personal=(personalR.data||[]).map(x=>({
        id:'personal-'+x.id,
