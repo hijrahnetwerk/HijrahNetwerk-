@@ -4,7 +4,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: { default: "Hijrah Netwerk", template: "%s | Hijrah Netwerk" },
   description: "Een netwerk voor emigranten, van oriëntatie tot integratie.",
-  metadataBase: new URL("https://hijrah-netwerk.vercel.app"),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://hijrah-netwerk.vercel.app"),
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
