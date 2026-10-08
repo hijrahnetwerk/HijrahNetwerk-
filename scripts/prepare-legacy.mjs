@@ -1,7 +1,29 @@
 import fs from "node:fs";
+import { execFileSync } from "node:child_process";
 import path from "node:path";
 
 const root = process.cwd();
+
+const supabaseUrl = String(process.env.NEXT_PUBLIC_SUPABASE_URL || "").trim();
+const anonKey = String(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "").trim();
+
+if (!supabaseUrl || !anonKey) {
+  throw new Error("[HN] NEXT_PUBLIC_SUPABASE_URL en NEXT_PUBLIC_SUPABASE_ANON_KEY zijn vereist.");
+}
+
+// Reuse the existing HN build transformation during the compatibility phase.
+// This keeps the current pages, injected runtime scripts, asset paths and sitemap
+// behavior intact while the UI is migrated page-by-page into Next.js.
+execFileSync(process.execPath, ["build.js"], {
+  cwd: root,
+  stdio: "inherit",
+  env: {
+    ...process.env,
+    VITE_SUPABASE_URL: supabaseUrl,
+    VITE_SUPABASE_ANON_KEY: anonKey,
+    HN_SITE_URL: process.env.HN_SITE_URL || "https://hijrah-netwerk.vercel.app"
+  }
+});
 const publicDir = path.join(root, "public");
 const legacyDir = path.join(publicDir, "legacy");
 const sourceAssets = path.join(root, "assets");
