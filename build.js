@@ -75,6 +75,8 @@ for (const file of htmlFiles) {
     html = html.replace('</head>', faviconTag + '\n</head>');
   }
 
+  const isAdminSurface = file.startsWith('admin') || file.startsWith('werkruimte');
+
   const additions = [
     !html.includes(pageEngineTag) && !file.startsWith('admin') && !file.startsWith('login') && !file.startsWith('register') && !file.startsWith('reset-password') && !file.startsWith('update-password') && !file.startsWith('dashboard') && !file.startsWith('werkruimte') ? pageEngineTag : '',
     !html.includes(visualEditorTag) && !file.startsWith('admin') && !file.startsWith('login') && !file.startsWith('register') && !file.startsWith('reset-password') && !file.startsWith('update-password') && !file.startsWith('dashboard') && !file.startsWith('werkruimte') ? visualEditorTag : '',
@@ -88,8 +90,13 @@ for (const file of htmlFiles) {
     !html.includes(adminBarStyleTag) ? adminBarStyleTag : '',
     !html.includes(visualPolishStyleTag) ? visualPolishStyleTag : '',
     !html.includes(motionTag) ? motionTag : '',
-    !html.includes(copyProtectionTag) && !file.startsWith('admin') ? copyProtectionTag : ''
+    !html.includes(copyProtectionTag) && !isAdminSurface ? copyProtectionTag : ''
   ].filter(Boolean).join('\n') + '\n';
+
+  if (!html.includes('/assets/hn-safe-url.js')) {
+    html = html.replace('</head>', '<script src="/assets/hn-safe-url.js"></script>\n</head>');
+  }
+  html = html.replaceAll('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2', 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3');
 
   const canonicalRoutes = {
     'index.html':'/', 'landen.html':'/landen', 'navigatie.html':'/navigatie',

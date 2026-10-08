@@ -45,7 +45,7 @@
     }
 
     if (!window.supabase || !window.supabase.createClient) {
-      await loadScript('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2');
+      await loadScript('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3');
     }
 
     if (!window.hijrahSupabase && window.supabase && window.supabase.createClient) {

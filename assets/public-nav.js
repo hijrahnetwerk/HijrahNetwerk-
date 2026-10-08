@@ -40,12 +40,12 @@
       const special=String(x.href||'').replace(/\/$/,'')==='/navigatie';
       if(mobile){
         return special
-          ? '<a class="hn-mobile-link hn-mobile-special" href="'+esc(x.href)+'"><span>⌕</span><span><strong>'+esc(x.label)+'</strong><small>Zoek in HN</small></span></a>'
-          : '<a class="hn-mobile-link" href="'+esc(x.href)+'">'+esc(x.label)+'</a>';
+          ? '<a class="hn-mobile-link hn-mobile-special" href="'+esc(safeHref(x.href))+'"><span>⌕</span><span><strong>'+esc(x.label)+'</strong><small>Zoek in HN</small></span></a>'
+          : '<a class="hn-mobile-link" href="'+esc(safeHref(x.href))+'">'+esc(x.label)+'</a>';
       }
       return special
-        ? '<a class="hn-nav-special" href="'+esc(x.href)+'"><span class="hn-nav-special-icon">⌕</span><span>'+esc(x.label)+'</span><small>Zoek in HN</small></a>'
-        : '<a href="'+esc(x.href)+'">'+esc(x.label)+'</a>';
+        ? '<a class="hn-nav-special" href="'+esc(safeHref(x.href))+'"><span class="hn-nav-special-icon">⌕</span><span>'+esc(x.label)+'</span><small>Zoek in HN</small></a>'
+        : '<a href="'+esc(safeHref(x.href))+'">'+esc(x.label)+'</a>';
     }).join('');
   }
 

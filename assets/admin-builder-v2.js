@@ -61,18 +61,16 @@ async function loadVersions(){if(!page)return;const r=await db().from('hn_site_p
 async function restoreVersion(id){const r=await db().from('hn_site_page_versions').select('snapshot,version_number').eq('id',id).maybeSingle();if(r.error||!r.data)return msg('Versie kon niet worden geladen.',true);const s=r.data.snapshot||{};if(s.page)page={...page,...s.page};sections=(s.sections||[]).map(normalize);draw();await syncPageFields();note('v'+r.data.version_number+' geladen als werkversie. Sla op om te bewaren.')}
 async function syncPageFields(){draw()}
 async function save(publish=false){
- if(!page)return;const now=new Date().toISOString();
+ if(!page)return;
+ const now=new Date().toISOString();
  const payload={title:$('title').value.trim()||'Zonder titel',slug:slug($('slug').value||$('title').value),status:publish?'published':($('status').value||'draft'),description:$('desc').value.trim(),seo_title:$('seoTitle').value.trim(),seo_description:$('seoDesc').value.trim(),settings:{...(page.settings||{}),builder_mode:'cms',editor_version:2,updated_in_builder_at:now}};
- let r=await db().from('hn_site_pages').update(payload).eq('id',page.id);if(r.error)return msg(r.error.message,true);
- await db().from('hn_site_sections').delete().eq('page_id',page.id);
- const rows=sections.map((s,i)=>({page_id:page.id,section_type:s.section_type||s.component_type,component_type:s.component_type||s.section_type,component_id:s.component_id,title:s.title||'',content:s.content||{},data:s.data||{},settings:s.settings||{},sort_order:i,is_visible:s.is_visible!==false}));
- if(rows.length){r=await db().from('hn_site_sections').insert(rows);if(r.error)return msg(r.error.message,true)}
- const vr=await db().from('hn_site_page_versions').select('version_number').eq('page_id',page.id).order('version_number',{ascending:false}).limit(1).maybeSingle();const next=(vr.data?.version_number||0)+1;
- await db().from('hn_site_page_versions').insert({page_id:page.id,version_number:next,snapshot:{page:{...page,...payload},sections},created_by:(await db().auth.getUser()).data.user?.id||null});
- await db().from('hn_admin_events').insert({action:publish?'publish_page':'save_page',entity_type:'hn_site_page',entity_id:page.id,route:routeFor({...page,...payload}),metadata:{version:next,section_count:sections.length}});
- page={...page,...payload};await loadVersions();draw();note(publish?'Pagina gepubliceerd.':'Concept opgeslagen.');
-}
-async function createPage(){const name=prompt('Naam van de nieuwe pagina');if(!name)return;const tr=await db().from('hn_page_templates').select('name,structure').eq('is_active',true).order('name');const templates=tr.data||[];let structure=[];if(templates.length){const choice=prompt('Template: '+templates.map((x,i)=>(i+1)+'. '+x.name).join(' | ')+'\\nVul nummer in of laat leeg voor leeg.','1');const t=templates[Number(choice)-1];if(t&&Array.isArray(t.structure?.sections))structure=t.structure.sections.map(normalize)}const s=slug(name);const r=await db().from('hn_site_pages').insert({title:name,slug:s,status:'draft',page_type:'content',settings:{builder_mode:'cms',editor_version:2}}).select('*').single();if(r.error)return msg(r.error.message,true);pages.unshift(r.data);page=r.data;sections=structure;drawPages();draw();note('Nieuwe pagina aangemaakt.')}
+ const sectionsPayload=sections.map((s,i)=>({section_type:s.section_type||s.component_type,component_type:s.component_type||s.section_type,component_id:s.component_id,title:s.title||'',content:s.content||{},data:s.data||{},settings:s.settings||{},sort_order:i,is_visible:s.is_visible!==false}));
+ const r=await db().rpc('hn_admin_save_page',{p_page_id:page.id,p_payload:payload,p_sections:sectionsPayload,p_publish:publish});
+ if(r.error)return msg(r.error.message,true);
+ page={...page,...payload};
+ await loadVersions();draw();
+ note(publish?'Pagina gepubliceerd.':'Concept opgeslagen.');
+}async function createPage(){const name=prompt('Naam van de nieuwe pagina');if(!name)return;const tr=await db().from('hn_page_templates').select('name,structure').eq('is_active',true).order('name');const templates=tr.data||[];let structure=[];if(templates.length){const choice=prompt('Template: '+templates.map((x,i)=>(i+1)+'. '+x.name).join(' | ')+'\\nVul nummer in of laat leeg voor leeg.','1');const t=templates[Number(choice)-1];if(t&&Array.isArray(t.structure?.sections))structure=t.structure.sections.map(normalize)}const s=slug(name);const r=await db().from('hn_site_pages').insert({title:name,slug:s,status:'draft',page_type:'content',settings:{builder_mode:'cms',editor_version:2}}).select('*').single();if(r.error)return msg(r.error.message,true);pages.unshift(r.data);page=r.data;sections=structure;drawPages();draw();note('Nieuwe pagina aangemaakt.')}
 function drawPages(){$('pages').innerHTML=pages.map(p=>'<button class="page '+(p.id===page?.id?'active':'')+'" data-id="'+p.id+'"><b>'+esc(p.title||'Zonder titel')+'</b><small>/'+esc(p.slug||'')+' · '+esc(p.status||'draft')+'</small></button>').join('');document.querySelectorAll('.page').forEach(b=>b.onclick=()=>pick(b.dataset.id))}
 async function pick(id){page=pages.find(p=>p.id===id);if(!page)return;const r=await db().from('hn_site_sections').select('*').eq('page_id',page.id).order('sort_order');sections=(r.data||[]).map(normalize);selected=-1;drawPages();draw();await loadVersions()}
 async function init(){

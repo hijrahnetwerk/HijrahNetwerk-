@@ -319,7 +319,7 @@ function render(){
  };
    const verification=x.verification_status||d.verification_status||'';
    const verificationLabel=verificationMap[verification]||'';
-   const ficheButton=fiche?'<a class="button primary" href="'+esc(ficheUrl(fiche,city,cat))+'">Snel bekijken</a>':'';
+   const ficheButton=fiche?'<a class="button primary" href="'+esc(safeHref(ficheUrl(fiche,city,cat)))+'">Snel bekijken</a>':'';
    const articleButton=article?'<a class="button secondary" href="/artikels/'+encodeURIComponent(publicSlug(article.slug||article.id))+'">Meer lezen</a>':'';
    const detailHref=fiche?ficheUrl(fiche,city,cat):'/artikels/'+encodeURIComponent(publicSlug(article?.slug||article?.id||x.id));
    const countryHref=x.country_id?'/navigatie?country='+encodeURIComponent(x.country_id):'/navigatie';
@@ -341,8 +341,8 @@ function render(){
     '<div class="meta">'+esc(location)+'</div>'+
     '<div class="actions">'+
     ficheButton+articleButton+
-    (d.website?'<a class="button secondary" target="_blank" rel="noopener" href="'+esc(d.website)+'">Website</a>':'')+
-    (d.maps_url?'<a class="button secondary" target="_blank" rel="noopener" href="'+esc(d.maps_url)+'">Route</a>':'')+
+    (d.website?'<a class="button secondary" target="_blank" rel="noopener" href="'+esc(safeHref(d.website))+'">Website</a>':'')+
+    (d.maps_url?'<a class="button secondary" target="_blank" rel="noopener" href="'+esc(safeHref(d.maps_url))+'">Route</a>':'')+
     '</div></article>';
  }).join('');
 }

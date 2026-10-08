@@ -44,7 +44,7 @@ footer{padding:30px 0;border-top:1px solid var(--line);color:var(--muted);font-s
 <footer><div class="wrap">HN Hulpcentrum · Informatie wordt per land en stad gekoppeld aan gecontroleerde bronnen.</div></footer>
 <script>
 let helpRows=[];
-const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));const safeHref=v=>window.hnSafeUrl?window.hnSafeUrl(v):'#';
 function renderCategories(){
  const grid=document.getElementById('helpGrid');
  const cats=helpRows.filter(x=>x.card_data?.hn_record_type==='category' && x.status==='published');
@@ -60,7 +60,7 @@ function showCat(id){
  const p=document.getElementById('panel');
  p.innerHTML='<h2>'+esc(cat.title)+'</h2><p>'+esc(cat.content||'Hulpinformatie die door HN aan deze categorie is gekoppeld.')+'</p><div class="results">'+(services.length?services.map(x=>{
    const c=x.card_data||{};
-   const links=(c.phone?'<div class="tag">📞 '+esc(c.phone)+'</div>':'')+(c.address?'<div class="tag">📍 '+esc(c.address)+'</div>':'')+(c.website?'<div><a class="tag" href="'+esc(c.website)+'" target="_blank" rel="noopener">Website</a></div>':'');
+   const links=(c.phone?'<div class="tag">📞 '+esc(c.phone)+'</div>':'')+(c.address?'<div class="tag">📍 '+esc(c.address)+'</div>':'')+(c.website?'<div><a class="tag" href="'+esc(safeHref(c.website))+'" target="_blank" rel="noopener">Website</a></div>':'');
    return '<div class="result"><b>'+esc(x.title)+'</b><small>'+esc(x.content||'')+'</small>'+links+'</div>';
  }).join(''):'<div class="result"><b>Nog geen hulpbronnen beschikbaar</b><small>HN kan hier per land en stad gecontroleerde hulpbronnen toevoegen.</small></div>')+'</div>';
  p.classList.add('show');p.scrollIntoView({behavior:'smooth',block:'center'});
