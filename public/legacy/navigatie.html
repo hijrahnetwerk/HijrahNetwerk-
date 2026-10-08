@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Hijrah Navigatie | Hijrah Netwerk</title>
+<meta name="description" content="Zoek in Hijrah Netwerk naar concrete informatie per land en stad. Vind fiches én artikelen over scholen, artsen, wijken, moskeeën, diensten en meer.">
+<script src="assets/config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-client.js"></script>
+<script src="auth.js"></script>
+<style>
+:root{--brown:#674C2E;--brown-dark:#674C2E;--orange:#DD842A;--gold:#C6A15B;--cream:#FFFFFF;--text:#674C2E;--muted:#756d63;--border:#674C2E;--white:#fff}
+*{box-sizing:border-box}
+body{margin:0;background:var(--cream);color:var(--text);font-family:Arial,sans-serif;line-height:1.5}
+a{text-decoration:none;color:inherit}
+.top{background:var(--brown);color:#fff}
+.nav{max-width:1200px;margin:auto;padding:16px 22px;display:flex;justify-content:space-between;align-items:center;gap:20px}
+.brand{font-weight:700;font-size:20px}
+.navlinks{display:flex;gap:8px;flex-wrap:wrap}
+.navlinks a{color:#fff;padding:8px 10px;border-radius:8px;font-size:14px}
+.navlinks a:hover{background:rgba(255,255,255,.12)}
+.wrap{max-width:1200px;margin:auto;padding:42px 22px 70px}
+.hero,.filters,.layout,.note{width:min(1120px,calc(100% - 80px));margin-left:auto;margin-right:auto}
+.hero{max-width:900px;margin-bottom:28px;width:min(1120px,calc(100% - 80px));padding:52px 0 35px}
+.search-hero-label{display:flex;align-items:center;gap:9px;margin-bottom:13px;color:var(--brown);font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+.search-hero-label span{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:9px;background:var(--brown);color:#fff;font-size:17px;letter-spacing:0}
+.hero-intro{max-width:720px}
+.hero-intro strong{color:var(--brown-dark)}
+.result-type{display:inline-block;margin-left:5px;padding:3px 7px;border-radius:999px;background:#f6eadb;color:var(--brown);font-size:10px;font-weight:800}
+.eyebrow{display:inline-block;background:#f3e5d4;color:var(--brown);font-size:12px;font-weight:700;padding:6px 10px;border-radius:20px;margin-bottom:12px}
+h1{font-size:36px;line-height:1.15;margin:0 0 12px;color:var(--brown-dark)}
+.hero p{color:var(--muted);font-size:16px;margin:0}
+.hero-search{margin-top:22px;position:relative}
+.hero-search input{font-size:16px;padding:15px 17px 15px 44px;border-radius:12px;box-shadow:0 4px 18px rgba(103,76,46,.07)}
+.hero-search-icon{position:absolute;left:15px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:18px;pointer-events:none}
+.quick-links{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.quick-link{font-size:12px;padding:6px 10px;border:1px solid var(--border);border-radius:20px;background:#fff;color:var(--brown)}
+.quick-link:hover{border-color:var(--orange);color:var(--orange)}
+.trust{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
+.trust-badge{font-size:11px;padding:5px 8px;border-radius:20px;background:#f6f1ea;color:var(--brown)}
+.filter-actions{display:flex;align-items:center;justify-content:space-between;gap:10px;grid-column:1/-1}
+.clear-filters{border:0;background:transparent;color:var(--orange);font-size:12px;font-weight:700;cursor:pointer;padding:5px}
+.result-context{font-size:12px;color:var(--muted)}
+.card-tags{margin-bottom:2px}
+.card-tag{display:inline-block;background:#FFFFFF;color:var(--brown);border-radius:20px;padding:5px 9px;font-size:11px;margin:0 5px 5px 0}
+.card-tag:hover{background:#f6eadb;color:var(--orange)}
+.source-status{font-size:11px;color:var(--muted);margin-top:9px}
+.source-status strong{color:var(--brown)}
+.card .actions .primary{font-weight:700}
+@media(max-width:950px){.filter-actions{grid-column:auto}}
+.filters{background:#fff;border:1px solid var(--border);border-radius:16px;padding:16px;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:10px;margin-bottom:28px;box-shadow:0 2px 10px rgba(103,76,46,.05)}
+input,select,textarea{font:inherit;border:1px solid var(--border);border-radius:9px;padding:11px;background:#fff;color:var(--text);width:100%}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--orange);box-shadow:0 0 0 3px rgba(223,132,44,.12)}
+.layout{display:grid;grid-template-columns:220px 1fr;gap:22px;align-items:start}
+.side{background:#fff;border:1px solid var(--border);border-radius:14px;padding:16px;position:sticky;top:20px}
+.side h3{margin:0 0 12px;font-size:15px;color:var(--brown-dark)}
+.side button{display:block;width:100%;text-align:left;border:0;background:transparent;padding:9px 10px;border-radius:8px;cursor:pointer;color:var(--muted)}
+.side button:hover,.side button.active{background:#f6eadb;color:var(--brown-dark);font-weight:700}
+.results-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px}
+.results-head strong{color:var(--brown-dark)}
+.submit-link{font-size:13px;color:var(--orange);font-weight:700}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.card{background:#fff;border:1px solid var(--border);border-radius:15px;padding:18px;display:flex;flex-direction:column;min-height:270px}
+.card:hover{box-shadow:0 8px 24px rgba(103,76,46,.08)}
+.badge{display:inline-block;background:#FFFFFF;color:var(--brown);border-radius:20px;padding:5px 9px;font-size:11px;margin:0 5px 5px 0}
+.card h2{font-size:19px;line-height:1.3;margin:10px 0 7px;color:var(--brown-dark)}
+.card-title-link{color:inherit;text-decoration:none}.card-title-link:hover{text-decoration:underline;text-decoration-color:var(--orange)}
+.summary{color:var(--muted);font-size:14px;margin:0 0 10px}
+.info-list{display:grid;gap:6px;font-size:13px;margin-top:3px}
+.info-list div{color:var(--text)}
+.info-list span{color:var(--muted)}
+.warning{background:#fff6e8;border:1px solid #f0d8ad;border-radius:9px;padding:9px;font-size:12px;margin-top:10px}
+.meta{font-size:12px;color:var(--muted);margin-top:auto;padding-top:14px}
+.actions{margin-top:12px;display:flex;gap:7px;flex-wrap:wrap}
+.button{border:0;border-radius:8px;padding:8px 11px;text-decoration:none;cursor:pointer;font-size:13px}
+.primary{background:var(--orange);color:#fff}
+.secondary{background:#FFFFFF;color:var(--brown)}
+.empty{padding:35px;text-align:center;color:var(--muted);background:#fff;border:1px solid var(--border);border-radius:12px}
+.note{font-size:12px;color:var(--muted);margin-top:20px}
+@media(max-width:950px){.cards{grid-template-columns:repeat(2,1fr)}.filters{grid-template-columns:1fr 1fr}.layout{grid-template-columns:1fr}.side{position:static}}
+@media(max-width:600px){.cards{grid-template-columns:1fr}.filters{grid-template-columns:1fr}.nav{display:block}.navlinks{margin-top:10px}.wrap{padding:30px 20px 50px}.hero,.filters,.layout,.note{width:calc(100% - 40px)}.hero{padding:45px 0 30px}h1{font-size:30px}}
+
+.mobile-menu-toggle{display:none;align-items:center;justify-content:center;flex-direction:column;gap:4px;width:42px;height:42px;border:1px solid var(--line,#674C2E);border-radius:10px;background:#fff;cursor:pointer}
+.mobile-menu-toggle span{display:block;width:18px;height:2px;border-radius:2px;background:var(--brown,#674C2E)}
+.desktop-only{display:flex}
+.mobile-nav{position:fixed;inset:0;z-index:999;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .2s ease,visibility .2s ease}
+.mobile-nav.open{opacity:1;visibility:visible;pointer-events:auto}
+.mobile-nav-backdrop{position:absolute;inset:0;background:rgba(43,36,28,.4)}
+.mobile-nav-panel{position:absolute;right:0;top:0;height:100%;width:min(88vw,360px);background:#fff;padding:20px;box-shadow:-10px 0 30px rgba(0,0,0,.12);display:flex;flex-direction:column;gap:5px;transform:translateX(100%);transition:transform .25s ease}
+.mobile-nav.open .mobile-nav-panel{transform:translateX(0)}
+.mobile-nav-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.mobile-nav-close{width:38px;height:38px;border:1px solid var(--line,#674C2E);background:#fff;border-radius:50%;font-size:24px;line-height:1;cursor:pointer;color:var(--brown-dark,#674C2E)}
+.mobile-nav-panel>a{padding:13px 11px;border-radius:10px;color:var(--brown-dark,#674C2E);font-weight:600}
+.mobile-nav-panel>a:hover{background:#f5efe8}
+.mobile-nav-divider{height:1px;background:var(--line,#674C2E);margin:8px 0}
+.mobile-nav-panel .mobile-nav-primary{background:var(--orange,#DD842A);color:#fff;text-align:center}
+@media(max-width:680px){
+  .desktop-only{display:none!important}
+  .mobile-menu-toggle{display:flex}
+}
+</style>
+</head>
+<body>
+<link rel="stylesheet" href="assets/public-nav.css">
+<script src="assets/public-nav.js"></script>
+
+<section class="hero">
+<div class="search-hero-label"><span>⌕</span>De zoekpagina van Hijrah Netwerk</div>
+<span class="eyebrow">Hijrah Navigatie</span>
+<h1>Zoek in HN.</h1>
+<p class="hero-intro">Vind concrete informatie per land en stad. Zoek een arts, school, moskee, wijk, winkel of andere dienst. <strong>Artikelen en fiches vind je hier samen.</strong></p>
+<div class="hero-search">
+<span class="hero-search-icon">⌕</span>
+<input id="heroQ" placeholder="Bijvoorbeeld: huisarts in Tanger, school in Cairo..." aria-label="Zoek in Hijrah Navigatie">
+</div>
+<div class="quick-links">
+<a class="quick-link" href="/smart-search">Zoek uitgebreider</a>
+<a class="quick-link" data-category-name="zorg" href="/navigatie">Zorg</a>
+<a class="quick-link" data-category-name="onderwijs" href="/navigatie">Onderwijs</a>
+<a class="quick-link" data-category-name="wonen" href="/navigatie">Wonen</a>
+<a class="quick-link" data-category-name="moslimleven" href="/navigatie">Moslimleven</a>
+</div>
+<div class="trust">
+<span class="trust-badge">Fiches + artikelen</span>
+<span class="trust-badge">Officiële bronnen waar beschikbaar</span>
+<span class="trust-badge">Ervaringen apart herkenbaar</span>
+<span class="trust-badge">HN controleert inzendingen</span>
+</div>
+</section>
+
+<div class="filters">
+<input id="q" placeholder="Zoek op naam, onderwerp, wijk of plaats...">
+<select id="country"><option value="">Alle landen</option></select>
+<select id="city"><option value="">Alle steden</option></select>
+<select id="category"><option value="">Alle categorieën</option></select>
+<div class="filter-actions">
+<span id="resultContext" class="result-context">Alle informatie</span>
+<button id="clearFilters" class="clear-filters" type="button">Filters wissen</button>
+</div>
+</div>
+
+<div class="layout">
+<aside class="side">
+<h3>Categorieën</h3>
+<div id="categoryButtons"><button class="active" data-cat="">Alles</button></div>
+</aside>
+
+<section>
+<div class="results-head">
+<strong id="resultCount">Laden...</strong>
+<a class="submit-link" href="/bijdragen">+ Informatie toevoegen</a>
+</div>
+<div id="cards" class="cards"><div class="empty">De navigatie wordt geladen...</div></div>
+<p class="note">Fiches geven de belangrijkste informatie kort weer. Artikelen geven meer achtergrond en uitleg. Ervaringen en aanbevelingen worden als zodanig herkenbaar gemaakt.</p>
+</section>
+</div>
+</main>
+
+<script>
+const db=()=>window.hijrahSupabase;
+const esc=v=>v==null?'':String(v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+let rows=[],countries=[],cities=[],categories=[];
+
+function data(x){return x&&x.card_data&&typeof x.card_data==='object'?x.card_data:{}}
+function fill(id,items,label){
+ const e=document.getElementById(id);
+ e.innerHTML='<option value="">'+label+'</option>'+items.map(x=>'<option value="'+x.id+'">'+esc(x.name)+'</option>').join('');
+}
+function fillCityOptions(){
+ const countryId=document.getElementById('country').value;
+ const currentCity=document.getElementById('city').value;
+ const list=countryId?cities.filter(x=>String(x.country_id)===String(countryId)):cities;
+ const e=document.getElementById('city');
+ e.innerHTML='<option value="">Alle steden</option>'+list.map(x=>'<option value="'+x.id+'">'+esc(x.name)+'</option>').join('');
+ if(list.some(x=>String(x.id)===String(currentCity))) e.value=currentCity;
+}
+function updateContext(){
+ const parts=[];
+ const country=document.getElementById('country').selectedOptions[0]?.text;
+ const city=document.getElementById('city').selectedOptions[0]?.text;
+ const category=document.getElementById('category').selectedOptions[0]?.text;
+ if(country&&country!=='Alle landen') parts.push(country);
+ if(city&&city!=='Alle steden') parts.push(city);
+ if(category&&category!=='Alle categorieën') parts.push(category);
+ document.getElementById('resultContext').textContent=parts.length?parts.join(' · '):'Alle informatie';
+}
+function normalizeText(value){return String(value||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim()}
+function categoryForPreset(value){
+ if(!value) return '';
+ const exact=categories.find(x=>String(x.id)===String(value));
+ if(exact) return exact.id;
+ const wanted=normalizeText(value).replace(/[^a-z0-9]+/g,'');
+ const aliases={
+   zorg:['zorg','medisch','gezondheid'],
+   onderwijs:['onderwijs','school','scholen'],
+   wonen:['wonen','huisvesting'],
+   moslimleven:['moslimleven','islam','moslim']
+ };
+ const candidates=aliases[wanted]||[wanted];
+ const found=categories.find(x=>candidates.includes(normalizeText(x.name).replace(/[^a-z0-9]+/g,'')));
+ return found?found.id:'';
+}
+function updateQuickLinks(){
+ document.querySelectorAll('.quick-link[data-category-name]').forEach(link=>{
+   const cat=categoryForPreset(link.dataset.categoryName);
+   link.href=cat?'/navigatie?category='+encodeURIComponent(cat):'/navigatie';
+ });
+}
+function syncCategorySidebar(){
+ const selected=document.getElementById('category').value;
+ document.querySelectorAll('#categoryButtons button').forEach(b=>b.classList.toggle('active',String(b.dataset.cat)===String(selected)));
+}
+function catButtons(){
+ const box=document.getElementById('categoryButtons');
+ box.innerHTML='<button class="active" data-cat="">Alles</button>'+categories.map(x=>'<button data-cat="'+x.id+'">'+esc(x.name)+'</button>').join('');
+ box.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{
+   document.getElementById('category').value=b.dataset.cat;
+   box.querySelectorAll('button').forEach(x=>x.classList.remove('active'));
+   b.classList.add('active');
+   render();
+ }));
+}
+function slugify(value){return String(value||'').toLowerCase().trim().normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').replace(/&/g,'-en-').replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');}
+function publicSlug(value){return String(value||'').replace(/-([0-9a-f]{8})-([0-9a-f]{4})-([0-9a-f]{4})-([0-9a-f]{4})-([0-9a-f]{12})$/i,'');}
+function ficheUrl(topic,city,category){const cityName=city||'';const categoryName=category||'';const slug=publicSlug(topic.slug||topic.id);const parts=['/locaties',slugify(cityName)];if(categoryName)parts.push(slugify(categoryName));parts.push(slugify(slug));return parts.join('/');}
+function syncSearchUrl(){
+ const p=new URLSearchParams();
+ const q=document.getElementById('q').value.trim();
+ const co=document.getElementById('country').value;
+ const ci=document.getElementById('city').value;
+ const ca=document.getElementById('category').value;
+ if(q)p.set('q',q);
+ if(co)p.set('country',co);
+ if(ci)p.set('city',ci);
+ if(ca)p.set('category',ca);
+ const next='/navigatie'+(p.toString()?'?'+p.toString():'');
+ if(location.pathname+location.search!==next)history.replaceState({},'',next);
+}
+function render(){
+ const q=normalizeText(document.getElementById('q').value);
+ const tokens=q.split(/\s+/).filter(Boolean);
+ const co=document.getElementById('country').value;
+ const ci=document.getElementById('city').value;
+ const ca=document.getElementById('category').value;
+ const filtered=rows.map(x=>{
+   const d=data(x);
+   const fields={
+     title:normalizeText(x.title),
+     city:normalizeText(cities.find(y=>y.id===x.city_id)?.name),
+     category:normalizeText(categories.find(y=>y.id===x.category_id)?.name),
+     summary:normalizeText(x.summary||d.short_description),
+     local:normalizeText([d.neighborhood,d.service_type,d.address,d.languages,d.phone].join(' ')),
+     content:normalizeText([x.content,x.information_type,d.warning].join(' '))
+   };
+   const searchable=Object.values(fields).join(' ');
+   if(tokens.length && !tokens.every(token=>searchable.includes(token)))return null;
+   if(co&&x.country_id!==co)return null;
+   if(ci&&x.city_id!==ci)return null;
+   if(ca&&x.category_id!==ca)return null;
+   let score=0;
+   tokens.forEach(token=>{
+     if(fields.title.includes(token))score+=12;
+     if(fields.city.includes(token))score+=8;
+     if(fields.category.includes(token))score+=7;
+     if(fields.local.includes(token))score+=6;
+     if(fields.summary.includes(token))score+=4;
+     if(fields.content.includes(token))score+=1;
+   });
+   if(x.visibility==='fiche_only')score+=tokens.length?2:1;
+   return {x,score};
+ }).filter(Boolean).sort((a,b)=>b.score-a.score).map(item=>item.x);
+ syncSearchUrl();
+ document.getElementById('resultCount').textContent=filtered.length+' resultaat'+(filtered.length===1?'':'en');
+ const box=document.getElementById('cards');
+ if(!filtered.length){box.innerHTML='<div class="empty">Geen fiches gevonden. Je kunt ontbrekende informatie zelf insturen.</div>';return}
+ const ficheRows=rows.filter(item=>item.visibility==='fiche_only');
+ const articleRows=rows.filter(item=>item.visibility!=='fiche_only');
+ 
+ const findFicheForArticle=article=>ficheRows.find(f=>{
+   const fd=data(f);
+   return (fd.article_slug&&article.slug&&fd.article_slug===article.slug) ||
+          (fd.article_id&&fd.article_id===article.id) ||
+          (fd.practice_name&&article.title&&normalizeText(fd.practice_name)===normalizeText(article.title));
+ })||null;
+ const findArticleForFiche=fiche=>{
+   const fd=data(fiche);
+   return articleRows.find(a=>
+     (fd.article_slug&&a.slug&&fd.article_slug===a.slug) ||
+     (fd.article_id&&a.id===fd.article_id)
+   )||null;
+ };
+ box.innerHTML=filtered.map(x=>{
+   const d=data(x);
+   const country=countries.find(y=>y.id===x.country_id)?.name||'';
+   const city=cities.find(y=>y.id===x.city_id)?.name||'';
+   const cat=categories.find(y=>y.id===x.category_id)?.name||'';
+   const location=[city,country].filter(Boolean).join(', ');
+   const isFiche=x.visibility==='fiche_only';
+   const resultType=isFiche?'Fiche':'Artikel';
+   const fiche=isFiche?x:findFicheForArticle(x);
+   const article=isFiche?findArticleForFiche(x):x;
+   const info=[
+     d.service_type?'<div><span>Type:</span> '+esc(d.service_type)+'</div>':'',
+     d.address?'<div><span>Adres:</span> '+esc(d.address)+'</div>':'',
+     d.neighborhood?'<div><span>Wijk:</span> '+esc(d.neighborhood)+'</div>':'',
+     d.languages?'<div><span>Talen:</span> '+esc(Array.isArray(d.languages)?d.languages.map(x=>typeof x==='string'?x:(x.language||x.name||'')).filter(Boolean).join(', '):d.languages)+'</div>':'',
+     d.phone?'<div><span>Telefoon:</span> '+esc(d.phone)+'</div>':''
+   ].join('');
+   const verificationMap={
+   verified:'Bron bevestigd',
+   official:'Officieel bevestigd',
+   multiple_sources:'Meerdere bronnen',
+   community_confirmed:'Community bevestigd',
+   community_experience:'Community-ervaring',
+   unverified:'Niet bevestigd',
+   needs_review:'Controle nodig',
+   outdated:'Verouderd'
+ };
+   const verification=x.verification_status||d.verification_status||'';
+   const verificationLabel=verificationMap[verification]||'';
+   const ficheButton=fiche?'<a class="button primary" href="'+esc(safeHref(ficheUrl(fiche,city,cat)))+'">Snel bekijken</a>':'';
+   const articleButton=article?'<a class="button secondary" href="/artikels/'+encodeURIComponent(publicSlug(article.slug||article.id))+'">Meer lezen</a>':'';
+   const detailHref=fiche?ficheUrl(fiche,city,cat):'/artikels/'+encodeURIComponent(publicSlug(article?.slug||article?.id||x.id));
+   const countryHref=x.country_id?'/navigatie?country='+encodeURIComponent(x.country_id):'/navigatie';
+   const cityHref=x.city_id?'/navigatie?city='+encodeURIComponent(x.city_id):'/navigatie';
+   const categoryHref=x.category_id?'/navigatie?category='+encodeURIComponent(x.category_id):'/navigatie';
+   return '<article class="card">'+
+    '<div class="card-tags">'+
+    (cat?'<a class="card-tag" href="'+categoryHref+'">'+esc(cat)+'</a>':'')+
+    (city?'<a class="card-tag" href="'+cityHref+'">'+esc(city)+'</a>':'')+
+    (country?'<a class="card-tag" href="'+countryHref+'">'+esc(country)+'</a>':'')+
+    (x.information_type?'<span class="card-tag">'+esc(x.information_type)+'</span>':'')+
+    '<span class="result-type">'+resultType+'</span>'+
+    '</div>'+
+    '<h2><a class="card-title-link" href="'+detailHref+'">'+esc(x.title||'Zonder titel')+'</a></h2>'+
+    '<p class="summary">'+esc(x.summary||d.short_description||'Praktische informatie voor emigranten.')+'</p>'+
+    (info?'<div class="info-list">'+info+'</div>':'')+
+    (verificationLabel?'<div class="source-status">✓ <strong>'+esc(verificationLabel)+'</strong></div>':'')+
+    (d.warning?'<div class="warning">⚠️ '+esc(d.warning)+'</div>':'')+
+    '<div class="meta">'+esc(location)+'</div>'+
+    '<div class="actions">'+
+    ficheButton+articleButton+
+    (d.website?'<a class="button secondary" target="_blank" rel="noopener" href="'+esc(safeHref(d.website))+'">Website</a>':'')+
+    (d.maps_url?'<a class="button secondary" target="_blank" rel="noopener" href="'+esc(safeHref(d.maps_url))+'">Route</a>':'')+
+    '</div></article>';
+ }).join('');
+}
+async function waitForDb(){
+  for(let i=0;i<60;i++){
+    if(window.hijrahSupabase && typeof window.hijrahSupabase.from==='function'){
+      return window.hijrahSupabase;
+    }
+    await new Promise(resolve=>setTimeout(resolve,100));
+  }
+  throw new Error('Supabase client is niet beschikbaar.');
+}
+
+async function init(){
+  const database=await waitForDb();
+  const coreTopics = 'id,title,slug,summary,content,information_type,country_id,city_id,category_id,published,visibility,card_data,updated_at';
+
+  let topicResult = await database
+    .from('topic')
+    .select(coreTopics)
+    .eq('published',true)
+    .order('updated_at',{ascending:false});
+
+  if(topicResult.error){
+    console.error('HN Navigatie topics:',topicResult.error);
+    document.getElementById('cards').innerHTML =
+      '<div class="empty"><strong>De navigatie kon momenteel niet worden geladen.</strong><br><br>Probeer de pagina opnieuw te openen. De fout zit bij het laden van de fiches, niet bij je mobiele navigatie.</div>';
+    document.getElementById('resultCount').textContent='Tijdelijk niet beschikbaar';
+    return;
+  }
+
+  rows=topicResult.data||[];
+
+  const results=await Promise.allSettled([
+    database.from('countries').select('id,name').order('name'),
+    database.from('cities').select('id,name,country_id').order('name'),
+    database.from('categories').select('id,name').order('name')
+  ]);
+
+  countries=results[0].status==='fulfilled' && !results[0].value.error ? (results[0].value.data||[]) : [];
+  cities=results[1].status==='fulfilled' && !results[1].value.error ? (results[1].value.data||[]) : [];
+  categories=results[2].status==='fulfilled' && !results[2].value.error ? (results[2].value.data||[]) : [];
+
+  fill('country',countries,'Alle landen');
+  const params=new URLSearchParams(location.search);
+  const presetQ=params.get('q');
+  const presetCountry=params.get('country');
+  const presetCity=params.get('city');
+  const presetCategory=params.get('category');
+  if(presetQ){
+    document.getElementById('q').value=presetQ;
+    document.getElementById('heroQ').value=presetQ;
+  }
+  if(presetCountry) document.getElementById('country').value=presetCountry;
+  fillCityOptions();
+  if(presetCity) document.getElementById('city').value=presetCity;
+  fill('category',categories,'Alle categorieën');
+  if(presetCategory) document.getElementById('category').value=presetCategory;
+  catButtons();
+  syncCategorySidebar();
+  render();
+}
+document.getElementById('heroQ').addEventListener('input',e=>{
+ document.getElementById('q').value=e.target.value;
+ render();
+});
+document.getElementById('q').addEventListener('input',e=>{
+ document.getElementById('heroQ').value=e.target.value;
+ render();
+});
+document.getElementById('country').addEventListener('change',()=>{
+ fillCityOptions();
+ document.getElementById('city').value='';
+ render();
+});
+document.getElementById('city').addEventListener('change',render);
+document.getElementById('category').addEventListener('change',()=>{
+ syncCategorySidebar();
+ render();
+});
+document.getElementById('clearFilters').addEventListener('click',()=>{
+ document.getElementById('q').value='';
+ document.getElementById('heroQ').value='';
+ document.getElementById('country').value='';
+ fillCityOptions();
+ document.getElementById('category').value='';
+ document.querySelectorAll('#categoryButtons button').forEach(x=>x.classList.remove('active'));
+ document.querySelector('#categoryButtons button[data-cat=""]')?.classList.add('active');
+ render();
+});
+init().catch(error=>{
+  console.error('HN Navigatie:',error);
+  document.getElementById('cards').innerHTML =
+    '<div class="empty"><strong>De navigatie kon momenteel niet worden geladen.</strong><br><br><button class="button primary" type="button" onclick="location.reload()">Pagina vernieuwen</button></div>';
+  document.getElementById('resultCount').textContent='Tijdelijk niet beschikbaar';
+});
+</script>
+<script src="assets/hn-save-personal.js"></script>
+</body>
+</html>
