@@ -8,8 +8,8 @@
     "build": "npm run prepare:legacy && next build",
     "start": "next start",
     "cf:build": "npm run prepare:legacy && opennextjs-cloudflare build",
-    "cf:preview": "opennextjs-cloudflare build && wrangler dev",
-    "cf:deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
+    "cf:preview": "npm run prepare:legacy && opennextjs-cloudflare build && wrangler dev",
+    "cf:deploy": "npm run prepare:legacy && opennextjs-cloudflare build && opennextjs-cloudflare deploy",
     "cf:typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",
     "prepare:legacy": "node scripts/prepare-legacy.mjs",
     "predev": "npm run prepare:legacy"
