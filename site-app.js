@@ -70,7 +70,7 @@
        */
       const result = await db
         .from('countries')
-        .select('*')
+        .select('id,name,slug,code,description,is_active')
         .order('name');
 
       if (result.error) {
@@ -215,7 +215,7 @@
     try {
       const result = await db
         .from('cities')
-        .select('*')
+        .select('id,name,slug,country_id,description,is_active')
         .order('name');
 
       if (result.error) {
@@ -235,7 +235,7 @@
     try {
       const result = await db
         .from('categories')
-        .select('*')
+        .select('id,name,slug,description,is_active')
         .order('name');
 
       if (result.error) {
