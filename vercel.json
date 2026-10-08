@@ -57,6 +57,16 @@
       "permanent": true
     },
     {
+      "source": "/admin-componenten.html",
+      "destination": "/admin-componenten",
+      "permanent": true
+    },
+    {
+      "source": "/profiel.html",
+      "destination": "/profiel",
+      "permanent": true
+    },
+    {
       "source": "/vergelijken.html",
       "destination": "/vergelijken",
       "permanent": true
@@ -252,6 +262,14 @@
     {
       "source": "/admin-beloningen",
       "destination": "/admin-beloningen.html"
+    },
+    {
+      "source": "/admin-componenten",
+      "destination": "/admin-componenten.html"
+    },
+    {
+      "source": "/profiel",
+      "destination": "/profiel.html"
     },
     {
       "source": "/vergelijken",
