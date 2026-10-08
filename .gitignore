@@ -8,6 +8,12 @@ npm-debug.log*
 .DS_Store
 Thumbs.db
 
+# Next.js / Cloudflare generated artifacts
+.next/
+.open-next/
+.wrangler/
+cloudflare-env.d.ts
+
 # Generated local/build artifacts
 coverage/
 dist/
