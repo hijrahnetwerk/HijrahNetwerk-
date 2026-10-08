@@ -1,7 +1,5 @@
 import type { NextConfig } from "next";
 
-const legacy = (file: string) => ({ source: file, destination: `/legacy/${file.replace(/^\//, "")}` });
-
 const staticRoutes = [
   "community", "landen", "navigatie", "kennisbank", "smart-search", "dashboard",
   "bijdragen", "login", "register", "admin", "admin-beloningen",
