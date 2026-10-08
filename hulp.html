@@ -68,7 +68,7 @@ function showCat(id){
 async function loadHelp(){
  const db=window.hijrahSupabase;
  if(!db)return;
- const r=await db.from('topic').select('*').eq('source_type','hn_help').eq('status','published').order('created_at',{ascending:true});
+ const r=await db.from('topic').select('id,title,slug,summary,content,status,source_type,city_id,country_id,category_id,card_data,updated_at').eq('source_type','hn_help').eq('status','published').order('created_at',{ascending:true});
  if(r.error){console.warn('HN Hulpcentrum:',r.error);return}
  helpRows=r.data||[];
  renderCategories();
