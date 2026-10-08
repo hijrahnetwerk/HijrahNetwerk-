@@ -18,3 +18,6 @@ build/
 .vscode/*
 !.vscode/extensions.json
 .idea/
+
+# Generated production config; never commit runtime Supabase config
+assets/config.js
