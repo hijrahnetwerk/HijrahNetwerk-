@@ -58,8 +58,14 @@ for (const file of htmlFiles) {
 
   html = html.replace(/(href|src)=(['"])assets\//g, '$1=$2/assets/');
   for (const scriptName of ['supabase-client', 'auth', 'site-app']) {
-    const scriptPattern = new RegExp('<script\\\\s+src=["\\\\'](?:\\\\./)?' + scriptName + '\\\\.js["\\\\']>\\\\<\\\\/script>');
-    html = html.replace(scriptPattern, '<script src="/' + scriptName + '.js"><\\/script>');
+    const scriptTags = [
+      '<script src="' + scriptName + '.js"></script>',
+      '<script src="./' + scriptName + '.js"></script>',
+      '<script src="/' + scriptName + '.js"></script>'
+    ];
+    for (const tag of scriptTags) {
+      html = html.replace(tag, '<script src="/' + scriptName + '.js"></script>');
+    }
   }
   html = html.replace(/assets\/public-nav\.(css|js)(?:\?[^"\']*)?/g, 'assets/public-nav.$1?v=20261007');
   html = html.replace(/<script src="\/assets\/private-preview\.js"><\/script>\s*/g, '');
