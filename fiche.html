@@ -515,7 +515,7 @@ async function renderFiche(){
   const experienceUserIds=[...new Set(exps.map(e=>e?.submitted_by||e?.user_id).filter(Boolean))];
   const experienceProfiles={};
   if(experienceUserIds.length){
-    const ep=await db().from('profiles').select('id,display_name,first_name,last_name,application_status,profile_visibility,show_contributions,show_status,hn_status').in('id',experienceUserIds).eq('application_status','approved').eq('profile_visibility',true).eq('show_contributions',true);
+    const ep=await db().rpc('hn_public_profiles',{p_ids:experienceUserIds});
     (ep.data||[]).forEach(p=>experienceProfiles[p.id]=p);
   }
   const experienceStatusSlugs=[...new Set(Object.values(experienceProfiles).map(p=>p.hn_status).filter(Boolean))];
