@@ -112,10 +112,10 @@
     inset:0;
     pointer-events:none;
     background-image:
-      #674C2E 1px,transparent 1px),
-      #674C2E 1px,transparent 1px);
+      linear-gradient(rgba(103,76,46,.08) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(103,76,46,.08) 1px,transparent 1px);
     background-size:44px 44px;
-    mask-image:#674C2E,transparent 88%);
+    mask-image:linear-gradient(to bottom,rgba(0,0,0,.9),transparent 88%);
   }
 
   .map-layout{
@@ -875,10 +875,10 @@
 
     const [c,ci]=await Promise.all([
       db().from('countries')
-        .select('*')
+        .select('id,name,slug,code,description,is_active')
         .order('name'),
       db().from('cities')
-        .select('*')
+        .select('id,name,slug,country_id,description,is_active')
         .order('name')
     ]);
 
