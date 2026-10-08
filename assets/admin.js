@@ -32,12 +32,12 @@ window.showPage=function(p,remember=true){
   document.querySelectorAll('.nav-button').forEach(x=>x.classList.remove('active'));
   page.classList.add('active');
   const nav=document.querySelector('.nav-button[data-page="'+p+'"]'); if(nav)nav.classList.add('active');
-  const titles={overview:'Overzicht',platform:"Platformpagina's",countries:'Landen',cities:'Steden',categories:'Categorieën',subcategories:'Subcategorieën',topics:'Kennisbank',reviewers:'Reviewers',users:'Gebruikers',submissions:'Inzendingen',sync:'Sync Queue'};
+  const titles={overview:'Overzicht',platform:"Platformpagina's",countries:'Landen',cities:'Steden',categories:'Categorieën',subcategories:'Subcategorieën',topics:'Kennisbank',reviewers:'Reviewers',users:'Gebruikers',submissions:'Inzendingen',content:'Contentbeheer',sync:'Sync Queue'};
   if($('pageTitle'))$('pageTitle').textContent=titles[p]||'Admin';
   if(remember){
     try{localStorage.setItem('hn_admin_page',p);history.replaceState(null,'','#'+p)}catch(e){}
   }
-  const loaders={overview:loadOverview,countries:loadCountries,platform:()=>{},categories:loadCategories,subcategories:loadSubcategories,topics:loadTopics,reviewers:loadReviewers,users:loadUsers,submissions:loadSubmissions,sync:loadSync};
+  const loaders={overview:loadOverview,countries:loadCountries,platform:()=>{},categories:loadCategories,subcategories:loadSubcategories,topics:loadTopics,reviewers:loadReviewers,users:loadUsers,submissions:loadSubmissions,content:loadContentbeheer,sync:loadSync};
   if(loaders[p])safe(titles[p]||'Pagina',loaders[p]);
 };
 
@@ -414,6 +414,59 @@ window.approveSubmission=async id=>{const s=currentSubmissionReview?.id===id?cur
 
 window.rejectSubmission=async id=>{const r=await db().from('submissions').update({status:'rejected',reviewed_at:new Date().toISOString(),updated_at:new Date().toISOString()}).eq('id',id);if(r.error)return msg(r.error.message,'error');await loadSubmissions();msg('Inzending afgewezen.')};
 $('refreshSubmissions')?.addEventListener('click',loadSubmissions);
+
+async function loadContentbeheer(){
+  const topicsR=await db().from('topic').select('id,title,slug').order('title');
+  if(topicsR.error)throw topicsR.error;
+  const topics=topicsR.data||[];
+  const topicName=id=>topics.find(x=>x.id===id)?.title||id||'Onbekend topic';
+  ['contentRelTopic','contentRelRelated','contentTermTopic'].forEach(id=>{
+    const el=$(id);if(!el)return;
+    const old=el.value;
+    el.innerHTML='<option value="">Kies topic...</option>'+topics.map(x=>'<option value="'+esc(x.id)+'">'+esc(x.title||x.slug||x.id)+'</option>').join('');
+    if(old)el.value=old;
+  });
+
+  const [rel,terms,claims,proposals]=await Promise.all([
+    db().from('topic_relationships').select('id,topic_id,related_topic_id,relationship_type,created_at').order('created_at',{ascending:false}),
+    db().from('topic_search_terms').select('id,topic_id,term,language,term_type,created_at').order('created_at',{ascending:false}),
+    db().from('hn_fiche_claims').select('id,topic_id,name,role,email,phone,message,status,created_at').order('created_at',{ascending:false}).limit(100),
+    db().from('hn_fiche_proposals').select('id,topic_id,proposed_card_data,sources,notes,status,generated_at').order('generated_at',{ascending:false}).limit(100)
+  ]);
+  if(rel.error)throw rel.error;if(terms.error)throw terms.error;if(claims.error)throw claims.error;if(proposals.error)throw proposals.error;
+
+  const rt=$('contentRelationsTable');
+  if(rt)rt.innerHTML=(rel.data||[]).length?(rel.data||[]).map(x=>'<tr><td>'+esc(topicName(x.topic_id))+'</td><td>'+esc(x.relationship_type)+'</td><td>'+esc(topicName(x.related_topic_id))+'</td><td><button class="button-danger" type="button" onclick="deleteContentRelation(\''+x.id+'\')">Verwijderen</button></td></tr>').join(''):'<tr><td colspan="4" class="empty">Nog geen relaties.</td></tr>';
+
+  const tt=$('contentTermsTable');
+  if(tt)tt.innerHTML=(terms.data||[]).length?(terms.data||[]).map(x=>'<tr><td>'+esc(topicName(x.topic_id))+'</td><td>'+esc(x.term)+'</td><td>'+esc(x.language)+'</td><td>'+esc(x.term_type)+'</td><td><button class="button-danger" type="button" onclick="deleteContentTerm(\''+x.id+'\')">Verwijderen</button></td></tr>').join(''):'<tr><td colspan="5" class="empty">Nog geen extra zoektermen.</td></tr>';
+
+  const ct=$('contentClaimsTable');
+  if(ct)ct.innerHTML=(claims.data||[]).length?(claims.data||[]).map(x=>'<tr><td>'+esc(topicName(x.topic_id))+'</td><td>'+esc(x.name)+'</td><td>'+esc(x.email)+(x.phone?' · '+esc(x.phone):'')+'</td><td><select id="claim-status-'+esc(x.id)+'"><option value="pending"'+(x.status==='pending'?' selected':'')+'>In behandeling</option><option value="reviewing"'+(x.status==='reviewing'?' selected':'')+'>In controle</option><option value="approved"'+(x.status==='approved'?' selected':'')+'>Goedgekeurd</option><option value="rejected"'+(x.status==='rejected'?' selected':'')+'>Afgewezen</option></select></td><td>'+esc(new Date(x.created_at).toLocaleString('nl-NL'))+'</td><td><button class="button button-primary" type="button" onclick="saveContentClaim(\''+x.id+'\')">Opslaan</button></td></tr>').join(''):'<tr><td colspan="6" class="empty">Geen ficheclaims.</td></tr>';
+
+  const pt=$('contentProposalsTable');
+  if(pt)pt.innerHTML=(proposals.data||[]).length?(proposals.data||[]).map(x=>{
+    const preview=Object.entries(x.proposed_card_data||{}).filter(([,v])=>v!==null&&v!==''&&v!==false).slice(0,4).map(([k,v])=>k.replaceAll('_',' ')+': '+(typeof v==='object'?JSON.stringify(v):v)).join(' · ');
+    return '<tr><td>'+esc(topicName(x.topic_id))+'</td><td>'+esc(preview||'Voorstel')+'</td><td><select id="proposal-status-'+esc(x.id)+'"><option value="proposed"'+(x.status==='proposed'?' selected':'')+'>Voorgesteld</option><option value="reviewing"'+(x.status==='reviewing'?' selected':'')+'>In controle</option><option value="accepted"'+(x.status==='accepted'?' selected':'')+'>Geaccepteerd</option><option value="rejected"'+(x.status==='rejected'?' selected':'')+'>Afgewezen</option></select></td><td>'+esc(new Date(x.generated_at).toLocaleString('nl-NL'))+'</td><td><button class="button button-primary" type="button" onclick="saveContentProposal(\''+x.id+'\')">Opslaan</button></td></tr>';
+  }).join(''):'<tr><td colspan="5" class="empty">Geen fichevoorstellen.</td></tr>';
+}
+window.deleteContentRelation=async id=>{if(!confirm('Deze relatie verwijderen?'))return;const r=await db().from('topic_relationships').delete().eq('id',id);if(r.error)return msg(r.error.message,'error');await loadContentbeheer();msg('Relatie verwijderd.')};
+window.deleteContentTerm=async id=>{if(!confirm('Deze zoekterm verwijderen?'))return;const r=await db().from('topic_search_terms').delete().eq('id',id);if(r.error)return msg(r.error.message,'error');await loadContentbeheer();msg('Zoekterm verwijderd.')};
+window.saveContentClaim=async id=>{const status=$('claim-status-'+id)?.value||'pending';const r=await db().from('hn_fiche_claims').update({status,reviewed_at:new Date().toISOString()}).eq('id',id);if(r.error)return msg(r.error.message,'error');await loadContentbeheer();msg('Ficheclaim bijgewerkt.')};
+window.saveContentProposal=async id=>{const status=$('proposal-status-'+id)?.value||'proposed';const r=await db().from('hn_fiche_proposals').update({status,reviewed_at:new Date().toISOString()}).eq('id',id);if(r.error)return msg(r.error.message,'error');await loadContentbeheer();msg('Fichevoorstel bijgewerkt.')};
+$('contentAddRelation')?.addEventListener('click',async()=>{
+ const topic_id=$('contentRelTopic')?.value,related_topic_id=$('contentRelRelated')?.value,relationship_type=$('contentRelType')?.value;
+ if(!topic_id||!related_topic_id||topic_id===related_topic_id)return msg('Kies twee verschillende topics.','error');
+ const r=await db().from('topic_relationships').insert({topic_id,related_topic_id,relationship_type});
+ if(r.error)return msg(r.error.message,'error');await loadContentbeheer();msg('Relatie toegevoegd.');
+});
+$('contentAddTerm')?.addEventListener('click',async()=>{
+ const topic_id=$('contentTermTopic')?.value,term=$('contentTerm')?.value.trim(),language=$('contentTermLanguage')?.value.trim()||'nl',term_type=$('contentTermType')?.value||'keyword';
+ if(!topic_id||!term)return msg('Kies een topic en vul een zoekterm in.','error');
+ const normalized_term=term.normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').toLowerCase().trim();
+ const r=await db().from('topic_search_terms').insert({topic_id,term,normalized_term,language,term_type});
+ if(r.error)return msg(r.error.message,'error');$('contentTerm').value='';await loadContentbeheer();msg('Zoekterm toegevoegd.');
+});
 
 async function loadSync(){const t=$('syncTable');if(!t)return;const r=await db().from('sync_queue').select('*').order('created_at',{ascending:false}).limit(100);if(r.error){t.innerHTML='<tr><td colspan="6" class="empty">Sync Queue kon niet worden geladen.</td></tr>';return}t.innerHTML=(r.data||[]).length?(r.data||[]).map(x=>'<tr><td>'+esc(x.record_id||x.airtable_record_id||'—')+'</td><td>'+esc(x.entity_type||'—')+'</td><td>'+esc(x.action||'—')+'</td><td>'+esc(x.status||'—')+'</td><td>'+esc(x.updated_at||x.created_at||'—')+'</td><td>'+esc(x.error||'')+'</td></tr>').join(''):'<tr><td colspan="6" class="empty">Geen sync-items.</td></tr>'}
 
