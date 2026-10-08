@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>HN Pagina-bouwer</title>
+<link rel="stylesheet" href="/assets/fonts.css">
+<link rel="stylesheet" href="/assets/platform-pages.css">
+<link rel="stylesheet" href="/assets/admin-builder.css">
+<script src="/assets/config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/supabase-client.js"></script>
+<script src="/auth.js"></script>
+<script src="/assets/hn-component-registry.js"></script>
+<script src="/assets/admin-builder-v2.js" defer></script>
+</head>
+<body>
+<main class="builder">
+<header class="builder-head">
+  <div class="head-title">
+    <a href="/admin">← Admin</a>
+    <div>
+      <h1>Pagina-bouwer</h1>
+      <p id="builderHint">Je werkt rechtstreeks op de echte pagina. Alles wat je ziet is de pagina zelf.</p>
+    </div>
+  </div>
+  <div class="head-actions">
+    <button id="save">Opslaan als concept</button>
+    <button id="publish" class="primary">Publiceren</button>
+  </div>
+</header>
+<div id="msg" hidden></div>
+
+<div class="builder-layout">
+  <aside class="page-panel">
+    <div class="panel-title">Pagina</div>
+    <div id="pages"></div>
+    <button id="new" class="new-page">+ Nieuwe pagina</button>
+
+    <div class="panel-divider"></div>
+    <div class="panel-title">Toevoegen</div>
+    <p class="panel-help">Kies een blok. Daarna klik je in de pagina op de plek waar het moet komen.</p>
+    <div id="palette"></div>
+  </aside>
+
+  <section class="canvas-panel">
+    <div class="canvas-toolbar">
+      <div>
+        <strong id="heading">Pagina</strong>
+        <span id="route"></span>
+      </div>
+      <div class="toolbar-actions">
+        <button id="desktop" class="active">Desktop</button>
+        <button id="mobile">Mobiel</button>
+        <button id="focus">Volledig scherm</button><button id="open">Open ↗</button>
+      </div>
+    </div>
+    <div id="empty" class="empty">Kies een pagina.</div>
+    <div id="editor" hidden>
+      <div id="liveFrameWrap" class="desktop">
+        <iframe id="liveFrame" title="Volledige live pagina"></iframe>
+      </div>
+    </div>
+  </section>
+
+  <aside id="inspector" class="inspector">
+    <div class="inspector-title">Pagina-instellingen</div>
+    <div class="inspector-section">
+      <label>Titel<input id="title"></label>
+      <label>URL-slug<input id="slug"></label>
+      <label>Status<select id="status"><option value="draft">Concept</option><option value="published">Gepubliceerd</option><option value="archived">Gearchiveerd</option></select></label>
+      <label class="builder-source-toggle"><span>Pagina-opbouw</span><span><input id="cmsMode" type="checkbox"> CMS-componenten als bron van de live pagina</span></label>
+    </div>
+
+    <div class="inspector-section">
+      <div class="section-heading">SEO</div>
+      <label>SEO-titel<input id="seoTitle"></label>
+      <label>SEO-beschrijving<textarea id="seoDesc" rows="5"></textarea></label>
+      <label>Korte beschrijving<textarea id="desc" rows="5"></textarea></label>
+    </div>
+
+    <div id="blockInspector" class="inspector-section" hidden>
+      <div class="section-heading">Geselecteerd blok</div>
+      <div class="selected-kind" id="kind"></div>
+      <label>Type<select id="type"></select></label>
+      <label>Titel<input id="bt"></label>
+      <label>Tekst<textarea id="tx" rows="7"></textarea></label>
+      <label>Link<input id="url"></label>
+      <label>Knoptekst<input id="btn"></label>
+      <label>Afbeelding URL<input id="img"></label>
+      <label><span>Zichtbaar</span><input id="visible" type="checkbox" checked></label>
+      <label>Uitlijning<select id="align"><option value="left">Links</option><option value="center">Midden</option><option value="right">Rechts</option></select></label>
+      <label id="cardWrap">Kaarten<textarea id="cards" rows="6" placeholder="Titel | tekst | /link, één per regel"></textarea></label>
+      <div id="dataWrap" class="data-settings" hidden>
+        <div class="section-heading">HN-data</div>
+        <label>Databron<select id="dataSource">
+          <option value="">Geen databron</option>
+          <option value="cities">Steden</option>
+          <option value="categories">Categorieën</option>
+          <option value="topics">Artikels / onderwerpen</option>
+        </select></label>
+        <label>Maximum aantal<input id="dataLimit" type="number" min="1" max="50" value="6"></label>
+        <label>Filters (optioneel, JSON)<textarea id="dataFilters" rows="4" placeholder='{"country":"marokko","city":"tanger"}'></textarea></label>
+        <small>Gebruik filters alleen met velden die in de gekoppelde HN-databron bestaan.</small>
+      </div>
+      <div id="componentMeta" class="component-meta" hidden>
+        <div><span>Component-ID</span><code id="componentId"></code></div>
+        <div><span>Type</span><code id="componentType"></code></div>
+      </div>
+      <div class="block-actions"><button id="dup">Blok dupliceren</button><button id="remove" class="danger">Blok verwijderen</button></div>
+    </div>
+
+    <div class="inspector-note">Sleep bestaande onderdelen rechtstreeks in de pagina. Gebruik de oranje <b>+</b> tussen onderdelen om iets nieuws precies daar toe te voegen.</div>
+<div id="hnAdvisor" class="hn-advisor">
+  <div class="hn-advisor-head"><strong>HN Check & Advies</strong><span>gratis</span></div>
+  <div id="hnChecks"></div>
+  <button id="runChecks" class="advisor-action">Controle uitvoeren</button>
+  <button id="copyAiPrompt" class="advisor-ai">AI-advies voorbereiden</button>
+  <small>Geen API nodig. De prompt wordt gekopieerd zodat je hem gratis in ChatGPT of Claude kunt gebruiken.</small>
+</div>
+<script src="/assets/hn-free-advisor.js" defer></script>
+  </aside>
+</div>
+</main>
+</body>
+</html>
