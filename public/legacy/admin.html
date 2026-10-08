@@ -1,0 +1,1751 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<title>Admin — Hijrah Netwerk</title>
+
+<script src="assets/config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-client.js"></script>
+<script type="module" src="assets/speed-insights-init.js"></script>
+<script type="module" src="assets/analytics-init.js"></script>
+
+<style>
+:root{
+  --brown:#674C2E;
+  --orange:#DD842A;
+  --gold:#C6A15B;
+  --cream:#FFFFFF;
+  --text:#674C2E;
+  --muted:#756d63;
+  --border:#674C2E;
+  --danger:#DD842A;
+  --success:#674C2E
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:var(--cream);
+  color:var(--text)
+}
+
+button,input,textarea,select{font:inherit}
+
+.layout{
+  display:flex;
+  min-height:100vh
+}
+
+.sidebar{
+  width:250px;
+  background:var(--brown);
+  color:#fff;
+  padding:24px 16px;
+  flex-shrink:0;
+  position:relative;
+  z-index:20
+}
+
+.logo{
+  font-size:22px;
+  font-weight:700;
+  margin-bottom:6px
+}
+
+.admin-label{
+  font-size:13px;
+  opacity:.7;
+  margin-bottom:25px
+}
+
+.nav-button{
+  width:100%;
+  border:0;
+  background:transparent;
+  color:#fff;
+  text-align:left;
+  padding:11px 14px;
+  border-radius:9px;
+  cursor:pointer;
+  margin-bottom:3px;
+  display:block;
+  position:relative;
+  z-index:21;
+  pointer-events:auto;
+  text-decoration:none
+}
+
+.nav-button:hover,
+.nav-button.active{
+  background:rgba(255,255,255,.13)
+}
+
+.main{
+  flex:1;
+  min-width:0
+}
+
+.topbar{
+  height:72px;
+  background:#fff;
+  border-bottom:1px solid var(--border);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 30px
+}
+
+.topbar h1{
+  font-size:22px;
+  margin:0
+}
+
+.logout{
+  border:1px solid var(--border);
+  background:#fff;
+  padding:9px 14px;
+  border-radius:8px;
+  cursor:pointer
+}
+
+.content{
+  padding:30px;
+  max-width:1500px
+}
+
+.page{
+  display:none
+}
+
+.page.active{
+  display:block
+}
+
+.intro{
+  margin-bottom:24px
+}
+
+.intro h2{
+  margin:0 0 7px;
+  font-size:25px
+}
+
+.intro p{
+  margin:0;
+  color:var(--muted)
+}
+
+.cards{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:16px;
+  margin-bottom:25px
+}
+
+.card,.panel{
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:12px
+}
+
+.card{
+  padding:20px
+}
+
+.card-label{
+  color:var(--muted);
+  font-size:13px;
+  margin-bottom:8px
+}
+
+.card-number{
+  font-size:29px;
+  font-weight:700;
+  color:var(--brown)
+}
+
+.panel{
+  padding:22px;
+  margin-bottom:24px
+}
+
+.panel-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:15px;
+  margin-bottom:18px
+}
+
+.panel h3,
+.panel-header h3{
+  margin:0;
+  font-size:18px
+}
+
+.button{
+  border:0;
+  border-radius:8px;
+  padding:10px 14px;
+  cursor:pointer
+}
+
+.button-primary{
+  background:var(--orange);
+  color:#fff
+}
+
+.button-secondary{
+  background:#FFFFFF;
+  color:var(--brown)
+}
+
+.button-danger{
+  background:#FFFFFF;
+  color:var(--danger)
+}
+
+.form-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:16px
+}
+
+.field{
+  display:flex;
+  flex-direction:column;
+  gap:7px
+}
+
+.field.full{
+  grid-column:1/-1
+}
+
+label{
+  font-size:13px;
+  font-weight:600
+}
+
+input,select,textarea{
+  width:100%;
+  border:1px solid var(--border);
+  border-radius:8px;
+  padding:10px 12px;
+  background:#fff;
+  color:var(--text)
+}
+
+textarea{
+  resize:vertical
+}
+
+input:focus,
+select:focus,
+textarea:focus{
+  outline:2px solid rgba(223,132,44,.2);
+  border-color:var(--orange)
+}
+
+.form-actions{
+  margin-top:18px;
+  display:flex;
+  gap:10px
+}
+
+.table-wrap{
+  overflow:auto
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  min-width:700px
+}
+
+th,td{
+  padding:12px 9px;
+  border-bottom:1px solid var(--border);
+  text-align:left;
+  font-size:14px;
+  vertical-align:top
+}
+
+th{
+  color:var(--muted);
+  font-size:12px;
+  text-transform:uppercase
+}
+
+.status{
+  display:inline-block;
+  padding:5px 9px;
+  border-radius:20px;
+  font-size:12px
+}
+
+.status-active{
+  background:#e6f2e9;
+  color:var(--success)
+}
+
+.status-inactive{
+  background:#f0ece8;
+  color:var(--muted)
+}
+
+.status-published{
+  background:#e6f2e9;
+  color:var(--success)
+}
+
+.status-draft{
+  background:#f0ece8;
+  color:var(--muted)
+}
+
+.status-online{
+  background:#e6f2e9;
+  color:var(--success)
+}
+
+.status-offline{
+  background:#f0ece8;
+  color:var(--muted)
+}
+
+.actions{
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap
+}
+
+.actions button{
+  border:0;
+  border-radius:6px;
+  padding:7px 9px;
+  cursor:pointer;
+  font-size:12px
+}
+
+.empty,.loading{
+  padding:25px 10px;
+  color:var(--muted);
+  text-align:center
+}
+
+.message{
+  display:none;
+  padding:12px 14px;
+  border-radius:8px;
+  margin-bottom:18px;
+  font-size:14px
+}
+
+.message.show{
+  display:block
+}
+
+.message.success{
+  background:#FFFFFF;
+  color:var(--success)
+}
+
+.message.error{
+  background:#FFFFFF;
+  color:var(--danger)
+}
+
+.hint{
+  font-size:12px;
+  color:var(--muted);
+  margin-top:5px
+}
+
+.checkbox{
+  display:flex;
+  align-items:center;
+  gap:8px
+}
+
+.checkbox input{
+  width:auto
+}
+
+.wide{
+  min-width:260px
+}
+
+.plan-summary{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:16px;
+  margin-bottom:25px
+}
+
+.plan-box{
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:15px;
+  background:#fff
+}
+
+.plan-box-label{
+  color:var(--muted);
+  font-size:12px;
+  margin-bottom:6px
+}
+
+.plan-box-value{
+  font-weight:600;
+  color:var(--text);
+  white-space:pre-wrap
+}
+
+.plan-box-large{
+  grid-column:1/-1
+}
+
+.plan-text{
+  margin-top:8px;
+  padding:12px;
+  background:#FFFFFF;
+  border-radius:8px;
+  white-space:pre-wrap;
+  line-height:1.55;
+  font-weight:400
+}
+
+.progress-bar{
+  width:100%;
+  height:10px;
+  background:#eee7df;
+  border-radius:20px;
+  overflow:hidden;
+  margin-top:10px
+}
+
+.progress-fill{
+  height:100%;
+  background:var(--orange);
+  border-radius:20px
+}
+
+.step-row{
+  display:flex;
+  align-items:flex-start;
+  gap:12px;
+  padding:14px 0;
+  border-bottom:1px solid var(--border)
+}
+
+.step-check{
+  width:23px;
+  height:23px;
+  border-radius:50%;
+  border:1px solid var(--border);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-shrink:0;
+  font-size:13px
+}
+
+.step-check.done{
+  background:#e6f2e9;
+  color:var(--success);
+  border-color:#c8dfcd
+}
+
+.step-title{
+  font-weight:600
+}
+
+.step-description{
+  font-size:12px;
+  color:var(--muted);
+  margin-top:4px
+}
+
+.activity-list{
+  display:flex;
+  flex-direction:column
+}
+
+.activity-item{
+  padding:14px 0;
+  border-bottom:1px solid var(--border)
+}
+
+.activity-item:last-child{
+  border-bottom:0
+}
+
+.activity-main{
+  display:flex;
+  justify-content:space-between;
+  gap:15px
+}
+
+.activity-user{
+  font-weight:600
+}
+
+.activity-description{
+  margin-top:4px;
+  font-size:14px
+}
+
+.activity-time{
+  color:var(--muted);
+  font-size:12px;
+  white-space:nowrap
+}
+
+.activity-details{
+  margin-top:5px;
+  color:var(--muted);
+  font-size:12px
+}
+
+.online-dot{
+  display:inline-block;
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:var(--success);
+  margin-right:6px
+}
+
+.offline-dot{
+  display:inline-block;
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:#aaa;
+  margin-right:6px
+}
+
+.monitor-summary{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:15px;
+  margin-bottom:18px
+}
+
+.monitor-box{
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:15px;
+  background:#fff
+}
+
+.monitor-box-label{
+  color:var(--muted);
+  font-size:12px;
+  margin-bottom:6px
+}
+
+.monitor-box-value{
+  font-size:23px;
+  font-weight:700;
+  color:var(--brown)
+}
+
+.monitor-error{
+  display:none;
+  background:#fff4e8;
+  border:1px solid #efd1ad;
+  color:#79501f;
+  padding:12px 14px;
+  border-radius:8px;
+  margin-bottom:18px;
+  font-size:13px;
+  line-height:1.5
+}
+
+.monitor-error.show{
+  display:block
+}
+
+.notification-badge{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:20px;
+  height:20px;
+  padding:0 6px;
+  margin-left:5px;
+  border-radius:20px;
+  background:var(--orange);
+  color:#fff;
+  font-size:11px;
+  font-weight:700
+}
+
+.admin-overview-cards{grid-template-columns:repeat(4,1fr)}
+.overview-card{border:1px solid var(--border);background:#fff;border-radius:12px;padding:20px;text-align:left;cursor:pointer;color:var(--text);box-shadow:none}
+.overview-card:hover{border-color:var(--gold);transform:translateY(-1px)}
+.overview-card .card-number{margin-bottom:7px}
+.overview-card-link{font-size:12px;color:var(--orange);font-weight:700}
+.overview-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.overview-list{display:flex;flex-direction:column}
+.overview-item{display:flex;justify-content:space-between;align-items:center;gap:15px;padding:14px 0;border-bottom:1px solid var(--border)}
+.overview-item:last-child{border-bottom:0}
+.overview-item-main{min-width:0}
+.overview-item-title{font-weight:700}
+.overview-item-meta{font-size:12px;color:var(--muted);margin-top:4px}
+.overview-item .button{flex-shrink:0}
+.overview-empty{padding:12px 0;color:var(--muted);font-size:14px}
+@media(max-width:950px){
+
+  .cards{
+    grid-template-columns:repeat(2,1fr)
+  }
+
+  .form-grid,
+  .plan-summary{
+    grid-template-columns:1fr
+  }
+
+  .monitor-summary{
+    grid-template-columns:1fr
+  }
+
+  .plan-box-large{
+    grid-column:auto
+  }
+}
+
+@media(max-width:650px){
+
+  .layout{
+    display:block
+  }
+
+  .sidebar{
+    width:100%;
+    padding:15px
+  }
+
+  .sidebar nav{
+    display:flex;
+    overflow:auto;
+    gap:4px
+  }
+
+  .nav-button{
+    white-space:nowrap;
+    width:auto
+  }
+
+  .topbar{
+    padding:0 18px
+  }
+
+  .content{
+    padding:18px
+  }
+
+  .cards{
+    grid-template-columns:1fr
+  }
+
+  .activity-main{
+    display:block
+  }
+
+  .activity-time{
+    display:block;
+    margin-top:5px
+  }
+}
+</style>
+</head>
+
+<body>
+<div class="layout">
+
+<aside class="sidebar">
+
+  <div class="logo">Hijrah Netwerk</div>
+  <div class="admin-label">Beheerdersomgeving</div>
+
+  <nav>
+    <button class="nav-button active" data-page="overview">Overzicht</button>
+    <button class="nav-button" data-page="platform">Platformpagina's</button>
+    <button class="nav-button" data-page="countries">Landen</button>
+    <button class="nav-button" data-page="cities">Steden</button>
+    <button class="nav-button" data-page="categories">Categorieën</button>
+    <button class="nav-button" data-page="subcategories">Subcategorieën</button>
+    <button class="nav-button" data-page="topics">Kennisbank</button>
+    <button class="nav-button" data-page="reviewers">Reviewers</button>
+    <a class="nav-button" href="/admin-profielen">HN Profielen</a>\n    <a class="nav-button" href="/admin-beloningen">HN Paspoort &amp; Beloningen</a>
+    <button class="nav-button" data-page="users">
+      Gebruikers
+      <span id="activityBadge" class="notification-badge" style="display:none;">0</span>
+    </button>
+    <button class="nav-button" data-page="submissions">
+      Inzendingen
+      <span id="submissionBadge" class="notification-badge" style="display:none;">0</span>
+    </button>
+    <a class="nav-button" href="/admin-cms">HN Beheercentrum</a>
+    <a class="nav-button" href="/admin-builder">Pagina-bouwer</a>
+    <a class="nav-button" href="/admin-componenten">Componenten &amp; Templates</a>
+    <a class="nav-button" href="/admin-navigation">Navigatie beheren</a>
+    <a class="nav-button" href="/werkruimte">Mijn HN Werkruimte</a>
+    <a class="nav-button" href="/admin-wachtlijst">Lanceringlijst</a>
+    <a class="nav-button" href="/admin-bewerkvoorstellen">Bewerkvoorstellen</a>
+    <a class="nav-button" href="/admin-hulp">Hulpcentrum</a>
+    <a class="nav-button" href="/admin-kaart">HN-kaart</a>
+    <button class="nav-button" data-page="content">Contentbeheer</button>
+    <button class="nav-button" data-page="sync">Sync Queue</button>
+  </nav>
+
+</aside>
+
+<main class="main">
+
+<header class="topbar">
+  <h1 id="pageTitle">Overzicht</h1>
+  <div style="display:flex;align-items:center;gap:8px;">
+    <a class="logout" href="/dashboard" style="text-decoration:none;display:inline-flex;align-items:center;">Mijn dashboard</a>
+    <button class="logout" id="logoutButton">Uitloggen</button>
+  </div>
+</header>
+
+<div class="content">
+
+<div id="message" class="message"></div>
+
+<!-- OVERZICHT -->
+
+<section class="page active" id="page-overview">
+
+  <div class="intro">
+    <h2>Overzicht</h2>
+    <p>Zie hier snel wat er nieuw is en wat jouw aandacht nodig heeft. Van hieruit ga je door naar het juiste onderdeel.</p>
+  </div>
+
+  <div class="cards admin-overview-cards">
+    <button class="overview-card" type="button" data-admin-page="submissions"><div class="card-label">Nieuwe registraties</div><div class="card-number" id="overviewRegistrationCount">—</div><div class="overview-card-link">Naar inzendingen →</div></button>
+    <button class="overview-card" type="button" data-admin-page="submissions"><div class="card-label">Nieuwe inzendingen</div><div class="card-number" id="overviewSubmissionCount">—</div><div class="overview-card-link">Naar inzendingen →</div></button>
+    <button class="overview-card" type="button" data-admin-page="topics"><div class="card-label">Te controleren</div><div class="card-number" id="overviewReviewCount">—</div><div class="overview-card-link">Naar Kennisbank →</div></button>
+    <button class="overview-card" type="button" data-admin-page="topics"><div class="card-label">Verouderd</div><div class="card-number" id="overviewOutdatedCount">—</div><div class="overview-card-link">Naar Kennisbank →</div></button>
+    <div class="overview-card" style="cursor:default;"><div class="card-label">Lanceringlijst</div><div class="card-number" id="launchWaitlistCount">—</div><a class="overview-card-link" href="/admin-wachtlijst">Naar lanceringlijst →</a></div>
+  </div>
+
+  <div class="overview-grid">
+    <div class="panel">
+      <div class="panel-header"><h3>Nieuw binnen</h3><button class="button button-secondary" type="button" data-admin-page="submissions">Alles bekijken</button></div>
+      <div id="overviewNewItems" class="overview-list"><div class="loading">Laden...</div></div>
+    </div>
+    <div class="panel">
+      <div class="panel-header"><h3>Te controleren</h3><button class="button button-secondary" type="button" data-admin-page="topics">Kennisbank</button></div>
+      <div id="overviewReviewItems" class="overview-list"><div class="loading">Laden...</div></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-header"><h3>Recent toegevoegd of gewijzigd</h3><button class="button button-secondary" type="button" data-admin-page="topics">Alle topics</button></div>
+    <div id="overviewRecentTopics" class="overview-list"><div class="loading">Laden...</div></div>
+  </div>
+
+  <div class="cards" style="margin-top:0;">
+    <div class="card"><div class="card-label">Landen</div><div class="card-number" id="countryCount">—</div></div>
+    <div class="card"><div class="card-label">Steden</div><div class="card-number" id="cityCount">—</div></div>
+    <div class="card"><div class="card-label">Categorieën</div><div class="card-number" id="categoryCount">—</div></div>
+    <div class="card"><div class="card-label">Topics</div><div class="card-number" id="topicCount">—</div></div>
+  </div>
+
+</section>
+
+
+<!-- PLATFORMPAGINA'S -->
+
+<section class="page" id="page-platform">
+
+  <div class="intro">
+    <h2>Alle HN-pagina's</h2><p><a class="button button-primary" href="/admin-builder">Open Pagina-bouwer</a></p>
+    <p>Vanuit de admin kun je hier alle bestaande pagina's openen en controleren. Elke link gebruikt de nieuwe clean URL.</p>
+  </div>
+
+  <div class="panel">
+    <h3>Publieke hoofdpagina's</h3>
+    <div class="actions" style="margin-top:15px;">
+      <a class="button button-primary" href="/" target="_blank" rel="noopener">Homepage</a>
+      <a class="button button-secondary" href="/landen" target="_blank" rel="noopener">Landen &amp; Steden</a>
+      <a class="button button-secondary" href="/navigatie" target="_blank" rel="noopener">Hijrah Navigatie</a>
+      <a class="button button-secondary" href="/kennisbank" target="_blank" rel="noopener">Artikels / Kennisbank</a>
+      <a class="button button-secondary" href="/smart-search" target="_blank" rel="noopener">Smart Search</a>
+      <a class="button button-secondary" href="/community" target="_blank" rel="noopener">Community</a>
+      <a class="button button-secondary" href="/dashboard" target="_blank" rel="noopener">Mijn Hijrah</a>
+      <a class="button button-secondary" href="/bijdragen" target="_blank" rel="noopener">Informatie insturen</a>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h3>HijrahTools &amp; traject</h3>
+    <div class="actions" style="margin-top:15px;">
+      <a class="button button-secondary" href="/orientatie" target="_blank" rel="noopener">Oriëntatie</a>
+      <a class="button button-secondary" href="/orientatietest" target="_blank" rel="noopener">Oriëntatietest</a>
+      <a class="button button-secondary" href="/handboek" target="_blank" rel="noopener">Handboek</a>
+      <a class="button button-secondary" href="/stappenplan" target="_blank" rel="noopener">Stappenplan</a>
+      <a class="button button-secondary" href="/voorbereiding" target="_blank" rel="noopener">Voorbereiding</a>
+      <a class="button button-secondary" href="/vertrek" target="_blank" rel="noopener">Vertrek</a>
+      <a class="button button-secondary" href="/integratie" target="_blank" rel="noopener">Aankomst &amp; Integratie</a>
+      <a class="button button-secondary" href="/realiteitscheck" target="_blank" rel="noopener">Realiteitscheck</a>
+      <a class="button button-secondary" href="/vergelijken" target="_blank" rel="noopener">Steden vergelijken</a>
+      <a class="button button-secondary" href="/verhalen" target="_blank" rel="noopener">Verhalen</a>
+      <a class="button button-secondary" href="/stedengids" target="_blank" rel="noopener">Stedengids</a>
+      <a class="button button-secondary" href="/hulp" target="_blank" rel="noopener">Hulp</a>
+      <a class="button button-secondary" href="/mijn-kaart" target="_blank" rel="noopener">Mijn HN-kaart</a>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h3>Dynamische pagina's</h3>
+    <div class="actions" style="margin-top:15px;">
+      <a class="button button-secondary" href="/stad" target="_blank" rel="noopener">Stad</a>
+      <a class="button button-secondary" href="/fiche" target="_blank" rel="noopener">HN-fiche</a>
+    </div>
+    <p class="hint">Stad en fiche verwachten normaal een specifieke slug of parameter wanneer je een concrete vermelding wilt openen.</p>
+  </div>
+
+  <div class="panel">
+    <h3>Accountpagina's</h3>
+    <div class="actions" style="margin-top:15px;">
+      <a class="button button-secondary" href="/login" target="_blank" rel="noopener">Inloggen</a>
+      <a class="button button-secondary" href="/register" target="_blank" rel="noopener">Registreren / Lancering</a>
+      <a class="button button-secondary" href="/reset-password" target="_blank" rel="noopener">Wachtwoord resetten</a>
+      <a class="button button-secondary" href="/update-password" target="_blank" rel="noopener">Wachtwoord wijzigen</a>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h3>Beheerpagina's</h3>
+    <div class="actions" style="margin-top:15px;">
+      <a class="button button-primary" href="/admin" target="_blank" rel="noopener">Admin hoofdscherm</a>
+      <a class="button button-secondary" href="/admin-wachtlijst" target="_blank" rel="noopener">Lanceringlijst</a>
+      <a class="button button-secondary" href="/admin-bewerkvoorstellen" target="_blank" rel="noopener">Bewerkvoorstellen</a>
+      <a class="button button-secondary" href="/admin-hulp" target="_blank" rel="noopener">Hulpcentrum</a>
+      <a class="button button-secondary" href="/admin-kaart" target="_blank" rel="noopener">HN-kaart beheer</a>
+      <a class="button button-secondary" href="/werkruimte" target="_blank" rel="noopener">Mijn HN Werkruimte</a>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h3>Juridisch</h3>
+    <div class="actions" style="margin-top:15px;">
+      <a class="button button-secondary" href="/auteursrecht" target="_blank" rel="noopener">Auteursrecht</a>
+    </div>
+  </div>
+
+</section>
+
+
+<!-- LANDEN -->
+
+<section class="page" id="page-countries">
+
+  <div class="intro">
+    <h2>Landen</h2>
+    <p>Beheer landen die in HN beschikbaar zijn.</p>
+  </div>
+
+  <div class="panel">
+
+    <h3 id="countryFormTitle">Nieuw land</h3>
+
+    <form id="countryForm">
+
+      <input type="hidden" id="countryId">
+
+      <div class="form-grid">
+
+        <div class="field">
+          <label>Naam</label>
+          <input id="countryName" required placeholder="Marokko">
+        </div>
+
+        <div class="field">
+          <label>Landcode</label>
+          <input id="countryCode" maxlength="5" placeholder="MA">
+        </div>
+
+        <div class="field full">
+          <label>Beschrijving</label>
+          <textarea id="countryDescription" rows="3"></textarea>
+        </div>
+
+      </div>
+
+      <div class="form-actions">
+        <button class="button button-primary">Opslaan</button>
+        <button type="button" class="button button-secondary" id="cancelCountry" hidden>Annuleren</button>
+      </div>
+
+    </form>
+
+  </div>
+
+  <div class="panel">
+
+    <h3>Alle landen</h3>
+
+    <div class="table-wrap">
+
+      <table>
+
+        <thead>
+          <tr>
+            <th>Naam</th>
+            <th>Code</th>
+            <th>Status</th>
+            <th>Acties</th>
+          </tr>
+        </thead>
+
+        <tbody id="countriesTable"></tbody>
+
+      </table>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- STEDEN -->
+
+<section class="page" id="page-cities">
+
+  <div class="intro">
+    <h2>Steden</h2>
+    <p>Koppel steden aan landen.</p>
+  </div>
+
+  <div class="panel">
+
+    <h3 id="cityFormTitle">Nieuwe stad</h3>
+
+    <form id="cityForm">
+
+      <input type="hidden" id="cityId">
+
+      <div class="form-grid">
+
+        <div class="field">
+          <label>Naam</label>
+          <input id="cityName" required placeholder="Tanger">
+        </div>
+
+        <div class="field">
+          <label>Land</label>
+          <select id="cityCountry" required></select>
+        </div>
+
+        <div class="field full">
+          <label>Beschrijving</label>
+          <textarea id="cityDescription" rows="3"></textarea>
+        </div>
+
+      </div>
+
+      <div class="form-actions">
+        <button class="button button-primary">Opslaan</button>
+        <button type="button" class="button button-secondary" id="cancelCity" hidden>Annuleren</button>
+      </div>
+
+    </form>
+
+  </div>
+
+  <div class="panel">
+
+    <h3>Alle steden</h3>
+
+    <div class="table-wrap">
+
+      <table>
+
+        <thead>
+          <tr>
+            <th>Stad</th>
+            <th>Land</th>
+            <th>Status</th>
+            <th>Acties</th>
+          </tr>
+        </thead>
+
+        <tbody id="citiesTable"></tbody>
+
+      </table>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- CATEGORIEËN -->
+
+<section class="page" id="page-categories">
+
+  <div class="intro">
+    <h2>Categorieën</h2>
+    <p>Beheer de hoofdonderwerpen van de Hijrah Wijzer.</p>
+  </div>
+
+  <div class="panel">
+
+    <h3 id="categoryFormTitle">Nieuwe categorie</h3>
+
+    <form id="categoryForm">
+
+      <input type="hidden" id="categoryId">
+
+      <div class="form-grid">
+
+        <div class="field">
+          <label>Naam</label>
+          <input id="categoryName" required placeholder="Huisvesting">
+        </div>
+
+        <div class="field">
+          <label>Volgorde</label>
+          <input id="categoryOrder" type="number" min="0" value="0">
+        </div>
+
+        <div class="field full">
+          <label>Beschrijving</label>
+          <textarea id="categoryDescription" rows="3"></textarea>
+        </div>
+
+      </div>
+
+      <div class="form-actions">
+        <button class="button button-primary">Opslaan</button>
+        <button type="button" class="button button-secondary" id="cancelCategory" hidden>Annuleren</button>
+      </div>
+
+    </form>
+
+  </div>
+
+  <div class="panel">
+
+    <h3>Alle categorieën</h3>
+
+    <div class="table-wrap">
+
+      <table>
+
+        <thead>
+          <tr>
+            <th>Categorie</th>
+            <th>Volgorde</th>
+            <th>Status</th>
+            <th>Acties</th>
+          </tr>
+        </thead>
+
+        <tbody id="categoriesTable"></tbody>
+
+      </table>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- SUBCATEGORIEËN -->
+
+<section class="page" id="page-subcategories">
+
+  <div class="intro">
+    <h2>Subcategorieën</h2>
+    <p>Koppel iedere subcategorie aan een hoofdcategorie.</p>
+  </div>
+
+  <div class="panel">
+
+    <h3 id="subcategoryFormTitle">Nieuwe subcategorie</h3>
+
+    <form id="subcategoryForm">
+
+      <input type="hidden" id="subcategoryId">
+
+      <div class="form-grid">
+
+        <div class="field">
+          <label>Categorie</label>
+          <select id="subcategoryCategory" required></select>
+        </div>
+
+        <div class="field">
+          <label>Naam</label>
+          <input id="subcategoryName" required placeholder="Huren">
+        </div>
+
+        <div class="field">
+          <label>Volgorde</label>
+          <input id="subcategoryOrder" type="number" min="0" value="0">
+        </div>
+
+        <div class="field full">
+          <label>Beschrijving</label>
+          <textarea id="subcategoryDescription" rows="3"></textarea>
+        </div>
+
+      </div>
+
+      <div class="form-actions">
+        <button class="button button-primary">Opslaan</button>
+        <button type="button" class="button button-secondary" id="cancelSubcategory" hidden>Annuleren</button>
+      </div>
+
+    </form>
+
+  </div>
+
+  <div class="panel">
+
+    <h3>Alle subcategorieën</h3>
+
+    <div class="table-wrap">
+
+      <table>
+
+        <thead>
+          <tr>
+            <th>Subcategorie</th>
+            <th>Categorie</th>
+            <th>Volgorde</th>
+            <th>Status</th>
+            <th>Acties</th>
+          </tr>
+        </thead>
+
+        <tbody id="subcategoriesTable"></tbody>
+
+      </table>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- KENNISBANK -->
+
+<section class="page" id="page-topics">
+
+  <div class="intro">
+    <h2>Kennisbank & Fiches</h2>
+    <p>Beheer uitgebreide artikelen en korte praktische fiches.</p>
+  </div>
+
+  <div class="panel">
+
+    <h3 id="topicFormTitle">Nieuw topic</h3>
+
+    <form id="topicForm">
+
+      <input type="hidden" id="topicId">
+
+      <div class="form-grid">
+
+        <div class="field full">
+          <label>Type inhoud</label>
+          <select id="topicContentType">
+            <option value="article">Kennisbankartikel</option>
+            <option value="fiche">Fiche</option>
+          </select>
+        </div>
+
+        <div class="field full">
+          <label>Titel</label>
+          <input id="topicTitle" required placeholder="Bijvoorbeeld Huren in Tanger">
+        </div>
+
+        <div class="field">
+          <label>Land</label>
+          <div style="display:flex;gap:7px;align-items:center;">
+            <select id="topicCountry" style="flex:1;"></select>
+            <button type="button" class="button button-secondary" data-tax-add="country" title="Nieuwe land toevoegen">+</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Stad</label>
+          <div style="display:flex;gap:7px;align-items:center;">
+            <select id="topicCity" style="flex:1;"></select>
+            <button type="button" class="button button-secondary" data-tax-add="city" title="Nieuwe stad toevoegen">+</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Categorie</label>
+          <div style="display:flex;gap:7px;align-items:center;">
+            <select id="topicCategory" style="flex:1;"></select>
+            <button type="button" class="button button-secondary" data-tax-add="category" title="Nieuwe categorie toevoegen">+</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Subcategorie</label>
+          <div style="display:flex;gap:7px;align-items:center;">
+            <select id="topicSubcategory" style="flex:1;"></select>
+            <button type="button" class="button button-secondary" data-tax-add="subcategory" title="Nieuwe subcategorie toevoegen">+</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Informatietype</label>
+          <select id="topicInformationType">
+            <option>Algemene informatie</option>
+            <option>Officiële informatie</option>
+            <option>Ervaring</option>
+            <option>Review</option>
+            <option>Aanbeveling</option>
+            <option>Waarschuwing</option>
+            <option>Persoonlijke tip</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Zichtbaarheid</label>
+          <select id="topicVisibility">
+            <option value="public">Openbaar</option>
+            <option value="members">Ingelogde leden</option>
+            <option value="approved_members">Goedgekeurde leden</option>
+            <option value="admin">Alleen Admin</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Status</label>
+          <select id="topicStatus">
+            <option value="needs_research">Needs research</option>
+            <option value="in_review">In review</option>
+            <option value="verified">Verified</option>
+            <option value="outdated">Outdated</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Reviewer</label>
+          <select id="topicReviewer"></select>
+        </div>
+
+        <div class="field">
+          <label>Bron</label>
+          <input id="topicSource" placeholder="Naam bron">
+        </div>
+
+        <div class="field">
+          <label>Bron URL</label>
+          <input id="topicSourceUrl" type="url" placeholder="https://...">
+        </div>
+
+        <div class="field full">
+          <label>Korte samenvatting</label>
+          <textarea id="topicSummary" rows="3"></textarea>
+        </div>
+
+        <div class="field full" id="ficheFields" style="display:none;">
+  <div style="padding:16px;background:#FFFFFF;border:1px solid #674C2E;border-radius:10px;">
+    <h4 style="margin:0 0 6px;">Fiche-inhoud</h4>
+    <p class="hint" style="margin:0 0 8px;">Vul zoveel mogelijk concrete gegevens afzonderlijk in. Lege velden worden niet getoond.</p>
+    <p class="hint" id="ficheContextHint" style="margin:0 0 16px;">Kies een categorie of subcategorie om extra, onderwerp-specifieke velden te tonen.</p>
+    <div class="form-grid">
+      <div class="field"><label>Naam / persoon</label><input id="ficheDoctorName"></div>
+      <div class="field"><label>Volledige naam</label><input id="ficheFullName"></div>
+      <div class="field"><label>Praktijk / organisatie</label><input id="fichePracticeName"></div>
+      <div class="field"><label>Type dienst / voorziening</label><input id="ficheServiceType" placeholder="Bijv. huisarts, school, moskee, winkel"></div>
+      <div class="field"><label>Specialisatie / aanbod</label><input id="ficheSpecialties"></div>
+      <div class="field"><label>Extra opleiding / kwalificatie</label><input id="ficheAdditionalQualification"></div>
+      <div class="field"><label>Voor kinderen</label><input id="ficheForChildren"></div>
+      <div class="field"><label>Voor wie?</label><input id="ficheAudience" placeholder="Vrouwen, gezinnen, studenten, iedereen..."></div>
+      <div class="field"><label>Talen</label><input id="ficheLanguages" placeholder="Frans, Arabisch, Engels"></div>
+      <div class="field"><label>Telefoon</label><input id="fichePhone" type="tel"></div>
+      <div class="field"><label>WhatsApp</label><input id="ficheWhatsapp" type="tel"></div>
+      <div class="field"><label>E-mail</label><input id="ficheEmail" type="email"></div>
+      <div class="field"><label>Website</label><input id="ficheWebsite" type="url"></div>
+      <div class="field"><label>Adres</label><input id="ficheAddress"></div>
+      <div class="field"><label>Wijk / buurt</label><input id="ficheNeighborhood"></div>
+      <div class="field"><label>Postcode</label><input id="fichePostalCode"></div>
+      <div class="field"><label>Google Maps / kaartlink</label><input id="ficheMapsUrl" type="url"></div>
+      <div class="field full"><label>Openingstijden / tijden</label><textarea id="ficheOpeningHours" rows="5" placeholder="Maandag 08:30–18:30&#10;Dinsdag 08:30–18:30"></textarea></div>
+      <div class="field"><label>Afspraak nodig?</label><input id="ficheAppointment" placeholder="Ja / nee / soms"></div>
+      <div class="field"><label>Zonder afspraak?</label><input id="ficheWalkIn"></div>
+      <div class="field"><label>Huisbezoeken</label><input id="ficheHomeVisits"></div>
+      <div class="field"><label>Online / teleconsultatie</label><input id="ficheTeleconsultation"></div>
+      <div class="field"><label>Bezorging / levering</label><input id="ficheDelivery"></div>
+      <div class="field"><label>Spoed / 24 uur</label><input id="ficheEmergency"></div>
+      <div class="field"><label>Prijs / kosten</label><input id="fichePrice"></div>
+      <div class="field"><label>Verzekering / CNSS</label><input id="ficheInsurance"></div>
+      <div class="field"><label>Betaalwijzen</label><input id="fichePaymentMethods"></div>
+      <div class="field"><label>Uitrusting / voorzieningen</label><input id="ficheEquipment"></div>
+      <div class="field"><label>Erkenning / accreditatie</label><input id="ficheAccreditation"></div>
+      <div class="field"><label>Toegankelijkheid</label><input id="ficheAccessibility" placeholder="Rolstoel, lift, parkeren, kinderwagen..."></div>
+
+      <div class="field full" style="margin-top:8px;"><strong style="font-size:14px;">Onderwijs / school</strong></div>
+      <div class="field"><label>Leeftijden / groepen</label><input id="ficheSchoolAges"></div>
+      <div class="field"><label>Jongens / meisjes</label><input id="ficheSchoolGender"></div>
+      <div class="field"><label>Onderwijstype / curriculum</label><input id="ficheSchoolCurriculum"></div>
+      <div class="field"><label>Onderwijstalen</label><input id="ficheSchoolTeachingLanguages"></div>
+      <div class="field"><label>Schoolgeld / kosten</label><input id="ficheSchoolFees"></div>
+      <div class="field"><label>Inschrijving / toelating</label><input id="ficheSchoolAdmission"></div>
+      <div class="field"><label>Vervoer / schoolbus</label><input id="ficheSchoolTransport"></div>
+
+      <div class="field full" style="margin-top:8px;"><strong style="font-size:14px;">Moskee / islamitisch centrum</strong></div>
+      <div class="field"><label>Ruimte voor vrouwen</label><input id="ficheMosqueWomen"></div>
+      <div class="field"><label>Jumu'ah / vrijdaggebed</label><input id="ficheMosqueFriday"></div>
+      <div class="field"><label>Lessen / Qur'an / Arabisch</label><input id="ficheMosqueLessons"></div>
+      <div class="field"><label>Activiteiten voor kinderen</label><input id="ficheMosqueChildren"></div>
+      <div class="field"><label>Talen lessen / khutbah</label><input id="ficheMosqueLanguages"></div>
+      <div class="field"><label>Parkeren</label><input id="ficheMosqueParking"></div>
+
+      <div class="field full" style="margin-top:8px;"><strong style="font-size:14px;">Wonen / woning</strong></div>
+      <div class="field"><label>Type woning</label><input id="ficheHousingType" placeholder="Appartement, huis, studio..."></div>
+      <div class="field"><label>Huurprijs / koopprijs</label><input id="ficheHousingPrice"></div>
+      <div class="field"><label>Gemeubileerd?</label><input id="ficheHousingFurnished"></div>
+      <div class="field"><label>Contract / voorwaarden</label><input id="ficheHousingContract"></div>
+      <div class="field"><label>Borg / voorschot</label><input id="ficheHousingDeposit"></div>
+      <div class="field"><label>Nutsvoorzieningen</label><input id="ficheHousingUtilities"></div>
+      <div class="field full"><label>Wijk / omgeving / aandachtspunten</label><textarea id="ficheHousingArea" rows="3"></textarea></div>
+
+      <div class="field full" style="margin-top:8px;"><strong style="font-size:14px;">Winkel / eten / dienst</strong></div>
+      <div class="field"><label>Wat vind je er?</label><input id="ficheShopProducts" placeholder="Halal vlees, boodschappen, kleding..."></div>
+      <div class="field"><label>Halal / certificering</label><input id="ficheShopHalal"></div>
+      <div class="field"><label>Bezorging</label><input id="ficheShopDelivery"></div>
+      <div class="field"><label>Betaalwijzen</label><input id="ficheShopPayment"></div>
+      <div class="field full"><label>Praktische aandachtspunten</label><textarea id="ficheShopNotes" rows="3"></textarea></div>
+
+      <div class="field full" style="margin-top:8px;"><strong style="font-size:14px;">Ervaring / community</strong></div>
+      <div class="field"><label>Situatie van de ervaringsdeskundige</label><input id="ficheExperienceSituation" placeholder="Alleenstaand, gezin, kinderen, pas verhuisd..."></div>
+      <div class="field"><label>Periode / datum</label><input id="ficheExperienceDate"></div>
+      <div class="field"><label>Zou je het aanraden?</label><input id="ficheExperienceRecommend"></div>
+      <div class="field"><label>Beoordeling</label><input id="ficheExperienceRating" placeholder="1–5"></div>
+      <div class="field full"><label>Wat ging goed?</label><textarea id="ficheExperiencePros" rows="3"></textarea></div>
+      <div class="field full"><label>Wat viel tegen?</label><textarea id="ficheExperienceCons" rows="3"></textarea></div>
+
+      <div class="field"><label>Waarschuwing / aandachtspunt</label><input id="ficheWarning"></div>
+      <div class="field"><label>Laatste gecontroleerd</label><input id="ficheLastChecked" placeholder="Bijv. oktober 2026"></div>
+      <div class="field full"><label>Korte beschrijving</label><textarea id="ficheShortDescription" rows="3"></textarea></div>
+      <div class="field full"><label>Bron / controle-opmerking</label><textarea id="ficheVerificationNote" rows="3" placeholder="Wat is officieel bevestigd, wat komt uit community-ervaring?"></textarea></div>
+    </div>
+  </div>
+</div>
+<div class="field full" id="articleContentField">
+          <label id="topicContentLabel">Inhoud artikel</label>
+          <textarea id="topicContent" rows="12"></textarea>
+          <div id="topicFicheHint" class="hint" style="display:none;">Een fiche is kort en praktisch. De uitgebreide uitleg hoort in een Kennisbankartikel.</div>
+        </div>
+
+        <div class="field full">
+          <label class="checkbox">
+            <input id="topicPublished" type="checkbox">
+            Publiceren op de website
+          </label>
+        </div>
+
+      </div>
+
+      <div class="form-actions">
+        <button class="button button-primary">Opslaan</button>
+        <button type="button" class="button button-secondary" id="cancelTopic" hidden>Annuleren</button>
+      </div>
+
+    </form>
+
+  </div>
+
+  <div class="panel" id="ficheClaimsPanel">
+    <div class="panel-header"><div><h3>Claimaanvragen</h3><p class="hint" style="margin:4px 0 0;">Aanbieders kunnen hun vermelding claimen. Controleer de identiteit en pas gegevens pas daarna handmatig aan.</p></div><button class="button button-secondary" type="button" onclick="loadFicheClaims()">Vernieuwen</button></div>
+    <div id="ficheClaimsList" class="overview-list"><div class="loading">Laden...</div></div>
+  </div>
+
+  <div class="panel" id="ficheProposalPanel">
+    <div class="panel-header">
+      <div>
+        <h3>Fiche voorstellen</h3>
+        <p class="hint" style="margin:4px 0 0;">Voor elk Kennisbankartikel maakt HN een voorstel voor een korte fiche. Bestaande informatie wordt overgenomen als voorstel, online gevonden bronnen worden apart getoond en niets wordt automatisch gepubliceerd.</p>
+      </div>
+      <button class="button button-secondary" type="button" onclick="loadFicheProposals()">Vernieuwen</button>
+    </div>
+    <div id="ficheProposalList" class="overview-list"><div class="loading">Laden...</div></div>
+  </div>
+
+  <div class="panel">
+
+    <div class="panel-header">
+      <h3>Alle topics</h3>
+      <input class="wide" id="topicFilter" placeholder="Zoek in titels...">
+    </div>
+
+    <div class="table-wrap">
+
+      <table>
+
+        <thead>
+          <tr>
+            <th>Titel</th>
+            <th>Locatie</th>
+            <th>Categorie</th>
+            <th>Type</th>
+            <th>Status</th>
+            <th>Publicatie</th>
+            <th>Acties</th>
+          </tr>
+        </thead>
+
+        <tbody id="topicsTable"></tbody>
+
+      </table>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- REVIEWERS -->
+
+<section class="page" id="page-reviewers">
+
+  <div class="intro">
+    <h2>Reviewers</h2>
+    <p>Beheer wie HN-content controleert.</p>
+  </div>
+
+  <div class="panel">
+
+    <h3 id="reviewerFormTitle">Nieuwe reviewer</h3>
+
+    <form id="reviewerForm">
+
+      <input type="hidden" id="reviewerId">
+
+      <div class="form-grid">
+
+        <div class="field">
+          <label>Naam</label>
+          <input id="reviewerName" required>
+        </div>
+
+        <div class="field">
+          <label>E-mail</label>
+          <input id="reviewerEmail" type="email">
+        </div>
+
+        <div class="field">
+          <label>Rol</label>
+          <input id="reviewerRole" placeholder="Reviewer">
+        </div>
+
+      </div>
+
+      <div class="form-actions">
+        <button class="button button-primary">Opslaan</button>
+        <button type="button" class="button button-secondary" id="cancelReviewer" hidden>Annuleren</button>
+      </div>
+
+    </form>
+
+  </div>
+
+  <div class="panel">
+
+    <h3>Alle reviewers</h3>
+
+    <div class="table-wrap">
+
+      <table>
+
+        <thead>
+          <tr>
+            <th>Naam</th>
+            <th>E-mail</th>
+            <th>Rol</th>
+            <th>Status</th>
+            <th>Acties</th>
+          </tr>
+        </thead>
+
+        <tbody id="reviewersTable"></tbody>
+
+      </table>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- GEBRUIKERS -->
+
+<section class="page" id="page-users">
+
+  <div class="intro">
+    <h2>Gebruikers</h2>
+    <p>Bekijk geregistreerde gebruikers, hun activiteit en hun Mijn Hijrah Plan.</p>
+  </div>
+
+  <div id="monitorError" class="monitor-error"></div>
+
+  <div class="panel">
+
+    <div class="monitor-summary">
+
+      <div class="monitor-box">
+        <div class="monitor-box-label">Totaal gebruikers</div>
+        <div class="monitor-box-value" id="totalUsersCount">—</div>
+      </div>
+
+      <div class="monitor-box">
+        <div class="monitor-box-label">Nu online</div>
+        <div class="monitor-box-value" id="onlineUsersCount">—</div>
+      </div>
+
+      <div class="monitor-box">
+        <div class="monitor-box-label">Activiteiten</div>
+        <div class="monitor-box-value" id="activityCount">—</div>
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <div class="panel">
+
+    <div class="panel-header">
+      <h3>Gebruikers</h3>
+      <input class="wide" id="userFilter" placeholder="Zoek op e-mail...">
+    </div>
+
+    <div class="table-wrap">
+
+      <table>
+
+        <thead>
+          <tr>
+            <th>Gebruiker</th>
+            <th>Status</th>
+            <th>Laatste activiteit</th>
+            <th>Sessie</th>
+            <th>Mijn Hijrah Plan</th>
+            <th>Actie</th>
+          </tr>
+        </thead>
+
+        <tbody id="usersTable"></tbody>
+
+      </table>
+
+    </div>
+
+  </div>
+
+
+  <div class="panel">
+
+    <div class="panel-header">
+      <h3>Recente activiteit</h3>
+
+      <button
+        class="button button-secondary"
+        id="clearActivityBadgeButton">
+        Meldingen gelezen
+      </button>
+    </div>
+
+    <div id="activityList" class="activity-list">
+      <div class="empty">Activiteiten worden geladen...</div>
+    </div>
+
+  </div>
+
+
+  <div class="panel" id="userPlanPanel" style="display:none;">
+
+    <div class="panel-header">
+
+      <h3 id="selectedUserTitle">Mijn Hijrah Plan</h3>
+
+      <button
+        class="button button-secondary"
+        id="closeUserPlanButton">
+        Sluiten
+      </button>
+
+    </div>
+
+    <div id="userPlanContent"></div>
+
+  </div>
+
+</section>
+
+
+<!-- INZENDINGEN -->
+<section class="page" id="page-submissions">
+
+  <div class="intro">
+    <h2>Inzendingen & registraties</h2>
+    <p>Hier beheer je nieuwe registraties en informatie die door de community is ingestuurd.</p>
+  </div>
+
+  <div id="submissionsMessage" class="message"></div>
+
+  <div class="panel">
+    <div class="panel-header">
+      <h3>Nieuwe registraties</h3>
+      <button class="button button-secondary" id="refreshSubmissions">Vernieuwen</button>
+    </div>
+    <div id="registrationList">
+      <div class="loading">Registraties worden geladen...</div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-header">
+      <h3>Ingestuurde informatie</h3>
+    </div>
+    <div id="submissionsList">
+      <div class="loading">Inzendingen worden geladen...</div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h3 style="margin-top:0;">Wat gebeurt er na goedkeuring?</h3>
+    <p class="hint">Een goedgekeurde registratie krijgt toegang volgens de HN-instellingen. Een goedgekeurde informatie-inzending wordt als HN-fiche toegevoegd aan Hijrah Navigatie. Niets wordt automatisch openbaar gemaakt.</p>
+  </div>
+
+</section>
+
+<!-- INZENDING REVIEW MODAL -->
+<div id="submissionReviewModal" hidden style="position:fixed;inset:0;z-index:2000;background:rgba(43,36,28,.48);padding:24px;overflow:auto;">
+  <div style="max-width:920px;margin:5vh auto;background:#fff;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.2);overflow:hidden;">
+    <div style="padding:20px 24px;border-bottom:1px solid #e8e1d8;display:flex;align-items:center;justify-content:space-between;gap:15px;">
+      <div><div style="font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#DD842A;">HN REVIEW</div><h3 id="submissionReviewTitle" style="margin:4px 0 0;">Inzending beoordelen</h3></div>
+      <button type="button" class="button button-secondary" id="closeSubmissionReview">Sluiten</button>
+    </div>
+    <div style="padding:24px;display:grid;gap:18px;">
+      <div id="submissionReviewMeta" style="padding:14px;background:#faf7f3;border:1px solid #e8e1d8;border-radius:10px;font-size:13px;line-height:1.6;"></div>
+      <div>
+        <label for="submissionOriginalText" style="display:block;font-weight:700;margin-bottom:7px;">Oorspronkelijke inzending</label>
+        <textarea id="submissionOriginalText" rows="7" readonly style="width:100%;box-sizing:border-box;padding:12px;border:1px solid #e8e1d8;border-radius:10px;background:#f7f5f2;line-height:1.55;"></textarea>
+      </div>
+      <div>
+        <label for="submissionPublicText" style="display:block;font-weight:700;margin-bottom:7px;">Openbare versie</label>
+        <div class="hint" style="margin-bottom:7px;">Deze tekst wordt zichtbaar in HN. Verwijder namen, telefoonnummers en andere herkenbare persoonsgegevens wanneer dat nodig is.</div>
+        <textarea id="submissionPublicText" rows="10" style="width:100%;box-sizing:border-box;padding:12px;border:1px solid #674C2E;border-radius:10px;line-height:1.55;"></textarea>
+      </div>
+      <div>
+        <label for="submissionAdminNotes" style="display:block;font-weight:700;margin-bottom:7px;">HN-notitie</label>
+        <textarea id="submissionAdminNotes" rows="4" placeholder="Bijvoorbeeld: bron gecontroleerd, locatie nog controleren, contact opgenomen..." style="width:100%;box-sizing:border-box;padding:12px;border:1px solid #e8e1d8;border-radius:10px;line-height:1.55;"></textarea>
+      </div>
+      <div>
+        <label style="display:block;font-weight:700;margin-bottom:7px;">Ingevulde praktische gegevens</label>
+        <div class="hint" style="margin-bottom:8px;">Losse velden uit de inzending. HN kan deze gegevens afzonderlijk controleren en gebruiken voor de fiche.</div>
+        <div id="submissionReviewDetails" style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;font-size:13px;"></div>
+      </div>
+      <div id="submissionReviewContact" style="font-size:12px;color:#6f665d;"></div>
+      <div style="display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap;border-top:1px solid #e8e1d8;padding-top:18px;">
+        <button type="button" class="button button-danger" id="reviewRejectSubmission">Afwijzen</button>
+        <button type="button" class="button button-primary" id="reviewApproveSubmission">Goedkeuren & fiche maken</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CONTENTBEHEER -->
+<section class="page" id="page-content">
+<div class="intro"><h2>Contentbeheer</h2><p>Beheer relaties tussen artikels en fiches, zoektermen en ficheclaims/voorstellen.</p></div>
+<div class="panel"><h3>Topic-relatie toevoegen</h3><div class="form-grid">
+<div class="field"><label>Topic</label><select id="contentRelTopic"></select></div>
+<div class="field"><label>Gerelateerd topic</label><select id="contentRelRelated"></select></div>
+<div class="field"><label>Type</label><select id="contentRelType"><option value="related_article">Gerelateerd artikel</option><option value="related_content">Gerelateerde inhoud</option><option value="related_fiche">Gerelateerde fiche</option><option value="related_place">Gerelateerde plaats</option></select></div></div>
+<div class="form-actions"><button class="button button-primary" id="contentAddRelation">Relatie toevoegen</button></div></div>
+<div class="panel"><h3>Zoekterm toevoegen</h3><div class="form-grid">
+<div class="field"><label>Topic</label><select id="contentTermTopic"></select></div><div class="field"><label>Zoekterm</label><input id="contentTerm"></div>
+<div class="field"><label>Taal</label><input id="contentTermLanguage" value="nl"></div><div class="field"><label>Type</label><select id="contentTermType"><option value="keyword">Zoekterm</option><option value="synonym">Synoniem</option><option value="alias">Alias</option><option value="spelling">Spelling</option></select></div></div>
+<div class="form-actions"><button class="button button-primary" id="contentAddTerm">Zoekterm toevoegen</button></div></div>
+<div class="panel"><h3>Ficheclaims</h3><div class="table-wrap"><table><thead><tr><th>Fiche</th><th>Naam</th><th>Contact</th><th>Status</th><th>Datum</th><th>Actie</th></tr></thead><tbody id="contentClaimsTable"></tbody></table></div></div>
+<div class="panel"><h3>Fichevoorstellen</h3><div class="table-wrap"><table><thead><tr><th>Fiche</th><th>Voorstel</th><th>Status</th><th>Datum</th><th>Actie</th></tr></thead><tbody id="contentProposalsTable"></tbody></table></div></div>
+<div class="panel"><h3>Bestaande relaties</h3><div class="table-wrap"><table><thead><tr><th>Topic</th><th>Type</th><th>Gerelateerd</th><th>Actie</th></tr></thead><tbody id="contentRelationsTable"></tbody></table></div></div>
+<div class="panel"><h3>Bestaande zoektermen</h3><div class="table-wrap"><table><thead><tr><th>Topic</th><th>Term</th><th>Taal</th><th>Type</th><th>Actie</th></tr></thead><tbody id="contentTermsTable"></tbody></table></div></div>
+</section>
+
+<!-- SYNC -->
+
+<section class="page" id="page-sync">
+
+  <div class="intro">
+    <h2>Sync Queue</h2>
+    <p>Overzicht van Airtable → Supabase synchronisaties. Deze pagina verwijdert niets.</p>
+  </div>
+
+  <div class="panel">
+
+    <div class="table-wrap">
+
+      <table>
+
+        <thead>
+          <tr>
+            <th>Record</th>
+            <th>Type</th>
+            <th>Actie</th>
+            <th>Status</th>
+            <th>Gewijzigd</th>
+            <th>Fout</th>
+          </tr>
+        </thead>
+
+        <tbody id="syncTable"></tbody>
+
+      </table>
+
+    </div>
+
+  </div>
+
+</section>
+
+</div>
+</main>
+</div>
+
+
+<script src="assets/admin.js"></script>\n<script src="assets/hn-admin-center.js"></script>
+
+<div id="taxonomyQuickAdd" hidden style="position:fixed;inset:0;background:rgba(40,30,20,.45);z-index:1000;display:none;align-items:center;justify-content:center;padding:20px;">
+  <div style="background:#fff;border:1px solid #674C2E;border-radius:12px;width:min(520px,100%);padding:22px;">
+    <h3 id="taxonomyQuickTitle" style="margin:0 0 8px;">Nieuwe optie</h3>
+    <p id="taxonomyQuickHint" class="hint"></p>
+    <div class="field" style="margin-top:15px;"><label>Naam</label><input id="taxonomyQuickName" maxlength="150"></div>
+    <div class="field" id="taxonomyQuickParentField" style="margin-top:15px;display:none;"><label id="taxonomyQuickParentLabel">Bovenliggende optie</label><select id="taxonomyQuickParent"></select></div>
+    <div class="field" style="margin-top:15px;"><label>Beschrijving <span class="hint">(optioneel)</span></label><textarea id="taxonomyQuickDescription" rows="3"></textarea></div>
+    <div class="form-actions">
+      <button type="button" class="button button-primary" id="taxonomyQuickSave">Toevoegen</button>
+      <button type="button" class="button button-secondary" id="taxonomyQuickCancel">Annuleren</button>
+    </div>
+  </div>
+</div></body>
+</html>
