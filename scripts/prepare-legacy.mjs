@@ -65,13 +65,6 @@ for (const file of ["robots.txt", "favicon.ico"]) {
   copyIfExists(file, path.join(publicDir, file));
 }
 
-const supabaseUrl = String(process.env.NEXT_PUBLIC_SUPABASE_URL || "").trim();
-const anonKey = String(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "").trim();
-
-if (!supabaseUrl || !anonKey) {
-  throw new Error("[HN] NEXT_PUBLIC_SUPABASE_URL en NEXT_PUBLIC_SUPABASE_ANON_KEY zijn vereist voor de legacy compatibility build.");
-}
-
 fs.writeFileSync(
   path.join(publicAssets, "config.js"),
   `window.__ENV = { SUPABASE_URL: ${JSON.stringify(supabaseUrl)}, SUPABASE_ANON_KEY: ${JSON.stringify(anonKey)} };\n`,
