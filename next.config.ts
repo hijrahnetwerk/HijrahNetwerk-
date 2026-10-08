@@ -26,7 +26,8 @@ const nextConfig: NextConfig = {
     ];
   },
   async rewrites() {
-    return [
+    return {
+      beforeFiles: [
       { source: "/", destination: "/legacy/index.html" },
       ...staticRoutes.map((route) => ({
         source: `/${route}`,
@@ -38,7 +39,8 @@ const nextConfig: NextConfig = {
       { source: "/stad/:slug", destination: "/legacy/stad.html?slug=:slug" },
       { source: "/locaties/:city/:area/:category/:slug", destination: "/legacy/fiche.html?city_slug=:city&area_slug=:area&category_slug=:category&slug=:slug" },
       { source: "/locaties/:city/:category/:slug", destination: "/legacy/fiche.html?city_slug=:city&category_slug=:category&slug=:slug" },
-    ];
+      ]
+    };
   },
   async headers() {
     return [
