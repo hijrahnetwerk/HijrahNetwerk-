@@ -1,74 +1,14 @@
 (function(){'use strict';
 const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 const safeHref=v=>window.hnSafeUrl?window.hnSafeUrl(v):'#';
-const root=document.getElementById('hn-cms-page');
-if(!root)return;
-
+const root=document.getElementById('hn-cms-page');if(!root)return;
 const db=()=>window.hijrahSupabase;
 const getType=s=>s.component_type||s.section_type||'text';
-const routeSlug=()=>{const p=location.pathname.split('/').filter(Boolean);return p[0]==='pagina'&&p[1]?decodeURIComponent(p[1]):''};
-
-function link(url,label,cls){
-  const href=safeHref(url);
-  return href==='#'?'': '<a'+(cls?' class="'+esc(cls)+'"':'')+' href="'+esc(href)+'">'+esc(label)+'</a>';
-}
-function renderData(s){
-  const c=s.content||{}, type=getType(s), source=c.data_source||s.data?.source||'';
-  const limit=Math.min(50,Math.max(1,Number(c.data_limit||s.data?.limit||6)||6));
-  const filters=c.data_filters&&typeof c.data_filters==='object'?c.data_filters:{};
-  if(!db()||!source)return '<div class="hn-v2-data"><span>HN DATA</span><strong>'+esc(source||type)+'</strong><small>Geen databron ingesteld.</small></div>';
-  return '<div class="hn-v2-data" data-source="'+esc(source)+'"><span>HN DATA</span><strong>'+esc(source)+'</strong><small>Gegevens worden geladen…</small></div>';
-}
-async function loadData(node,source,limit,filters){
-  if(!db()||!node)return;
-  const tables={cities:'cities',categories:'categories',topics:'topic',fiches:'topic'};
-  const table=tables[source];if(!table)return;
-  const fields=source==='topics'||source==='fiches'
-    ? 'id,title,slug,summary,content,city_id,country_id,category_id,published,visibility,verification_status,last_verified_at'
-    : source==='cities' ? 'id,name,slug,country_id,is_active' : 'id,name,slug,is_active';
-  let q=db().from(table).select(fields).limit(limit);
-  if(source==='cities'||source==='categories')q=q.eq('is_active',true);
-  if(source==='topics'||source==='fiches')q=q.eq('published',true).in('visibility',['','public','fiche_only']);
-  if(filters.country_id)q=q.eq('country_id',filters.country_id);
-  if(filters.city_id)q=q.eq('city_id',filters.city_id);
-  if(filters.category_id)q=q.eq('category_id',filters.category_id);
-  if(filters.slug)q=q.eq('slug',filters.slug);
-  const r=await q.order(source==='cities'||source==='categories'?'name':'updated_at',{ascending:false});
-  if(r.error){node.innerHTML='<span>HN DATA</span><strong>'+esc(source)+'</strong><small>Gegevens konden niet worden geladen.</small>';return}
-  const rows=r.data||[];
-  node.innerHTML='<span>HN DATA</span><strong>'+esc(source)+'</strong><div class="hn-v2-data-list">'+rows.map(x=>{
-    const title=x.name||x.title||'Zonder titel';
-    const summary=x.summary||x.content||'';
-    const url=x.slug?(source==='cities'?'/stad/'+encodeURIComponent(x.slug):source==='topics'||source==='fiches'?'/artikels/'+encodeURIComponent(x.slug):'#'):'#';
-    return '<article><a href="'+esc(safeHref(url))+'"><strong>'+esc(title)+'</strong></a>'+(summary?'<p>'+esc(String(summary).slice(0,180))+'</p>':'')+'</article>';
-  }).join('')+(rows.length?'':'<small>Geen resultaten gevonden.</small>')+'</div>';
-}
-function renderSection(s){
-  const c=s.content||{},type=getType(s),title=s.title||c.title||'';
-  let body='';
-  if(type==='hero')body='<div class="hn-v2-hero"><div><h1>'+esc(title)+'</h1><p>'+esc(c.text||'')+'</p>'+link(c.url,c.button||'Bekijk meer')+'</div>'+(c.image?'<img src="'+esc(safeHref(c.image))+'" alt="'+esc(title)+'">':'')+'</div>';
-  else if(type==='intro'||type==='text')body='<p class="hn-v2-text">'+esc(c.text||'')+'</p>';
-  else if(type==='image')body=(c.image?'<img class="hn-v2-image" src="'+esc(safeHref(c.image))+'" alt="'+esc(title)+'">':'<div class="hn-v2-placeholder">Afbeelding toevoegen</div>')+(c.text?'<p>'+esc(c.text)+'</p>':'');
-  else if(type==='cards')body='<div class="hn-v2-cards">'+String(c.cards||'').split('\n').filter(Boolean).map(x=>{const a=x.split('|');return '<article><strong>'+esc(a[0]?.trim())+'</strong><p>'+esc(a[1]?.trim())+'</p>'+link(a[2]?.trim(), 'Bekijk meer')+'</article>'}).join('')+'</div>';
-  else if(type==='links'||type==='navigation')body='<div class="hn-v2-links">'+String(c.text||'').split('\n').filter(Boolean).map(x=>{const a=x.split('|');return link(a[1]?.trim(),a[0]?.trim()||a[1]?.trim()||'Link')}).join('')+'</div>';
-  else if(type==='cta'||type==='comparison'||type==='steps'||type==='community'){const label=c.button||(type==='comparison'?'Vergelijken':type==='steps'?'Bekijk het stappenplan':type==='community'?'Naar de community':'Bekijk meer');const url=c.url||(type==='comparison'?'/vergelijken':type==='steps'?'/stappenplan':type==='community'?'/community':'');body='<p>'+esc(c.text||'')+'</p>'+link(url,label,'hn-v2-cta')}
-  else if(type==='divider')body='<hr>';
-  else if(type==='spacer')body='<div style="height:'+Math.max(8,Number(c.height)||80)+'px"></div>';
-  else if(['directory','articles','fiches','cities','categories','smart_search'].includes(type))body=renderData(s);
-  else body='<p class="hn-v2-text">'+esc(c.text||'')+'</p>';
-  return '<section class="hn-v2-section">'+(type==='hero'?'':'<h2>'+esc(title)+'</h2>')+body+'</section>';
-}
-async function run(){
-  const slug=routeSlug();if(!slug){root.innerHTML='<div style="padding:50px;text-align:center"><h1>Pagina niet gevonden</h1></div>';return}
-  const database=db();if(!database)return;
-  const p=await database.from('hn_site_pages').select('id,title,description,seo_title,seo_description,slug,status').eq('slug',slug).eq('status','published').maybeSingle();
-  if(p.error||!p.data){root.innerHTML='<div style="padding:50px;text-align:center"><h1>Pagina niet gevonden</h1><p>Deze pagina bestaat niet of is nog niet gepubliceerd.</p></div>';return}
-  const r=await database.from('hn_site_sections').select('section_type,component_type,component_id,title,content,sort_order,is_visible,data,settings').eq('page_id',p.data.id).eq('is_visible',true).order('sort_order');
-  if(r.error){root.innerHTML='<div style="padding:50px;text-align:center"><h1>Pagina kon niet worden geladen</h1></div>';return}
-  document.title=p.data.seo_title||p.data.title||'Hijrah Netwerk';
-  const md=document.querySelector('meta[name="description"]');if(md)md.content=p.data.seo_description||p.data.description||'';
-  root.innerHTML='<header style="padding:55px 22px;background:#faf7f2"><div style="max-width:900px;margin:auto"><h1 style="color:#674c2e;margin:0 0 12px">'+esc(p.data.title)+'</h1><p style="line-height:1.7;margin:0">'+esc(p.data.description||'')+'</p></div></header>'+((r.data||[]).map(renderSection).join('')||'<div style="padding:40px;text-align:center">Deze pagina bevat nog geen zichtbare onderdelen.</div>');
-  root.querySelectorAll('[data-source]').forEach(async node=>{const source=node.dataset.source;const section=r.data.find(s=>(s.content?.data_source||s.data?.source)===source);await loadData(node,source,Number(section?.content?.data_limit||section?.data?.limit||6),section?.content?.data_filters||{});});
-}
+const routeSlug=()=>{const p=location.pathname.split('/').filter(Boolean);if(p[0]==='pagina'&&p[1])return decodeURIComponent(p[1]);const q=new URLSearchParams(location.search).get('slug');if(q)return q;return root.dataset.pageSlug||''};
+function link(url,label,cls){const href=safeHref(url);return href==='#'?'':'<a'+(cls?' class="'+esc(cls)+'"':'')+' href="'+esc(href)+'">'+esc(label)+'</a>'}
+function renderData(s){const c=s.content||{},type=getType(s),source=c.data_source||s.data?.source||'';if(!db()||!source)return '<div class="hn-v2-data"><span>HN DATA</span><strong>'+esc(source||type)+'</strong><small>Geen databron ingesteld.</small></div>';return '<div class="hn-v2-data" data-source="'+esc(source)+'"><span>HN DATA</span><strong>'+esc(source)+'</strong><small>Gegevens worden geladen…</small></div>'}
+async function loadData(node,source,limit,filters){if(!db()||!node)return;const tables={cities:'cities',categories:'categories',topics:'topic',fiches:'topic'};const table=tables[source];if(!table)return;const fields=source==='topics'||source==='fiches'?'id,title,slug,summary,content,city_id,country_id,category_id,published,visibility,verification_status,last_verified_at,updated_at':source==='cities'?'id,name,slug,country_id,is_active':'id,name,slug,is_active';let q=db().from(table).select(fields).limit(Math.min(50,Math.max(1,Number(limit)||6)));if(source==='cities'||source==='categories')q=q.eq('is_active',true);if(source==='topics'||source==='fiches')q=q.eq('published',true).or('visibility.is.null,visibility.eq.,visibility.eq.public,visibility.eq.fiche_only');if(filters.country_id)q=q.eq('country_id',filters.country_id);if(filters.city_id)q=q.eq('city_id',filters.city_id);if(filters.category_id)q=q.eq('category_id',filters.category_id);if(filters.slug)q=q.eq('slug',filters.slug);const r=await q.order(source==='cities'||source==='categories'?'name':'updated_at',{ascending:false});if(r.error){node.innerHTML='<span>HN DATA</span><strong>'+esc(source)+'</strong><small>Gegevens konden niet worden geladen.</small>';return}const rows=r.data||[];node.innerHTML='<span>HN DATA</span><strong>'+esc(source)+'</strong><div class="hn-v2-data-list">'+rows.map(x=>{const title=x.name||x.title||'Zonder titel',summary=x.summary||x.content||'',url=x.slug?(source==='cities'?'/stad/'+encodeURIComponent(x.slug):source==='topics'||source==='fiches'?'/artikels/'+encodeURIComponent(x.slug):'#'):'#';return '<article><a href="'+esc(safeHref(url))+'"><strong>'+esc(title)+'</strong></a>'+(summary?'<p>'+esc(String(summary).slice(0,180))+'</p>':'')+'</article>'}).join('')+(rows.length?'':'<small>Geen resultaten gevonden.</small>')+'</div>'}
+function renderSection(s){const c=s.content||{},type=getType(s),title=s.title||c.title||'';let body='';if(type==='hero')body='<div class="hn-v2-hero"><div><h1>'+esc(title)+'</h1><p>'+esc(c.text||'')+'</p>'+link(c.url,c.button||'Bekijk meer')+'</div>'+(c.image?'<img src="'+esc(safeHref(c.image))+'" alt="'+esc(title)+'">':'')+'</div>';else if(type==='intro'||type==='text')body='<p class="hn-v2-text">'+esc(c.text||'')+'</p>';else if(type==='image')body=(c.image?'<img class="hn-v2-image" src="'+esc(safeHref(c.image))+'" alt="'+esc(title)+'">':'<div class="hn-v2-placeholder">Afbeelding toevoegen</div>')+(c.text?'<p>'+esc(c.text)+'</p>':'');else if(type==='cards')body='<div class="hn-v2-cards">'+String(c.cards||'').split('\n').filter(Boolean).map(x=>{const a=x.split('|');return '<article><strong>'+esc(a[0]?.trim())+'</strong><p>'+esc(a[1]?.trim())+'</p>'+link(a[2]?.trim(),'Bekijk meer')+'</article>'}).join('')+'</div>';else if(type==='links'||type==='navigation')body='<div class="hn-v2-links">'+String(c.text||'').split('\n').filter(Boolean).map(x=>{const a=x.split('|');return link(a[1]?.trim(),a[0]?.trim()||a[1]?.trim()||'Link')}).join('')+'</div>';else if(type==='cta'||type==='comparison'||type==='steps'||type==='community'){const label=c.button||(type==='comparison'?'Vergelijken':type==='steps'?'Bekijk het stappenplan':type==='community'?'Naar de community':'Bekijk meer'),url=c.url||(type==='comparison'?'/vergelijken':type==='steps'?'/stappenplan':type==='community'?'/community':'');body='<p>'+esc(c.text||'')+'</p>'+link(url,label,'hn-v2-cta')}else if(type==='divider')body='<hr>';else if(type==='spacer')body='<div style="height:'+Math.max(8,Number(c.height)||80)+'px"></div>';else if(['directory','articles','fiches','cities','categories','smart_search'].includes(type))body=renderData(s);else body='<p class="hn-v2-text">'+esc(c.text||'')+'</p>';return '<section class="hn-v2-section">'+(type==='hero'?'':'<h2>'+esc(title)+'</h2>')+body+'</section>'}
+async function run(){const slug=routeSlug();if(!slug){root.innerHTML='<div style="padding:50px;text-align:center"><h1>Pagina niet gevonden</h1></div>';return}const database=db();if(!database)return;const p=await database.from('hn_site_pages').select('id,title,description,seo_title,seo_description,slug,status').eq('slug',slug).eq('status','published').maybeSingle();if(p.error||!p.data){root.innerHTML='<div style="padding:50px;text-align:center"><h1>Pagina niet gevonden</h1><p>Deze pagina bestaat niet of is nog niet gepubliceerd.</p></div>';return}const r=await database.from('hn_site_sections').select('section_type,component_type,component_id,title,content,sort_order,is_visible,data,settings').eq('page_id',p.data.id).eq('is_visible',true).order('sort_order');if(r.error){root.innerHTML='<div style="padding:50px;text-align:center"><h1>Pagina kon niet worden geladen</h1></div>';return}document.title=p.data.seo_title||p.data.title||'Hijrah Netwerk';const md=document.querySelector('meta[name="description"]');if(md)md.content=p.data.seo_description||p.data.description||'';root.innerHTML='<header style="padding:55px 22px;background:#faf7f2"><div style="max-width:900px;margin:auto"><h1 style="color:#674c2e;margin:0 0 12px">'+esc(p.data.title)+'</h1><p style="line-height:1.7;margin:0">'+esc(p.data.description||'')+'</p></div></header>'+((r.data||[]).map(renderSection).join('')||'<div style="padding:40px;text-align:center">Deze pagina bevat nog geen zichtbare onderdelen.</div>');root.querySelectorAll('[data-source]').forEach(async node=>{const source=node.dataset.source;const section=r.data.find(s=>(s.content?.data_source||s.data?.source)===source);await loadData(node,source,Number(section?.content?.data_limit||section?.data?.limit||6),section?.content?.data_filters||{})})}
 run();
 })();
