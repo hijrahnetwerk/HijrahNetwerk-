@@ -62,3 +62,32 @@ $function$;
 
 revoke all on function public.hn_admin_update_profile(uuid, jsonb) from public, anon;
 grant execute on function public.hn_admin_update_profile(uuid, jsonb) to authenticated;
+
+
+-- Admin-only read path for another member's Hijrah plan and progress.
+create or replace function public.hn_admin_get_user_plan(p_user_id uuid)
+returns jsonb
+language plpgsql
+stable
+security definer
+set search_path = ''
+as $function$
+declare
+  result jsonb;
+begin
+  if not private.is_admin() then
+    raise exception 'Alleen HN-beheerders mogen een gebruikersplan bekijken.' using errcode = '42501';
+  end if;
+  if p_user_id is null then
+    raise exception 'Gebruiker ontbreekt.' using errcode = '22023';
+  end if;
+  select jsonb_build_object(
+    'plan', (select to_jsonb(p) from public.hijrah_plans p where p.user_id = p_user_id order by p.updated_at desc limit 1),
+    'steps', coalesce((select jsonb_agg(to_jsonb(s) order by s.sort_order) from public.hijrah_steps s where s.is_active = true), '[]'::jsonb),
+    'progress', coalesce((select jsonb_agg(to_jsonb(mp) order by mp.updated_at desc) from public.member_progress mp where mp.user_id = p_user_id), '[]'::jsonb)
+  ) into result;
+  return result;
+end;
+$function$;
+revoke all on function public.hn_admin_get_user_plan(uuid) from public, anon;
+grant execute on function public.hn_admin_get_user_plan(uuid) to authenticated;
