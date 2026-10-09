@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title id="pageTitle">Verhaal — Hijrah Netwerk</title>
+<meta name="description" id="pageMeta" content="Lees dit verhaal op Hijrah Netwerk.">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="stylesheet" href="/assets/public-nav.css">
+<style>
+:root{
+  --br:#674C2E;--rs:#DD842A;--gd:#C6A15B;--gd2:#D4AF37;
+  --wh:#fff;--bg:#FDFAF6;--muted:#8a7060;--border:rgba(103,76,46,.18);
+  --shadow-gd:0 14px 38px rgba(212,175,55,.20);--r:20px;--max:780px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--br);font-family:Inter,system-ui,sans-serif;line-height:1.6;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+
+/* Progress bar bovenaan */
+.read-progress{
+  position:fixed;top:0;left:0;z-index:2000;
+  height:3px;width:0%;
+  background:linear-gradient(90deg,var(--rs),var(--gd2),var(--gd));
+  transition:width .1s linear;
+}
+
+.gold-stripe{
+  height:3px;
+  background:linear-gradient(90deg,var(--rs),var(--gd2),var(--gd),var(--gd2),var(--rs));
+  background-size:200% 100%;
+  animation:stripe 4s linear infinite;
+}
+@keyframes stripe{to{background-position:200% 0}}
+
+.wrap{width:min(var(--max),calc(100% - 32px));margin-inline:auto}
+.wrap-wide{width:min(1180px,calc(100% - 32px));margin-inline:auto}
+
+/* ── ARTIKEL HERO ── */
+.art-hero{
+  position:relative;overflow:hidden;min-height:440px;
+  display:flex;align-items:flex-end;padding-bottom:56px;
+  background:linear-gradient(135deg,#3d2a14,var(--br),#7a4e28,var(--gd2));
+  color:#fff;
+}
+.art-hero-img{
+  position:absolute;inset:0;
+  object-fit:cover;width:100%;height:100%;
+  opacity:.45;
+}
+.art-hero-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(to top,rgba(30,18,6,.9) 0%,rgba(30,18,6,.5) 50%,rgba(30,18,6,.2) 100%);
+}
+.art-hero-deco{
+  position:absolute;right:60px;top:50%;transform:translateY(-50%);
+  width:220px;height:220px;opacity:.08;pointer-events:none;
+}
+.art-hero-inner{position:relative;z-index:1;max-width:720px}
+.back-link{
+  display:inline-flex;align-items:center;gap:7px;
+  margin-bottom:24px;font-size:13px;font-weight:700;color:rgba(255,255,255,.65);
+  transition:.18s;
+}
+.back-link:hover{color:var(--gd)}
+.art-type{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:5px 14px;border-radius:999px;margin-bottom:18px;
+  background:rgba(255,255,255,.12);color:var(--gd);
+  border:1px solid rgba(212,175,55,.55);
+  font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;
+}
+.art-hero h1{
+  font-size:clamp(28px,5vw,52px);line-height:1.06;letter-spacing:-.04em;
+  color:#fff;margin-bottom:16px;
+}
+.art-meta-row{
+  display:flex;align-items:center;gap:16px;flex-wrap:wrap;
+  font-size:13px;color:rgba(255,255,255,.65);
+}
+.art-meta-row .sep{opacity:.4}
+.art-author-dot{
+  width:32px;height:32px;border-radius:50%;flex-shrink:0;
+  background:linear-gradient(135deg,var(--br),var(--gd));
+  color:#fff;display:grid;place-items:center;font-size:11px;font-weight:800;
+}
+
+/* ── CONTENT ── */
+.art-content{padding:56px 0 40px}
+.art-intro{
+  font-size:clamp(17px,2.2vw,21px);line-height:1.55;color:var(--br);
+  font-weight:500;margin-bottom:36px;padding-bottom:36px;
+  border-bottom:2px solid rgba(212,175,55,.25);
+}
+.art-body{
+  font-size:16px;line-height:1.8;color:#4a3520;
+  white-space:pre-wrap;word-break:break-word;
+}
+.art-body p{margin-bottom:1.5em}
+
+/* ── TAGS / META SIDEBAR ── */
+.art-aside{
+  position:sticky;top:90px;
+  padding:24px;background:#fff;
+  border:1px solid var(--border);border-radius:var(--r);
+  box-shadow:0 8px 28px rgba(103,76,46,.08);
+}
+.art-aside h4{font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:14px}
+.aside-stat{display:flex;align-items:center;gap:10px;margin-bottom:12px;font-size:13px}
+.aside-icon{
+  width:32px;height:32px;border-radius:10px;
+  background:linear-gradient(135deg,rgba(212,175,55,.15),rgba(103,76,46,.08));
+  display:grid;place-items:center;font-size:15px;flex-shrink:0;
+}
+.aside-label{font-weight:600;color:var(--br)}
+.aside-val{color:var(--muted);font-size:12px}
+.share-btns{display:flex;flex-direction:column;gap:8px;margin-top:18px}
+.share-btn{
+  display:flex;align-items:center;gap:10px;padding:10px 14px;
+  border-radius:12px;border:1.5px solid var(--border);
+  background:#fff;color:var(--br);font-size:13px;font-weight:700;
+  cursor:pointer;transition:.18s;
+}
+.share-btn:hover{border-color:var(--gd);background:linear-gradient(135deg,#fff,rgba(212,175,55,.08))}
+
+/* ── LAYOUT ── */
+.art-layout{
+  display:grid;grid-template-columns:1fr;gap:36px;
+  align-items:start;
+}
+@media(min-width:860px){
+  .art-layout{grid-template-columns:1fr 280px}
+  .art-aside{display:block}
+}
+
+/* ── GERELATEERD ── */
+.related{padding:56px 0;background:linear-gradient(135deg,#fff,rgba(212,175,55,.07))}
+.gold-divider{height:2px;background:linear-gradient(90deg,transparent,var(--gd),var(--gd2),var(--gd),transparent);opacity:.55}
+.related h2{font-size:clamp(22px,3vw,30px);letter-spacing:-.035em;margin-bottom:28px}
+.rel-grid{display:grid;grid-template-columns:1fr;gap:18px}
+@media(min-width:600px){.rel-grid{grid-template-columns:repeat(2,1fr)}}
+@media(min-width:900px){.rel-grid{grid-template-columns:repeat(3,1fr)}}
+.rel-card{
+  background:#fff;border:1px solid var(--border);border-radius:16px;
+  padding:20px;cursor:pointer;transition:.2s ease;
+}
+.rel-card:hover{transform:translateY(-3px);border-color:var(--gd);box-shadow:var(--shadow-gd)}
+.rel-type{font-size:10px;font-weight:800;color:var(--gd2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px}
+.rel-card h3{font-size:15px;line-height:1.25;letter-spacing:-.02em;color:var(--br);margin-bottom:6px}
+.rel-card p{font-size:12px;color:var(--muted);line-height:1.5}
+
+/* ── ANIMATIES ── */
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease}
+.reveal.in{opacity:1;transform:translateY(0)}
+
+/* ── LOADING ── */
+.loading-state{
+  min-height:60vh;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:16px;text-align:center;
+}
+.spinner{width:36px;height:36px;border-radius:50%;border:3px solid rgba(103,76,46,.15);border-top-color:var(--gd);animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:11px 22px;border-radius:999px;font-size:14px;font-weight:750;border:1px solid transparent;transition:.18s;cursor:pointer}
+.btn:hover{transform:translateY(-2px)}
+.btn-primary{background:linear-gradient(135deg,var(--rs),var(--gd));color:#fff;box-shadow:var(--shadow-gd)}
+</style>
+</head>
+<body>
+
+<div class="read-progress" id="readProgress"></div>
+<div class="gold-stripe"></div>
+
+<link rel="stylesheet" href="/assets/public-nav.css">
+<script src="/config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/supabase-client.js"></script>
+<script src="/assets/public-nav.js"></script>
+
+<div id="articleRoot">
+  <div class="loading-state wrap">
+    <div class="spinner"></div>
+    <p>Artikel laden…</p>
+  </div>
+</div>
+
+<script>
+(function(){
+'use strict';
+
+const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+
+function typeLabel(t){return{verhaal:'✈ Verhaal',interview:'🎙 Interview',ervaring:'💬 Ervaring'}[t]||t}
+function faseLabel(f){return{orienteren:'Oriënteren',voorbereiden:'Voorbereiden',integreren:'Integreren',terugkeren:'Terugkeren'}[f]||f}
+function initials(n){return(n||'HN').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase()}
+function readTime(content){return Math.max(2,Math.round((content||'').split(/\s+/).length/200))}
+
+function compassSvg(){
+  return`<svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="60" cy="60" r="55" stroke="white" stroke-width="1.5" opacity=".4"/>
+    <circle cx="60" cy="60" r="38" stroke="white" stroke-width="1" opacity=".2"/>
+    <line x1="60" y1="10" x2="60" y2="110" stroke="white" stroke-width="1" opacity=".3"/>
+    <line x1="10" y1="60" x2="110" y2="60" stroke="white" stroke-width="1" opacity=".3"/>
+    <polygon points="60,16 55,55 65,55" fill="white" opacity=".6"/>
+    <polygon points="60,104 55,65 65,65" fill="white" opacity=".2"/>
+    <circle cx="60" cy="60" r="5" fill="white" opacity=".7"/>
+    <text x="57" y="9" fill="white" font-size="9" opacity=".7" font-weight="700">N</text>
+  </svg>`;
+}
+
+/* Progress bar */
+window.addEventListener('scroll',()=>{
+  const el=document.getElementById('readProgress');
+  if(!el)return;
+  const total=document.documentElement.scrollHeight-window.innerHeight;
+  el.style.width=(total>0?Math.min(100,window.scrollY/total*100):0)+'%';
+},{passive:true});
+
+/* Scroll reveal */
+function observeReveal(){
+  const obs=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');obs.unobserve(e.target)}});
+  },{threshold:.1,rootMargin:'0px 0px -30px 0px'});
+  document.querySelectorAll('.reveal:not(.in)').forEach(el=>obs.observe(el));
+}
+
+/* Slug uit URL */
+function getSlug(){
+  const parts=location.pathname.split('/').filter(Boolean);
+  return parts[parts.length-1]||'';
+}
+
+/* Render artikel */
+function renderArticle(b,related){
+  const rt=b.read_time_min||readTime(b.content);
+  const land=b.countries?.name||'';
+  const date=b.published_at?new Date(b.published_at).toLocaleDateString('nl-NL',{day:'numeric',month:'long',year:'numeric'}):'';
+  const tags=(b.tags||[]);
+
+  document.getElementById('pageTitle').textContent=`${b.title} — Hijrah Netwerk`;
+  document.getElementById('pageMeta').setAttribute('content',b.intro||b.title);
+
+  document.getElementById('articleRoot').innerHTML=`
+  <!-- HERO -->
+  <section class="art-hero">
+    ${b.cover_url?`<img class="art-hero-img" src="${esc(b.cover_url)}" alt="${esc(b.title)}" loading="eager">`:''}
+    <div class="art-hero-overlay"></div>
+    <div class="art-hero-deco">${compassSvg()}</div>
+    <div class="wrap">
+      <div class="art-hero-inner">
+        <a class="back-link" href="/verhalen">← Terug naar verhalen</a>
+        <div class="art-type">${typeLabel(b.type)}</div>
+        <h1>${esc(b.title)}</h1>
+        <div class="art-meta-row">
+          <div class="art-author-dot">${initials(b.author_name)}</div>
+          <span>${esc(b.author_name||'Hijrah Netwerk')}</span>
+          ${date?`<span class="sep">·</span><span>${date}</span>`:''}
+          ${land?`<span class="sep">·</span><span>📍 ${esc(land)}</span>`:''}
+          ${b.fase?`<span class="sep">·</span><span>${faseLabel(b.fase)}</span>`:''}
+          <span class="sep">·</span><span>⏱ ${rt} min lezen</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="gold-divider"></div>
+
+  <!-- CONTENT -->
+  <section class="art-content">
+    <div class="wrap-wide">
+      <div class="art-layout">
+        <!-- HOOFDTEKST -->
+        <div>
+          ${b.intro?`<div class="art-intro reveal">${esc(b.intro)}</div>`:''}
+          <div class="art-body reveal">${esc(b.content||'').split('\n\n').map(p=>`<p>${esc(p)}</p>`).join('').replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"')}</div>
+        </div>
+
+        <!-- ASIDE -->
+        <aside class="art-aside reveal">
+          <h4>Over dit verhaal</h4>
+          <div class="aside-stat">
+            <span class="aside-icon">✈</span>
+            <div><div class="aside-label">${typeLabel(b.type)}</div></div>
+          </div>
+          ${land?`<div class="aside-stat"><span class="aside-icon">📍</span><div><div class="aside-label">${esc(land)}</div><div class="aside-val">Bestemming</div></div></div>`:''}
+          ${b.fase?`<div class="aside-stat"><span class="aside-icon">🧭</span><div><div class="aside-label">${faseLabel(b.fase)}</div><div class="aside-val">Fase</div></div></div>`:''}
+          <div class="aside-stat">
+            <span class="aside-icon">⏱</span>
+            <div><div class="aside-label">${rt} min lezen</div><div class="aside-val">Leestijd</div></div>
+          </div>
+          ${tags.length?`<div class="aside-stat"><span class="aside-icon">🏷</span><div><div class="aside-label">${tags.map(t=>esc(t)).join(', ')}</div><div class="aside-val">Tags</div></div></div>`:''}
+
+          <div class="share-btns">
+            <h4 style="margin-top:4px">Deel dit verhaal</h4>
+            <button class="share-btn" onclick="navigator.clipboard.writeText(location.href).then(()=>this.textContent='✓ Link gekopieerd!')">
+              🔗 Kopieer link
+            </button>
+            <a class="share-btn" href="https://wa.me/?text=${encodeURIComponent(b.title+' — '+location.href)}" target="_blank" rel="noopener">
+              💬 Deel via WhatsApp
+            </a>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <div class="gold-divider"></div>
+
+  <!-- GERELATEERD -->
+  ${related&&related.length?`
+  <section class="related">
+    <div class="wrap-wide">
+      <h2 class="reveal">Meer verhalen & interviews</h2>
+      <div class="rel-grid">
+        ${related.map(r=>`
+        <article class="rel-card reveal" onclick="location.href='/verhalen/${esc(r.slug)}'">
+          <div class="rel-type">${typeLabel(r.type)}</div>
+          <h3>${esc(r.title)}</h3>
+          <p>${esc((r.intro||'').slice(0,90))}${(r.intro||'').length>90?'…':''}</p>
+        </article>`).join('')}
+      </div>
+    </div>
+  </section>`:''}
+
+  <!-- CTA -->
+  <section style="padding:64px 0;background:linear-gradient(135deg,var(--br),#5a3820,var(--br));color:#fff;text-align:center">
+    <div class="wrap">
+      <h2 style="font-size:clamp(22px,4vw,36px);letter-spacing:-.04em;margin-bottom:12px;color:#fff">Jouw verhaal telt ook.</h2>
+      <p style="color:rgba(255,255,255,.75);margin-bottom:28px;max-width:480px;margin-inline:auto">Heb je zelf de stap gezet? Deel jouw ervaring en help anderen die dezelfde weg bewandelen.</p>
+      <a class="btn btn-primary" href="/bijdragen?type=experience">✍ Deel jouw verhaal</a>
+    </div>
+  </section>
+  `;
+
+  observeReveal();
+}
+
+/* Foutpagina */
+function renderError(msg){
+  document.getElementById('articleRoot').innerHTML=`
+  <div class="loading-state wrap" style="min-height:60vh">
+    <div style="font-size:48px">🧭</div>
+    <h2 style="font-size:24px">Verhaal niet gevonden</h2>
+    <p style="color:var(--muted)">${esc(msg||'Dit verhaal bestaat niet of is niet gepubliceerd.')}</p>
+    <a class="btn btn-primary" href="/verhalen">← Terug naar verhalen</a>
+  </div>`;
+}
+
+async function init(){
+  for(let i=0;i<80&&!window.hijrahSupabase;i++)await new Promise(r=>setTimeout(r,100));
+  const db=window.hijrahSupabase;
+  const s=getSlug();
+  if(!db||!s){renderError('Kon de pagina niet laden.');return}
+
+  const {data,error}=await db.from('blogs')
+    .select('*,countries(name)')
+    .eq('slug',s)
+    .eq('published',true)
+    .maybeSingle();
+
+  if(error||!data){renderError('Dit verhaal bestaat niet of is niet gepubliceerd.');return}
+
+  // Gerelateerde verhalen
+  const {data:rel}=await db.from('blogs')
+    .select('id,title,slug,intro,type')
+    .eq('published',true)
+    .eq('access_level','public')
+    .neq('id',data.id)
+    .limit(3)
+    .order('published_at',{ascending:false});
+
+  renderArticle(data,rel||[]);
+}
+
+init();
+})();
+</script>
+</body>
+</html>
