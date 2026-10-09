@@ -506,7 +506,20 @@ async function loadOverview(){
  }
  if($('launchWaitlistCount'))$('launchWaitlistCount').textContent=w.error?'—':(w.count||0);
 }
-function startUserMonitoring(){loadActivity().catch(e=>{console.error(e);renderMonitoringError(e)})}
+async function loadActivity(){
+  const el=document.getElementById('activityList');
+  if(!el)return;
+  try{
+    const r=await db().from('user_activity').select('*,profiles(email)').order('created_at',{ascending:false}).limit(50);
+    if(r.error)throw r.error;
+    const items=r.data||[];
+    el.innerHTML=items.length?items.map(x=>'<div class="activity-item"><div><b>'+esc(x.profiles?.email||'Gebruiker')+'</b><div class="hint">'+esc(x.action||x.event_type||'Activiteit')+' · '+new Date(x.created_at).toLocaleString('nl-NL')+'</div></div></div>').join(''):'<div class="overview-empty">Geen recente activiteit.</div>';
+  }catch(e){
+    if(el)el.innerHTML='<div class="overview-empty">Activiteit kon niet worden geladen.</div>';
+    console.warn('loadActivity:',e.message);
+  }
+}
+function startUserMonitoring(){loadActivity().catch(e=>{console.warn('monitoring:',e.message);renderMonitoringError(e)})}
 function renderMonitoringError(e){const el=$('monitorError');if(el){el.textContent='Activiteiten konden niet worden geladen: '+(e?.message||'onbekende fout');el.classList.add('show')}}
 window.toggleRegistrationDetails=id=>{const e=$('registration-details-'+id);if(e)e.hidden=!e.hidden};
 window.toggleOlderActivities=()=>{const el=$('activityList');if(el)el.scrollIntoView({behavior:'smooth',block:'start'})};
@@ -525,7 +538,6 @@ async function init(){
   $('closeSubmissionReview')?.addEventListener('click',()=>{const m=$('submissionReviewModal');if(m){m.hidden=true;document.body.style.overflow=''}currentSubmissionReview=null});
   $('reviewApproveSubmission')?.addEventListener('click',()=>{if(currentSubmissionReview)approveSubmission(currentSubmissionReview.id)});
   $('reviewRejectSubmission')?.addEventListener('click',async()=>{if(!currentSubmissionReview)return;const reason=window.prompt('Waarom wijs je deze inzending af? (optioneel)');if(reason===null)return;const r=await db().from('submissions').update({status:'rejected',reviewed_at:new Date().toISOString(),updated_at:new Date().toISOString(),admin_notes:reason||'Afgewezen door HN.'}).eq('id',currentSubmissionReview.id);if(r.error)return msg(r.error.message,'error');const m=$('submissionReviewModal');if(m){m.hidden=true;document.body.style.overflow=''}currentSubmissionReview=null;await loadSubmissions();msg('Inzending afgewezen.')});
-  if(!db()){msg('Supabase is niet beschikbaar.','error');return}
   if(!db()){msg('Supabase is niet beschikbaar.','error');return}
   try{
     if(!(await checkAdmin()))return;
