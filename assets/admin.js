@@ -26,6 +26,7 @@ function options(el,items,placeholder='Kies...'){
   if(old)el.value=old;
 }
 
+let _adminReady=false;
 window.showPage=function(p,remember=true){
   const page=$('page-'+p); if(!page)return;
   document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
@@ -37,6 +38,7 @@ window.showPage=function(p,remember=true){
   if(remember){
     try{localStorage.setItem('hn_admin_page',p);history.replaceState(null,'','#'+p)}catch(e){}
   }
+  if(!_adminReady)return;
   const loaders={overview:loadOverview,countries:loadCountries,platform:()=>{},categories:loadCategories,subcategories:loadSubcategories,topics:loadTopics,reviewers:loadReviewers,users:loadUsers,submissions:loadSubmissions,content:loadContentbeheer,sync:loadSync};
   if(loaders[p])safe(titles[p]||'Pagina',loaders[p]);
 };
@@ -546,6 +548,7 @@ async function init(){
     msg('De beheeromgeving kon niet worden gecontroleerd: '+(e.message||''),'error');
     return;
   }
+  _adminReady=true;
   const jobs=[
     ['Landen',loadCountries],['Steden',loadCities],['Categorieën',loadCategories],
     ['Subcategorieën',loadSubcategories],['Reviewers',loadReviewers],['Kennisbank',loadTopics],
