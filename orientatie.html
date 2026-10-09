@@ -229,7 +229,7 @@
         <section class="hn-tools-selection" aria-labelledby="hn-tools-selection-heading">
           <div class="hn-tools-selection-head">
             <div>
-              <h2 id="hn-tools-selection-heading">Jouw selectie</h2>
+              <h2 id="hn-tools-selection-heading" tabindex="-1">Jouw selectie</h2>
               <p id="hn-tools-selection-description">Kies één of meer hulpmiddelen die je wilt gebruiken of als eerste verder wilt laten uitwerken.</p>
             </div>
             <span class="hn-tools-count" id="hn-tools-selected-count" aria-label="Aantal gekozen hulpmiddelen">0</span>
@@ -341,7 +341,7 @@
         var tool=tools[id];
         return '<li><strong>'+tool.name+'</strong> · <a href="'+tool.url+'">Bekijk verwante HN-informatie</a></li>';
       }).join('');
-      output.innerHTML='<h3>Dit heb je gekozen</h3><p>Je hebt '+list.length+' hulpmiddel'+(list.length===1:'':'en')+' geselecteerd. Je kunt hieronder naar verwante HN-informatie gaan.</p><ol class="hn-tools-selected-list">'+items+'</ol><p class="hn-tools-notice">De links openen bestaande informatiepagina’s; ze betekenen niet dat de nieuwe interactieve tool al volledig beschikbaar is.</p>';
+      output.innerHTML='<h3>Dit heb je gekozen</h3><p>Je hebt '+list.length+' hulpmiddel'+(list.length===1?'':'en')+' geselecteerd. Je kunt hieronder naar verwante HN-informatie gaan.</p><ol class="hn-tools-selected-list">'+items+'</ol><p class="hn-tools-notice">De links openen bestaande informatiepagina’s; ze betekenen niet dat de nieuwe interactieve tool al volledig beschikbaar is.</p>';
       output.hidden=false;
       output.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'nearest'});
     });
