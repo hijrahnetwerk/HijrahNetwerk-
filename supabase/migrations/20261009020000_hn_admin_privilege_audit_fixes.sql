@@ -7,6 +7,8 @@ grant insert, update, delete on table public.countries, public.cities, public.su
 
 grant select on table public.hn_content_overrides, public.hn_page_layout_overrides to anon, authenticated;
 
+grant select on table public.hn_statuses to anon, authenticated;
+
 grant select, insert, update, delete on table public.reviewer_topic, public.hn_badges, public.hn_user_badges, public.hn_site_blocks to authenticated;
 
 create or replace function public.hn_admin_update_profile(p_profile_id uuid, p_payload jsonb)
