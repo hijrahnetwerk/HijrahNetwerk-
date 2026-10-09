@@ -340,7 +340,7 @@
         var hay=(card.textContent+' '+(card.getAttribute('data-search')||'')).toLocaleLowerCase('nl');
         var matchesPhase=activeFilter==='all'||phase.split(' ').indexOf(activeFilter)!==-1;
         var matchesQuery=!q||hay.indexOf(q)!==-1;
-        var show=matchesPhase&&matchesQuery;
+        var show=matchesPhase&&matchesQuery&&card.getAttribute('data-tool-active')!=='false';
         card.hidden=!show;
         if(show)visible++;
       });
