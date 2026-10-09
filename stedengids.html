@@ -29,4 +29,5 @@ async function init(){
 }
 function render(){const q=document.getElementById('q').value.toLowerCase().trim();const list=cities.filter(x=>!q||x.name.toLowerCase().includes(q)||String(x.country_name||'').toLowerCase().includes(q));document.getElementById('cities').innerHTML=list.length?list.map(x=>{const n=topics.filter(t=>t.city_id===x.id).length;return `<article class="city"><h2>${esc(x.name)}</h2><div class="meta">${esc(x.country_name||'')} · ${n} gepubliceerde fiches</div><a class="button primary" href="/navigatie?city=${encodeURIComponent(x.id)}">Bekijk informatie</a> <a class="button secondary" href="/vergelijken?city=${encodeURIComponent(x.id)}">Vergelijk</a></article>`}).join(''):'<div class="search-empty">Geen stad gevonden.</div>'}
 document.getElementById('q').addEventListener('input',render);init();
-</script></body></html>
+</script><script src="/assets/hn-footer.js" defer></script>
+</body></html>
