@@ -185,6 +185,11 @@
       "source": "/auteursrecht.html",
       "destination": "/auteursrecht",
       "permanent": true
+    },
+    {
+      "source": "/hijrahtools.html",
+      "destination": "/hijrahtools",
+      "permanent": true
     }
   ],
   "rewrites": [
@@ -287,6 +292,10 @@
     {
       "source": "/orientatie",
       "destination": "/orientatie.html"
+    },
+    {
+      "source": "/hijrahtools",
+      "destination": "/hijrahtools.html"
     },
     {
       "source": "/voorbereiding",
