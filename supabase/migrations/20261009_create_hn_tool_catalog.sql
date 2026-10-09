@@ -28,7 +28,7 @@ create policy "Public can read active HN tools"
   on public.hn_tool_catalog
   for select
   to anon, authenticated
-  using (is_active = true or (select private.is_admin()));
+  using (true);
 
 drop policy if exists "Admins manage HN tools" on public.hn_tool_catalog;
 create policy "Admins manage HN tools"
