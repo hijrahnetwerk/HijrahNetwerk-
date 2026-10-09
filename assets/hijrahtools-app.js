@@ -337,7 +337,7 @@
       '.hnt-range{display:flex;align-items:center;gap:12px}.hnt-range input{accent-color:#9B7735;min-width:0}.hnt-range output{display:grid;place-items:center;min-width:28px;height:28px;border-radius:8px;background:#F3E4BC;font-weight:700}',
       '.hnt-form-actions,.hnt-dashboard-actions,.hnt-experience-tools{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:18px}.hnt-primary,.hnt-secondary,.hnt-danger{display:inline-flex;align-items:center;justify-content:center;min-height:42px;border-radius:9px;padding:10px 14px;font:inherit;font-size:13px;font-weight:700;cursor:pointer;text-decoration:none}.hnt-primary{border:1px solid #9B7735;background:linear-gradient(130deg,#E4CA84,#C6A15B);color:#392A18}.hnt-secondary{border:1px solid #b7a68d;background:#fff;color:#674C2E}.hnt-danger{border:1px solid #cda39a;background:#fff8f6;color:#8a3024}.hnt-primary:hover,.hnt-secondary:hover,.hnt-danger:hover{filter:brightness(.98)}.hnt-save-inline{font-size:12px;color:#6c5b43}.hnt-result{border:1px solid #D8B665;background:linear-gradient(135deg,#fffdf7,#f8edcf);padding:18px;border-radius:14px;margin-top:20px;line-height:1.6}.hnt-result h3{margin:0 0 10px}.hnt-result h4{margin:15px 0 7px}.hnt-result ul{padding-left:22px}.hnt-score{font-size:27px;font-weight:800;color:#674C2E}.hnt-result-row{padding:10px 0;border-bottom:1px solid #e8d7ad}.hnt-result-row:last-child{border-bottom:0}',
       '.hnt-budget-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:18px 0}.hnt-budget-metric{padding:13px;border-radius:11px;background:#f9f1df;border:1px solid #e1c985}.hnt-budget-metric span{display:block;font-size:11px;color:#65543b;margin-bottom:6px}.hnt-budget-metric strong{font-size:18px;overflow-wrap:anywhere}.hnt-doc-row{border:1px solid #e5dac8;border-radius:12px;padding:14px;margin-bottom:12px}.hnt-doc-title{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}.hnt-doc-status{min-width:180px}.hnt-doc-status select{min-height:36px;padding:6px;font-size:12px}.hnt-add-row{display:flex;gap:8px;margin:16px 0}.hnt-add-row input{flex:1;min-width:0;border:1px solid #d8cbb7;border-radius:9px;padding:10px}',
-      '.hnt-location-form{padding:16px;border:1px solid #e4d7c1;border-radius:13px;background:#fffdf8}.hnt-location-list{margin-top:16px}.hnt-location-card{display:flex;justify-content:space-between;gap:18px;padding:15px 0;border-bottom:1px solid #e8ddcc}.hnt-location-card h4{margin:8px 0 5px}.hnt-location-card p{margin:4px 0;font-size:13px;line-height:1.5}.hnt-tag{display:inline-block;border:1px solid #d3b76d;background:#f5e7c0;color:#5a421e;padding:4px 8px;border-radius:99px;font-size:11px}.hnt-card-actions{display:flex;align-items:flex-start;flex-direction:column;gap:8px;min-width:140px}.hnt-link{color:#755019;font-weight:700;font-size:13px}.hnt-empty,.hnt-loading{padding:18px;border:1px dashed #d9c8ac;border-radius:10px;color:#756d63;text-align:center}',
+      '.hnt-table-wrap{overflow-x:auto}.hnt-compare-table{width:100%;border-collapse:collapse;min-width:520px}.hnt-compare-table th,.hnt-compare-table td{padding:10px;border-bottom:1px solid #e8ddcc;text-align:left;font-size:13px}.hnt-compare-table th{background:#fbf5e8}.hnt-unknown{color:#88765d;font-style:italic}.hnt-location-form{padding:16px;border:1px solid #e4d7c1;border-radius:13px;background:#fffdf8}.hnt-location-list{margin-top:16px}.hnt-location-card{display:flex;justify-content:space-between;gap:18px;padding:15px 0;border-bottom:1px solid #e8ddcc}.hnt-location-card h4{margin:8px 0 5px}.hnt-location-card p{margin:4px 0;font-size:13px;line-height:1.5}.hnt-tag{display:inline-block;border:1px solid #d3b76d;background:#f5e7c0;color:#5a421e;padding:4px 8px;border-radius:99px;font-size:11px}.hnt-card-actions{display:flex;align-items:flex-start;flex-direction:column;gap:8px;min-width:140px}.hnt-link{color:#755019;font-weight:700;font-size:13px}.hnt-empty,.hnt-loading{padding:18px;border:1px dashed #d9c8ac;border-radius:10px;color:#756d63;text-align:center}',
       '.hnt-experience-card{border:1px solid #e3d5bf;border-radius:12px;padding:15px;margin:0 0 12px;background:#fff}.hnt-experience-card h4{margin:8px 0;font-size:17px}.hnt-experience-card p{line-height:1.6;font-size:13px}.hnt-meta{font-size:11px;color:#74634d}.hnt-dashboard-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.hnt-dashboard-card{border:1px solid #dfc989;border-radius:12px;padding:16px;background:linear-gradient(140deg,#fffdf8,#f8efda)}.hnt-dashboard-card h4{margin:0 0 7px}.hnt-dashboard-card p{font-size:13px;line-height:1.5;min-height:36px}.hnt-dashboard-card button{margin-top:8px}',
       '.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}',
       '@media(max-width:700px){.hnt-dialog{width:calc(100% - 12px);max-height:calc(100dvh - 12px);border-radius:14px}.hnt-dialog-head{padding:17px}.hnt-dialog-body{padding:16px;max-height:calc(100dvh - 130px)}.hnt-grid-2,.hnt-city-grid,.hnt-budget-summary,.hnt-dashboard-grid{grid-template-columns:1fr}.hnt-doc-title,.hnt-location-card{align-items:flex-start;flex-direction:column}.hnt-doc-status{width:100%}.hnt-add-row{flex-direction:column}.hnt-card-actions{flex-direction:row;flex-wrap:wrap}.hn-tool-launch{width:100%}}',
@@ -381,7 +381,7 @@
       if (!card || !row) return;
       if (row.title) { var h= $('h2',card); if(h) h.textContent=row.title; }
       if (row.description) { var p=$('.hn-tool-description',card); if(p) p.textContent=row.description; }
-      card.hidden=row.is_active===false;
+      card.setAttribute('data-tool-active',String(row.is_active!==false));\n      card.hidden=row.is_active===false;
       var status=$('.hn-tool-status',card);
       if(status) status.textContent=row.status==='onderhoud'?'Tijdelijk in onderhoud':(row.status==='beta'?'Beschikbaar · bèta':'Interactieve tool beschikbaar');
       var launch=$('.hn-tool-launch',card);
@@ -515,21 +515,27 @@
   }
   function cityTableResult(path, weighted) {
     var citiesList=value(path+'.cities',[]), weights=value('fit.weights',{});
-    var scored=citiesList.filter(function(c){return c.name&&c.name.trim();}).map(function(c){
-      var sum=0,total=0,details=[];
+    var named=citiesList.map(function(c,i){return {city:c,index:i};}).filter(function(x){return x.city.name&&x.city.name.trim();});
+    if(!named.length) return '<h3>Vul eerst minstens één stad in</h3><p>Geef een stad een naam en vul je eigen scores in.</p>';
+    if(!weighted) {
+      return '<h3>Vergelijking per criterium</h3><p class="hnt-note">Dit overzicht toont alleen jouw invoer. “Nog onbekend” betekent dat je de informatie nog moet onderzoeken.</p><div class="hnt-table-wrap"><table class="hnt-compare-table"><thead><tr><th>Criterium</th>'+named.map(function(x){return '<th>'+esc(x.city.name)+'</th>';}).join('')+'</tr></thead><tbody>'+compareCriteria.map(function(criterion){
+        return '<tr><th>'+esc(criterion.label)+'</th>'+named.map(function(x){var v=x.city.ratings&&x.city.ratings[criterion.id];return '<td>'+(v==null||v===''?'<span class="hnt-unknown">Nog onbekend</span>':esc(v)+' / 5')+'</td>';}).join('')+'</tr>';
+      }).join('')+'</tbody></table></div>'+field('Notities en bronnen om later te controleren','comparator.notes','textarea',{rows:3,placeholder:'Welke informatie ontbreekt nog?'});
+    }
+    var scored=named.map(function(x){
+      var c=x.city,sum=0,total=0,details=[];
       compareCriteria.forEach(function(criterion){
         var raw=c.ratings&&c.ratings[criterion.id];
         if(raw==null||raw==='') return;
-        var score=Number(raw), weight=weighted?Number(weights[criterion.id]||1):1;
-        sum+=score*weight; total+=weight; details.push({label:criterion.label,score:score});
+        var score=Number(raw), weight=Number(weights[criterion.id]||1);
+        sum+=score*weight; total+=weight; details.push({label:criterion.label,score:score,weight:weight});
       });
       return {name:c.name,score:total?sum/total:null,details:details,total:total};
     });
     scored.sort(function(a,b){if(a.score==null)return 1;if(b.score==null)return -1;return b.score-a.score;});
-    if(!scored.length) return '<h3>Vul eerst minstens één stad in</h3><p>Geef een stad een naam en vul je eigen scores in.</p>';
-    return '<h3>'+(weighted?'Vergelijking op basis van jouw prioriteiten':'Jouw ingevulde vergelijking')+'</h3><p class="hnt-note">De cijfers zijn jouw eigen beoordeling. Onbekende gegevens tellen niet mee; een hoge score betekent niet dat feiten onafhankelijk zijn geverifieerd.</p>'+scored.map(function(c,i){
-      return '<div class="hnt-result-row"><strong>'+esc(c.name)+'</strong><div>'+(c.score==null?'Nog onvoldoende scores':('Gemiddelde score: <strong>'+c.score.toFixed(2).replace('.',',')+' / 5</strong>'))+'</div><small>'+c.details.length+' van '+compareCriteria.length+' criteria beoordeeld</small></div>';
-    }).join('');
+    return '<h3>Vergelijking op basis van jouw prioriteiten</h3><p class="hnt-note">De cijfers zijn jouw eigen beoordeling. Onbekende gegevens tellen niet mee; een hoge score betekent niet dat feiten onafhankelijk zijn geverifieerd.</p>'+scored.map(function(c){
+      return '<div class="hnt-result-row"><strong>'+esc(c.name)+'</strong><div>'+(c.score==null?'Nog onvoldoende scores':('Gewogen gemiddelde: <strong>'+c.score.toFixed(2).replace('.',',')+' / 5</strong>'))+'</div><small>'+c.details.length+' van '+compareCriteria.length+' criteria beoordeeld</small><ul>'+c.details.map(function(d){return '<li>'+esc(d.label)+': '+d.score+' / 5 (gewicht '+d.weight+')</li>';}).join('')+'</ul></div>';
+    }).join('')+'<p class="hnt-note">Deze volgorde weerspiegelt jouw ingevulde voorkeuren, geen objectieve beoordeling van een stad.</p>';
   }
   function budgetResult() {
     var b=state.budget,currency=b.currency||'EUR';
@@ -558,7 +564,7 @@
       if(country&&String(row.countryName||'').toLocaleLowerCase('nl').indexOf(country)===-1)return false;
       if(city&&String(row.cityName||'').toLocaleLowerCase('nl').indexOf(city)===-1)return false;
       if(kind==='ervaring'&&!(info.includes('ervaring')||info.includes('review')))return false;
-      if(kind==='officieel'&&!(info.includes('officieel')||info.includes('informatie')))return false;
+      if(kind==='officieel'&&!(info.includes('officieel')||String(row.source_type||'').toLocaleLowerCase('nl').includes('officieel')))return false;
       if(kind==='aanbeveling'&&!info.includes('aanbeveling'))return false;
       return true;
     });
