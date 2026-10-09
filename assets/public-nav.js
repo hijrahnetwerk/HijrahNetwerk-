@@ -14,7 +14,7 @@
   const fallbackItems = [
     {label:'Landen & Steden', href:'/landen'},
     {label:'Hijrah Navigatie', href:'/navigatie'},
-    {label:'HijrahTools', href:'/orientatie'},
+    {label:'HijrahTools', href:'/hijrahtools'},
     {label:'Community', href:'/community'},
     {label:'Mijn Hijrah', href:'/dashboard'},
     {label:'Over HN', href:'/#over-ons'}
