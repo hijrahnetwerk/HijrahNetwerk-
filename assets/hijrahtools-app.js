@@ -288,7 +288,7 @@
     body += '<div class="hnt-experience-tools"><button type="button" class="hnt-primary" data-search-experiences>Zoek ervaringen</button><a class="hnt-link" href="/verhalen">Open alle HN-verhalen ↗</a></div>';
     body += '<div id="hnt-experience-results" class="hnt-experience-results"><p class="hnt-loading">Gepubliceerde HN-informatie laden…</p></div>';
     body += '<p class="hnt-note">Een persoonlijke ervaring is geen garantie dat de situatie voor jou hetzelfde is. Officiële regels controleer je altijd bij de bevoegde instantie.</p>';
-    return shell('9','Doorzoek gepubliceerde HN-informatie. De tool toont geen verzonnen verhalen en maakt zichtbaar wanneer informatie een persoonlijke ervaring is.',body,'');
+    return shell('9','Doorzoek gepubliceerde HN-informatie. De tool toont geen verzonnen verhalen en maakt zichtbaar wanneer informatie een persoonlijke ervaring is.',body,'Zoek ervaringen');
   }
   function renderDashboard() {
     var stepDone = stepItems.filter(function(s){return !!state.steps.checked[s[0]];}).length;
@@ -370,7 +370,7 @@
     setSaveStatus(sessionUser?'Je voortgang wordt bewaard in je HN-account.':'Je kunt de tool gebruiken; zonder inloggen blijft de voortgang in deze browser.');
     if (dialog.showModal) dialog.showModal(); else dialog.setAttribute('open','open');
     if (id==='4') updateBudgetSummary();
-    if (id==='9') renderExperienceResults();
+    if (id==='9') {renderExperienceResults();loadExperiences();}
     var first = $('input,select,textarea,button',dialogBody);
     if (first) first.focus({preventScroll:true});
   }
