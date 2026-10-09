@@ -33,7 +33,7 @@ window.showPage=function(p,remember=true){
   document.querySelectorAll('.nav-button').forEach(x=>x.classList.remove('active'));
   page.classList.add('active');
   const nav=document.querySelector('.nav-button[data-page="'+p+'"]'); if(nav)nav.classList.add('active');
-  const titles={overview:'Overzicht',platform:"Platformpagina's",countries:'Landen',cities:'Steden',categories:'Categorieën',subcategories:'Subcategorieën',topics:'Kennisbank',reviewers:'Reviewers',users:'Gebruikers',submissions:'Inzendingen',content:'Contentbeheer',sync:'Sync Queue'};
+  const titles={overview:'Overzicht',platform:"Platformpagina's",hijrahtools:'HijrahTools beheren',countries:'Landen',cities:'Steden',categories:'Categorieën',subcategories:'Subcategorieën',topics:'Kennisbank',reviewers:'Reviewers',users:'Gebruikers',submissions:'Inzendingen',content:'Contentbeheer',sync:'Sync Queue'};
   if($('pageTitle'))$('pageTitle').textContent=titles[p]||'Admin';
   if(remember){
     try{localStorage.setItem('hn_admin_page',p);history.replaceState(null,'','#'+p)}catch(e){}
