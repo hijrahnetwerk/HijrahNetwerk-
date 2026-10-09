@@ -40,7 +40,7 @@
 </aside>
 </div>
 </main>
-<script src="/assets/config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/supabase-client.js"></script>
+<script src="/config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/supabase-client.js"></script>
 <script>
 (()=>{'use strict';
 const $=id=>document.getElementById(id),esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])),db=()=>window.hijrahSupabase;
@@ -57,18 +57,18 @@ async function init(){
   if(!user){message('Log in om je persoonlijke HN Paspoort en je profielgegevens te bekijken.');$('stampGrid').innerHTML='<div class="empty">Log in om je stempels te laden.</div>';$('contributions').innerHTML='<div class="empty">Log in om je openbare bijdragen te bekijken.</div>';return}
   const [profileResult,badgesResult,earnedResult,contribResult]=await Promise.all([
    db().from('profiles').select('*').eq('id',user.id).maybeSingle(),
-   db().from('hn_badges').select('id,slug,name,description,category,icon,manual_only,show_on_profile,active,sort_order').eq('active',true).order('sort_order').order('name'),
+   db().from('hn_badges').select('id,slug,name,description,category,icon,manual_only,show_on_profile,active,sort_order').order('sort_order').order('name'),
    db().from('hn_user_badges').select('badge_id,earned_at').eq('user_id',user.id),
    db().from('topic').select('id,title,slug,information_type,created_at').eq('submitted_by',user.id).eq('published',true).eq('visibility','public').order('created_at',{ascending:false}).limit(20)
   ]);
   if(profileResult.error)throw profileResult.error;
   if(badgesResult.error)throw badgesResult.error;
   if(earnedResult.error)throw earnedResult.error;
-  const p=profileResult.data||{},name=p.display_name||p.full_name||user.user_metadata?.display_name||user.user_metadata?.full_name||'HN-communitylid';
+  const p=profileResult.data||{},name=p.display_name||[p.first_name,p.last_name].filter(Boolean).join(' ')||user.user_metadata?.display_name||user.user_metadata?.full_name||'HN-communitylid';
   $('profileName').textContent=name;$('coverName').textContent=name;$('avatar').textContent=initials(name);$('profileStatus').textContent=p.hn_status||'HN-communitylid';$('memberSince').textContent=(p.created_at||user.created_at)?new Date(p.created_at||user.created_at).toLocaleDateString('nl-BE',{month:'short',year:'numeric'}):'—';
   const earnedIds=new Set((earnedResult.data||[]).map(x=>x.badge_id));const badges=badgesResult.data||[];showStamps(badges,earnedIds);
   if(contribResult.error){$('contributions').innerHTML='<div class="empty">Openbare bijdragen konden niet worden geladen.</div>';message('Je paspoort is geladen, maar de bijdragen konden niet worden opgehaald. Controleer de kolommen en toegangsregels van de kennisbank.')}
-  else{const contributions=contribResult.data||[];$('contributionCount').textContent=contributions.length;$('contributions').innerHTML=contributions.length?contributions.map(x=>'<a class="contribution" href="/fiche?id='+encodeURIComponent(x.id)+'" style="text-decoration:none"><b>'+esc(x.title||'HN-bijdrage')+'</b><small>'+esc(x.information_type||'Bijdrage')+' · '+(x.created_at?esc(new Date(x.created_at).toLocaleDateString('nl-BE')):'')+'</small></a>').join(''):'<div class="empty">Er zijn nog geen openbare bijdragen gekoppeld aan dit profiel.</div>'}
+  else{const contributions=p.show_contributions===false||p.profile_visibility===false?[]:(contribResult.data||[]);$('contributionCount').textContent=contributions.length;$('contributions').innerHTML=p.show_contributions===false||p.profile_visibility===false?'<div class="empty">Je profielinstellingen houden bijdragen privé.</div>':contributions.length?contributions.map(x=>'<a class="contribution" href="/fiche?id='+encodeURIComponent(x.id)+'" style="text-decoration:none"><b>'+esc(x.title||'HN-bijdrage')+'</b><small>'+esc(x.information_type||'Bijdrage')+' · '+(x.created_at?esc(new Date(x.created_at).toLocaleDateString('nl-BE')):'')+'</small></a>').join(''):'<div class="empty">Er zijn nog geen openbare bijdragen gekoppeld aan dit profiel.</div>'}
  }catch(e){console.error('[HN Paspoort]',e);message('Het paspoort kon niet volledig worden geladen. Controleer de Supabase-tabellen en toegangsregels.',true);$('stampGrid').innerHTML='<div class="empty">Gegevens konden niet worden geladen.</div>'}
 }
 init();
