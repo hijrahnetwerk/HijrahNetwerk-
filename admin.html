@@ -678,6 +678,7 @@ th{
   <nav>
     <button class="nav-button active" data-page="overview">Overzicht</button>
     <button class="nav-button" data-page="platform">Platformpagina's</button>
+    <button class="nav-button" data-page="hijrahtools">HijrahTools beheren</button>
     <button class="nav-button" data-page="countries">Landen</button>
     <button class="nav-button" data-page="cities">Steden</button>
     <button class="nav-button" data-page="categories">Categorieën</button>
@@ -1693,6 +1694,28 @@ th{
 <div class="panel"><h3>Bestaande zoektermen</h3><div class="table-wrap"><table><thead><tr><th>Topic</th><th>Term</th><th>Taal</th><th>Type</th><th>Actie</th></tr></thead><tbody id="contentTermsTable"></tbody></table></div></div>
 </section>
 
+<!-- HIJRAHTOOLS BEHEER -->
+<section class="page" id="page-hijrahtools">
+  <div class="intro">
+    <h2>HijrahTools beheren</h2>
+    <p>Beheer welke interactieve hulpmiddelen zichtbaar zijn voor leden, de omschrijving, fase, status en volgorde. Wijzigingen worden opgeslagen in de HN-database.</p>
+  </div>
+  <div id="toolCatalogMessage" class="message" role="status"></div>
+  <div class="panel">
+    <div class="panel-header">
+      <h3>Toolcatalogus</h3>
+      <button type="button" class="button button-secondary" id="toolCatalogReload">Vernieuwen</button>
+    </div>
+    <p class="hint">Gebruik ‘Onderhoud’ om een tool tijdelijk uit te schakelen. Een uitgeschakelde tool wordt niet getoond aan leden. De vaste toolnamen kunnen hier aangepast worden; wijzig ze alleen als dat bewust nodig is.</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Tool</th><th>Omschrijving</th><th>Fase</th><th>Status</th><th>Zichtbaar</th><th>Volgorde</th><th>Actie</th></tr></thead>
+        <tbody id="toolCatalogTable"><tr><td colspan="7" class="loading">Catalogus laden…</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
 <!-- SYNC -->
 
 <section class="page" id="page-sync">
@@ -1735,6 +1758,7 @@ th{
 
 
 <script src="assets/admin.js?v=20261009"></script>\n<script src="assets/hn-admin-center.js"></script>
+<script src="assets/admin-hijrahtools.js"></script>
 
 <div id="taxonomyQuickAdd" hidden style="position:fixed;inset:0;background:rgba(40,30,20,.45);z-index:1000;display:none;align-items:center;justify-content:center;padding:20px;">
   <div style="background:#fff;border:1px solid #674C2E;border-radius:12px;width:min(520px,100%);padding:22px;">
