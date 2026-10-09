@@ -40,7 +40,7 @@
     );
 
     window.hijrahSupabase = client;
-    console.log('[Hijrah Netwerk] Supabase client geladen.');
+    // Supabase client geladen (log verwijderd in productie)
   } catch (error) {
     configError('Supabase kon niet worden geïnitialiseerd: ' + (error && error.message ? error.message : 'onbekende fout'));
   }
