@@ -1,3 +1,6 @@
+# LEGACY — dit project draait op Vercel, niet op Netlify.
+# Dit bestand wordt niet gebruikt maar blijft staan als referentie.
+
 [build]
   command = "npm run build"
   publish = "."
