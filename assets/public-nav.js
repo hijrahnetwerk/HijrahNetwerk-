@@ -13,6 +13,7 @@
 
   const fallbackItems = [
     {label:'Landen & Steden', href:'/landen'},
+    {label:'Verhalen', href:'/verhalen'},
     {label:'Hijrah Navigatie', href:'/navigatie'},
     {label:'HijrahTools', href:'/orientatie'},
     {label:'Community', href:'/community'},
