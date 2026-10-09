@@ -379,7 +379,8 @@
     Object.keys(catalogSlug).forEach(function(id){
       var slug=catalogSlug[id], row=catalog[slug], card=$('.hn-tool-card[data-tool-id="'+id+'"]');
       if (!card || !row) return;
-      if (row.title) { var h= $('h2',card); if(h) h.textContent=row.title; }\n      var phaseEl=$('.hn-tool-phase',card); if(phaseEl&&row.phase) phaseEl.textContent=row.phase;
+      if (row.title) { var h= $('h2',card); if(h) h.textContent=row.title; }
+      var phaseEl=$('.hn-tool-phase',card); if(phaseEl&&row.phase) phaseEl.textContent=row.phase;
       if (row.description) { var p=$('.hn-tool-description',card); if(p) p.textContent=row.description; }
       card.setAttribute('data-tool-active',String(row.is_active!==false));
       card.hidden=row.is_active===false;
