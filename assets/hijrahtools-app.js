@@ -463,11 +463,20 @@
     }
     try {
       var client=window.hijrahSupabase;
-      var result=await client.from('hijrah_plans').select('plan_data').eq('user_id',sessionUser.id).maybeSingle();
+      var result=await client.from('hijrah_plans').select('target_country_id,target_city_id,target_date,plan_data,notes').eq('user_id',sessionUser.id).maybeSingle();
       if(result.error) throw result.error;
-      var current=result.data&&result.data.plan_data&&typeof result.data.plan_data==='object'?result.data.plan_data:existingPlanData;
+      var row=result.data||{};
+      var current=row.plan_data&&typeof row.plan_data==='object'?row.plan_data:existingPlanData;
       var merged=Object.assign({},current,{hijrahtools:state});
-      var save=await client.from('hijrah_plans').upsert({user_id:sessionUser.id,plan_data:merged,updated_at:new Date().toISOString()},{onConflict:'user_id'});
+      var save=await client.from('hijrah_plans').upsert({
+        user_id:sessionUser.id,
+        target_country_id:row.target_country_id==null?null:row.target_country_id,
+        target_city_id:row.target_city_id==null?null:row.target_city_id,
+        target_date:row.target_date==null?null:row.target_date,
+        notes:row.notes==null?null:row.notes,
+        plan_data:merged,
+        updated_at:new Date().toISOString()
+      },{onConflict:'user_id'});
       if(save.error) throw save.error;
       existingPlanData=merged;
       setSaveStatus('Opgeslagen in je HN-account.');
