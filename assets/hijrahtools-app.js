@@ -381,7 +381,8 @@
       if (!card || !row) return;
       if (row.title) { var h= $('h2',card); if(h) h.textContent=row.title; }
       if (row.description) { var p=$('.hn-tool-description',card); if(p) p.textContent=row.description; }
-      card.setAttribute('data-tool-active',String(row.is_active!==false));\n      card.hidden=row.is_active===false;
+      card.setAttribute('data-tool-active',String(row.is_active!==false));
+      card.hidden=row.is_active===false;
       var status=$('.hn-tool-status',card);
       if(status) status.textContent=row.status==='onderhoud'?'Tijdelijk in onderhoud':(row.status==='beta'?'Beschikbaar · bèta':'Interactieve tool beschikbaar');
       var launch=$('.hn-tool-launch',card);
