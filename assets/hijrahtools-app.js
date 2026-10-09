@@ -521,8 +521,9 @@
     var once=Object.keys(b.oneTime||{}).reduce(function(sum,k){return sum+Number(b.oneTime[k]||0);},0);
     var monthly=Object.keys(b.monthly||{}).reduce(function(sum,k){return sum+Number(b.monthly[k]||0);},0);
     var income=Number(b.monthlyIncome||0), savings=Number(b.savings||0), balance=income-monthly;
-    var months=monthly>0?Math.max(0,(savings-once)/monthly):null;
-    el.innerHTML='<div class="hnt-budget-metric"><span>Eenmalige kosten</span><strong>'+money(once,currency)+'</strong></div><div class="hnt-budget-metric"><span>Maandelijkse kosten</span><strong>'+money(monthly,currency)+'</strong></div><div class="hnt-budget-metric"><span>Maandelijks saldo</span><strong>'+money(balance,currency)+'</strong></div><div class="hnt-budget-metric"><span>Na vertrek over</span><strong>'+money(savings-once,currency)+'</strong></div><div class="hnt-budget-metric"><span>Buffer bij huidige uitgaven</span><strong>'+(months===null?'Niet berekend':months.toFixed(1)+' maanden')+'</strong></div>';
+    var burn=monthly-income;
+    var months=burn>0?Math.max(0,(savings-once)/burn):null;
+    el.innerHTML='<div class="hnt-budget-metric"><span>Eenmalige kosten</span><strong>'+money(once,currency)+'</strong></div><div class="hnt-budget-metric"><span>Maandelijkse kosten</span><strong>'+money(monthly,currency)+'</strong></div><div class="hnt-budget-metric"><span>Maandelijks saldo</span><strong>'+money(balance,currency)+'</strong></div><div class="hnt-budget-metric"><span>Na vertrek over</span><strong>'+money(savings-once,currency)+'</strong></div><div class="hnt-budget-metric"><span>Buffer bij verwacht tekort</span><strong>'+(months===null?'Inkomsten dekken uitgaven':months.toFixed(1)+' maanden')+'</strong></div>';
   }
   function readinessResult() {
     var answers=state.readiness.answers||{}, answered=readinessQuestions.filter(function(q){return Number(answers[q.id])>0;});
@@ -561,8 +562,9 @@
     var b=state.budget,currency=b.currency||'EUR';
     var once=Object.keys(b.oneTime||{}).reduce(function(s,k){return s+Number(b.oneTime[k]||0);},0);
     var monthly=Object.keys(b.monthly||{}).reduce(function(s,k){return s+Number(b.monthly[k]||0);},0);
-    var balance=Number(b.monthlyIncome||0)-monthly, after=Number(b.savings||0)-once;
-    return '<h3>Je berekende budget</h3><div class="hnt-budget-summary"><div class="hnt-budget-metric"><span>Eenmalige vertrekuitgaven</span><strong>'+money(once,currency)+'</strong></div><div class="hnt-budget-metric"><span>Maandelijkse uitgaven</span><strong>'+money(monthly,currency)+'</strong></div><div class="hnt-budget-metric"><span>Maandelijks saldo</span><strong>'+money(balance,currency)+'</strong></div></div><p>Na de eenmalige uitgaven blijft volgens jouw invoer '+money(after,currency)+' over. '+(balance<0?'Je maandelijkse uitgaven zijn hoger dan het opgegeven maandinkomen.':balance===0?'Je opgegeven inkomen en maandelijkse uitgaven zijn gelijk.':'Je opgegeven inkomen ligt boven de maandelijkse uitgaven.')+'</p><p class="hnt-note">Dit is een berekening op basis van jouw eigen bedragen. Het bevat geen automatische prijsdata, belastingen, wisselkoersen of onverwachte kosten.</p>';
+    var balance=Number(b.monthlyIncome||0)-monthly, after=Number(b.savings||0)-once, burn=monthly-Number(b.monthlyIncome||0);
+    var months=burn>0?Math.max(0,after/burn):null;
+    return '<h3>Je berekende budget</h3><div class="hnt-budget-summary"><div class="hnt-budget-metric"><span>Eenmalige vertrekuitgaven</span><strong>'+money(once,currency)+'</strong></div><div class="hnt-budget-metric"><span>Maandelijkse uitgaven</span><strong>'+money(monthly,currency)+'</strong></div><div class="hnt-budget-metric"><span>Maandelijks saldo</span><strong>'+money(balance,currency)+'</strong></div><div class="hnt-budget-metric"><span>Na eenmalige uitgaven over</span><strong>'+money(after,currency)+'</strong></div><div class="hnt-budget-metric"><span>Buffer bij verwacht tekort</span><strong>'+(months===null?'Inkomsten dekken uitgaven':months.toFixed(1)+' maanden')+'</strong></div></div><p>'+(balance<0?'Je maandelijkse uitgaven zijn hoger dan het opgegeven maandinkomen.':balance===0?'Je opgegeven inkomen en maandelijkse uitgaven zijn gelijk.':'Je opgegeven inkomen ligt boven de maandelijkse uitgaven.')+'</p><p class="hnt-note">Dit is een berekening op basis van jouw eigen bedragen. Het bevat geen automatische prijsdata, belastingen, wisselkoersen of onverwachte kosten.</p>';
   }
   function documentsResult() {
     var items=state.documents.items||[];
@@ -696,7 +698,12 @@
       var cb=$('input[type="checkbox"]',card);
       if(cb) cb.checked=(state.selectedTools||[]).indexOf(card.getAttribute('data-tool-id'))!==-1;
     });
-    var count=$('#hn-tools-selected-count'); if(count) count.textContent=String((state.selectedTools||[]).length);
+    var selected=(state.selectedTools||[]).length;
+    var count=$('#hn-tools-selected-count'); if(count) {count.textContent=String(selected);count.setAttribute('aria-label',selected+' hulpmiddelen gekozen');}
+    var show=$('#hn-tools-show-selection'), clear=$('#hn-tools-clear-selection');
+    if(show)show.disabled=selected===0;
+    if(clear)clear.disabled=selected===0;
+    cards.forEach(function(card){card.classList.toggle('is-selected',!!(card.querySelector('input[type="checkbox"]:checked')));});
   }
   function loadReferenceData() {
     if(!window.hijrahSupabase)return Promise.resolve();
