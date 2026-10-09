@@ -20,7 +20,7 @@
     '5':'stadkeuzehulp','6':'documentencheck','7':'emotionele-voorbereiding',
     '8':'voorzieningenkaart','9':'zusterervaringen','10':'mijn-dashboard'
   };
-  var phases = ['Oriënteren','Onderzoeken','Voorbereiden','Vertrekken','Integreren'];
+  var phases = ['Oriëntatie','Onderzoeken','Voorbereiden','Vertrekken','Integreren'];
   var stepItems = [
     ['ori-reden','Oriëntatie','Mijn redenen en verwachtingen opgeschreven'],
     ['ori-gezin','Oriëntatie','Mijn gezinssituatie en verantwoordelijkheden in kaart gebracht'],
@@ -379,7 +379,7 @@
     Object.keys(catalogSlug).forEach(function(id){
       var slug=catalogSlug[id], row=catalog[slug], card=$('.hn-tool-card[data-tool-id="'+id+'"]');
       if (!card || !row) return;
-      if (row.title) { var h= $('h2',card); if(h) h.textContent=row.title; }
+      if (row.title) { var h= $('h2',card); if(h) h.textContent=row.title; }\n      var phaseEl=$('.hn-tool-phase',card); if(phaseEl&&row.phase) phaseEl.textContent=row.phase;
       if (row.description) { var p=$('.hn-tool-description',card); if(p) p.textContent=row.description; }
       card.setAttribute('data-tool-active',String(row.is_active!==false));
       card.hidden=row.is_active===false;
@@ -402,6 +402,15 @@
       if(status) status.textContent='Interactieve tool beschikbaar';
       bottom.insertBefore(button,status||null);
     });
+  }
+  function sortCards(rows) {
+    var grid=$('#hn-tools-grid'); if(!grid)return;
+    rows.slice().sort(function(a,b){return Number(a.sort_order||0)-Number(b.sort_order||0);}).forEach(function(row){
+      var id=Object.keys(catalogSlug).filter(function(k){return catalogSlug[k]===row.slug;})[0];
+      var card=id&&$('.hn-tool-card[data-tool-id="'+id+'"]',grid);
+      if(card)grid.appendChild(card);
+    });
+    var empty=$('#hn-tools-empty',grid); if(empty)grid.appendChild(empty);
   }
   function readLocal() {
     try {
@@ -435,7 +444,7 @@
     try {
       var result=await client.from('hn_tool_catalog').select('slug,title,description,phase,status,is_active,sort_order').order('sort_order',{ascending:true});
       if(result.error) throw result.error;
-      if(result.data&&result.data.length) applyCatalog(result.data);
+      if(result.data&&result.data.length) {applyCatalog(result.data);sortCards(result.data);}
     } catch(e) { console.warn('[HijrahTools] Catalogus niet geladen; standaardinhoud wordt gebruikt.',e.message); }
   }
   function saveState() {
@@ -521,7 +530,7 @@
     if(!weighted) {
       return '<h3>Vergelijking per criterium</h3><p class="hnt-note">Dit overzicht toont alleen jouw invoer. “Nog onbekend” betekent dat je de informatie nog moet onderzoeken.</p><div class="hnt-table-wrap"><table class="hnt-compare-table"><thead><tr><th>Criterium</th>'+named.map(function(x){return '<th>'+esc(x.city.name)+'</th>';}).join('')+'</tr></thead><tbody>'+compareCriteria.map(function(criterion){
         return '<tr><th>'+esc(criterion.label)+'</th>'+named.map(function(x){var v=x.city.ratings&&x.city.ratings[criterion.id];return '<td>'+(v==null||v===''?'<span class="hnt-unknown">Nog onbekend</span>':esc(v)+' / 5')+'</td>';}).join('')+'</tr>';
-      }).join('')+'</tbody></table></div>'+field('Notities en bronnen om later te controleren','comparator.notes','textarea',{rows:3,placeholder:'Welke informatie ontbreekt nog?'});
+      }).join('')+'</tbody></table></div>';
     }
     var scored=named.map(function(x){
       var c=x.city,sum=0,total=0,details=[];
