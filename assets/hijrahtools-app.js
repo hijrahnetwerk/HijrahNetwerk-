@@ -649,6 +649,7 @@
     result.innerHTML=html;result.hidden=false;saveState();
   }
   function handleClick(e) {
+    if(e.target.closest('#hn-tools-clear-selection')) {state.selectedTools=[];saveState();return;}
     var open=e.target.closest('[data-open-tool]');
     if(open) {e.preventDefault();openTool(open.getAttribute('data-open-tool'));return;}
     var addDoc=e.target.closest('[data-add-doc]');
