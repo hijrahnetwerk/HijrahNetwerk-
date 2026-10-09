@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Blogs & Verhalen — HN Admin</title>
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="stylesheet" href="/assets/admin-style.css">
+<style>
+:root{
+  --br:#674C2E;--rs:#DD842A;--gd:#C6A15B;--gd2:#D4AF37;
+  --bg:#FDFAF6;--wh:#fff;--muted:#8a7060;--border:rgba(103,76,46,.18);
+  --shadow:0 8px 28px rgba(103,76,46,.10);--r:16px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--br);font-family:Inter,system-ui,sans-serif;line-height:1.55}
+a{color:inherit;text-decoration:none}
+button,input,select,textarea{font:inherit;cursor:pointer}
+
+.gold-stripe{height:3px;background:linear-gradient(90deg,var(--rs),var(--gd2),var(--gd),var(--gd2),var(--rs));background-size:200% 100%;animation:stripe 4s linear infinite}
+@keyframes stripe{to{background-position:200% 0}}
+
+/* ── TOP BAR ── */
+.topbar{
+  position:sticky;top:0;z-index:100;
+  background:rgba(253,250,246,.95);backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--border);padding:14px 0;
+}
+.topbar-inner{
+  width:min(1280px,calc(100% - 32px));margin-inline:auto;
+  display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+}
+.topbar h1{font-size:20px;font-weight:800;letter-spacing:-.03em;flex:1}
+.topbar h1 span{color:var(--gd)}
+.btn{display:inline-flex;align-items:center;gap:7px;padding:9px 18px;border-radius:999px;font-size:13px;font-weight:750;border:1px solid transparent;transition:.18s;white-space:nowrap}
+.btn:hover{transform:translateY(-1px)}
+.btn-primary{background:linear-gradient(135deg,var(--rs),var(--gd));color:#fff;box-shadow:0 6px 18px rgba(212,175,55,.25)}
+.btn-secondary{background:#fff;color:var(--br);border-color:var(--br)}
+.btn-secondary:hover{border-color:var(--rs);color:var(--rs)}
+.btn-danger{background:#fff;color:#c0392b;border-color:#c0392b}
+.btn-danger:hover{background:#c0392b;color:#fff}
+.btn-sm{padding:6px 12px;font-size:12px}
+
+/* ── LAYOUT ── */
+.page-wrap{width:min(1280px,calc(100% - 32px));margin-inline:auto;padding:32px 0 80px}
+
+/* ── STATS BALK ── */
+.stats-row{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:28px}
+@media(min-width:640px){.stats-row{grid-template-columns:repeat(4,1fr)}}
+.stat-card{background:#fff;border:1px solid var(--border);border-radius:var(--r);padding:18px 20px}
+.stat-card .n{font-size:28px;font-weight:800;color:var(--gd2);letter-spacing:-.04em;line-height:1}
+.stat-card .l{font-size:12px;color:var(--muted);font-weight:600;margin-top:4px}
+
+/* ── FILTER + ZOEK ── */
+.toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:22px}
+.filter-tabs{display:flex;gap:6px;flex-wrap:wrap}
+.tab{padding:7px 14px;border-radius:999px;font-size:12px;font-weight:700;border:1.5px solid var(--border);background:#fff;color:var(--br);transition:.18s}
+.tab:hover{border-color:var(--gd)}
+.tab.active{background:linear-gradient(135deg,var(--br),var(--rs));color:#fff;border-color:transparent}
+.search-box{display:flex;align-items:center;gap:8px;background:#fff;border:1.5px solid var(--border);border-radius:999px;padding:7px 14px;flex:1;min-width:180px;max-width:260px}
+.search-box input{border:0;outline:0;flex:1;font-size:13px;background:transparent;color:var(--br)}
+.select-wrap{position:relative}
+.select-wrap select{appearance:none;padding:7px 28px 7px 12px;border-radius:999px;border:1.5px solid var(--border);background:#fff;color:var(--br);font-size:12px;font-weight:600}
+.select-wrap::after{content:'▾';position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:10px;color:var(--muted);pointer-events:none}
+
+/* ── TABEL ── */
+.blog-table{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow)}
+.blog-table thead{background:linear-gradient(135deg,rgba(103,76,46,.06),rgba(212,175,55,.08))}
+.blog-table th{padding:12px 16px;text-align:left;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);white-space:nowrap}
+.blog-table td{padding:14px 16px;font-size:13px;border-top:1px solid var(--border);vertical-align:middle}
+.blog-table tr:hover td{background:rgba(212,175,55,.04)}
+.type-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:999px;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;white-space:nowrap}
+.type-verhaal{background:rgba(221,132,42,.1);color:var(--rs)}
+.type-interview{background:rgba(103,76,46,.1);color:var(--br)}
+.type-ervaring{background:rgba(212,175,55,.15);color:var(--gd2)}
+.pub-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:999px;font-size:10px;font-weight:800}
+.pub-yes{background:rgba(39,174,96,.1);color:#27ae60}
+.pub-no{background:rgba(231,76,60,.08);color:#c0392b}
+.access-badge{padding:3px 8px;border-radius:999px;font-size:10px;font-weight:700;background:rgba(103,76,46,.08);color:var(--br)}
+.row-actions{display:flex;gap:6px;flex-wrap:wrap}
+.blog-title-cell{max-width:260px}
+.blog-title-cell .title{font-weight:700;color:var(--br);display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.blog-title-cell .slug{font-size:11px;color:var(--muted)}
+.empty-row td{text-align:center;padding:48px;color:var(--muted)}
+.spinner{display:inline-block;width:22px;height:22px;border-radius:50%;border:2px solid rgba(103,76,46,.15);border-top-color:var(--gd);animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── MODAL EDITOR ── */
+.modal-overlay{
+  position:fixed;inset:0;z-index:500;
+  background:rgba(40,20,5,.6);backdrop-filter:blur(6px);
+  display:flex;align-items:flex-start;justify-content:center;
+  padding:24px 16px;overflow-y:auto;
+  opacity:0;pointer-events:none;transition:opacity .2s;
+}
+.modal-overlay.open{opacity:1;pointer-events:auto}
+.modal{
+  background:#fff;border-radius:var(--r);
+  width:min(900px,100%);box-shadow:0 24px 64px rgba(30,15,0,.3);
+  transform:translateY(20px);transition:transform .25s ease;
+  overflow:hidden;
+}
+.modal-overlay.open .modal{transform:translateY(0)}
+.modal-head{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:20px 24px;border-bottom:1px solid var(--border);
+  background:linear-gradient(135deg,rgba(103,76,46,.05),rgba(212,175,55,.08));
+}
+.modal-head h2{font-size:18px;font-weight:800;letter-spacing:-.03em}
+.modal-close{width:36px;height:36px;border-radius:50%;border:1.5px solid var(--border);background:#fff;font-size:20px;color:var(--br);display:grid;place-items:center}
+.modal-close:hover{border-color:var(--rs);color:var(--rs)}
+.modal-body{padding:28px 24px;display:grid;grid-template-columns:1fr;gap:18px}
+@media(min-width:700px){.modal-body{grid-template-columns:1fr 1fr}}
+.field{display:flex;flex-direction:column;gap:6px}
+.field.full{grid-column:1/-1}
+.field label{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.field input,.field select,.field textarea{
+  padding:10px 14px;border-radius:12px;border:1.5px solid var(--border);
+  background:#fff;color:var(--br);font-size:14px;
+  transition:.18s;outline:none;
+}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--gd);box-shadow:0 0 0 3px rgba(212,175,55,.12)}
+.field textarea{min-height:140px;resize:vertical;line-height:1.6}
+.field.content-field textarea{min-height:320px}
+.field-hint{font-size:11px;color:var(--muted);margin-top:2px}
+.char-count{font-size:11px;color:var(--muted);text-align:right}
+.modal-foot{
+  padding:18px 24px;border-top:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  gap:12px;flex-wrap:wrap;
+  background:rgba(253,250,246,.6);
+}
+.modal-status{font-size:12px;font-weight:600;color:var(--muted)}
+.modal-status.ok{color:#27ae60}
+.modal-status.err{color:#c0392b}
+
+/* ── PREVIEW PANEL ── */
+.preview-panel{
+  background:linear-gradient(135deg,rgba(103,76,46,.04),rgba(212,175,55,.06));
+  border:1.5px dashed rgba(212,175,55,.4);border-radius:var(--r);
+  padding:20px;grid-column:1/-1;
+}
+.preview-panel h4{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:14px}
+.preview-card{background:#fff;border:1px solid var(--border);border-radius:14px;overflow:hidden;max-width:380px}
+.preview-cover{height:140px;background:linear-gradient(135deg,var(--br),#9a6a38,var(--gd2));display:flex;align-items:center;justify-content:center;font-size:40px;color:rgba(255,255,255,.25)}
+.preview-cover img{width:100%;height:100%;object-fit:cover}
+.preview-body{padding:16px}
+.preview-type{font-size:10px;font-weight:800;text-transform:uppercase;color:var(--gd2);margin-bottom:6px}
+.preview-title{font-size:16px;font-weight:700;line-height:1.25;color:var(--br);margin-bottom:6px}
+.preview-intro{font-size:12px;color:var(--muted);line-height:1.5}
+
+/* ── TOEGANGSBEHEER SECTIE ── */
+.access-section{
+  grid-column:1/-1;
+  background:linear-gradient(135deg,rgba(212,175,55,.06),rgba(103,76,46,.04));
+  border:1.5px solid rgba(212,175,55,.25);border-radius:var(--r);
+  padding:20px;
+}
+.access-section h3{font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:14px}
+.access-options{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+@media(max-width:480px){.access-options{grid-template-columns:1fr}}
+.access-option{position:relative}
+.access-option input[type=radio]{position:absolute;opacity:0;inset:0;cursor:pointer}
+.access-option label{
+  display:block;padding:14px;border-radius:12px;
+  border:1.5px solid var(--border);background:#fff;cursor:pointer;
+  transition:.18s;
+}
+.access-option input:checked+label{
+  border-color:var(--gd);
+  background:linear-gradient(135deg,#fff,rgba(212,175,55,.08));
+  box-shadow:0 4px 14px rgba(212,175,55,.18);
+}
+.access-option label strong{display:block;font-size:13px;color:var(--br);margin-bottom:3px}
+.access-option label span{font-size:11px;color:var(--muted);line-height:1.4}
+
+/* ── TOAST ── */
+.toast{
+  position:fixed;bottom:24px;right:24px;z-index:900;
+  padding:12px 20px;border-radius:12px;font-size:13px;font-weight:700;
+  background:var(--br);color:#fff;
+  box-shadow:0 8px 28px rgba(30,15,0,.25);
+  transform:translateY(80px);opacity:0;
+  transition:.25s ease;pointer-events:none;
+  display:flex;align-items:center;gap:8px;
+}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.ok{background:linear-gradient(135deg,#1e7e34,#27ae60)}
+.toast.err{background:linear-gradient(135deg,#922b21,#c0392b)}
+
+/* ── DELETE CONFIRM ── */
+.confirm-overlay{position:fixed;inset:0;z-index:600;background:rgba(40,20,5,.7);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:.2s}
+.confirm-overlay.open{opacity:1;pointer-events:auto}
+.confirm-box{background:#fff;border-radius:var(--r);padding:28px;max-width:400px;width:100%;text-align:center;box-shadow:0 24px 64px rgba(30,15,0,.3)}
+.confirm-box h3{font-size:18px;font-weight:800;margin-bottom:10px}
+.confirm-box p{color:var(--muted);font-size:14px;margin-bottom:24px}
+.confirm-actions{display:flex;gap:10px;justify-content:center}
+</style>
+</head>
+<body>
+
+<div class="gold-stripe"></div>
+
+<script src="/config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/supabase-client.js"></script>
+<script src="/auth.js" defer></script>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="topbar-inner">
+    <h1>✦ <span>Blogs</span> & Verhalen</h1>
+    <a href="/admin" class="btn btn-secondary btn-sm">← Admin</a>
+    <a href="/verhalen" target="_blank" class="btn btn-secondary btn-sm">👁 Bekijk pagina</a>
+    <button class="btn btn-primary" id="btnNieuw">+ Nieuw verhaal</button>
+  </div>
+</div>
+
+<div class="page-wrap">
+
+  <!-- STATS -->
+  <div class="stats-row" id="statsRow">
+    <div class="stat-card"><div class="n" id="sTotal">—</div><div class="l">Totaal</div></div>
+    <div class="stat-card"><div class="n" id="sPub">—</div><div class="l">Gepubliceerd</div></div>
+    <div class="stat-card"><div class="n" id="sConcept">—</div><div class="l">Concepten</div></div>
+    <div class="stat-card"><div class="n" id="sInterview">—</div><div class="l">Interviews</div></div>
+  </div>
+
+  <!-- TOOLBAR -->
+  <div class="toolbar">
+    <div class="filter-tabs" id="typeTabs">
+      <button class="tab active" data-type="">Alles</button>
+      <button class="tab" data-type="verhaal">✈ Verhalen</button>
+      <button class="tab" data-type="interview">🎙 Interviews</button>
+      <button class="tab" data-type="ervaring">💬 Ervaringen</button>
+    </div>
+    <div class="select-wrap">
+      <select id="pubFilter">
+        <option value="">Alle statussen</option>
+        <option value="1">Gepubliceerd</option>
+        <option value="0">Concept</option>
+      </select>
+    </div>
+    <div class="search-box">
+      <span>⌕</span>
+      <input type="search" id="zoek" placeholder="Zoek in titels…">
+    </div>
+  </div>
+
+  <!-- TABEL -->
+  <div style="overflow-x:auto">
+    <table class="blog-table">
+      <thead>
+        <tr>
+          <th>Titel / Slug</th>
+          <th>Type</th>
+          <th>Fase</th>
+          <th>Toegang</th>
+          <th>Status</th>
+          <th>Datum</th>
+          <th>Acties</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody">
+        <tr><td colspan="7" style="text-align:center;padding:40px"><div class="spinner"></div></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- EDITOR MODAL -->
+<div class="modal-overlay" id="editorModal">
+  <div class="modal">
+    <div class="modal-head">
+      <h2 id="modalTitle">Nieuw verhaal</h2>
+      <button class="modal-close" id="modalClose">×</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="fId">
+
+      <div class="field">
+        <label>Titel *</label>
+        <input type="text" id="fTitle" placeholder="De stap naar Marokko…" maxlength="160">
+        <div class="char-count" id="titleCount">0/160</div>
+      </div>
+
+      <div class="field">
+        <label>Auteur</label>
+        <input type="text" id="fAuthor" placeholder="Naam of 'Anoniem'" maxlength="80">
+      </div>
+
+      <div class="field">
+        <label>Type</label>
+        <select id="fType">
+          <option value="verhaal">✈ Verhaal</option>
+          <option value="interview">🎙 Interview</option>
+          <option value="ervaring">💬 Ervaring</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Fase</label>
+        <select id="fFase">
+          <option value="">— Geen fase —</option>
+          <option value="orienteren">Oriënteren</option>
+          <option value="voorbereiden">Voorbereiden</option>
+          <option value="integreren">Integreren</option>
+          <option value="terugkeren">Terugkeren</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Land</label>
+        <select id="fLand">
+          <option value="">— Geen land —</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Cover afbeelding URL</label>
+        <input type="url" id="fCover" placeholder="https://…">
+        <div class="field-hint">Optioneel. Laat leeg voor automatische stijl.</div>
+      </div>
+
+      <div class="field">
+        <label>Leestijd (minuten)</label>
+        <input type="number" id="fReadTime" min="1" max="60" placeholder="auto">
+        <div class="field-hint">Laat leeg voor automatische berekening.</div>
+      </div>
+
+      <div class="field">
+        <label>Tags (komma-gescheiden)</label>
+        <input type="text" id="fTags" placeholder="marokko, gezin, werk">
+      </div>
+
+      <div class="field full">
+        <label>Intro (korte samenvatting) *</label>
+        <textarea id="fIntro" rows="3" maxlength="400" placeholder="Een korte samenvatting die op de kaart en in zoekresultaten verschijnt…"></textarea>
+        <div class="char-count" id="introCount">0/400</div>
+      </div>
+
+      <div class="field full content-field">
+        <label>Inhoud (volledig artikel) *</label>
+        <textarea id="fContent" placeholder="Schrijf hier het volledige verhaal, interview of ervaringsverhaal…&#10;&#10;Gebruik lege regels voor alinea's."></textarea>
+        <div class="field-hint">Lege regels worden automatisch omgezet naar alinea's.</div>
+      </div>
+
+      <!-- LIVE PREVIEW -->
+      <div class="preview-panel full" id="previewPanel">
+        <h4>🔍 Live preview kaart</h4>
+        <div class="preview-card">
+          <div class="preview-cover" id="prevCover">🧭</div>
+          <div class="preview-body">
+            <div class="preview-type" id="prevType">✈ Verhaal</div>
+            <div class="preview-title" id="prevTitle">Titel van het verhaal</div>
+            <div class="preview-intro" id="prevIntro">Kort intro verschijnt hier…</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TOEGANGSBEHEER -->
+      <div class="access-section full">
+        <h3>🔒 Toegangsbeheer</h3>
+        <div class="access-options">
+          <div class="access-option">
+            <input type="radio" name="access" id="accPublic" value="public" checked>
+            <label for="accPublic">
+              <strong>🌍 Publiek</strong>
+              <span>Iedereen kan dit lezen, ook zonder account.</span>
+            </label>
+          </div>
+          <div class="access-option">
+            <input type="radio" name="access" id="accMembers" value="members">
+            <label for="accMembers">
+              <strong>👥 Leden only</strong>
+              <span>Enkel ingelogde leden van Hijrah Netwerk.</span>
+            </label>
+          </div>
+          <div class="access-option">
+            <input type="radio" name="access" id="accMods" value="moderators">
+            <label for="accMods">
+              <strong>🔑 Moderatoren</strong>
+              <span>Enkel admins en moderatoren kunnen dit zien.</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- PUBLICATIE -->
+      <div class="field">
+        <label>Status</label>
+        <select id="fPub">
+          <option value="0">📝 Concept (niet zichtbaar)</option>
+          <option value="1">✅ Gepubliceerd</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Slug (URL)</label>
+        <input type="text" id="fSlug" placeholder="word-automatisch-gegenereerd">
+        <div class="field-hint">Wordt automatisch gegenereerd op basis van de titel. Pas eventueel aan.</div>
+      </div>
+    </div>
+
+    <div class="modal-foot">
+      <span class="modal-status" id="modalStatus"></span>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <button class="btn btn-secondary" id="btnCancel">Annuleren</button>
+        <button class="btn btn-primary" id="btnSave">💾 Opslaan</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DELETE CONFIRM -->
+<div class="confirm-overlay" id="confirmOverlay">
+  <div class="confirm-box">
+    <h3>Verhaal verwijderen?</h3>
+    <p id="confirmMsg">Dit kan niet worden teruggedraaid.</p>
+    <div class="confirm-actions">
+      <button class="btn btn-secondary" id="confirmCancel">Annuleren</button>
+      <button class="btn btn-danger" id="confirmOk">Verwijderen</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+'use strict';
+
+const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+const slug=s=>String(s||'').toLowerCase().trim().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
+const $=id=>document.getElementById(id);
+const typeLabel=t=>({verhaal:'✈ Verhaal',interview:'🎙 Interview',ervaring:'💬 Ervaring'}[t]||t);
+const faseLabel=f=>({orienteren:'Oriënteren',voorbereiden:'Voorbereiden',integreren:'Integreren',terugkeren:'Terugkeren'}[f]||f);
+
+let db,allBlogs=[],countries=[],deleteTarget=null;
+let activeType='',activePub='',zoekTerm='';
+
+/* ── TOAST ── */
+function toast(msg,type='ok'){
+  const t=$('toast');
+  t.textContent=type==='ok'?'✓ '+msg:'✕ '+msg;
+  t.className='toast show '+(type==='ok'?'ok':'err');
+  clearTimeout(t._t);
+  t._t=setTimeout(()=>t.className='toast',3200);
+}
+
+/* ── STATS ── */
+function updateStats(data){
+  $('sTotal').textContent=data.length;
+  $('sPub').textContent=data.filter(b=>b.published).length;
+  $('sConcept').textContent=data.filter(b=>!b.published).length;
+  $('sInterview').textContent=data.filter(b=>b.type==='interview').length;
+}
+
+/* ── TABEL RENDER ── */
+function renderTable(){
+  let list=allBlogs.filter(b=>{
+    if(activeType&&b.type!==activeType)return false;
+    if(activePub==='1'&&!b.published)return false;
+    if(activePub==='0'&&b.published)return false;
+    if(zoekTerm&&!(b.title||'').toLowerCase().includes(zoekTerm.toLowerCase()))return false;
+    return true;
+  });
+
+  if(!list.length){
+    $('tableBody').innerHTML=`<tr class="empty-row"><td colspan="7">Geen verhalen gevonden.</td></tr>`;
+    return;
+  }
+
+  $('tableBody').innerHTML=list.map(b=>{
+    const land=countries.find(c=>c.id===b.country_id);
+    const date=b.published_at?new Date(b.published_at).toLocaleDateString('nl-NL',{day:'2-digit',month:'short',year:'numeric'}):'—';
+    return `<tr>
+      <td class="blog-title-cell">
+        <span class="title">${esc(b.title)}</span>
+        <span class="slug">/verhalen/${esc(b.slug)}</span>
+      </td>
+      <td><span class="type-badge type-${esc(b.type)}">${typeLabel(b.type)}</span></td>
+      <td>${b.fase?faseLabel(b.fase):'—'}</td>
+      <td>
+        <span class="access-badge">${b.access_level==='public'?'🌍 Publiek':b.access_level==='members'?'👥 Leden':'🔑 Mods'}</span>
+      </td>
+      <td><span class="pub-badge ${b.published?'pub-yes':'pub-no'}">${b.published?'✓ Live':'● Concept'}</span></td>
+      <td>${date}</td>
+      <td><div class="row-actions">
+        <button class="btn btn-secondary btn-sm" onclick="editBlog('${esc(b.id)}')">✎ Bewerken</button>
+        <button class="btn btn-secondary btn-sm" onclick="togglePub('${esc(b.id)}',${b.published})">${b.published?'Offline':'Publiceer'}</button>
+        <a class="btn btn-secondary btn-sm" href="/verhalen/${esc(b.slug)}" target="_blank">👁</a>
+        <button class="btn btn-danger btn-sm" onclick="confirmDelete('${esc(b.id)}','${esc(b.title)}')">✕</button>
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+
+/* ── LANDEN LADEN ── */
+async function loadCountries(){
+  const {data}=await db.from('countries').select('id,name').order('name');
+  countries=data||[];
+  const sel=$('fLand');
+  countries.forEach(c=>{
+    const o=document.createElement('option');o.value=c.id;o.textContent=c.name;sel.appendChild(o);
+  });
+}
+
+/* ── BLOGS LADEN ── */
+async function loadBlogs(){
+  const {data,error}=await db.from('blogs')
+    .select('*')
+    .order('created_at',{ascending:false});
+  if(error){toast('Fout bij laden: '+error.message,'err');return}
+  allBlogs=data||[];
+  updateStats(allBlogs);
+  renderTable();
+}
+
+/* ── MODAL OPEN/SLUIT ── */
+function openModal(title){
+  $('modalTitle').textContent=title;
+  $('editorModal').classList.add('open');
+  document.body.style.overflow='hidden';
+  $('modalStatus').textContent='';
+  $('modalStatus').className='modal-status';
+}
+function closeModal(){
+  $('editorModal').classList.remove('open');
+  document.body.style.overflow='';
+  clearForm();
+}
+
+function clearForm(){
+  ['fId','fTitle','fAuthor','fIntro','fContent','fCover','fTags','fSlug'].forEach(id=>$(id).value='');
+  $('fType').value='verhaal';
+  $('fFase').value='';
+  $('fLand').value='';
+  $('fPub').value='0';
+  $('fReadTime').value='';
+  document.querySelector('input[name=access][value=public]').checked=true;
+  updatePreview();
+}
+
+/* ── LIVE PREVIEW ── */
+function updatePreview(){
+  const title=$('fTitle').value||'Titel van het verhaal';
+  const intro=$('fIntro').value||'Kort intro verschijnt hier…';
+  const type=$('fType').value;
+  const cover=$('fCover').value;
+  $('prevTitle').textContent=title;
+  $('prevIntro').textContent=intro.slice(0,100)+(intro.length>100?'…':'');
+  $('prevType').textContent=typeLabel(type);
+  const cov=$('prevCover');
+  if(cover){cov.innerHTML=`<img src="${esc(cover)}" alt="" style="width:100%;height:100%;object-fit:cover">`}
+  else{cov.innerHTML='🧭';cov.style.background='linear-gradient(135deg,#3d2a14,#9a6a38,#D4AF37)'}
+}
+
+/* ── CHAR COUNTERS ── */
+function bindChar(inputId,countId,max){
+  const el=$(inputId);const ct=$(countId);
+  el.addEventListener('input',()=>{ct.textContent=`${el.value.length}/${max}`});
+}
+
+/* ── SLUG AUTO-GENERATE ── */
+$('fTitle').addEventListener('input',function(){
+  $('titleCount').textContent=`${this.value.length}/160`;
+  if(!$('fId').value){
+    $('fSlug').value=slug(this.value);
+  }
+  updatePreview();
+});
+
+/* ── NIEUW BLOG ── */
+$('btnNieuw').addEventListener('click',()=>{
+  clearForm();
+  openModal('Nieuw verhaal / interview');
+});
+
+/* ── EDIT BLOG ── */
+window.editBlog=function(id){
+  const b=allBlogs.find(x=>x.id===id);if(!b)return;
+  $('fId').value=b.id;
+  $('fTitle').value=b.title||'';
+  $('fAuthor').value=b.author_name||'';
+  $('fIntro').value=b.intro||'';
+  $('fContent').value=b.content||'';
+  $('fCover').value=b.cover_url||'';
+  $('fSlug').value=b.slug||'';
+  $('fType').value=b.type||'verhaal';
+  $('fFase').value=b.fase||'';
+  $('fLand').value=b.country_id||'';
+  $('fPub').value=b.published?'1':'0';
+  $('fReadTime').value=b.read_time_min||'';
+  $('fTags').value=(b.tags||[]).join(', ');
+  const acc=b.access_level||'public';
+  document.querySelector(`input[name=access][value="${acc}"]`).checked=true;
+  updatePreview();
+  openModal('Verhaal bewerken');
+};
+
+/* ── TOGGLE PUBLICATIE ── */
+window.togglePub=async function(id,currentlyPub){
+  const newPub=!currentlyPub;
+  const payload={published:newPub};
+  if(newPub)payload.published_at=new Date().toISOString();
+  const {error}=await db.from('blogs').update(payload).eq('id',id);
+  if(error){toast('Fout: '+error.message,'err');return}
+  toast(newPub?'Gepubliceerd!':'Offline gezet');
+  await loadBlogs();
+};
+
+/* ── DELETE ── */
+window.confirmDelete=function(id,title){
+  deleteTarget=id;
+  $('confirmMsg').textContent=`"${title}" wordt permanent verwijderd.`;
+  $('confirmOverlay').classList.add('open');
+};
+$('confirmCancel').addEventListener('click',()=>{
+  $('confirmOverlay').classList.remove('open');deleteTarget=null;
+});
+$('confirmOk').addEventListener('click',async()=>{
+  if(!deleteTarget)return;
+  $('confirmOverlay').classList.remove('open');
+  const {error}=await db.from('blogs').delete().eq('id',deleteTarget);
+  deleteTarget=null;
+  if(error){toast('Fout bij verwijderen: '+error.message,'err');return}
+  toast('Verhaal verwijderd');
+  await loadBlogs();
+});
+
+/* ── OPSLAAN ── */
+$('btnSave').addEventListener('click',async()=>{
+  const id=$('fId').value;
+  const title=$('fTitle').value.trim();
+  const intro=$('fIntro').value.trim();
+  const content=$('fContent').value.trim();
+  const st=$('modalStatus');
+
+  if(!title){st.textContent='Titel is verplicht.';st.className='modal-status err';return}
+  if(!intro){st.textContent='Intro is verplicht.';st.className='modal-status err';return}
+  if(!content){st.textContent='Inhoud is verplicht.';st.className='modal-status err';return}
+
+  const tags=$('fTags').value.split(',').map(t=>t.trim()).filter(Boolean);
+  const access=document.querySelector('input[name=access]:checked').value;
+  const published=$('fPub').value==='1';
+  const rt=parseInt($('fReadTime').value)||null;
+
+  const payload={
+    title,
+    slug:$('fSlug').value||slug(title),
+    intro,
+    content,
+    author_name:$('fAuthor').value.trim()||'Hijrah Netwerk',
+    cover_url:$('fCover').value.trim()||null,
+    type:$('fType').value,
+    fase:$('fFase').value||null,
+    country_id:$('fLand').value||null,
+    tags,
+    access_level:access,
+    published,
+    published_at:published?new Date().toISOString():null,
+    read_time_min:rt,
+    updated_at:new Date().toISOString(),
+  };
+
+  st.textContent='Opslaan…';st.className='modal-status';
+  $('btnSave').disabled=true;
+
+  let error;
+  if(id){
+    ({error}=await db.from('blogs').update(payload).eq('id',id));
+  }else{
+    ({error}=await db.from('blogs').insert(payload));
+  }
+
+  $('btnSave').disabled=false;
+  if(error){
+    st.textContent='Fout: '+error.message;st.className='modal-status err';
+    toast('Opslaan mislukt','err');
+    return;
+  }
+  st.textContent='Opgeslagen!';st.className='modal-status ok';
+  toast(id?'Wijzigingen opgeslagen':'Nieuw verhaal aangemaakt');
+  closeModal();
+  await loadBlogs();
+});
+
+/* ── SLUIT MODAL ── */
+$('modalClose').addEventListener('click',closeModal);
+$('btnCancel').addEventListener('click',closeModal);
+$('editorModal').addEventListener('click',e=>{if(e.target===$('editorModal'))closeModal()});
+
+/* ── FILTER EVENTS ── */
+$('typeTabs').addEventListener('click',e=>{
+  const tab=e.target.closest('[data-type]');if(!tab)return;
+  document.querySelectorAll('#typeTabs .tab').forEach(t=>t.classList.remove('active'));
+  tab.classList.add('active');activeType=tab.dataset.type;renderTable();
+});
+$('pubFilter').addEventListener('change',e=>{activePub=e.target.value;renderTable()});
+let zoekTimer;
+$('zoek').addEventListener('input',e=>{clearTimeout(zoekTimer);zoekTimer=setTimeout(()=>{zoekTerm=e.target.value;renderTable()},250)});
+
+/* ── PREVIEW EVENTS ── */
+['fType','fFase','fCover'].forEach(id=>$(id).addEventListener('change',updatePreview));
+$('fIntro').addEventListener('input',()=>{$('introCount').textContent=`${$('fIntro').value.length}/400`;updatePreview()});
+
+/* ── INIT ── */
+async function init(){
+  for(let i=0;i<80&&!window.hijrahSupabase;i++)await new Promise(r=>setTimeout(r,100));
+  db=window.hijrahSupabase;
+  if(!db){
+    $('tableBody').innerHTML=`<tr class="empty-row"><td colspan="7">Supabase kon niet worden geladen.</td></tr>`;
+    return;
+  }
+  await Promise.all([loadCountries(),loadBlogs()]);
+}
+
+init();
+})();
+</script>
+</body>
+</html>
