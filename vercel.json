@@ -189,6 +189,14 @@
   ],
   "rewrites": [
     {
+      "source": "/admin-blogs",
+      "destination": "/admin-blogs.html"
+    },
+    {
+      "source": "/verhalen/:slug",
+      "destination": "/blog-artikel.html"
+    },
+    {
       "source": "/concept",
       "destination": "/concept.html"
     },
