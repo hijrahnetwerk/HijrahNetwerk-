@@ -594,7 +594,10 @@
       el.innerHTML='<p class="hnt-empty">Er zijn momenteel geen gepubliceerde fiches beschikbaar via deze koppeling. Je kunt ook de HN-verhalenpagina bekijken of later opnieuw zoeken.</p>';
       return;
     }
-    if(!filtered.length){el.innerHTML='<p class="hnt-empty">Geen resultaten met deze filters. Probeer een andere zoekterm.</p>';return;}
+    if(!filtered.length){
+      var emptyText=kind==='ervaring'?'Er zijn nog geen gepubliceerde HN-ervaringen die bij dit filter passen. De tool toont geen fictieve verhalen; bekijk de HN-verhalenpagina of kom later terug.':'Geen resultaten met deze filters. Probeer een andere zoekterm.';
+      el.innerHTML='<p class="hnt-empty">'+esc(emptyText)+' <a class="hnt-link" href="/verhalen">Bekijk HN-verhalen ↗</a></p>';return;
+    }
     el.innerHTML=filtered.slice(0,40).map(function(row){
       var type=row.information_type||row.source_type||'HN-informatie';
       var body=String(row.summary||row.content||'');
