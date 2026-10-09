@@ -265,7 +265,7 @@
             <button class="hn-tools-button" type="button" id="hn-tools-clear-selection" disabled>Wis selectie</button>
           </div>
           <div class="hn-tools-selection-output" id="hn-tools-selection-output" aria-live="polite" hidden></div>
-          <p class="hn-tools-notice">Je selectie wordt op deze pagina tijdelijk weergegeven. Ze wordt nog niet opgeslagen in je HN-account. De genoemde hulpmiddelen zijn deels nog in ontwikkeling; de links brengen je naar bestaande HN-pagina's met verwante informatie.</p>
+          <p class="hn-tools-notice">Je selectie wordt bewaard in deze browser en, wanneer je bent ingelogd, in het HijrahTools-deel van je HN-account. Open een gekozen hulpmiddel om ermee aan de slag te gaan.</p>
         </section>
       </div>
     </section>
@@ -288,8 +288,8 @@
       <div class="container">
         <h2 id="hn-tools-faq-heading">Veelgestelde vragen over HijrahTools</h2>
         <details><summary>Moet ik alle hulpmiddelen gebruiken?</summary><p>Nee. Kies alleen wat nu aansluit bij jouw vragen. Je kunt later altijd een andere tool kiezen.</p></details>
-        <details><summary>Zijn alle interactieve tools al beschikbaar?</summary><p>Nog niet. Op de kaarten staat welke hulpmiddelen in ontwikkeling zijn. Via de links kun je intussen verwante informatie op bestaande HN-pagina's bekijken.</p></details>
-        <details><summary>Wordt mijn selectie opgeslagen in mijn account?</summary><p>Nog niet. Op dit moment wordt je selectie alleen tijdelijk op deze pagina getoond. Accountgebonden opslag wordt pas aangeboden wanneer die koppeling daadwerkelijk is gebouwd en getest.</p></details>
+        <details><summary>Zijn alle interactieve tools al beschikbaar?</summary><p>De interactieve onderdelen zijn beschikbaar. Sommige onderdelen gebruiken gegevens die je zelf invult; gepubliceerde ervaringen en toolinstellingen worden uit de HN-database geladen wanneer die koppeling beschikbaar is.</p></details>
+        <details><summary>Wordt mijn selectie opgeslagen in mijn account?</summary><p>Ja, wanneer je bent ingelogd wordt je toolvoortgang opgeslagen in je HN-account. Zonder inloggen wordt je voortgang alleen in deze browser bewaard.</p></details>
         <details><summary>Kan Hijrah Netwerk bepalen welk land het beste bij mij past?</summary><p>De hulpmiddelen zijn bedoeld om je vragen te ordenen en bestemmingen gericht te onderzoeken. Ze bepalen niet voor jou welke bestemming de beste is. De uitkomst hangt af van jouw situatie, prioriteiten en de informatie die beschikbaar is.</p></details>
       </div>
     </section>
@@ -365,9 +365,9 @@
       var items=list.map(function(card){
         var id=card.getAttribute('data-tool-id');
         var tool=tools[id];
-        return '<li><strong>'+tool.name+'</strong> · <a href="'+tool.url+'">Bekijk verwante HN-informatie</a></li>';
+        return '<li><strong>'+tool.name+'</strong> · <button type="button" class="hn-tools-button primary" data-open-tool="'+id+'">Open deze tool</button></li>';
       }).join('');
-      output.innerHTML='<h3>Dit heb je gekozen</h3><p>Je hebt '+list.length+' hulpmiddel'+(list.length===1?'':'en')+' geselecteerd. Je kunt hieronder naar verwante HN-informatie gaan.</p><ol class="hn-tools-selected-list">'+items+'</ol><p class="hn-tools-notice">De links openen bestaande informatiepagina’s; ze betekenen niet dat de nieuwe interactieve tool al volledig beschikbaar is.</p>';
+      output.innerHTML='<h3>Dit heb je gekozen</h3><p>Je hebt '+list.length+' hulpmiddel'+(list.length===1?'':'en')+' geselecteerd. Open een tool hieronder om direct te beginnen.</p><ol class="hn-tools-selected-list">'+items+'</ol><p class="hn-tools-notice">Je voortgang wordt automatisch bewaard. Log in om deze op je andere apparaten in je HN-account terug te vinden.</p>';
       output.hidden=false;
       output.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'nearest'});
     });
@@ -380,5 +380,9 @@
     updateSelection();
   })();
   </script>
+<script src="/config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3"></script>
+<script src="/supabase-client.js"></script>
+<script src="/assets/hijrahtools-app.js"></script>
 </body>
 </html>
