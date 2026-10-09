@@ -1,3 +1,5 @@
+revoke update on table public.profiles from authenticated;
+
 -- Restore missing admin table privileges while keeping authorization enforced by RLS.
 -- Profile writes are intentionally handled by a SECURITY DEFINER RPC, not table-wide UPDATE grants.
 
