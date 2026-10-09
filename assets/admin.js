@@ -330,14 +330,12 @@ window.viewUserPlan=async id=>{
   $('selectedUserTitle').textContent='Mijn Hijrah Plan · '+(x.email||'Gebruiker');
   $('userPlanContent').innerHTML='<div class="empty">Plan laden...</div>';
   try{
-    const [plan,steps,progress]=await Promise.all([
-      db().from('hijrah_plans').select('*').eq('user_id',id).order('updated_at',{ascending:false}).limit(1).maybeSingle(),
-      db().from('hijrah_steps').select('*').order('sort_order'),
-      db().from('member_progress').select('*').eq('user_id',id)
-    ]);
-    if(plan.error)throw plan.error;
-    if(steps.error)throw steps.error;
-    if(progress.error)throw progress.error;
+    const result=await db().rpc('hn_admin_get_user_plan',{p_user_id:id});
+    if(result.error)throw result.error;
+    const data=result.data||{};
+    const plan={data:data.plan||null};
+    const steps={data:data.steps||[]};
+    const progress={data:data.progress||[]};
     const p=plan.data;
     if(!p){
       $('userPlanContent').innerHTML='<div class="empty">Deze gebruiker heeft nog geen Mijn Hijrah Plan opgeslagen.</div>';
