@@ -214,6 +214,7 @@
 
   /* ── INIT ── */
   function init() {
+    if (/(^|\/)admin(?:-[^/]+)?\.html$/i.test(location.pathname)) document.body.classList.add('hn-admin-page');
     injectStripe();
     // Admin is an application workspace: keep its shell, but do not append the public footer.
     if (!/(^|\/)admin(?:-[^/]+)?\.html$/i.test(location.pathname)) injectFooter();
