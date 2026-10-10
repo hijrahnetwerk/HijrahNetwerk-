@@ -8,7 +8,8 @@
 
 <script src="assets/config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="supabase-client.js"></script>
+<script src="/config.js"></script>
+  <script src="supabase-client.js"></script>
 <script type="module" src="assets/speed-insights-init.js"></script>
 <script type="module" src="assets/analytics-init.js"></script>
 
@@ -664,49 +665,178 @@ th{
     margin-top:5px
   }
 }
+
+/* ── HN ADMIN SIDEBAR UPGRADE ── */
+.hn-admin-sidebar{
+  width:256px;
+  background:linear-gradient(170deg,#2f1e0a,#674C2E);
+  color:#fff;
+  padding:22px 14px 20px;
+  flex-shrink:0;
+  height:100vh;
+  position:sticky;
+  top:0;
+  overflow-y:auto;
+  display:flex;
+  flex-direction:column;
+  gap:2px;
+}
+.hn-admin-logo{display:flex;align-items:center;gap:10px;margin-bottom:4px}
+.hn-admin-logo-mark{
+  width:36px;height:36px;border-radius:11px;
+  background:linear-gradient(135deg,#DD842A,#C6A15B);
+  display:grid;place-items:center;font-size:10px;font-weight:900;color:#fff;
+  box-shadow:0 6px 18px rgba(212,175,55,.3);
+  flex-shrink:0;
+}
+.hn-admin-logo-name{font-size:16px;font-weight:800}
+.hn-admin-label{
+  font-size:10px;opacity:.45;text-transform:uppercase;
+  letter-spacing:.1em;margin-bottom:18px;display:block;padding-left:2px;
+}
+.hn-admin-section-label{
+  font-size:10px;font-weight:800;text-transform:uppercase;
+  letter-spacing:.1em;color:rgba(255,255,255,.3);
+  padding:12px 12px 4px;
+}
+.hn-admin-nav-btn{
+  width:100%;border:0;
+  background:transparent;
+  color:rgba(255,255,255,.7);
+  text-align:left;
+  padding:9px 12px;
+  border-radius:10px;
+  cursor:pointer;
+  font-size:13px;font-weight:600;
+  display:flex;align-items:center;gap:9px;
+  transition:.18s;
+  text-decoration:none;
+  margin-bottom:1px;
+}
+.hn-admin-nav-btn:hover{
+  background:rgba(255,255,255,.1);
+  color:#fff;
+}
+.hn-admin-nav-btn.active,
+.hn-admin-nav-btn[data-page].active{
+  background:linear-gradient(135deg,rgba(221,132,42,.28),rgba(212,175,55,.18));
+  color:#D4AF37;
+  border:1px solid rgba(212,175,55,.2);
+}
+.hn-admin-nav-btn .icon{font-size:15px;width:20px;text-align:center;flex-shrink:0}
+.hn-admin-divider{height:1px;background:rgba(255,255,255,.08);margin:8px 0}
+/* Topbar upgrade */
+.topbar{
+  background:rgba(253,250,246,.97)!important;
+  backdrop-filter:blur(12px)!important;
+  border-bottom:1px solid rgba(103,76,46,.15)!important;
+}
+.topbar h1{
+  font-size:19px!important;
+  font-weight:800!important;
+  letter-spacing:-.03em!important;
+}
+/* Stats cards upgrade */
+.card.hn-admin-stat{border-top:3px solid #D4AF37!important}
+.card-number{color:#D4AF37!important}
+/* Goud stripe bovenaan admin */
+.hn-admin-stripe{
+  height:3px;
+  background:linear-gradient(90deg,#674C2E,#DD842A,#D4AF37,#F0D060,#D4AF37,#DD842A,#674C2E);
+  background-size:300% 100%;
+  animation:hn-stripe 5s linear infinite;
+}
+@keyframes hn-stripe{to{background-position:300% 0}}
+
 </style>
+<link rel="stylesheet" href="/assets/hn-design.css">
 </head>
 
 <body>
+<div class="hn-admin-stripe"></div>
 <div class="layout">
 
-<aside class="sidebar">
+<aside class="sidebar hn-admin-sidebar">
+  <div>
+    <div class="hn-admin-logo">
+      <div class="hn-admin-logo-mark">HN</div>
+      <span class="hn-admin-logo-name">Admin</span>
+    </div>
+    <span class="hn-admin-label">Hijrah Netwerk</span>
 
-  <div class="logo">Hijrah Netwerk</div>
-  <div class="admin-label">Beheerdersomgeving</div>
-
-  <nav>
-    <button class="nav-button active" data-page="overview">Overzicht</button>
-    <button class="nav-button" data-page="platform">Platformpagina's</button>
-    <button class="nav-button" data-page="hijrahtools">HijrahTools beheren</button>
-    <button class="nav-button" data-page="countries">Landen</button>
-    <button class="nav-button" data-page="cities">Steden</button>
-    <button class="nav-button" data-page="categories">Categorieën</button>
-    <button class="nav-button" data-page="subcategories">Subcategorieën</button>
-    <button class="nav-button" data-page="topics">Kennisbank</button>
-    <button class="nav-button" data-page="reviewers">Reviewers</button>
-    <a class="nav-button" href="/admin-profielen">HN Profielen</a>\n    <a class="nav-button" href="/admin-beloningen">HN Paspoort &amp; Beloningen</a>
-    <button class="nav-button" data-page="users">
-      Gebruikers
-      <span id="activityBadge" class="notification-badge" style="display:none;">0</span>
+    <div class="hn-admin-section-label">Overzicht</div>
+    <button class="nav-button hn-admin-nav-btn" data-page="overview" onclick="showPage('overview')">
+      <span class="icon">📊</span> Dashboard
     </button>
-    <button class="nav-button" data-page="submissions">
-      Inzendingen
-      <span id="submissionBadge" class="notification-badge" style="display:none;">0</span>
-    </button>
-    <a class="nav-button" href="/admin-cms">HN Beheercentrum</a>
-    <a class="nav-button" href="/admin-builder">Pagina-bouwer</a>
-    <a class="nav-button" href="/admin-componenten">Componenten &amp; Templates</a>
-    <a class="nav-button" href="/admin-navigation">Navigatie beheren</a>
-    <a class="nav-button" href="/werkruimte">Mijn HN Werkruimte</a>
-    <a class="nav-button" href="/admin-wachtlijst">Lanceringlijst</a>
-    <a class="nav-button" href="/admin-bewerkvoorstellen">Bewerkvoorstellen</a>
-    <a class="nav-button" href="/admin-hulp">Hulpcentrum</a>
-    <a class="nav-button" href="/admin-kaart">HN-kaart</a>
-    <button class="nav-button" data-page="content">Contentbeheer</button>
-    <button class="nav-button" data-page="sync">Sync Queue</button>
-  </nav>
 
+    <div class="hn-admin-section-label">Content</div>
+    <button class="nav-button hn-admin-nav-btn" data-page="topics" onclick="showPage('topics')">
+      <span class="icon">📚</span> Kennisbank
+    </button>
+    <a class="nav-button hn-admin-nav-btn" href="/admin-blogs">
+      <span class="icon">✈</span> Blogs & Verhalen
+    </a>
+    <button class="nav-button hn-admin-nav-btn" data-page="content" onclick="showPage('content')">
+      <span class="icon">📄</span> Pagina's
+    </button>
+    <button class="nav-button hn-admin-nav-btn" data-page="categories" onclick="showPage('categories')">
+      <span class="icon">🏷</span> Categorieën
+    </button>
+    <button class="nav-button hn-admin-nav-btn" data-page="subcategories" onclick="showPage('subcategories')">
+      <span class="icon">🔖</span> Subcategorieën
+    </button>
+
+    <div class="hn-admin-section-label">Locaties</div>
+    <button class="nav-button hn-admin-nav-btn" data-page="countries" onclick="showPage('countries')">
+      <span class="icon">🌍</span> Landen
+    </button>
+    <button class="nav-button hn-admin-nav-btn" data-page="cities" onclick="showPage('cities')">
+      <span class="icon">📍</span> Steden
+    </button>
+
+    <div class="hn-admin-section-label">Gebruikers</div>
+    <button class="nav-button hn-admin-nav-btn" data-page="users" onclick="showPage('users')">
+      <span class="icon">👥</span> Gebruikers
+    </button>
+    <button class="nav-button hn-admin-nav-btn" data-page="submissions" onclick="showPage('submissions')">
+      <span class="icon">📥</span> Inzendingen
+    </button>
+    <button class="nav-button hn-admin-nav-btn" data-page="reviewers" onclick="showPage('reviewers')">
+      <span class="icon">✅</span> Reviewers
+    </button>
+
+    <div class="hn-admin-section-label">Platform</div>
+    <button class="nav-button hn-admin-nav-btn" data-page="hijrahtools" onclick="showPage('hijrahtools')">
+      <span class="icon">🧰</span> HijrahTools beheren
+    </button>
+    <button class="nav-button hn-admin-nav-btn" data-page="platform" onclick="showPage('platform')">
+      <span class="icon">🖥</span> Site-instellingen
+    </button>
+    <a class="nav-button hn-admin-nav-btn" href="/admin-navigation">
+      <span class="icon">🧭</span> Navigatie
+    </a>
+    <a class="nav-button hn-admin-nav-btn" href="/admin-kaart">
+      <span class="icon">🗺</span> Kaart
+    </a>
+    <button class="nav-button hn-admin-nav-btn" data-page="sync" onclick="showPage('sync')">
+      <span class="icon">🔄</span> Sync Queue
+    </button>
+
+    <div class="hn-admin-divider"></div>
+    <a class="nav-button hn-admin-nav-btn" href="/admin-wachtlijst">
+      <span class="icon">📋</span> Wachtlijst
+    </a>
+    <a class="nav-button hn-admin-nav-btn" href="/admin-bewerkvoorstellen">
+      <span class="icon">✏️</span> Bewerkvoorstellen
+    </a>
+  </div>
+
+  <div style="margin-top:auto;padding-top:16px">
+    <div class="hn-admin-divider"></div>
+    <a href="/" class="nav-button hn-admin-nav-btn" style="font-size:12px;opacity:.6">
+      <span class="icon">↩</span> Naar website
+    </a>
+  </div>
 </aside>
 
 <main class="main">
@@ -1757,7 +1887,7 @@ th{
 </div>
 
 
-<script src="assets/admin.js?v=20261009-2"></script>\n<script src="assets/hn-admin-center.js"></script>
+<script src="assets/admin.js?v=20261009-3"></script>\n<script src="assets/hn-admin-center.js"></script>
 <script src="assets/admin-hijrahtools.js?v=20261009-2"></script>
 
 <div id="taxonomyQuickAdd" hidden style="position:fixed;inset:0;background:rgba(40,30,20,.45);z-index:1000;display:none;align-items:center;justify-content:center;padding:20px;">
