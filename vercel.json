@@ -2,6 +2,11 @@
   "buildCommand": "node build.js",
   "redirects": [
     {
+      "source": "/admin-badges.html",
+      "destination": "/admin-badges",
+      "permanent": true
+    },
+    {
       "source": "/paspoort",
       "destination": "/mijn-badges",
       "permanent": true
@@ -208,6 +213,10 @@
     }
   ],
   "rewrites": [
+    {
+      "source": "/admin-badges",
+      "destination": "/admin-badges.html"
+    },
     {
       "source": "/mijn-badges",
       "destination": "/mijn-badges.html"
@@ -449,6 +458,19 @@
     },
     {
       "source": "/admin(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "private, no-store, max-age=0"
+        },
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow, noarchive"
+        }
+      ]
+    },
+    {
+      "source": "/admin-badges",
       "headers": [
         {
           "key": "Cache-Control",
