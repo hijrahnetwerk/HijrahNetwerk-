@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HijrahTools: interactieve hulpmiddelen voor je hijrah | Hijrah Netwerk</title>
+  <meta name="description" content="Ontdek de interactieve HijrahTools van Hijrah Netwerk. Vergelijk steden, bereid je vertrek voor, plan je budget en houd je hijrah overzichtelijk van oriëntatie tot integratie.">
+  <meta name="theme-color" content="#674C2E">
+  <link rel="stylesheet" href="/assets/platform-pages.css">
+  <link rel="stylesheet" href="/assets/public-nav.css">
+  <script src="/assets/public-nav.js"></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "name": "HijrahTools | Hijrah Netwerk",
+    "description": "Kies interactieve hulpmiddelen voor je hijrah: van landen vergelijken en budget plannen tot voorbereiding en integratie.",
+    "inLanguage": "nl",
+    "isPartOf": {
+      "@type": "WebSite",
+      "name": "Hijrah Netwerk",
+      "url": "https://hijrah-netwerk.vercel.app/"
+    }
+  }
+  </script>
+  <style>
+    .hn-tools-page{--tools-brown:#674C2E;--tools-rust:#DD842A;--tools-gold:#C6A15B;--tools-cream:#FAF7F2;color:var(--tools-brown)}
+    .hn-tools-hero{padding:clamp(44px,7vw,82px) 0 56px;background:linear-gradient(135deg,#674C2E 0%,#79532E 48%,#DD842A 100%);color:#fff;position:relative;overflow:hidden}
+    .hn-tools-hero:after{content:"";position:absolute;width:300px;height:300px;border:1px solid rgba(255,255,255,.2);border-radius:50%;right:-100px;bottom:-190px;box-shadow:0 0 0 30px rgba(255,255,255,.05),0 0 0 60px rgba(255,255,255,.035);pointer-events:none}
+    .hn-tools-hero .container{position:relative;z-index:1}
+    .hn-tools-kicker{display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(198,161,91,.8);border-radius:999px;padding:6px 12px;color:#FFE7B0;font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase}
+    .hn-tools-hero h1{max-width:850px;margin:18px 0 16px;color:#fff;font-size:clamp(38px,6vw,68px);line-height:1.04;letter-spacing:-.045em}
+    .hn-tools-hero p{max-width:740px;color:#fff;font-size:clamp(16px,2vw,19px);margin:0}
+    .hn-tools-hero .hn-tools-intro-note{font-size:13px;opacity:.92;margin-top:20px}
+    .hn-tools-main{padding:44px 0 76px}
+    .hn-tools-toolbar{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:18px;align-items:end;margin-bottom:22px}
+    .hn-tools-toolbar label{display:block;font-size:13px;font-weight:750;margin-bottom:7px}
+    .hn-tools-search{width:100%;min-height:48px;border:1px solid rgba(103,76,46,.42);border-radius:12px;padding:12px 14px;background:#fff;color:var(--tools-brown)}
+    .hn-tools-search:focus-visible,.hn-tools-filter:focus-visible,.hn-tool-select:focus-visible,.hn-tools-button:focus-visible,.hn-tool-link:focus-visible{outline:3px solid rgba(221,132,42,.42);outline-offset:3px}
+    .hn-tools-filters{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 26px}
+    .hn-tools-filter{border:1px solid rgba(103,76,46,.35);background:#fff;color:var(--tools-brown);padding:9px 13px;border-radius:999px;font-size:13px;font-weight:700;cursor:pointer}
+    .hn-tools-filter[aria-pressed="true"]{background:var(--tools-brown);border-color:var(--tools-brown);color:#fff}
+    .hn-tools-results{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px;font-size:13px;color:#62513F}
+    .hn-tools-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+    .hn-tool-card{display:flex;flex-direction:column;min-width:0;border:1px solid rgba(103,76,46,.23);border-radius:18px;background:#fff;padding:21px;box-shadow:0 3px 12px rgba(103,76,46,.035);transition:border-color .18s ease,box-shadow .18s ease,transform .18s ease}
+    .hn-tool-card:hover{border-color:var(--tools-gold);box-shadow:0 12px 28px rgba(103,76,46,.09);transform:translateY(-2px)}
+    .hn-tool-card.is-selected{border:2px solid var(--tools-rust);padding:20px;background:#FFFCF7;box-shadow:0 0 0 3px rgba(221,132,42,.09)}
+    .hn-tool-card[hidden]{display:none!important}
+    .hn-tool-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:15px}
+    .hn-tool-number{width:42px;height:42px;flex:0 0 42px;border-radius:13px;background:var(--tools-cream);border:1px solid rgba(198,161,91,.5);display:grid;place-items:center;color:var(--tools-brown);font:700 13px/1 "IBM Plex Mono",monospace}
+    .hn-tool-phase{display:inline-flex;max-width:70%;align-items:center;border-radius:999px;background:#F7F1E8;color:#674C2E;padding:5px 8px;font-size:10px;line-height:1.35;font-weight:800;letter-spacing:.045em;text-transform:uppercase;text-align:right}
+    .hn-tool-card h2{font-size:19px;line-height:1.25;letter-spacing:-.02em;margin:0 0 10px;color:var(--tools-brown)}
+    .hn-tool-description{font-size:14px;line-height:1.6;margin:0 0 14px;color:#554636}
+    .hn-tool-interaction{font-size:13px;line-height:1.55;margin:0 0 12px}
+    .hn-tool-interaction strong,.hn-tool-fit strong{color:var(--tools-brown)}
+    .hn-tool-fit{font-size:12px;line-height:1.5;color:#675B4D;margin:0 0 18px}
+    .hn-tool-card-bottom{margin-top:auto;padding-top:15px;border-top:1px solid rgba(103,76,46,.14);display:grid;gap:11px}
+    .hn-tool-select{display:flex;align-items:center;gap:9px;cursor:pointer;font-size:13px;font-weight:750;min-height:28px}
+    .hn-tool-select input{width:18px;height:18px;accent-color:var(--tools-rust);flex:0 0 auto}
+    .hn-tool-status{font-size:11px;color:#675B4D}
+    .hn-tool-link{display:inline-flex;align-items:center;gap:7px;width:fit-content;font-size:13px;font-weight:800;color:#8A4B15;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px}
+    .hn-tool-link:hover{color:var(--tools-brown)}
+    .hn-tools-empty{grid-column:1/-1;border:1px dashed rgba(103,76,46,.35);border-radius:16px;padding:28px;text-align:center;background:#FAF7F2}
+    .hn-tools-selection{margin-top:34px;border:1px solid rgba(198,161,91,.75);border-radius:20px;background:linear-gradient(135deg,#fff 0%,#FAF7F2 100%);padding:clamp(20px,4vw,30px)}
+    .hn-tools-selection-head{display:flex;align-items:flex-start;justify-content:space-between;gap:20px}
+    .hn-tools-selection h2{margin:0 0 7px;font-size:clamp(22px,3vw,30px);line-height:1.15}
+    .hn-tools-selection p{margin:0;color:#62513F;font-size:14px}
+    .hn-tools-count{display:inline-flex;align-items:center;justify-content:center;min-width:40px;height:40px;padding:0 10px;border-radius:999px;background:var(--tools-brown);color:#fff;font-weight:800}
+    .hn-tools-selection-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}
+    .hn-tools-button{min-height:44px;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--tools-brown);border-radius:999px;padding:10px 17px;background:#fff;color:var(--tools-brown);font-size:13px;font-weight:800;cursor:pointer}
+    .hn-tools-button.primary{background:var(--tools-rust);border-color:var(--tools-rust);color:#fff}
+    .hn-tools-button:disabled{opacity:.45;cursor:not-allowed}
+    .hn-tools-selection-output{margin-top:20px;padding-top:18px;border-top:1px solid rgba(103,76,46,.17)}
+    .hn-tools-selection-output[hidden]{display:none}
+    .hn-tools-selected-list{padding-left:22px;margin:12px 0 0}
+    .hn-tools-selected-list li{padding:5px 0;font-size:14px}
+    .hn-tools-selected-list a{color:#8A4B15;font-weight:750;text-decoration:underline;text-underline-offset:3px}
+    .hn-tools-notice{font-size:12px!important;line-height:1.55;margin-top:15px!important}
+    .hn-tools-help{padding:54px 0;background:#FAF7F2}
+    .hn-tools-help-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+    .hn-tools-help-card{padding:19px;border-radius:15px;background:#fff;border:1px solid rgba(103,76,46,.16)}
+    .hn-tools-help-card h3{font-size:16px;margin:0 0 7px}
+    .hn-tools-help-card p{font-size:13px;margin:0;color:#62513F}
+    .hn-tools-faq{padding:56px 0}
+    .hn-tools-faq h2{font-size:clamp(27px,4vw,38px);margin:0 0 22px}
+    .hn-tools-faq details{border-bottom:1px solid rgba(103,76,46,.2);padding:16px 0}
+    .hn-tools-faq summary{font-weight:800;cursor:pointer}
+    .hn-tools-faq details p{max-width:820px;font-size:14px;color:#62513F;margin:12px 0 0}
+    .hn-tools-breadcrumb{font-size:12px;margin-bottom:20px;color:rgba(255,255,255,.85)}
+    .hn-tools-breadcrumb a{text-decoration:underline;text-underline-offset:3px}
+    .hn-tools-sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
+    @media(max-width:1000px){.hn-tools-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.hn-tools-help-grid{grid-template-columns:1fr 1fr}}
+    @media(max-width:680px){.hn-tools-toolbar{grid-template-columns:1fr}.hn-tools-grid,.hn-tools-help-grid{grid-template-columns:1fr}.hn-tools-main{padding:30px 0 54px}.hn-tool-card{padding:19px}.hn-tool-card.is-selected{padding:18px}.hn-tools-selection-head{gap:12px}.hn-tools-hero{padding-top:38px}.hn-tools-hero h1{font-size:clamp(36px,11vw,52px)}.hn-tools-selection-actions .hn-tools-button{width:100%}}
+    @media(prefers-reduced-motion:reduce){.hn-tool-card{transition:none}.hn-tool-card:hover{transform:none}html{scroll-behavior:auto}}
+
+    /* HN Gold Edition: goud is een zichtbaar merkkleuraccent, niet alleen een detail. */
+    .hn-tools-page{--tools-gold:#C6A15B;--tools-gold-rich:#D8B665;--tools-gold-deep:#9B7735}
+    .hn-tools-hero{background:radial-gradient(ellipse at 82% 15%,rgba(216,182,101,.32),transparent 36%),linear-gradient(125deg,#674C2E 0%,#79552F 58%,#916B36 100%);border-bottom:4px solid var(--tools-gold-rich)}
+    .hn-tools-hero:after{border-color:rgba(216,182,101,.55);box-shadow:0 0 0 30px rgba(216,182,101,.13),0 0 0 60px rgba(216,182,101,.075),0 0 0 90px rgba(216,182,101,.04)}
+    .hn-tools-kicker{background:rgba(216,182,101,.16);border-color:var(--tools-gold-rich);color:#FFE9B4;box-shadow:inset 0 0 0 1px rgba(216,182,101,.12)}
+    .hn-tool-card{border-color:rgba(198,161,91,.48);box-shadow:0 4px 16px rgba(103,76,46,.055)}
+    .hn-tool-card:hover{border-color:var(--tools-gold-rich);box-shadow:0 14px 32px rgba(103,76,46,.12),0 0 0 1px rgba(198,161,91,.22)}
+    .hn-tool-number{background:linear-gradient(145deg,#F6E7BD 0%,#D8B665 100%);border-color:#B58D3E;color:#513A1F;box-shadow:inset 0 1px 0 rgba(255,255,255,.75)}
+    .hn-tool-phase{background:#F3E4BC;border:1px solid rgba(155,119,53,.42);color:#5B421D}
+    .hn-tools-filter[aria-pressed="true"]{background:linear-gradient(135deg,#D8B665,#C6A15B);border-color:#9B7735;color:#392A18;box-shadow:0 2px 7px rgba(103,76,46,.12)}
+    .hn-tool-select input{accent-color:#9B7735}
+    .hn-tool-card.is-selected{border-color:#B58D3E;background:linear-gradient(145deg,#FFFCF5 0%,#F8EBCB 100%);box-shadow:0 0 0 3px rgba(198,161,91,.2)}
+    .hn-tool-link,.hn-tools-selected-list a{color:#755019}
+    .hn-tool-link:hover{color:#674C2E}
+    .hn-tools-selection{border:2px solid #C6A15B;background:linear-gradient(125deg,#FFFDF7 0%,#F5E7C1 52%,#FCF8EE 100%);box-shadow:0 12px 30px rgba(103,76,46,.065)}
+    .hn-tools-count{background:linear-gradient(145deg,#D8B665,#B88C3E);color:#382817;border:1px solid #9B7735}
+    .hn-tools-button{border-color:#9B7735}
+    .hn-tools-button.primary{background:linear-gradient(135deg,#D8B665,#C6A15B);border-color:#9B7735;color:#392A18;box-shadow:0 4px 12px rgba(103,76,46,.13)}
+    .hn-tools-button.primary:hover:not(:disabled){background:linear-gradient(135deg,#E4CA84,#D0AA55)}
+    .hn-tools-help-card{border-color:rgba(198,161,91,.5);box-shadow:0 4px 14px rgba(103,76,46,.035)}
+    .hn-tools-help-card h3:before{content:"";display:block;width:36px;height:3px;background:linear-gradient(90deg,#9B7735,#D8B665);border-radius:99px;margin-bottom:12px}
+    .hn-tools-faq details{border-bottom-color:rgba(155,119,53,.28)}
+    .hn-tools-search:focus-visible,.hn-tools-filter:focus-visible,.hn-tool-select:focus-visible,.hn-tools-button:focus-visible,.hn-tool-link:focus-visible{outline:3px solid rgba(198,161,91,.75);outline-offset:3px}
+    @media(forced-colors:active){.hn-tool-card,.hn-tools-selection,.hn-tools-filter{border:1px solid CanvasText}}
+
+  </style>
+</head>
+<body>
+  <main class="hn-tools-page">
+    <header class="hn-tools-hero">
+      <div class="container">
+        <nav class="hn-tools-breadcrumb" aria-label="Kruimelpad"><a href="/">Home</a> / <span aria-current="page">HijrahTools</span></nav>
+        <span class="hn-tools-kicker">HijrahTools · Van oriëntatie tot integratie</span>
+        <h1>Kies waar jij mee aan de slag wilt.</h1>
+        <p>Elke hijrah ziet er anders uit. Misschien ben je nog aan het oriënteren, misschien bereid je je vertrek voor of woon je al ergens anders. Kies de hulpmiddelen die passen bij jouw vragen en situatie. Je hoeft niet alles tegelijk te doen.</p>
+        <p class="hn-tools-intro-note">Van zuster tot zuster, van emigrant tot emigrant. Praktische hulpmiddelen om je zoektocht overzichtelijker te maken.</p>
+      </div>
+    </header>
+
+    <section class="hn-tools-main" aria-labelledby="hn-tools-list-heading">
+      <div class="container">
+        <div class="section-head">
+          <h2 id="hn-tools-list-heading">Welke tool heb je nu nodig?</h2>
+          <p>Zoek op onderwerp, filter op fase of selecteer meerdere tools. Je ziet daarna je eigen selectie bij elkaar.</p>
+        </div>
+
+        <div class="hn-tools-toolbar">
+          <div>
+            <label for="hn-tools-search">Zoek een hulpmiddel</label>
+            <input class="hn-tools-search" type="search" id="hn-tools-search" placeholder="Bijvoorbeeld: budget, documenten of stad" autocomplete="off">
+          </div>
+          <div class="hn-tools-results" aria-live="polite" aria-atomic="true"><span id="hn-tools-result-count">10 hulpmiddelen</span></div>
+        </div>
+
+        <div class="hn-tools-filters" role="group" aria-label="Filter hulpmiddelen op fase">
+          <button class="hn-tools-filter" type="button" data-filter="all" aria-pressed="true">Alles bekijken</button>
+          <button class="hn-tools-filter" type="button" data-filter="orienteren" aria-pressed="false">Oriënteren</button>
+          <button class="hn-tools-filter" type="button" data-filter="voorbereiden" aria-pressed="false">Voorbereiden</button>
+          <button class="hn-tools-filter" type="button" data-filter="integreren" aria-pressed="false">Aankomen & integreren</button>
+          <button class="hn-tools-filter" type="button" data-filter="ervaring" aria-pressed="false">Ervaring & overzicht</button>
+        </div>
+
+        <div class="hn-tools-grid" id="hn-tools-grid">
+          <article class="hn-tool-card" data-tool-id="1" data-phase="orienteren" data-search="gereedheidscheck zelftest inkomen huisvesting documenten onderwijs kennis persoonlijke voorbereiding oriëntatie">
+            <div class="hn-tool-card-top"><span class="hn-tool-number">01</span><span class="hn-tool-phase">Oriënteren</span></div>
+            <h2>Mijn Hijrah-gereedheidscheck</h2>
+            <p class="hn-tool-description">Een interactieve zelftest die helpt bepalen waar je nu staat. De zuster beantwoordt vragen over inkomen, huisvesting, documenten, onderwijs, kennis en haar persoonlijke voorbereiding.</p>
+            <p class="hn-tool-interaction"><strong>Interactie:</strong> voortgangsbalk, vragen per thema en een persoonlijke uitslag met aandachtspunten en aanbevolen vervolgstappen.</p>
+            <p class="hn-tool-fit"><strong>Geschikt voor:</strong> de oriëntatiefase.</p>
+            <div class="hn-tool-card-bottom"><label class="hn-tool-select"><input type="checkbox" value="1"> Kies deze tool</label><span class="hn-tool-status">Interactieve tool beschikbaar</span><a class="hn-tool-link" href="/orientatietest">Bekijk de bestaande oriëntatietest <span aria-hidden="true">→</span></a></div>
+          </article>
+
+          <article class="hn-tool-card" data-tool-id="2" data-phase="orienteren" data-search="landen steden vergelijker woonkosten scholen zorg taal klimaat moslimleven voorzieningen">
+            <div class="hn-tool-card-top"><span class="hn-tool-number">02</span><span class="hn-tool-phase">Oriënteren & onderzoeken</span></div>
+            <h2>Landen- en stedenvergelijker</h2>
+            <p class="hn-tool-description">Vergelijk bijvoorbeeld Tanger, Caïro, Istanbul of Kuala Lumpur op punten die voor jouw gezin belangrijk zijn.</p>
+            <p class="hn-tool-interaction"><strong>Interactie:</strong> selecteer maximaal drie steden en vergelijk woonkosten, scholen, zorg, taal, klimaat, moslimleven en beschikbare voorzieningen. Onbekende gegevens worden duidelijk gemarkeerd.</p>
+            <p class="hn-tool-fit"><strong>Geschikt voor:</strong> Oriënteren en Onderzoeken.</p>
+            <div class="hn-tool-card-bottom"><label class="hn-tool-select"><input type="checkbox" value="2"> Kies deze tool</label><span class="hn-tool-status">Interactieve tool beschikbaar</span><a class="hn-tool-link" href="/vergelijken">Bekijk de bestaande vergelijkingspagina <span aria-hidden="true">→</span></a></div>
+          </article>
+
+          <article class="hn-tool-card" data-tool-id="3" data-phase="voorbereiden" data-search="stappenplan checklist taken notities deadlines voortgang gezin documenten woning financiën vertrek">
+            <div class="hn-tool-card-top"><span class="hn-tool-number">03</span><span class="hn-tool-phase">Voorbereiden</span></div>
+            <h2>Mijn Hijrah-stappenplan</h2>
+            <p class="hn-tool-description">Een persoonlijke checklist van de eerste oriëntatie tot de aankomst en integratie.</p>
+            <p class="hn-tool-interaction"><strong>Interactie:</strong> vink taken af, voeg notities en deadlines toe, bekijk je voortgang en filter op gezin, documenten, woning, financiën of vertrek.</p>
+            <p class="hn-tool-fit"><strong>Geschikt voor:</strong> voorbereiding en opvolging.</p>
+            <div class="hn-tool-card-bottom"><label class="hn-tool-select"><input type="checkbox" value="3"> Kies deze tool</label><span class="hn-tool-status">Interactieve tool beschikbaar</span><a class="hn-tool-link" href="/stappenplan">Bekijk het huidige stappenplan <span aria-hidden="true">→</span></a></div>
+          </article>
+
+          <article class="hn-tool-card" data-tool-id="4" data-phase="voorbereiden" data-search="budgetplanner geld euro eur mad vertrekuitgaven maandelijkse kosten inkomsten spaargeld reserve huurwaarborg tickets">
+            <div class="hn-tool-card-top"><span class="hn-tool-number">04</span><span class="hn-tool-phase">Voorbereiden</span></div>
+            <h2>Hijrah-budgetplanner</h2>
+            <p class="hn-tool-description">Bereken hoeveel geld je nodig hebt voor vertrek en de eerste maanden na aankomst.</p>
+            <p class="hn-tool-interaction"><strong>Interactie:</strong> vul je gezinssituatie, vliegtickets, huurwaarborg, inrichting, administratie en maandelijkse kosten in. De tool berekent het totaal en hoeveel maanden je reserve meegaat.</p>
+            <p class="hn-tool-fit"><strong>Geschikt voor:</strong> financiële voorbereiding.</p>
+            <div class="hn-tool-card-bottom"><label class="hn-tool-select"><input type="checkbox" value="4"> Kies deze tool</label><span class="hn-tool-status">Interactieve tool beschikbaar</span><a class="hn-tool-link" href="/voorbereiding">Bekijk de voorbereidingsthema's <span aria-hidden="true">→</span></a></div>
+          </article>
+
+          <article class="hn-tool-card" data-tool-id="5" data-phase="orienteren" data-search="welke stad past gezin budget kinderen taal klimaat werk onderwijs voorkeur keuzehulp">
+            <div class="hn-tool-card-top"><span class="hn-tool-number">05</span><span class="hn-tool-phase">Oriënteren</span></div>
+            <h2>Welke stad past bij ons?</h2>
+            <p class="hn-tool-description">Een keuzehulp voor zusters die nog twijfelen tussen meerdere steden of landen.</p>
+            <p class="hn-tool-interaction"><strong>Interactie:</strong> beantwoord vragen over budget, kinderen, taal, klimaat, werk, onderwijs en gewenste omgeving. De tool toont welke steden nader onderzoek verdienen, met uitleg waarom.</p>
+            <p class="hn-tool-fit"><strong>Geschikt voor:</strong> eerste oriëntatie, zonder een stad als universeel beste keuze aan te wijzen.</p>
+            <div class="hn-tool-card-bottom"><label class="hn-tool-select"><input type="checkbox" value="5"> Kies deze tool</label><span class="hn-tool-status">Interactieve tool beschikbaar</span><a class="hn-tool-link" href="/landen">Bekijk landen en steden <span aria-hidden="true">→</span></a></div>
+          </article>
+
+          <article class="hn-tool-card" data-tool-id="6" data-phase="voorbereiden" data-search="documenten regelingen verblijfsregels bestemming gezin administratie bronlinks officieel bevestigd controle nodig">
+            <div class="hn-tool-card-top"><span class="hn-tool-number">06</span><span class="hn-tool-phase">Voorbereiden & vertrek</span></div>
+            <h2>Documenten- en regelingencheck</h2>
+            <p class="hn-tool-description">Houd bij welke documenten je moet onderzoeken of regelen voor jouw bestemming.</p>
+            <p class="hn-tool-interaction"><strong>Interactie:</strong> kies bestemming en gezinssituatie, bekijk relevante categorieën, vink taken af en zie welke informatie nog officieel gecontroleerd moet worden.</p>
+            <p class="hn-tool-fit"><strong>Geschikt voor:</strong> administratie en voorbereiding. Visum- en verblijfsregels moeten per bestemming actueel worden gecontroleerd.</p>
+            <div class="hn-tool-card-bottom"><label class="hn-tool-select"><input type="checkbox" value="6"> Kies deze tool</label><span class="hn-tool-status">Interactieve tool beschikbaar</span><a class="hn-tool-link" href="/vertrek">Bekijk aandachtspunten voor vertrek <span aria-hidden="true">→</span></a></div>
+          </article>
+
+          <article class="hn-tool-card" data-tool-id="7" data-phase="integreren" data-search="emotionele voorbereiding verwachtingen familiebanden onzekerheid afscheid sociaal netwerk reflectie zorgen">
+            <div class="hn-tool-card-top"><span class="hn-tool-number">07</span><span class="hn-tool-phase">Voorbereiden & integreren</span></div>
+            <h2>Emotionele voorbereiding</h2>
+            <p class="hn-tool-description">Een rustige reflectietool rond verwachtingen, familiebanden, onzekerheid, afscheid en het opbouwen van een nieuw sociaal netwerk.</p>
+            <p class="hn-tool-interaction"><strong>Interactie:</strong> reflectievragen, persoonlijke notities, een overzicht van zorgen en kleine concrete vervolgstappen.</p>
+            <p class="hn-tool-fit"><strong>Geschikt voor:</strong> mentale en sociale voorbereiding, zonder therapeutische claims.</p>
+            <div class="hn-tool-card-bottom"><label class="hn-tool-select"><input type="checkbox" value="7"> Kies deze tool</label><span class="hn-tool-status">Interactieve tool beschikbaar</span><a class="hn-tool-link" href="/integratie">Lees over aankomst en integratie <span aria-hidden="true">→</span></a></div>
+          </article>
+
+          <article class="hn-tool-card" data-tool-id="8" data-phase="integreren" data-search="wijk voorzieningenkaart scholen zorg moskee winkels vervoer buurt locaties ervaringen">
+            <div class="hn-tool-card-top"><span class="hn-tool-number">08</span><span class="hn-tool-phase">Onderzoeken & integreren</span></div>
+            <h2>Mijn wijk- en voorzieningenkaart</h2>
+            <p class="hn-tool-description">Breng in kaart wat je in een bepaalde wijk nodig hebt: scholen, zorg, moskeeën, winkels, vervoer en contacten.</p>
+            <p class="hn-tool-interaction"><strong>Interactie:</strong> categorieën filteren, locaties bekijken en aandachtspunten of ervaringen noteren.</p>
+            <p class="hn-tool-fit"><strong>Geschikt voor:</strong> lokaal onderzoek en integratie.</p>
+            <div class="hn-tool-card-bottom"><label class="hn-tool-select"><input type="checkbox" value="8"> Kies deze tool</label><span class="hn-tool-status">Interactieve tool beschikbaar</span><a class="hn-tool-link" href="/navigatie">Bekijk Hijrah Navigatie <span aria-hidden="true">→</span></a></div>
+          </article>
+
+          <article class="hn-tool-card" data-tool-id="9" data-phase="ervaring" data-search="ervaring andere zuster emigranten land stad onderwerp gezinssituatie persoonlijke ervaring feiten">
+            <div class="hn-tool-card-top"><span class="hn-tool-number">09</span><span class="hn-tool-phase">Ervaring & community</span></div>
+            <h2>De ervaring van een andere zuster</h2>
+            <p class="hn-tool-description">Ontdek ervaringen van emigranten per land, stad en onderwerp, met een duidelijk onderscheid tussen persoonlijke ervaringen en controleerbare feiten.</p>
+            <p class="hn-tool-interaction"><strong>Interactie:</strong> filter op gezinssituatie, bestemming en thema. Open ervaringskaarten met datum, context en eventuele aandachtspunten.</p>
+            <p class="hn-tool-fit"><strong>Geschikt voor:</strong> community en kennisdeling.</p>
+            <div class="hn-tool-card-bottom"><label class="hn-tool-select"><input type="checkbox" value="9"> Kies deze tool</label><span class="hn-tool-status">Interactieve tool beschikbaar</span><a class="hn-tool-link" href="/verhalen">Bekijk bestaande verhalen <span aria-hidden="true">→</span></a></div>
+          </article>
+
+          <article class="hn-tool-card" data-tool-id="10" data-phase="ervaring" data-search="persoonlijk hijrah dashboard fase voortgang taken budget opgeslagen steden notities acties mijn hijrah">
+            <div class="hn-tool-card-top"><span class="hn-tool-number">10</span><span class="hn-tool-phase">Persoonlijk overzicht</span></div>
+            <h2>Mijn persoonlijke Hijrah-dashboard</h2>
+            <p class="hn-tool-description">Een centraal overzicht met de belangrijkste informatie over je eigen traject.</p>
+            <p class="hn-tool-interaction"><strong>Interactie:</strong> bekijk je huidige fase, openstaande taken, budget, opgeslagen steden, notities en eerstvolgende acties. Later kunnen onderdelen worden versleept of verborgen.</p>
+            <p class="hn-tool-fit"><strong>Geschikt voor:</strong> het centrale Mijn Hijrah-gedeelte van het platform.</p>
+            <div class="hn-tool-card-bottom"><label class="hn-tool-select"><input type="checkbox" value="10"> Kies deze tool</label><span class="hn-tool-status">Interactieve tool beschikbaar</span><a class="hn-tool-link" href="/dashboard">Bekijk Mijn Hijrah <span aria-hidden="true">→</span></a></div>
+          </article>
+
+          <div class="hn-tools-empty" id="hn-tools-empty" hidden>
+            <strong>Geen hulpmiddelen gevonden.</strong>
+            <p>Probeer een andere zoekterm of kies een andere fase.</p>
+          </div>
+        </div>
+
+        <section class="hn-tools-selection" aria-labelledby="hn-tools-selection-heading">
+          <div class="hn-tools-selection-head">
+            <div>
+              <h2 id="hn-tools-selection-heading" tabindex="-1">Jouw selectie</h2>
+              <p id="hn-tools-selection-description">Kies één of meer hulpmiddelen die je wilt gebruiken of als eerste verder wilt laten uitwerken.</p>
+            </div>
+            <span class="hn-tools-count" id="hn-tools-selected-count" aria-label="Aantal gekozen hulpmiddelen">0</span>
+          </div>
+          <div class="hn-tools-selection-actions">
+            <button class="hn-tools-button primary" type="button" id="hn-tools-show-selection" disabled>Bekijk mijn selectie</button>
+            <button class="hn-tools-button" type="button" id="hn-tools-clear-selection" disabled>Wis selectie</button>
+          </div>
+          <div class="hn-tools-selection-output" id="hn-tools-selection-output" aria-live="polite" hidden></div>
+          <p class="hn-tools-notice">Je selectie wordt bewaard in deze browser en, wanneer je bent ingelogd, in het HijrahTools-deel van je HN-account. Open een gekozen hulpmiddel om ermee aan de slag te gaan.</p>
+        </section>
+      </div>
+    </section>
+
+    <section class="hn-tools-help" aria-labelledby="hn-tools-how-heading">
+      <div class="container">
+        <div class="section-head">
+          <h2 id="hn-tools-how-heading">Je hoeft niet alles tegelijk te doen.</h2>
+          <p>Gebruik de hulpmiddelen op een manier die bij jouw situatie past. Je kunt op een later moment terugkomen en een ander onderwerp kiezen.</p>
+        </div>
+        <div class="hn-tools-help-grid">
+          <article class="hn-tools-help-card"><h3>Ben je nog aan het oriënteren?</h3><p>Begin met de gereedheidscheck, de keuzehulp of het vergelijken van landen en steden. Je hoeft nog geen definitieve bestemming te kiezen.</p></article>
+          <article class="hn-tools-help-card"><h3>Ben je je vertrek aan het voorbereiden?</h3><p>Breng je stappen, documenten, kosten, huisvesting en gezinszaken bij elkaar. Controleer belangrijke regels altijd via actuele officiële bronnen.</p></article>
+          <article class="hn-tools-help-card"><h3>Ben je al geëmigreerd?</h3><p>Onderzoek je buurt, bouw je netwerk op en deel waar passend je ervaringen. Ook na aankomst kunnen praktische vragen blijven ontstaan.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="hn-tools-faq" aria-labelledby="hn-tools-faq-heading">
+      <div class="container">
+        <h2 id="hn-tools-faq-heading">Veelgestelde vragen over HijrahTools</h2>
+        <details><summary>Moet ik alle hulpmiddelen gebruiken?</summary><p>Nee. Kies alleen wat nu aansluit bij jouw vragen. Je kunt later altijd een andere tool kiezen.</p></details>
+        <details><summary>Zijn alle interactieve tools al beschikbaar?</summary><p>De interactieve onderdelen zijn beschikbaar. Sommige onderdelen gebruiken gegevens die je zelf invult; gepubliceerde ervaringen en toolinstellingen worden uit de HN-database geladen wanneer die koppeling beschikbaar is.</p></details>
+        <details><summary>Wordt mijn selectie opgeslagen in mijn account?</summary><p>Ja, wanneer je bent ingelogd wordt je toolvoortgang opgeslagen in je HN-account. Zonder inloggen wordt je voortgang alleen in deze browser bewaard.</p></details>
+        <details><summary>Kan Hijrah Netwerk bepalen welk land het beste bij mij past?</summary><p>De hulpmiddelen zijn bedoeld om je vragen te ordenen en bestemmingen gericht te onderzoeken. Ze bepalen niet voor jou welke bestemming de beste is. De uitkomst hangt af van jouw situatie, prioriteiten en de informatie die beschikbaar is.</p></details>
+      </div>
+    </section>
+  </main>
+
+  <script>
+  (function(){
+    'use strict';
+    var grid=document.getElementById('hn-tools-grid');
+    if(!grid)return;
+    var cards=Array.prototype.slice.call(grid.querySelectorAll('[data-tool-id]'));
+    var search=document.getElementById('hn-tools-search');
+    var filters=Array.prototype.slice.call(document.querySelectorAll('.hn-tools-filter'));
+    var count=document.getElementById('hn-tools-result-count');
+    var empty=document.getElementById('hn-tools-empty');
+    var selectedCount=document.getElementById('hn-tools-selected-count');
+    var showButton=document.getElementById('hn-tools-show-selection');
+    var clearButton=document.getElementById('hn-tools-clear-selection');
+    var output=document.getElementById('hn-tools-selection-output');
+    var activeFilter='all';
+    var tools={
+      '1':{name:'Mijn Hijrah-gereedheidscheck',url:'/orientatietest'},
+      '2':{name:'Landen- en stedenvergelijker',url:'/vergelijken'},
+      '3':{name:'Mijn Hijrah-stappenplan',url:'/stappenplan'},
+      '4':{name:'Hijrah-budgetplanner',url:'/voorbereiding'},
+      '5':{name:'Welke stad past bij ons?',url:'/landen'},
+      '6':{name:'Documenten- en regelingencheck',url:'/vertrek'},
+      '7':{name:'Emotionele voorbereiding',url:'/integratie'},
+      '8':{name:'Mijn wijk- en voorzieningenkaart',url:'/navigatie'},
+      '9':{name:'De ervaring van een andere zuster',url:'/verhalen'},
+      '10':{name:'Mijn persoonlijke Hijrah-dashboard',url:'/dashboard'}
+    };
+    function chosen(){return cards.filter(function(card){var input=card.querySelector('input[type="checkbox"]');return input&&input.checked})}
+    function updateSelection(){
+      var list=chosen();
+      selectedCount.textContent=String(list.length);
+      selectedCount.setAttribute('aria-label',list.length+' hulpmiddel'+(list.length===1?' gekozen':'en gekozen'));
+      showButton.disabled=list.length===0;
+      clearButton.disabled=list.length===0;
+      cards.forEach(function(card){card.classList.toggle('is-selected',!!card.querySelector('input[type="checkbox"]:checked'))});
+      if(list.length===0){output.hidden=true;output.innerHTML=''}
+    }
+    function filterCards(){
+      var q=(search.value||'').trim().toLocaleLowerCase('nl');
+      var visible=0;
+      cards.forEach(function(card){
+        var phase=card.getAttribute('data-phase')||'';
+        var hay=(card.textContent+' '+(card.getAttribute('data-search')||'')).toLocaleLowerCase('nl');
+        var matchesPhase=activeFilter==='all'||phase.split(' ').indexOf(activeFilter)!==-1;
+        var matchesQuery=!q||hay.indexOf(q)!==-1;
+        var show=matchesPhase&&matchesQuery&&card.getAttribute('data-tool-active')!=='false';
+        card.hidden=!show;
+        if(show)visible++;
+      });
+      empty.hidden=visible!==0;
+      count.textContent=visible+' van '+cards.length+' hulpmiddelen';
+    }
+    filters.forEach(function(button){
+      button.addEventListener('click',function(){
+        activeFilter=button.getAttribute('data-filter')||'all';
+        filters.forEach(function(item){item.setAttribute('aria-pressed',String(item===button))});
+        filterCards();
+      });
+    });
+    search.addEventListener('input',filterCards);
+    cards.forEach(function(card){
+      var checkbox=card.querySelector('input[type="checkbox"]');
+      if(checkbox)checkbox.addEventListener('change',updateSelection);
+    });
+    showButton.addEventListener('click',function(){
+      var list=chosen();
+      if(!list.length)return;
+      var items=list.map(function(card){
+        var id=card.getAttribute('data-tool-id');
+        var tool=tools[id];
+        return '<li><strong>'+tool.name+'</strong> · <button type="button" class="hn-tools-button primary" data-open-tool="'+id+'">Open deze tool</button></li>';
+      }).join('');
+      output.innerHTML='<h3>Dit heb je gekozen</h3><p>Je hebt '+list.length+' hulpmiddel'+(list.length===1?'':'en')+' geselecteerd. Open een tool hieronder om direct te beginnen.</p><ol class="hn-tools-selected-list">'+items+'</ol><p class="hn-tools-notice">Je voortgang wordt automatisch bewaard. Log in om deze op je andere apparaten in je HN-account terug te vinden.</p>';
+      output.hidden=false;
+      output.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'nearest'});
+    });
+    clearButton.addEventListener('click',function(){
+      cards.forEach(function(card){var checkbox=card.querySelector('input[type="checkbox"]');if(checkbox)checkbox.checked=false});
+      updateSelection();
+      document.getElementById('hn-tools-selection-heading').focus({preventScroll:true});
+    });
+    filterCards();
+    updateSelection();
+  })();
+  </script>
+<script src="/assets/config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3"></script>
+<script src="/supabase-client.js"></script>
+<script src="/assets/hijrahtools-app.js?v=20261009-7"></script>
+</body>
+</html>
