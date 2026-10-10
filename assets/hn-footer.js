@@ -181,7 +181,7 @@
 
   /* ── VLIEGTUIG ROUTE INJECTIE in heroes ── */
   function injectPlaneRoutes() {
-    document.querySelectorAll('.hn-hero:not([data-plane-done])').forEach(hero => {
+    document.querySelectorAll('.hn-hero:not([data-plane-done]),.hero:not([data-plane-done]),.page-hero:not([data-plane-done]),.hero-section:not([data-plane-done])').forEach(hero => {
       hero.setAttribute('data-plane-done', '1');
       const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
       svg.setAttribute('viewBox', '0 0 700 320');
@@ -214,8 +214,10 @@
 
   /* ── INIT ── */
   function init() {
+    if (/(^|\/)admin(?:-[^/]+)?\.html$/i.test(location.pathname)) document.body.classList.add('hn-admin-page');
     injectStripe();
-    injectFooter();
+    // Admin is an application workspace: keep its shell, but do not append the public footer.
+    if (!/(^|\/)admin(?:-[^/]+)?\.html$/i.test(location.pathname)) injectFooter();
     injectPlaneRoutes();
     initReveal();
     initFilterbar();
