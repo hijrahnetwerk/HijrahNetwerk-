@@ -1,5 +1,5 @@
 // LOKAAL PLACEHOLDER-BESTAND.
-// Bij een Netlify-deploy wordt dit bestand automatisch overschreven door build.js
+// Bij de Vercel-build wordt dit bestand automatisch bijgewerkt door build.js
 // met de echte waarden uit je environment variables.
 //
 // Om dit lokaal te testen (bv. met `npx serve`), vul hieronder tijdelijk je eigen
