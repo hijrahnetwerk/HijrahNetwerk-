@@ -2,11 +2,6 @@
   "buildCommand": "node build.js",
   "redirects": [
     {
-      "source": "/paspoort",
-      "destination": "/mijn-badges",
-      "permanent": true
-    },
-    {
       "source": "/community.html",
       "destination": "/community",
       "permanent": true
@@ -198,7 +193,7 @@
     },
     {
       "source": "/paspoort.html",
-      "destination": "/mijn-badges",
+      "destination": "/paspoort",
       "permanent": true
     },
     {
@@ -417,8 +412,12 @@
       "destination": "/stad.html"
     },
     {
+      "source": "/paspoort",
+      "destination": "/paspoort.html"
+    },
+    {
       "source": "/admin-paspoort",
-      "destination": "/admin-beloningen.html"
+      "destination": "/admin-paspoort.html"
     }
   ],
   "headers": [
