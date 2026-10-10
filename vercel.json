@@ -2,11 +2,6 @@
   "buildCommand": "node build.js",
   "redirects": [
     {
-      "source": "/paspoort",
-      "destination": "/mijn-badges",
-      "permanent": true
-    },
-    {
       "source": "/community.html",
       "destination": "/community",
       "permanent": true
@@ -198,20 +193,26 @@
     },
     {
       "source": "/paspoort.html",
-      "destination": "/mijn-badges",
+      "destination": "/paspoort",
       "permanent": true
     },
     {
       "source": "/admin-paspoort.html",
       "destination": "/admin-paspoort",
       "permanent": true
+    },
+    {
+      "source": "/mijn-badges",
+      "destination": "/paspoort",
+      "permanent": true
+    },
+    {
+      "source": "/mijn-badges.html",
+      "destination": "/paspoort",
+      "permanent": true
     }
   ],
   "rewrites": [
-    {
-      "source": "/mijn-badges",
-      "destination": "/mijn-badges.html"
-    },
     {
       "source": "/admin-blogs",
       "destination": "/admin-blogs.html"
@@ -417,8 +418,12 @@
       "destination": "/stad.html"
     },
     {
+      "source": "/paspoort",
+      "destination": "/paspoort.html"
+    },
+    {
       "source": "/admin-paspoort",
-      "destination": "/admin-beloningen.html"
+      "destination": "/admin-paspoort.html"
     }
   ],
   "headers": [
