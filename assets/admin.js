@@ -510,10 +510,23 @@ async function loadActivity(){
   const el=document.getElementById('activityList');
   if(!el)return;
   try{
-    const r=await db().from('user_activity').select('*,profiles(email)').order('created_at',{ascending:false}).limit(50);
+    // user_activity heeft geen foreign-keyrelatie naar profiles; haal activiteit
+    // en profielen daarom afzonderlijk op in plaats van een ongeldige PostgREST-join.
+    const r=await db().from('user_activity').select('*').order('created_at',{ascending:false}).limit(50);
     if(r.error)throw r.error;
     const items=r.data||[];
-    el.innerHTML=items.length?items.map(x=>'<div class="activity-item"><div><b>'+esc(x.profiles?.email||'Gebruiker')+'</b><div class="hint">'+esc(x.action||x.event_type||'Activiteit')+' · '+new Date(x.created_at).toLocaleString('nl-NL')+'</div></div></div>').join(''):'<div class="overview-empty">Geen recente activiteit.</div>';
+    let emails={};
+    const userIds=[...new Set(items.map(x=>x.user_id||x.profile_id).filter(Boolean))];
+    if(userIds.length){
+      const p=await db().from('profiles').select('id,email').in('id',userIds);
+      if(!p.error)emails=Object.fromEntries((p.data||[]).map(x=>[x.id,x.email]));
+    }
+    el.innerHTML=items.length?items.map(x=>{
+      const who=emails[x.user_id||x.profile_id]||'Gebruiker';
+      const action=x.action||x.event_type||x.activity_type||'Activiteit';
+      const date=x.created_at?new Date(x.created_at).toLocaleString('nl-NL'):'Tijdstip onbekend';
+      return '<div class="activity-item"><div><b>'+esc(who)+'</b><div class="hint">'+esc(action)+' · '+esc(date)+'</div></div></div>';
+    }).join(''):'<div class="overview-empty">Geen recente activiteit.</div>';
   }catch(e){
     if(el)el.innerHTML='<div class="overview-empty">Activiteit kon niet worden geladen.</div>';
     console.warn('loadActivity:',e.message);
