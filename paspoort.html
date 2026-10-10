@@ -144,7 +144,7 @@ $('grid').onclick=function(e){var c=e.target.closest('.sc');if(!c)return;var b=B
  $('dbody').innerHTML='<span class="st">'+(on?'Behaald':'Nog te behalen')+'</span><h3>'+esc(b.name)+'</h3><b>Betekenis</b><br>'+esc(b.meaning_text||b.description||'—')+'<br><br><b>Voorwaarde</b><br>'+esc(b.condition_text||'—')+'<br><br><b>Ontgrendelt</b><br>'+esc(b.unlock_text||'—')+(on?'<br><br><b>Behaald op</b><br>'+new Date(E[b.id]).toLocaleDateString('nl-NL'):'');$('dlg').showModal()};
 $('dclose').onclick=function(){$('dlg').close()};$('dlg').onclick=function(e){if(e.target===this)this.close()};
 function priv(){$('vis').textContent=P.show_badges?'Aan':'Uit';$('vOn').disabled=!!P.show_badges;$('vOff').disabled=!P.show_badges}
-async function setVis(v){var r=await sb.from('profiles').update({show_badges:v}).eq('id',U.id);if(r.error){show('Opslaan is niet gelukt. Controleer je verbinding en probeer opnieuw.');return}P.show_badges=v;priv()}
+async function setVis(v){var r=await sb.rpc('hn_set_my_badge_visibility',{p_show:v});if(r.error){show('Opslaan is niet gelukt. Controleer je verbinding en probeer opnieuw.');return}P.show_badges=v;priv()}
 $('vOn').onclick=function(){setVis(true)};$('vOff').onclick=function(){setVis(false)};
 function observe(){var els=document.querySelectorAll('.rv:not(.vis)');if(!('IntersectionObserver'in window)){els.forEach(function(e){e.classList.add('vis')});return}var o=new IntersectionObserver(function(es){es.forEach(function(x){if(x.isIntersecting){x.target.classList.add('vis');o.unobserve(x.target)}})},{threshold:.1});els.forEach(function(e,i){e.style.setProperty('--d',(i%3)*80+'ms');o.observe(e)})}
 var hero=document.querySelector('.hero'),tk=0;
