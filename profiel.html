@@ -1,18 +1,18 @@
 <!doctype html>
 <html lang="nl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>HN Profiel</title>
 <style>
-body{margin:0;background:#fff;color:#674C2E;font-family:Arial,sans-serif}.wrap{max-width:900px;margin:auto;padding:28px 18px}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}.top a{color:#674C2E}.hero{border:1px solid #674C2E;border-radius:16px;padding:24px}.name{font-size:28px;font-weight:700}.muted{color:#756d63}.pill{display:inline-block;border-radius:20px;padding:5px 9px;background:#f3eee8;margin:4px 4px 0 0;font-size:12px}.verified{background:#e6f2e9}.section{border:1px solid #674C2E;border-radius:12px;padding:20px;margin-top:18px}.items{display:grid;gap:10px}.item{padding:12px;background:#faf7f3;border-radius:10px}.item a{color:#674C2E;font-weight:700}.empty{color:#756d63}.hidden{display:none}
+body{margin:0;background:#fff;color:#674C2E;font-family:Arial,sans-serif}.wrap{max-width:900px;margin:auto;padding:28px 18px}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}.top a{color:#674C2E}.hero{border:1px solid #674C2E;border-radius:16px;padding:24px}.name{font-size:28px;font-weight:700}.muted{color:#674C2E}.pill{display:inline-block;border-radius:20px;padding:5px 9px;background:#f3eee8;margin:4px 4px 0 0;font-size:12px}.verified{background:#e6f2e9}.section{border:1px solid #674C2E;border-radius:12px;padding:20px;margin-top:18px}.items{display:grid;gap:10px}.item{padding:12px;background:#faf7f3;border-radius:10px}.item a{color:#674C2E;font-weight:700}.empty{color:#674C2E}.hidden{display:none}
 
 /* ── HN DESIGN SYSTEM UPGRADE ── */
 :root{
-  --gd2:#D4AF37;--gd3:#F0D060;
-  --bg:#FDFAF6;--border-gd:rgba(212,175,55,.35);
-  --shadow-gd:0 14px 38px rgba(212,175,55,.22);
+  --gd2:#9B7735;--gd3:#C6A15B;
+  --bg:#FDFAF6;--border-gd:rgba(198,161,91,.35);
+  --shadow-gd:0 14px 38px rgba(198,161,91,.22);
 }
 /* Goud stripe */
 .hn-stripe{
   height:3px;
-  background:linear-gradient(90deg,#674C2E,#DD842A,#D4AF37,#F0D060,#D4AF37,#DD842A,#674C2E);
+  background:linear-gradient(90deg,#674C2E,#DD842A,#9B7735,#C6A15B,#9B7735,#DD842A,#674C2E);
   background-size:300% 100%;
   animation:hn-stripe 5s linear infinite;
 }
@@ -20,19 +20,19 @@ body{margin:0;background:#fff;color:#674C2E;font-family:Arial,sans-serif}.wrap{m
 /* Gold divider */
 .hn-divider{
   height:2px;border:none;
-  background:linear-gradient(90deg,transparent,#C6A15B,#D4AF37,#C6A15B,transparent);
+  background:linear-gradient(90deg,transparent,#C6A15B,#9B7735,#C6A15B,transparent);
   opacity:.55;margin:0;
 }
 /* Hero gradient upgrade */
 .hero{
   background:
-    radial-gradient(ellipse at 88% 8%,rgba(212,175,55,.35),transparent 46%),
+    radial-gradient(ellipse at 88% 8%,rgba(198,161,91,.35),transparent 46%),
     radial-gradient(ellipse at 8% 90%,rgba(221,132,42,.22),transparent 40%),
     linear-gradient(148deg,#3d2a14 0%,#674C2E 38%,#7a4e28 65%,#4e3018 100%)!important;
 }
 /* Kaarten gold-top accent */
 .card.hn-card-gold,
-.panel.hn-card-gold{border-top:3px solid #D4AF37}
+.panel.hn-card-gold{border-top:3px solid #9B7735}
 /* Animaties */
 .hn-reveal{opacity:0;transform:translateY(24px);transition:opacity .6s cubic-bezier(.22,.61,.36,1),transform .6s cubic-bezier(.22,.61,.36,1)}
 .hn-reveal.hn-in{opacity:1;transform:none}
@@ -40,7 +40,7 @@ body{margin:0;background:#fff;color:#674C2E;font-family:Arial,sans-serif}.wrap{m
 /* Btn upgrade */
 .btn-primary,.button-primary,.hnbtn.primary{
   background:linear-gradient(135deg,#DD842A,#C6A15B)!important;
-  box-shadow:0 8px 24px rgba(212,175,55,.25)!important;
+  box-shadow:0 8px 24px rgba(198,161,91,.25)!important;
 }
 /* Tab active upgrade */
 .tab.active{
@@ -53,15 +53,15 @@ body{margin:0;background:#fff;color:#674C2E;font-family:Arial,sans-serif}.wrap{m
 .filter input:focus,.filter select:focus,
 input:focus,select:focus,textarea:focus{
   border-color:#C6A15B!important;
-  box-shadow:0 0 0 3px rgba(212,175,55,.15)!important;
+  box-shadow:0 0 0 3px rgba(198,161,91,.15)!important;
 }
 /* Gold badge */
 .hn-badge-gd{
   display:inline-flex;align-items:center;gap:5px;
   padding:4px 11px;border-radius:999px;
   font-size:11px;font-weight:800;
-  background:linear-gradient(135deg,rgba(212,175,55,.18),rgba(103,76,46,.08));
-  color:#D4AF37;border:1px solid rgba(212,175,55,.35);
+  background:linear-gradient(135deg,rgba(198,161,91,.18),rgba(103,76,46,.08));
+  color:#9B7735;border:1px solid rgba(198,161,91,.35);
 }
 /* Dashboard hero upgrade */
 .hero{position:relative;overflow:hidden}
@@ -88,7 +88,7 @@ body::before{
 <script src="/assets/hn-footer.js?v=1" defer></script>
 <script src="/assets/hn-motion.js?v=1" defer></script>
 </head><body>
-<div class="hn-stripe" style="height:3px;background:linear-gradient(90deg,#674C2E,#DD842A,#D4AF37,#F0D060,#D4AF37,#DD842A,#674C2E);background-size:300% 100%;animation:hn-stripe 5s linear infinite"></div><main class="wrap">
+<div class="hn-stripe" style="height:3px;background:linear-gradient(90deg,#674C2E,#DD842A,#9B7735,#C6A15B,#9B7735,#DD842A,#674C2E);background-size:300% 100%;animation:hn-stripe 5s linear infinite"></div><main class="wrap">
 <div class="top"><a href="/dashboard">← Mijn Hijrah</a><span class="muted">HN Profiel</span></div><div id="app">Laden…</div>
 </main>
 <script src="/config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/supabase-client.js"></script>
