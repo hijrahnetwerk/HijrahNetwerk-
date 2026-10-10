@@ -1,29 +1,152 @@
-<!doctype html>
-<html lang="nl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="robots" content="noindex,nofollow"><title>Mijn HN Paspoort — Hijrah Netwerk</title><meta name="description" content="Jouw persoonlijke voortgang, stempels en ontgrendelde onderdelen binnen Hijrah Netwerk."><link rel="stylesheet" href="/assets/hn-sitewide.css?v=1"><style>
-:root{--brown:#674C2E;--rust:#DD842A;--gold:#C6A15B;--goldd:#9B7735;--foil:linear-gradient(115deg,#9B7735,#C6A15B,#fff,#C6A15B,#9B7735);color:var(--brown);font-family:Arial,sans-serif}*{box-sizing:border-box}body{margin:0;background:#fff;color:var(--brown)}a{color:inherit}.stripe{height:3px;background:var(--foil);background-size:300% 100%;animation:shine 6s linear infinite}@keyframes shine{to{background-position:300% 0}}header{background:var(--brown);color:white;padding:14px 22px}header nav{max-width:1180px;margin:auto;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}header a{text-decoration:none}.hero{padding:54px 20px;text-align:center;color:white;background:radial-gradient(ellipse at 85% 0%,#c6a15b55,transparent 48%),radial-gradient(ellipse at 10% 100%,#dd842a44,transparent 42%),var(--brown)}.hero h1{font-size:clamp(32px,5vw,54px);margin:16px 0}.gold{background:var(--foil);background-size:300%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:shine 6s linear infinite}.hero p{max-width:620px;margin:auto;line-height:1.6;color:#ffffffd9}.stats{display:flex;justify-content:center;gap:34px;flex-wrap:wrap;margin-top:28px}.stats b{display:block;font-size:30px}.stats span{font-size:11px;text-transform:uppercase;letter-spacing:.1em}.wrap{max-width:1180px;margin:auto;padding:30px 22px}.passport{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:24px;background:var(--brown);color:white;padding:24px;border-radius:18px;border:2px solid var(--gold);box-shadow:0 14px 34px #674c2e22}.crest{width:70px;height:70px;border:2px solid var(--gold);border-radius:50%;display:grid;place-items:center;color:var(--gold);font-weight:bold;font-size:24px}.passport h2{margin:5px 0}.details{display:flex;gap:24px;flex-wrap:wrap;font-size:13px}.details small{display:block;color:var(--gold);text-transform:uppercase;letter-spacing:.1em}.mrz{font:11px monospace;color:var(--gold);overflow-wrap:anywhere}.section h2{margin:42px 0 6px;font-size:26px}.sub{margin:0 0 18px;opacity:.8}.bar{display:flex;gap:9px;flex-wrap:wrap;margin:18px 0}.bar button,select,input{font:inherit;border:1px solid var(--goldd);border-radius:999px;padding:9px 13px;background:white;color:var(--brown)}button{cursor:pointer}.bar .active{background:var(--brown);color:white}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}.stamp{display:flex;gap:14px;text-align:left;background:white;color:var(--brown);border:1px solid var(--brown);border-radius:16px;padding:18px;position:relative;overflow:hidden}.stamp:before{content:"";height:3px;position:absolute;top:0;left:0;right:0;background:var(--foil)}.seal{flex:none;width:58px;height:58px;border-radius:50%;display:grid;place-items:center;border:2px dashed #674c2e66;opacity:.35;font-weight:bold}.stamp.earned .seal{border:3px solid var(--gold);color:var(--goldd);opacity:1;background:#c6a15b22;box-shadow:0 2px 10px #c6a15b44}.stamp h3{font-size:17px;margin:3px 0 7px}.stamp p{font-size:13px;line-height:1.45;margin:0}.tag{display:inline-block;font-size:10px;text-transform:uppercase;letter-spacing:.08em;border:1px solid var(--goldd);border-radius:99px;padding:4px 8px;margin-top:9px;color:var(--goldd)}.panel{padding:18px;border:1px solid var(--brown);border-radius:14px;margin:10px 0}.btn{display:inline-block;border:0;border-radius:999px;padding:12px 18px;background:linear-gradient(135deg,var(--rust),var(--gold));color:white;text-decoration:none;font-weight:bold}.empty{padding:26px;border:1px dashed var(--gold);border-radius:14px;text-align:center}.msg{padding:12px;border:1px solid var(--gold);border-radius:10px;margin:12px 0;display:none}footer{padding:30px 22px;max-width:1180px;margin:auto;opacity:.7}@media(max-width:720px){.passport{grid-template-columns:1fr}.mrz{text-align:left}.hero{padding:42px 18px}}@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important}}
-</style></head><body><div class="stripe"></div><header><nav><a href="/">Hijrah Netwerk</a><span><a href="/stappenplan">Stappenplan</a>　<a href="/dashboard">Dashboard</a></span></nav></header>
-<section class="hero"><div>✦ MIJN PASPOORT</div><h1>Jouw reis, <span class="gold">stempel voor stempel.</span></h1><p>Zie wat je al hebt gedaan, ontdek wat er nog komt en speel onderdelen vrij door op jouw manier bij te dragen aan het netwerk.</p><div class="stats"><div><b id="earnedCount">—</b><span>Behaald</span></div><div><b id="remainingCount">—</b><span>Nog te behalen</span></div><div><b id="accessCount">—</b><span>Ontgrendeld</span></div></div></section>
-<main class="wrap"><div id="msg" class="msg" role="status"></div><section class="passport"><div class="crest">HN</div><div><small style="color:var(--gold);letter-spacing:.13em">HIJRAH NETWERK PASPOORT</small><h2 id="memberName">Laden…</h2><div class="details"><div><small>Paspoortnr.</small><span id="passportNo">—</span></div><div><small>Lid sinds</small><span id="memberSince">—</span></div><div><small>Status</small><span id="memberStatus">—</span></div></div></div><div class="mrz">P&lt;HNL&lt;MEMBER<br>HN&lt;&lt;PASSPORT&lt;&lt;&lt;&lt;</div></section>
-<section class="section" id="stempels"><h2>Alle stempels</h2><p class="sub">Open een stempel om de betekenis, voorwaarde en eventuele ontgrendeling te bekijken.</p><div class="bar" id="filters"><button class="active" data-filter="all">Alles</button><button data-filter="earned">Behaald</button><button data-filter="remaining">Nog te behalen</button><select id="category"><option value="">Alle fases</option></select><input id="search" type="search" placeholder="Zoek een stempel" aria-label="Zoek een stempel"></div><div id="badges" class="grid"><div class="empty">Paspoort laden…</div></div></section>
-<section class="section"><h2>Ontgrendelen</h2><p class="sub">De server bepaalt welke onderdelen voor jouw account beschikbaar zijn.</p><div id="access"><div class="empty">Toegang controleren…</div></div></section>
-<section class="panel"><h3>Stempels op je gedeelde profiel</h3><p>Je bepaalt zelf of behaalde stempels op je gedeelde profiel zichtbaar zijn. Persoonlijke antwoorden uit Mijn Hijrah blijven privé.</p><button class="btn" id="visibility">Zichtbaarheid laden…</button></section><p><a class="btn" href="/bijdragen?type=experience">Deel jouw ervaring</a></p></main><footer>© Hijrah Netwerk</footer>
-<dialog id="detail" style="max-width:460px;width:calc(100% - 28px);border:1px solid var(--gold);border-radius:16px;color:var(--brown);padding:24px"><div id="detailBody"></div><button class="btn" id="closeDetail">Sluiten</button></dialog>
-<script src="/assets/config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/supabase-client.js"></script><script>
-(function(){'use strict';const sb=window.hijrahSupabase,$=id=>document.getElementById(id);let badges=[],earned={},profile={},filter='all',user=null,access=[];
-function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-function msg(t){$('msg').textContent=t;$('msg').style.display='block'}
-function initials(b){return b.icon&&String(b.icon).length<=3?b.icon:(b.name||'HN').split(/\s+/).map(w=>w[0]||'').join('').slice(0,2).toUpperCase()}
-async function init(){if(!sb){msg('De verbinding met de ledenomgeving kon niet worden gestart.');return}const session=await sb.auth.getSession();if(!session.data.session){location.href='/login?next=/paspoort';return}user=session.data.session.user;
-const results=await Promise.all([sb.from('hn_badges').select('*').eq('active',true).order('sort_order'),sb.from('hn_user_badges').select('badge_id,earned_at').eq('user_id',user.id),sb.from('profiles').select('display_name,first_name,created_at,hn_status,show_badges').eq('id',user.id).maybeSingle(),sb.rpc('hn_my_access')]);
-if(results[0].error){msg('De stempels konden niet worden geladen. Controleer of de paspoorttabellen en toegangsfunctie in Supabase zijn ingesteld.');$('badges').innerHTML='<div class="empty">Stempels tijdelijk niet beschikbaar.</div>';return}
-badges=results[0].data||[];(results[1].data||[]).forEach(x=>earned[x.badge_id]=x.earned_at);profile=results[2].data||{};access=Array.isArray(results[3].data)?results[3].data:[];
-$('memberName').textContent=profile.display_name||profile.first_name||'HN-lid';$('passportNo').textContent='HN-'+user.id.replace(/-/g,'').slice(0,6).toUpperCase();$('memberSince').textContent=profile.created_at?new Date(profile.created_at).toLocaleDateString('nl-NL',{month:'long',year:'numeric'}):'—';$('memberStatus').textContent=profile.hn_status||'Lid';
-$('earnedCount').textContent=badges.filter(b=>earned[b.id]).length;$('remainingCount').textContent=badges.filter(b=>!earned[b.id]).length;$('accessCount').textContent=access.filter(x=>x.unlocked).length;
-const cats=[...new Set(badges.map(b=>b.category).filter(Boolean))];$('category').innerHTML='<option value="">Alle fases</option>'+cats.map(c=>'<option value="'+esc(c)+'">'+esc(c)+'</option>').join('');
-$('access').innerHTML=access.length?access.map(x=>'<div class="panel"><span class="tag">'+(x.unlocked?'Ontgrendeld':'Vergrendeld')+'</span><h3>'+esc(x.name||'Onderdeel')+'</h3><p>'+esc(x.description||'')+'</p>'+(x.unlocked?'':'<ul>'+((x.routes||[]).map(r=>'<li>'+esc(r.label||'Voorwaarde')+'</li>').join(''))+'</ul>')+'</div>').join(''):'<div class="empty">Er zijn nog geen ontgrendelbare onderdelen beschikbaar.</div>';
-$('visibility').textContent='Stempels op profiel: '+(profile.show_badges?'Aan':'Uit');render()}
-function render(){const cat=$('category').value,q=$('search').value.trim().toLowerCase();const list=badges.filter(b=>{const on=!!earned[b.id];return(filter==='all'||(filter==='earned')===on)&&(!cat||b.category===cat)&&(!q||[b.name,b.description,b.meaning_text].join(' ').toLowerCase().includes(q))});$('badges').innerHTML=list.length?list.map(b=>{const on=!!earned[b.id];return '<button class="stamp '+(on?'earned':'')+'" data-id="'+esc(b.id)+'"><span class="seal">'+esc(initials(b))+'</span><span><small>'+esc(b.category||'')+'</small><h3>'+esc(b.name)+'</h3><p>'+esc(b.description||b.meaning_text||'')+'</p><span class="tag">'+(on?'Behaald':'Nog te behalen')+'</span></span></button>'}).join(''):'<div class="empty">Geen stempels gevonden voor deze keuze.</div>'}
-$('filters').addEventListener('click',e=>{const b=e.target.closest('[data-filter]');if(!b)return;filter=b.dataset.filter;$('filters').querySelectorAll('[data-filter]').forEach(x=>x.classList.toggle('active',x===b));render()});$('category').addEventListener('change',render);$('search').addEventListener('input',render);
-$('badges').addEventListener('click',e=>{const b=e.target.closest('[data-id]');if(!b)return;const x=badges.find(v=>v.id===b.dataset.id);if(!x)return;$('detailBody').innerHTML='<span class="tag">'+(earned[x.id]?'Behaald':'Nog te behalen')+'</span><h2>'+esc(x.name)+'</h2><b>Betekenis</b><p>'+esc(x.meaning_text||x.description||'Nog geen toelichting toegevoegd.')+'</p><b>Voorwaarde</b><p>'+esc(x.condition_text||'Bekijk de stempelvoorwaarden in de ledenomgeving.')+'</p><b>Ontgrendelt</b><p>'+esc(x.unlock_text||'Er is geen ontgrendeling gekoppeld.')+'</p>'+(earned[x.id]?'<small>Behaald op '+new Date(earned[x.id]).toLocaleDateString('nl-NL')+'</small>':'');$('detail').showModal()});$('closeDetail').onclick=()=>$('detail').close();
-$('visibility').onclick=async()=>{const next=!profile.show_badges;const r=await sb.from('profiles').update({show_badges:next}).eq('id',user.id);if(r.error){msg('De zichtbaarheid kon niet worden opgeslagen.');return}profile.show_badges=next;$('visibility').textContent='Stempels op profiel: '+(next?'Aan':'Uit')};init().catch(e=>{console.error(e);msg('Er ging iets mis bij het laden van het paspoort.')})})();
+<!DOCTYPE html>
+<html lang="nl" data-theme="light"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>Mijn HN Paspoort — Hijrah Netwerk</title>
+<meta name="description" content="Jouw persoonlijke voortgang, stempels en ontgrendelde onderdelen binnen Hijrah Netwerk.">
+<style>
+:root{--brown:#674C2E;--rust:#DD842A;--gold:#C6A15B;--gold-d:#9B7735;--bg:#FFFFFF;--ink:#674C2E;--card:#FFFFFF;--foil:linear-gradient(115deg,#9B7735 0%,#C6A15B 28%,#FFFFFF 47%,#C6A15B 62%,#9B7735 100%);box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px);scroll-behavior:smooth}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#674C2E;--ink:#FFFFFF;--card:#674C2E}}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;color:var(--ink);background:var(--bg)}
+a{color:inherit}
+@keyframes fs{from{background-position:100% 0}to{background-position:0 0}}
+@keyframes fb{from{background-position:0 0,0 0,100% 0}to{background-position:0 0,0 0,0 0}}
+@keyframes sweep{from{left:-60%}to{left:130%}}
+@keyframes stampIn{0%{opacity:0;transform:rotate(-14deg) scale(1.7)}60%{opacity:1;transform:rotate(-4deg) scale(.94)}100%{opacity:1;transform:rotate(-6deg) scale(1)}}
+.sp{position:fixed;top:0;left:0;height:3px;width:0;background:var(--foil);z-index:80}
+.top{position:sticky;top:0;z-index:70;background:var(--brown);color:#fff;box-shadow:0 3px 18px rgba(60,38,18,.16)}
+.nav{max-width:1180px;margin:auto;padding:12px 22px;display:flex;justify-content:space-between;align-items:center;gap:14px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:18px;text-decoration:none}
+.brand img{width:34px;height:34px;border-radius:8px;object-fit:contain;background:#fff}
+.nav nav a{color:#fff;text-decoration:none;font-size:14px;margin-left:18px;opacity:.88;position:relative}
+.nav nav a:hover{opacity:1}.nav nav a:after{content:"";position:absolute;left:0;right:0;bottom:-4px;height:2px;background:var(--foil);transform:scaleX(0);transition:transform .3s;transform-origin:left}.nav nav a:hover:after{transform:scaleX(1)}
+.hero{position:relative;overflow:hidden;color:#fff;text-align:center;padding:76px 22px 64px;background:radial-gradient(ellipse at 85% 0%,rgba(198,161,91,.35),transparent 48%),radial-gradient(ellipse at 10% 100%,rgba(221,132,42,.22),transparent 42%),#674C2E}
+.hero:before{content:"";position:absolute;top:0;left:-50%;width:40%;height:100%;background:linear-gradient(100deg,transparent,rgba(198,161,91,.22),rgba(255,255,255,.08),transparent);transform:skewX(-18deg);animation:sweep 11s ease-in-out infinite;pointer-events:none}
+.hero:after{content:"";position:absolute;width:420px;height:420px;left:50%;bottom:-300px;margin-left:-210px;border:1px solid rgba(255,255,255,.12);border-radius:50%;box-shadow:0 0 0 46px rgba(255,255,255,.035),0 0 0 92px rgba(255,255,255,.02);transform:translateY(var(--py,0px))}
+.in{max-width:760px;margin:auto;position:relative;z-index:1}
+.pill{display:inline-block;border:1px solid rgba(198,161,91,.7);color:#C6A15B;border-radius:999px;padding:7px 16px;font-size:12px;letter-spacing:.12em;text-transform:uppercase;background:rgba(255,255,255,.06)}
+.hero h1{font-size:clamp(34px,6vw,58px);line-height:1.08;margin:20px 0 16px;letter-spacing:-.01em}
+.acc{background:var(--foil);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;animation:fs 6s ease-in-out infinite alternate}
+.hero p{margin:0 auto;max-width:600px;color:rgba(255,255,255,.82);font-size:17px;line-height:1.6}
+.stats{display:flex;justify-content:center;gap:0;margin:34px auto 0;flex-wrap:wrap}
+.stat{padding:4px 34px;border-left:1px solid rgba(198,161,91,.4)}.stat:first-child{border-left:0}
+.stat b{display:block;font-size:38px;line-height:1.1}.stat span{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.72)}
+.cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:32px}
+.btn{display:inline-block;border:0;border-radius:999px;padding:13px 24px;cursor:pointer;font:700 14px Arial,sans-serif;text-decoration:none;background:linear-gradient(135deg,#DD842A,#C6A15B);color:#fff;transition:transform .2s,box-shadow .2s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(0,0,0,.25)}
+.btn.sec{background:transparent;border:1px solid rgba(255,255,255,.5)}.btn.sec:hover{background:rgba(255,255,255,.1)}
+.btn.dk{background:transparent;color:var(--ink);border:1px solid var(--gold-d);padding:9px 16px;font-size:13px}.btn.dk:hover{background:rgba(198,161,91,.18);box-shadow:none}
+.wrap{max-width:1180px;margin:auto;padding:46px 22px 20px}
+.msg{padding:12px 14px;border:1px solid var(--gold);border-radius:12px;margin-bottom:20px;font-size:14px}
+.pk{position:relative;display:grid;grid-template-columns:auto 1fr auto;gap:26px;align-items:center;background:#674C2E;color:#fff;border-radius:22px;padding:26px 30px;overflow:hidden;box-shadow:0 18px 40px rgba(103,76,46,.22);border:2px solid transparent;background:linear-gradient(#674C2E,#674C2E) padding-box,var(--foil) border-box;background-size:100% 100%,300% 100%;animation:fs 8s ease-in-out infinite alternate}
+.crest{width:78px;height:78px;border-radius:50%;border:2px solid var(--gold);display:grid;place-items:center;color:var(--gold);font-weight:700;font-size:26px}
+.pk h2{margin:0 0 4px;font-size:22px;letter-spacing:.06em}
+.pk dl{margin:10px 0 0;display:flex;gap:28px;flex-wrap:wrap;font-size:14px}.pk dt{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold)}.pk dd{margin:2px 0 0}
+.mrz{font:11px "Courier New",monospace;letter-spacing:.1em;color:var(--gold);text-align:right;word-break:break-all;max-width:300px}
+.sec h2{font-size:28px;margin:54px 0 6px}.sub{opacity:.8;margin:0 0 20px}
+.bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:22px}
+.pills{display:flex;gap:8px;flex-wrap:wrap}
+.pl{border:1px solid var(--gold-d);background:transparent;color:var(--ink);border-radius:999px;padding:9px 16px;cursor:pointer;font:inherit;font-size:14px;transition:background .25s,transform .25s}
+.pl:hover{background:rgba(198,161,91,.2);transform:translateY(-1px)}.pl.on{background:linear-gradient(135deg,#674C2E,#DD842A);color:#fff;border-color:transparent}
+select,input[type=search]{font:inherit;font-size:14px;color:var(--ink);background:var(--card);border:1px solid var(--gold-d);border-radius:999px;padding:9px 14px}
+input[type=search]{min-width:180px}select:focus,input:focus{outline:none;box-shadow:0 0 0 3px rgba(198,161,91,.25)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+.sc{all:unset;cursor:pointer;position:relative;overflow:hidden;display:flex;gap:14px;align-items:flex-start;background:var(--card);border:1px solid var(--brown);border-radius:18px;padding:20px 18px 18px;box-shadow:0 5px 18px rgba(70,45,25,.05);transition:transform .3s,box-shadow .3s}
+.sc:before{content:"";position:absolute;left:0;right:0;top:0;height:3px;background:var(--foil);background-size:300% 100%;animation:fs 6s ease-in-out infinite alternate}
+.sc.off:before{background:var(--gold);opacity:.4;animation:none}
+.sc:after{content:"";position:absolute;top:0;left:-60%;width:40%;height:100%;background:linear-gradient(100deg,transparent,rgba(198,161,91,.28),transparent);transform:skewX(-20deg);pointer-events:none}
+.sc:hover{transform:translateY(-4px);box-shadow:0 14px 30px rgba(155,119,53,.25)}.sc:hover:after{animation:sweep .9s ease}
+.sc:focus-visible{outline:2px solid var(--rust);outline-offset:2px}
+.seal{flex:none;width:64px;height:64px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:17px;position:relative;transform:rotate(-6deg);transition:transform .35s cubic-bezier(.2,.9,.3,1.2)}
+.seal:before{content:"";position:absolute;inset:4px;border-radius:50%;border:1px solid currentColor}
+.on .seal{color:var(--rust);border:3px solid transparent;background:linear-gradient(rgba(198,161,91,.18),rgba(198,161,91,.18)) padding-box,linear-gradient(var(--card),var(--card)) padding-box,var(--foil) border-box;background-size:100% 100%,100% 100%,300% 100%;animation:fb 6s ease-in-out infinite alternate;filter:drop-shadow(0 3px 6px rgba(155,119,53,.35))}
+.on.g .seal{color:var(--gold-d)}
+.off .seal{border:2px dashed var(--ink);opacity:.3}
+.sc:hover .seal{transform:rotate(0) scale(1.08)}
+.sc .t{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold-d)}.sc h3{margin:3px 0 6px;font-size:18px}.sc p{margin:0;font-size:13px;line-height:1.5;opacity:.85}
+.st{display:inline-block;margin-top:10px;font-size:10px;letter-spacing:.1em;text-transform:uppercase;padding:3px 9px;border-radius:99px;border:1px solid var(--gold-d);color:var(--gold-d)}
+.empty{grid-column:1/-1;text-align:center;padding:36px;border:1px dashed var(--gold-d);border-radius:18px;opacity:.8}
+.ac{background:var(--card);border:1px solid var(--brown);border-radius:18px;padding:20px;margin-bottom:12px;transition:transform .3s,box-shadow .3s}.ac:hover{transform:translateY(-3px);box-shadow:0 12px 26px rgba(155,119,53,.2)}
+.ac h3{margin:6px 0 4px}.ac ul{margin:8px 0 0;padding-left:18px;font-size:14px}
+.band{margin:60px 0 0;text-align:center;color:#fff;border-radius:26px;padding:50px 22px;background:radial-gradient(ellipse at 85% 0%,rgba(198,161,91,.35),transparent 50%),#674C2E}
+.band h2{margin:0 0 10px;font-size:30px}.band p{margin:0 auto 22px;max-width:520px;color:rgba(255,255,255,.82)}
+.priv{margin-top:26px;font-size:13px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;opacity:.9}
+footer{max-width:1180px;margin:30px auto 0;padding:24px 22px 50px;font-size:13px;opacity:.75}
+dialog{border:1px solid var(--gold);border-radius:20px;padding:0;max-width:440px;width:calc(100% - 32px);background:var(--card);color:var(--ink);box-shadow:0 30px 70px rgba(0,0,0,.35)}
+dialog::backdrop{background:rgba(60,38,18,.55)}
+.dh{height:4px;background:var(--foil)}.db{padding:24px;line-height:1.6;font-size:14px}.db h3{margin:8px 0;font-size:22px}.db .st{margin:0 0 6px}
+.rv{opacity:0;transform:translateY(28px);transition:opacity .75s cubic-bezier(.22,.61,.36,1),transform .75s cubic-bezier(.22,.61,.36,1);transition-delay:var(--d,0s)}.rv.vis{opacity:1;transform:none}
+@media(max-width:760px){.pk{grid-template-columns:1fr;text-align:left}.mrz{text-align:left}.stat{padding:4px 18px}.nav nav a:not(:last-child){display:none}.hero{padding:56px 18px 52px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}html{scroll-behavior:auto}.rv{opacity:1;transform:none}}
+</style></head><body>
+<div class="sp" id="sp"></div>
+<header class="top"><div class="nav"><a class="brand" href="/">Hijrah Netwerk</a><nav><a href="/stappenplan">Stappenplan</a><a href="/verhalen">Verhalen</a><a href="/dashboard">Dashboard</a></nav></div></header>
+<section class="hero"><div class="in">
+<span class="pill">✦ Mijn Paspoort</span>
+<h1>Jouw reis, <span class="acc">stempel voor stempel.</span></h1>
+<p>Zie wat je al hebt gedaan, ontdek wat er nog komt en ontgrendel onderdelen door op jouw manier bij te dragen aan het netwerk.</p>
+<div class="stats"><div class="stat"><b id="s1">—</b><span>Stempels behaald</span></div><div class="stat"><b id="s2">—</b><span>Nog te behalen</span></div><div class="stat"><b id="s3">—</b><span>Ontgrendeld</span></div></div>
+<div class="cta"><a class="btn" href="#stempels">Bekijk mijn stempels ↓</a><a class="btn sec" href="/bijdragen?type=experience">Deel jouw ervaring</a></div>
+</div></section>
+<main class="wrap"><div id="msg" class="msg" style="display:none" role="status" aria-live="polite"></div>
+<div class="pk rv"><div class="crest">HN</div><div><div class="small" style="font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold)">Hijrah Netwerk Paspoort</div><h2 id="pn">—</h2>
+<dl><div><dt>Paspoortnr.</dt><dd id="pnr">—</dd></div><div><dt>Lid sinds</dt><dd id="ps">—</dd></div><div><dt>Status</dt><dd id="pt">—</dd></div></dl></div><div class="mrz" id="mrz"></div></div>
+<section class="sec" id="stempels"><h2 class="rv">Alle stempels</h2><p class="sub rv">Tik op een stempel om te zien wat erachter zit en wat hij ontgrendelt.</p>
+<div class="bar rv"><div class="pills" id="pills"><button class="pl on" data-f="all" type="button">Alles</button><button class="pl" data-f="on" type="button">Behaald</button><button class="pl" data-f="off" type="button">Nog te behalen</button></div>
+<select id="cat" aria-label="Fase"><option value="">Alle fases</option></select><input type="search" id="q" placeholder="⌕  Zoek een stempel" aria-label="Zoek een stempel"></div>
+<div class="grid" id="grid"><div class="empty">Paspoort laden…</div></div></section>
+<section class="sec" id="ontgrendelen"><h2 class="rv">Ontgrendelen</h2><p class="sub rv">Een stempel opent echte toegang. De server bepaalt of je toegang hebt.</p><div id="ac"></div></section>
+<div class="band rv"><h2>Elke bijdrage telt.</h2><p>Deel een ervaring, schrijf een review of vul informatie aan. Zo help je anderen en ontgrendel je nieuwe onderdelen.</p><a class="btn" href="/bijdragen?type=experience">Naar bijdragen</a></div>
+<div class="priv rv"><span>Stempels tonen op mijn gedeelde profiel: <b id="vis">—</b></span><button class="btn dk" id="vOn" type="button">Aan</button><button class="btn dk" id="vOff" type="button">Uit</button><span>Dit paspoort is alleen voor jou zichtbaar. Antwoorden uit Mijn Hijrah blijven altijd privé.</span></div>
+</main><footer>© Hijrah Netwerk</footer>
+<dialog id="dlg"><div class="dh"></div><div class="db" id="dbody"></div><div style="padding:0 24px 22px;text-align:right"><button class="btn dk" id="dclose" type="button">Sluiten</button></div></dialog>
+<script src="/config.js"></script><script src="/assets/config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/supabase-client.js"></script>
+<script>
+(function(){'use strict';
+var sb=window.hijrahSupabase,$=function(i){return document.getElementById(i)};
+if(!sb){document.body.insertAdjacentHTML('afterbegin','<p style="padding:24px">De verbinding kon niet worden gestart. Vernieuw de pagina.</p>');return}
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+var B=[],E={},P={},U=null,F='all',first=true,rm=window.matchMedia&&matchMedia('(prefers-reduced-motion:reduce)').matches;
+function show(m){var e=$('msg');e.textContent=m;e.style.display='block'}
+function code(b){return(b.icon&&String(b.icon).length<=3?b.icon:(b.name||'HN').replace(/[^A-Za-zÀ-ÿ0-9 ]/g,'').split(' ').map(function(w){return w[0]||''}).join('').slice(0,2)).toUpperCase()}
+function cnt(el,t){if(rm){el.textContent=t;return}var st=null;function f(ts){st=st||ts;var p=Math.min((ts-st)/1100,1);el.textContent=Math.round(t*(1-Math.pow(1-p,3)));if(p<1)requestAnimationFrame(f)}requestAnimationFrame(f)}
+async function load(){
+ try{
+  var s=await sb.auth.getSession();if(!s.data||!s.data.session){location.href='/login?next=/paspoort';return}U=s.data.session.user;
+  var r=await Promise.all([sb.from('hn_badges').select('*').eq('active',true).order('sort_order'),sb.from('hn_user_badges').select('badge_id,earned_at').eq('user_id',U.id),sb.from('profiles').select('display_name,first_name,created_at,hn_status,show_badges,profile_visibility').eq('id',U.id).maybeSingle(),sb.rpc('hn_my_access')]);
+  if(r[0].error){show('De stempels konden niet worden geladen. Probeer het later opnieuw.');return}
+  B=r[0].data||[];(r[1].data||[]).forEach(function(x){E[x.badge_id]=x.earned_at});P=r[2].data||{};var A=Array.isArray(r[3].data)?r[3].data:[];
+  if(r[3].error)show('Je stempels zijn geladen, maar de toegangsstatus kon niet worden opgehaald.');
+  var cats=[];B.forEach(function(b){if(b.category&&cats.indexOf(b.category)<0)cats.push(b.category)});$('cat').innerHTML='<option value="">Alle fases</option>'+cats.map(function(c){return '<option value="'+esc(c)+'">'+esc(c)+'</option>'}).join('');
+  var n=B.filter(function(b){return !!E[b.id]}).length,un=A.filter(function(x){return x.unlocked}).length;
+  cnt($('s1'),n);cnt($('s2'),B.length-n);cnt($('s3'),un);
+  var nm=P.display_name||P.first_name||'Lid',no='HN-'+U.id.replace(/-/g,'').slice(0,6).toUpperCase();
+  $('pn').textContent=nm;$('pnr').textContent=no;$('ps').textContent=P.created_at?new Date(P.created_at).toLocaleDateString('nl-NL',{month:'long',year:'numeric'}):'—';$('pt').textContent=P.hn_status||'Lid';
+  var z=nm.toUpperCase().replace(/[^A-Z]/g,'<').slice(0,22).padEnd(22,'<');
+  $('mrz').textContent='P<HNL<'+z+'\n'+no.replace('-','')+'<<<<<<<<<<<<<<';
+  $('ac').innerHTML=A.map(function(x){return '<div class="ac rv"><span class="st">'+(x.unlocked?'Ontgrendeld':'Vergrendeld')+'</span><h3>'+esc(x.name||'Onderdeel')+'</h3><div>'+esc(x.description||'')+'</div>'+(x.unlocked?'':'<ul>'+(Array.isArray(x.routes)?x.routes:[]).map(function(r){return '<li>'+esc(r.label)+'</li>'}).join('')+'</ul>')+'</div>'}).join('')||'<div class="empty">Er zijn nog geen ontgrendelbare onderdelen.</div>';
+  priv();grid();observe();
+ }catch(e){console.error('[HN Paspoort]',e);show('Er ging iets mis bij het laden van je paspoort. Vernieuw de pagina of probeer het later opnieuw.')}
+}
+function grid(){
+ var c=$('cat').value,q=$('q').value.trim().toLowerCase();
+ var list=B.filter(function(b){var on=!!E[b.id];return(F==='all'||(F==='on')===on)&&(!c||b.category===c)&&(!q||((b.name||'')+' '+(b.description||'')+' '+(b.meaning_text||'')).toLowerCase().indexOf(q)>-1)});
+ $('grid').innerHTML=list.map(function(b,j){var on=!!E[b.id];return '<button type="button" class="sc '+(on?'on':'off')+(b.category&&b.category.toLowerCase()==='bijdragen'?' g':'')+(first&&on?' rise':'')+'" style="--k:'+j+'" data-id="'+esc(b.id)+'"><span class="seal">'+esc(code(b))+'</span><span><span class="t">'+esc(b.category||'')+'</span><h3>'+esc(b.name)+'</h3><p>'+esc(b.description||b.meaning_text||'')+'</p><span class="st">'+(on?'Behaald':'Nog te behalen')+'</span></span></button>'}).join('')||'<div class="empty">Geen stempels gevonden voor deze keuze.</div>';
+ first=false;
+}
+$('pills').onclick=function(e){var b=e.target.closest('.pl');if(!b)return;document.querySelectorAll('.pl').forEach(function(x){x.classList.remove('on')});b.classList.add('on');F=b.dataset.f;grid()};
+$('cat').onchange=grid;$('q').oninput=grid;
+$('grid').onclick=function(e){var c=e.target.closest('.sc');if(!c)return;var b=B.find(function(x){return x.id===c.dataset.id});if(!b)return;var on=!!E[b.id];
+ $('dbody').innerHTML='<span class="st">'+(on?'Behaald':'Nog te behalen')+'</span><h3>'+esc(b.name)+'</h3><b>Betekenis</b><br>'+esc(b.meaning_text||b.description||'—')+'<br><br><b>Voorwaarde</b><br>'+esc(b.condition_text||'—')+'<br><br><b>Ontgrendelt</b><br>'+esc(b.unlock_text||'—')+(on?'<br><br><b>Behaald op</b><br>'+new Date(E[b.id]).toLocaleDateString('nl-NL'):'');$('dlg').showModal()};
+$('dclose').onclick=function(){$('dlg').close()};$('dlg').onclick=function(e){if(e.target===this)this.close()};
+function priv(){$('vis').textContent=P.show_badges?'Aan':'Uit';$('vOn').disabled=!!P.show_badges;$('vOff').disabled=!P.show_badges}
+async function setVis(v){var r=await sb.from('profiles').update({show_badges:v}).eq('id',U.id);if(r.error){show('Opslaan is niet gelukt. Controleer je verbinding en probeer opnieuw.');return}P.show_badges=v;priv()}
+$('vOn').onclick=function(){setVis(true)};$('vOff').onclick=function(){setVis(false)};
+function observe(){var els=document.querySelectorAll('.rv:not(.vis)');if(!('IntersectionObserver'in window)){els.forEach(function(e){e.classList.add('vis')});return}var o=new IntersectionObserver(function(es){es.forEach(function(x){if(x.isIntersecting){x.target.classList.add('vis');o.unobserve(x.target)}})},{threshold:.1});els.forEach(function(e,i){e.style.setProperty('--d',(i%3)*80+'ms');o.observe(e)})}
+var hero=document.querySelector('.hero'),tk=0;
+addEventListener('scroll',function(){if(tk)return;tk=1;requestAnimationFrame(function(){tk=0;var h=document.documentElement.scrollHeight-innerHeight;$('sp').style.width=(h>0?100*scrollY/h:0)+'%';hero.style.setProperty('--py',Math.min(scrollY*.12,50)+'px')})},{passive:true});
+load();observe();
+})();
 </script></body></html>
