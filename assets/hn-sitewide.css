@@ -6,6 +6,8 @@
 .hn-hero,.hero,.page-hero,.hero-section{position:relative;isolation:isolate}
 .hn-hero,.hero,.page-hero,.hero-section{background-image:radial-gradient(ellipse at 88% 10%,rgba(198,161,91,.24),transparent 42%),radial-gradient(ellipse at 8% 92%,rgba(221,132,42,.17),transparent 40%),linear-gradient(135deg,#3d2a14 0%,#674C2E 46%,#7a4e28 72%,#49301b 100%)}
 .hn-hero>*:not(svg),.hero>*:not(svg),.page-hero>*:not(svg),.hero-section>*:not(svg){position:relative;z-index:1}
+:where(.hn-hero,.hero,.page-hero,.hero-section) :where(h1,h2,h3,h4,p,li,label,.eyebrow,.lead){color:#fff}
+:where(.hn-hero,.hero,.page-hero,.hero-section) :where(h1 span,h2 span,.hn-gold){color:var(--hn-gd)}
 .hn-route-deco,.hn-compass-deco{pointer-events:none}
 :where(.card,.country-card,.step,.note,.cta,.story,.city,.topic-card,.result-card,.search-result,.fiche-card,.article-card,.panel,.hn-card){transition:transform .24s cubic-bezier(.22,.61,.36,1),box-shadow .24s ease,border-color .24s ease}
 @media(hover:hover){:where(.card,.country-card,.step,.note,.cta,.story,.city,.topic-card,.result-card,.search-result,.fiche-card,.article-card,.panel,.hn-card):hover{transform:translateY(-5px);border-color:rgba(198,161,91,.75);box-shadow:0 16px 36px rgba(103,76,46,.16),0 0 0 1px rgba(198,161,91,.12)}}
