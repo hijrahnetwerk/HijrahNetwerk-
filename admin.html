@@ -748,6 +748,30 @@ th{
 }
 @keyframes hn-stripe{to{background-position:300% 0}}
 
+/* Uitlijning admin-sidebar: dezelfde volledige hoogte als de pagina */
+.layout{
+  min-height:calc(100vh - 3px);
+  align-items:stretch;
+}
+.hn-admin-sidebar{
+  height:auto;
+  min-height:calc(100vh - 3px);
+  max-height:none;
+  align-self:stretch;
+  position:relative;
+  top:auto;
+  overflow-y:visible;
+}
+@media(max-width:650px){
+  .hn-admin-sidebar{
+    width:100%;
+    min-height:0;
+    height:auto;
+    max-height:none;
+    position:relative;
+    overflow:visible;
+  }
+}
 </style>
 <link rel="stylesheet" href="/assets/hn-design.css">
 
