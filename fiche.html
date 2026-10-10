@@ -841,6 +841,15 @@ async function renderFiche(){
   }
   html+='<div class="hero-actions"><a class="button primary" href="/bijdragen?type=experience&topic='+encodeURIComponent(id)+'&title='+encodeURIComponent(pageTitle)+'">Ervaring delen</a></div></section>';
 
+  const publicReviewsResult=await db().rpc('hn_public_reviews',{p_target_key:'topic:'+id});
+  const publicReviews=publicReviewsResult.error?[]:(publicReviewsResult.data||[]);
+  const reviewSession=await db().auth.getSession();
+  html+='<section class="card" id="hn-reviews" style="margin-top:18px"><h2>Reviews</h2><p class="card-sub">Reviews worden eerst gecontroleerd. Andere gebruikers zien alleen een neutrale aanduiding, zoals Lid X.</p>';
+  if(publicReviewsResult.error)html+='<p class="empty-note">Reviews konden nu niet worden geladen.</p>';
+  else if(publicReviews.length)html+=publicReviews.map(r=>'<article class="experience" style="margin-top:12px"><div class="stars">'+('★'.repeat(Number(r.rating)||0)+('☆'.repeat(5-(Number(r.rating)||0))))+'</div><h3>'+esc(r.target_name)+'</h3><p class="exp-text">'+esc(r.body)+'</p><div class="exp-meta">'+esc(r.public_label)+' · '+esc(r.created_at?new Date(r.created_at).toLocaleDateString('nl-NL'):'')+'</div>'+(reviewSession.data?.session?'<button class="button outline hn-report-review" data-review-id="'+esc(r.id)+'" type="button" style="margin-top:8px">Review melden</button>':'')+'</article>').join('');
+  else html+='<p class="empty-note">Er zijn nog geen gepubliceerde reviews voor deze vermelding.</p>';
+  html+='<div class="hero-actions"><a class="button primary" href="/bijdragen?type=review&topic='+encodeURIComponent(id)+'&title='+encodeURIComponent(pageTitle)+'">Review schrijven</a></div></section>';
+
   html+='</div>';
 
   html+='<aside class="side">';
@@ -869,6 +878,13 @@ async function renderFiche(){
   }
 
   document.getElementById('app').innerHTML=html;
+  document.querySelectorAll('.hn-report-review').forEach(button=>button.addEventListener('click',async()=>{
+    const reason=window.prompt('Waarom wil je deze review melden? Beschrijf de reden (minimaal 10 tekens).');
+    if(reason===null)return;
+    const result=await db().rpc('hn_report_review',{p_review_id:button.dataset.reviewId,p_reason:reason.trim()});
+    if(result.error){window.alert(result.error.message||'De melding kon niet worden verstuurd.');return}
+    button.disabled=true;button.textContent='Gemeld';window.alert('Bedankt. De melding is naar HN verstuurd.');
+  }));
   const claimForm=document.getElementById('claimForm');
   if(claimForm){
     claimForm.addEventListener('submit',async e=>{
