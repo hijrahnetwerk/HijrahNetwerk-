@@ -8,9 +8,91 @@
 <link rel="stylesheet" href="assets/platform-pages.css">
 <style>
 .test{max-width:760px;margin:auto}.q{display:none}.q.active{display:block}.options{display:grid;gap:10px;margin-top:18px}.opt{padding:16px;border:1px solid var(--border);border-radius:12px;background:#fff;cursor:pointer}.opt.selected{border-color:var(--orange);background:#fff7ee}.progress{height:7px;background:#eee5db;border-radius:20px;overflow:hidden;margin:18px 0 28px}.bar{height:100%;background:var(--orange);width:0}.result{display:none}.result.show{display:block}
+
+/* ── HN DESIGN SYSTEM UPGRADE ── */
+:root{
+  --gd2:#D4AF37;--gd3:#F0D060;
+  --bg:#FDFAF6;--border-gd:rgba(212,175,55,.35);
+  --shadow-gd:0 14px 38px rgba(212,175,55,.22);
+}
+/* Goud stripe */
+.hn-stripe{
+  height:3px;
+  background:linear-gradient(90deg,#674C2E,#DD842A,#D4AF37,#F0D060,#D4AF37,#DD842A,#674C2E);
+  background-size:300% 100%;
+  animation:hn-stripe 5s linear infinite;
+}
+@keyframes hn-stripe{to{background-position:300% 0}}
+/* Gold divider */
+.hn-divider{
+  height:2px;border:none;
+  background:linear-gradient(90deg,transparent,#C6A15B,#D4AF37,#C6A15B,transparent);
+  opacity:.55;margin:0;
+}
+/* Hero gradient upgrade */
+.hero{
+  background:
+    radial-gradient(ellipse at 88% 8%,rgba(212,175,55,.35),transparent 46%),
+    radial-gradient(ellipse at 8% 90%,rgba(221,132,42,.22),transparent 40%),
+    linear-gradient(148deg,#3d2a14 0%,#674C2E 38%,#7a4e28 65%,#4e3018 100%)!important;
+}
+/* Kaarten gold-top accent */
+.card.hn-card-gold,
+.panel.hn-card-gold{border-top:3px solid #D4AF37}
+/* Animaties */
+.hn-reveal{opacity:0;transform:translateY(24px);transition:opacity .6s cubic-bezier(.22,.61,.36,1),transform .6s cubic-bezier(.22,.61,.36,1)}
+.hn-reveal.hn-in{opacity:1;transform:none}
+.hn-d1{transition-delay:.08s}.hn-d2{transition-delay:.16s}.hn-d3{transition-delay:.24s}.hn-d4{transition-delay:.32s}
+/* Btn upgrade */
+.btn-primary,.button-primary,.hnbtn.primary{
+  background:linear-gradient(135deg,#DD842A,#C6A15B)!important;
+  box-shadow:0 8px 24px rgba(212,175,55,.25)!important;
+}
+/* Tab active upgrade */
+.tab.active{
+  background:linear-gradient(135deg,#674C2E,#DD842A)!important;
+  color:#fff!important;
+  border-color:transparent!important;
+  box-shadow:0 5px 16px rgba(103,76,46,.22)!important;
+}
+/* Filter input focus */
+.filter input:focus,.filter select:focus,
+input:focus,select:focus,textarea:focus{
+  border-color:#C6A15B!important;
+  box-shadow:0 0 0 3px rgba(212,175,55,.15)!important;
+}
+/* Gold badge */
+.hn-badge-gd{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:4px 11px;border-radius:999px;
+  font-size:11px;font-weight:800;
+  background:linear-gradient(135deg,rgba(212,175,55,.18),rgba(103,76,46,.08));
+  color:#D4AF37;border:1px solid rgba(212,175,55,.35);
+}
+/* Dashboard hero upgrade */
+.hero{position:relative;overflow:hidden}
+.hero::after{
+  content:"";position:absolute;
+  width:380px;height:380px;
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:50%;right:-140px;bottom:-200px;
+  box-shadow:0 0 0 40px rgba(255,255,255,.04),0 0 0 80px rgba(255,255,255,.025);
+  pointer-events:none;
+}
+/* Dots patroon achtergrond */
+body::before{
+  content:"";
+  position:fixed;inset:0;
+  background-image:radial-gradient(circle,rgba(103,76,46,.03) 1px,transparent 1px);
+  background-size:32px 32px;
+  pointer-events:none;
+  z-index:-1;
+}
+
 </style>
 </head>
 <body>
+<div class="hn-stripe" style="height:3px;background:linear-gradient(90deg,#674C2E,#DD842A,#D4AF37,#F0D060,#D4AF37,#DD842A,#674C2E);background-size:300% 100%;animation:hn-stripe 5s linear infinite"></div>
 <link rel="stylesheet" href="assets/public-nav.css">
 <script src="assets/public-nav.js"></script>
 <script src="/config.js"></script>
