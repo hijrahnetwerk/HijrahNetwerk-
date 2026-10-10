@@ -1,6 +1,6 @@
 /**
  * HN build script
- * Werkt met Vercel én Netlify.
+ * Productie-build voor Vercel.
  */
 
 const fs = require('fs');
