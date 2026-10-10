@@ -27,6 +27,9 @@ const configContent = `// AUTOMATISCH GEGENEREERD DOOR build.js.\n// NIET HANDMA
 const assetsDir = path.join(__dirname, 'assets');
 fs.mkdirSync(assetsDir, { recursive: true });
 fs.writeFileSync(path.join(assetsDir, 'config.js'), configContent, 'utf8');
+// Compatibiliteit: bestaande pagina's laden nog /config.js. Genereer dit bestand
+// met exact dezelfde productieconfiguratie zodat de placeholder nooit live wordt gebruikt.
+fs.writeFileSync(path.join(__dirname, 'config.js'), configContent, 'utf8');
 
 const translateTag = '<script src="/assets/hn-translate.js"></script>';
 const translateStyleTag = '<link rel="stylesheet" href="/assets/hn-translate.css">';
