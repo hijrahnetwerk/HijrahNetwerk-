@@ -200,13 +200,19 @@
       "source": "/admin-paspoort.html",
       "destination": "/admin-paspoort",
       "permanent": true
+    },
+    {
+      "source": "/mijn-badges",
+      "destination": "/paspoort",
+      "permanent": true
+    },
+    {
+      "source": "/mijn-badges.html",
+      "destination": "/paspoort",
+      "permanent": true
     }
   ],
   "rewrites": [
-    {
-      "source": "/mijn-badges",
-      "destination": "/mijn-badges.html"
-    },
     {
       "source": "/admin-blogs",
       "destination": "/admin-blogs.html"
