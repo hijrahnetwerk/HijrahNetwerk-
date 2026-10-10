@@ -1,6 +1,6 @@
 /**
  * HN build script
- * Werkt met Vercel én Netlify.
+ * Productie-build voor Vercel.
  */
 
 const fs = require('fs');
@@ -114,7 +114,7 @@ for (const file of htmlFiles) {
   const canonicalRoutes = {
     'index.html':'/', 'landen.html':'/landen', 'navigatie.html':'/navigatie',
     'kennisbank.html':'/kennisbank', 'smart-search.html':'/smart-search', 'community.html':'/community',
-    'bijdragen.html':'/bijdragen', 'orientatie.html':'/orientatie', 'orientatietest.html':'/orientatietest',
+    'bijdragen.html':'/bijdragen', 'orientatie.html':'/orientatie', 'hijrahtools.html':'/hijrahtools', 'orientatietest.html':'/orientatietest',
     'stappenplan.html':'/stappenplan', 'voorbereiding.html':'/voorbereiding', 'vertrek.html':'/vertrek',
     'integratie.html':'/integratie', 'realiteitscheck.html':'/realiteitscheck', 'verhalen.html':'/verhalen',
     'stedengids.html':'/stedengids', 'vergelijken.html':'/vergelijken', 'hulp.html':'/hulp', 'auteursrecht.html':'/auteursrecht'
@@ -159,7 +159,7 @@ async function fetchJson(table, query) {
 }
 
 async function buildSitemap() {
-  const staticRoutes = ['/','/landen','/navigatie','/kennisbank','/smart-search','/community','/bijdragen','/orientatie','/orientatietest','/stappenplan','/voorbereiding','/vertrek','/integratie','/realiteitscheck','/verhalen','/stedengids','/vergelijken','/hulp','/auteursrecht'];
+  const staticRoutes = ['/','/landen','/navigatie','/kennisbank','/smart-search','/community','/bijdragen','/orientatie','/hijrahtools','/orientatietest','/stappenplan','/voorbereiding','/vertrek','/integratie','/realiteitscheck','/verhalen','/stedengids','/vergelijken','/hulp','/auteursrecht'];
   const urls = new Map();
   const add = (pathname, priority, changefreq) => { if (!pathname || pathname.includes('?')) return; const clean = pathname === '/' ? '/' : pathname.replace(/\/$/, ''); urls.set(clean, {priority, changefreq}); };
   staticRoutes.forEach(route => add(route, route === '/' ? '1.0' : '0.7', route === '/' ? 'weekly' : 'monthly'));
