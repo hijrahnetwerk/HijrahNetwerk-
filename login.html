@@ -43,7 +43,7 @@
   <script>
     (async function () {
       const { data } = await hnGetSession();
-      if (data && data.session) window.location.href = "/dashboard";
+      if (data && data.session) window.location.href = (function(){var n=new URLSearchParams(location.search).get('next');return n&&/^\/(?![\/\\])/.test(n)?n:'/dashboard'})();
     })();
     const form = document.getElementById('login-form');
     const message = document.getElementById('login-message');
@@ -60,7 +60,7 @@
           message.className = 'auth-message error';
           return;
         }
-        if (data && data.session) window.location.href = "/dashboard";
+        if (data && data.session) window.location.href = (function(){var n=new URLSearchParams(location.search).get('next');return n&&/^\/(?![\/\\])/.test(n)?n:'/dashboard'})();
         else {
           message.textContent = 'Inloggen is gelukt, maar er kon geen sessie worden aangemaakt.';
           message.className = 'auth-message error';
