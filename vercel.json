@@ -190,6 +190,16 @@
       "source": "/hijrahtools.html",
       "destination": "/hijrahtools",
       "permanent": true
+    },
+    {
+      "source": "/paspoort.html",
+      "destination": "/paspoort",
+      "permanent": true
+    },
+    {
+      "source": "/admin-paspoort.html",
+      "destination": "/admin-paspoort",
+      "permanent": true
     }
   ],
   "rewrites": [
@@ -400,6 +410,10 @@
     {
       "source": "/paspoort",
       "destination": "/paspoort.html"
+    },
+    {
+      "source": "/admin-paspoort",
+      "destination": "/admin-paspoort.html"
     }
   ],
   "headers": [
@@ -482,6 +496,19 @@
     },
     {
       "source": "/paspoort(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "private, no-store, max-age=0"
+        },
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow, noarchive"
+        }
+      ]
+    },
+    {
+      "source": "/admin-paspoort(.*)",
       "headers": [
         {
           "key": "Cache-Control",
