@@ -138,6 +138,8 @@ async function loadPageData(){
   return true;
 }
 
+function setBuilderFocus(focused){var root=document.querySelector(".builder");if(!root)return;root.classList.toggle("focus-mode",!!focused);var button=$("focus");if(button)button.textContent=focused?"Terug naar editor":"Volledig scherm";}
+
 async function pick(id,openFullPage){
   for(var i=0;i<pages.length;i++)if(pages[i].id===id)page=pages[i];
   if(!page)return;
@@ -602,8 +604,7 @@ function bind(){
   $("dataLimit").oninput=function(){edit("dataLimit",this.value);};
   $("dataFilters").onchange=function(){edit("dataFilters",this.value);};
   $("open").onclick=function(){if(page)window.open(route(page.slug),"_blank");};
-  function setBuilderFocus(focused){var root=document.querySelector(".builder");if(!root)return;root.classList.toggle("focus-mode",!!focused);$("focus").textContent=focused?"Terug naar editor":"Volledig scherm";}
-  $("focus").onclick=function(){var root=document.querySelector(".builder");setBuilderFocus(!root.classList.contains("focus-mode"));};
+  $("focus").onclick=function(){var root=document.querySelector(".builder");setBuilderFocus(!(root&&root.classList.contains("focus-mode")));};
   $("desktop").onclick=function(){$("liveFrameWrap").className="desktop";$("desktop").classList.add("active");$("mobile").classList.remove("active");};
   $("mobile").onclick=function(){$("liveFrameWrap").className="mobile";$("mobile").classList.add("active");$("desktop").classList.remove("active");};
 
