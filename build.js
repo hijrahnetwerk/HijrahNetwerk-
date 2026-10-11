@@ -101,8 +101,8 @@ for (const file of htmlFiles) {
   }
 
   // Keep every page usable on phones, including older pages without a viewport declaration.
-  if (!/<meta\\s+name=[\"']viewport[\"']/i.test(html)) {
-    html = html.replace('</head>', '<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\\n</head>');
+  if (!/<meta\s+name=[\"']viewport[\"']/i.test(html)) {
+    html = html.replace('</head>', '<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n</head>');
   }
 
   const isAdminSurface = file.startsWith('admin') || file.startsWith('werkruimte');
