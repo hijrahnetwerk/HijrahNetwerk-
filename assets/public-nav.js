@@ -1,153 +1,34 @@
+
 (function(){
-  'use strict';
-
-  function loadSiteUX(){
-    if(!document.querySelector('link[data-hn-ux]')){
-      const link=document.createElement('link'); link.rel='stylesheet'; link.href='/assets/hn-ux.css'; link.dataset.hnUx='true'; document.head.appendChild(link);
-    }
-    if(!document.querySelector('script[data-hn-ux]')){
-      const script=document.createElement('script'); script.src='/assets/hn-ux.js'; script.defer=true; script.dataset.hnUx='true'; document.head.appendChild(script);
-    }
-  }
-  loadSiteUX();
-
-  const fallbackItems = [
-    {label:'Landen & Steden', href:'/landen'},
-    {label:'Verhalen', href:'/verhalen'},
-    {label:'Hijrah Navigatie', href:'/navigatie'},
-    {label:'HijrahTools', href:'/hijrahtools'},
-    {label:'Community', href:'/community'},
-    {label:'Mijn Hijrah', href:'/dashboard'},
-    {label:'Over HN', href:'/#over-ons'}
-  ];
-
-  function esc(value){
-    return String(value ?? '').replace(/[&<>"']/g,m=>({
-      '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
-    }[m]));
-  }
-
-  // Sanitize navigation destinations before inserting them into href attributes.
-  function safeHref(value){
-    const href=String(value==null?'':value).trim();
-    if(!href) return '#';
-    if(/^(javascript|data|vbscript):/i.test(href)) return '#';
-    if(/^(https?:|mailto:|tel:)/i.test(href) || href.charAt(0)==='/' || href.charAt(0)==='#' || href.charAt(0)==='?') return href;
-    // Treat plain relative paths as local links, never as executable schemes.
-    if(!/^[a-z][a-z0-9+.-]*:/i.test(href)) return href;
-    return '#';
-  }
-
-  function normalizeItems(rows){
-    const items=(rows||[])
-       .filter(x=>x && x.is_visible!==false && x.location==='main' && !x.parent_id)
-      .filter(x=>String(x.href||'')!=='/' && !['/kennisbank','/kennisbank/','/artikels','/artikels/'].includes(String(x.href||'')))
-      .sort((a,b)=>(a.sort_order||0)-(b.sort_order||0));
-
-    return items.length ? items : fallbackItems;
-  }
-
-  function renderLinks(items, mobile){
-    return items.map(x=>{
-      const special=String(x.href||'').replace(/\/$/,'')==='/navigatie';
-      if(mobile){
-        return special
-          ? '<a class="hn-mobile-link hn-mobile-special" href="'+esc(safeHref(x.href))+'"><span>⌕</span><span><strong>'+esc(x.label)+'</strong><small>Zoek in HN</small></span></a>'
-          : '<a class="hn-mobile-link" href="'+esc(safeHref(x.href))+'">'+esc(x.label)+'</a>';
-      }
-      return special
-        ? '<a class="hn-nav-special" href="'+esc(safeHref(x.href))+'"><span class="hn-nav-special-icon">⌕</span><span>'+esc(x.label)+'</span><small>Zoek in HN</small></a>'
-        : '<a href="'+esc(safeHref(x.href))+'">'+esc(x.label)+'</a>';
-    }).join('');
-  }
-
-  function mount(){
-    if(document.getElementById('hnPublicNav')) return;
-
-    const root=document.createElement('div');
-    root.id='hnPublicNav';
-
-    const items=fallbackItems;
-
-    root.innerHTML=`
-      <header class="hn-nav">
-        <div class="hn-nav-inner">
-          <a class="hn-brand" href="/" aria-label="Hijrah Netwerk">
-            <span class="hn-mark"><img src="/assets/logo-color.pngneddkleinn.png?v=20261007" alt="" loading="eager" aria-hidden="true"></span>
-            <span>Hijrah Netwerk</span>
-          </a>
-          <nav class="hn-links" aria-label="Hoofdnavigatie">${renderLinks(items,false)}</nav>
-          <div class="hn-actions">
-            <a class="hn-action secondary" href="/dashboard">Mijn Hijrah</a>
-            <a class="hn-action secondary" href="/bijdragen">Bijdragen</a>
-            <a class="hn-action primary" href="/register">Aanmelden</a>
-          </div>
-          <button class="hn-menu" type="button" aria-label="Open menu" aria-expanded="false">
-            <span></span><span></span><span></span>
-          </button>
-        </div>
-      </header>
-
-      <div class="hn-mobile" aria-hidden="true">
-        <div class="hn-mobile-panel">
-          <div class="hn-mobile-head">
-            <strong>Hijrah Netwerk</strong>
-            <button class="hn-mobile-close" type="button" aria-label="Sluit menu">×</button>
-          </div>
-          <div class="hn-mobile-links">${renderLinks(items,true)}</div>
-          <div class="hn-mobile-divider"></div>
-          <a class="hn-mobile-link" href="/login">Inloggen</a>
-          <a class="hn-mobile-primary" href="/register">Aanmelden voor de lancering</a>
-        </div>
-      </div>
-    `;
-
-    document.body.insertBefore(root,document.body.firstChild);
-
-    const mobile=root.querySelector('.hn-mobile');
-    const menu=root.querySelector('.hn-menu');
-    const close=root.querySelector('.hn-mobile-close');
-
-    function setOpen(open){
-      mobile.classList.toggle('open',open);
-      mobile.setAttribute('aria-hidden',open?'false':'true');
-      menu.setAttribute('aria-expanded',open?'true':'false');
-      document.body.style.overflow=open?'hidden':'';
-    }
-
-    menu.addEventListener('click',()=>setOpen(true));
-    close.addEventListener('click',()=>setOpen(false));
-    mobile.addEventListener('click',e=>{if(e.target===mobile)setOpen(false)});
-    document.addEventListener('keydown',e=>{if(e.key==='Escape')setOpen(false)});
-
-    loadDatabaseNavigation(root).catch(()=>{});
-  }
-
-  async function loadDatabaseNavigation(root){
-    const db=window.hijrahSupabase;
-    if(!db || typeof db.from!=='function') return;
-
-    const result=await db
-      .from('hn_navigation_items')
-      .select('label,href,parent_id,location,sort_order,is_visible')
-      .eq('location','main')
-      .eq('is_visible',true)
-      .is('parent_id',null)
-      .order('sort_order',{ascending:true});
-
-    if(result.error) return;
-
-    const items=normalizeItems(result.data);
-    const desktop=root.querySelector('.hn-links');
-    const mobile=root.querySelector('.hn-mobile-links');
-
-    if(desktop) desktop.innerHTML=renderLinks(items,false);
-    if(mobile) mobile.innerHTML=renderLinks(items,true);
-  }
-
-  if(document.readyState==='loading'){
-    document.addEventListener('DOMContentLoaded',mount);
-  }else{
-    mount();
-  }
+'use strict';
+if(window.__hnPublicNavLoaded)return;window.__hnPublicNavLoaded=true;
+var fallback=[
+{label:'Landen & Steden',href:'/landen'},{label:'Verhalen',href:'/verhalen'},
+{label:'Hijrah Navigatie',href:'/navigatie',special:true},{label:'HijrahTools',href:'/hijrahtools'},
+{label:'Community',href:'/community'},{label:'Over HN',href:'/#over-ons'}
+];
+var $=function(s,r){return (r||document).querySelector(s)},esc=function(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})};
+function safeHref(v){var s=String(v||'').trim();if(!s||/^(javascript|data|vbscript):/i.test(s))return '#';if(/^(https?:\/\/|mailto:|tel:)/i.test(s)||s.charAt(0)==='/'||s.charAt(0)==='#'||s.charAt(0)==='?')return s;if(!/^[a-z][a-z0-9+.-]*:/i.test(s))return s;return '#'}
+function active(h){var p=location.pathname.replace(/\/$/,'')||'/';var q=String(h||'').split('?')[0].split('#')[0].replace(/\/$/,'')||'/';return q!=='/'&&(p===q||p.indexOf(q+'/')===0)}
+function renderLink(x,mobile){var special=x.special||String(x.href||'').replace(/\/$/,'')==='/navigatie';var cls=(mobile?'hn-mobile-link':'')+(special?' hn-nav-special':'')+(active(x.href)?' hn-active':'');return '<a class="'+cls.trim()+'" href="'+esc(safeHref(x.href))+'"'+(x.open_new_tab?' target="_blank" rel="noopener"':'')+'>'+(special?'<span class="hn-nav-special-icon">⌕</span>':'')+esc(x.label)+'</a>'}
+function mount(){
+if($('#hnPublicNav'))return;
+var root=document.createElement('div');root.id='hnPublicNav';
+root.innerHTML='<header class="hn-nav"><div class="hn-nav-inner"><a class="hn-brand" href="/" aria-label="Hijrah Netwerk"><span class="hn-mark"><img src="/assets/logo-color.pngneddkleinn.png?v=20261011-1" alt="" aria-hidden="true"></span><span>Hijrah Netwerk</span></a><nav class="hn-links" aria-label="Hoofdnavigatie"></nav><div class="hn-more"><button class="hn-more-trigger" type="button" aria-expanded="false">Meer⌄</button><div class="hn-more-menu"></div></div><div class="hn-actions"><a class="hn-action secondary" href="/login">Inloggen</a><a class="hn-action primary" href="/register">Aanmelden</a></div><button class="hn-menu" type="button" aria-label="Open menu" aria-expanded="false"><span></span><span></span><span></span></button></div></header><div class="hn-mobile" aria-hidden="true"><div class="hn-mobile-panel" role="dialog" aria-modal="true" aria-label="Hoofdnavigatie"><div class="hn-mobile-head"><strong>Hijrah Netwerk</strong><button class="hn-mobile-close" type="button" aria-label="Sluit menu">×</button></div><nav class="hn-mobile-links" aria-label="Mobiele hoofdnavigatie"></nav><div class="hn-mobile-divider"></div><div class="hn-mobile-account"><a class="hn-mobile-link" href="/login">Inloggen</a><a class="hn-mobile-primary" href="/register">Aanmelden</a></div></div></div>';
+document.body.insertBefore(root,document.body.firstChild);
+var mobile=$('.hn-mobile',root),menu=$('.hn-menu',root),close=$('.hn-mobile-close',root),links=$('.hn-links',root),more=$('.hn-more',root),moreMenu=$('.hn-more-menu',root),moreBtn=$('.hn-more-trigger',root),actions=$('.hn-actions',root);
+function setOpen(on){mobile.classList.toggle('open',on);mobile.setAttribute('aria-hidden',on?'false':'true');menu.setAttribute('aria-expanded',String(on));document.body.style.overflow=on?'hidden':'';if(on)close.focus()}
+menu.addEventListener('click',function(){setOpen(true)});close.addEventListener('click',function(){setOpen(false)});mobile.addEventListener('click',function(e){if(e.target===mobile)setOpen(false)});
+document.addEventListener('keydown',function(e){if(e.key==='Escape'){setOpen(false);more.classList.remove('open');moreBtn.setAttribute('aria-expanded','false');var ac=$('.hn-account',root);if(ac)ac.classList.remove('open')}});
+moreBtn.addEventListener('click',function(){var on=more.classList.toggle('open');moreBtn.setAttribute('aria-expanded',String(on))});
+document.addEventListener('click',function(e){if(!more.contains(e.target))more.classList.remove('open');var ac=$('.hn-account',root);if(ac&&!ac.contains(e.target))ac.classList.remove('open')});
+function draw(items){items=items&&items.length?items:fallback;links.innerHTML=items.map(function(x){return renderLink(x,false)}).join('');$('.hn-mobile-links',root).innerHTML=items.map(function(x){return renderLink(x,true)}).join('');fit()}
+function fit(){if(window.innerWidth<1200)return;var all=[].slice.call(links.querySelectorAll('a'));all.forEach(function(a){a.style.display=''});more.style.display='none';moreMenu.innerHTML='';var avail=links.clientWidth-8;var used=0,hidden=[];all.forEach(function(a){used+=a.getBoundingClientRect().width+3;if(used>avail){a.style.display='none';hidden.push(a)}});if(hidden.length){more.style.display='block';moreMenu.innerHTML=hidden.map(function(a){return '<a href="'+esc(a.getAttribute('href'))+'">'+esc(a.textContent.trim())+'</a>'}).join('')}}
+var ro=window.ResizeObserver?new ResizeObserver(fit):null;if(ro)ro.observe(links);window.addEventListener('resize',fit);
+async function db(){for(var i=0;i<60&&!window.hijrahSupabase;i++)await new Promise(function(r){setTimeout(r,100)});return window.hijrahSupabase||null}
+async function loadNav(){var d=await db();if(!d)return;try{var r=await d.from('hn_navigation_items').select('label,href,parent_id,location,sort_order,is_visible,open_new_tab').eq('location','main').eq('is_visible',true).is('parent_id',null).order('sort_order',{ascending:true});if(!r.error&&r.data&&r.data.length)draw(r.data.filter(function(x){return x.href&&x.href!=='/kennisbank'&&x.href!=='/artikels'}))}catch(e){}}
+async function loadAccount(){var d=await db();if(!d||!d.auth)return;try{var s=await d.auth.getSession(),u=s.data&&s.data.session&&s.data.session.user;if(!u)return;var p=await d.from('profiles').select('display_name,first_name,role').eq('id',u.id).maybeSingle();var name=p.data&&(p.data.display_name||p.data.first_name)||'Mijn HN';var initials=name.split(/\s+/).map(function(x){return x.charAt(0)}).join('').slice(0,2).toUpperCase();actions.innerHTML='<div class="hn-account"><button type="button" class="hn-account-trigger" aria-expanded="false"><span class="hn-avatar">'+esc(initials)+'</span><span class="hn-account-name">'+esc(name)+'</span>⌄</button><div class="hn-account-menu"><a href="/dashboard">Mijn Hijrah</a><a href="/mijn-badges">Mijn badges</a><a href="/mijn-kaart">Mijn HN-kaart</a><a href="/profiel">Mijn profiel</a><a href="/bijdragen">Bijdragen</a>'+(p.data&&p.data.role==='admin'?'<a href="/admin">Beheer</a>':'')+'<button type="button" data-hn-logout>Uitloggen</button></div></div>';var trigger=$('.hn-account-trigger',actions);trigger.addEventListener('click',function(){var a=$('.hn-account',actions),on=a.classList.toggle('open');trigger.setAttribute('aria-expanded',String(on))});$('[data-hn-logout]',actions).addEventListener('click',async function(){await d.auth.signOut();location.href='/'});var mobileAccount=$('.hn-mobile-account',root);if(mobileAccount)mobileAccount.innerHTML='<a class="hn-mobile-link" href="/dashboard">Mijn Hijrah</a><a class="hn-mobile-link" href="/mijn-badges">Mijn badges</a><a class="hn-mobile-link" href="/mijn-kaart">Mijn HN-kaart</a><a class="hn-mobile-link" href="/bijdragen">Bijdragen</a><button class="hn-mobile-link" data-hn-mobile-logout type="button">Uitloggen</button>';var ml=$('[data-hn-mobile-logout]',root);if(ml)ml.addEventListener('click',async function(){await d.auth.signOut();location.href='/'})}catch(e){}}
+draw(fallback);loadNav();loadAccount();
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount);else mount();
 })();
