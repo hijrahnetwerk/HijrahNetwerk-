@@ -40,11 +40,7 @@ window.hnSupabaseReady = new Promise((resolve, reject) => {
   };
   const fallback = () => {
     if (window.supabase && typeof window.supabase.createClient === 'function') return loadClient();
-    const script = document.createElement('script');
-    script.src = 'https://unpkg.com/@supabase/supabase-js@2.117.3/dist/umd/supabase.js';
-    script.onload = loadClient;
-    script.onerror = () => reject(new Error('De Supabase-library kon niet via jsDelivr of unpkg worden geladen. Controleer de netwerkverbinding of CDN-toegang.'));
-    document.head.appendChild(script);
+    reject(new Error('De vastgepinde Supabase-library via jsDelivr kon niet worden geladen. Er wordt geen tweede externe scriptbron gebruikt.'));
   };
   const primary = document.createElement('script');
   primary.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3/dist/umd/supabase.js';
