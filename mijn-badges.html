@@ -60,7 +60,7 @@ input[type=search]{min-width:180px}select:focus,input:focus{outline:none;box-sha
 .sc.off:before{background:var(--gold);opacity:.4;animation:none}
 .sc:after{content:"";position:absolute;top:0;left:-60%;width:40%;height:100%;background:linear-gradient(100deg,transparent,rgba(198,161,91,.28),transparent);transform:skewX(-20deg);pointer-events:none}
 .sc:hover{transform:translateY(-4px);box-shadow:0 14px 30px rgba(155,119,53,.25)}.sc:hover:after{animation:sweep .9s ease}
-.sc:focus-visible{outline:2px solid var(--rust);outline-offset:2px}
+.sc:focus-visible{outline:2px solid var(--rust);outline-offset:2px}.stamp-title{display:block;font-weight:700;font-size:16px;margin:4px 0}.stamp-description{display:block;font-size:13px;line-height:1.5;margin:4px 0 8px}.rise{animation:stampIn .45s ease both}
 .seal{flex:none;width:64px;height:64px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:17px;position:relative;transform:rotate(-6deg);transition:transform .35s cubic-bezier(.2,.9,.3,1.2)}
 .seal:before{content:"";position:absolute;inset:4px;border-radius:50%;border:1px solid currentColor}
 .on .seal{color:var(--rust);border:3px solid transparent;background:linear-gradient(rgba(198,161,91,.18),rgba(198,161,91,.18)) padding-box,linear-gradient(var(--card),var(--card)) padding-box,var(--foil) border-box;background-size:100% 100%,100% 100%,300% 100%;animation:fb 6s ease-in-out infinite alternate;filter:drop-shadow(0 3px 6px rgba(155,119,53,.35))}
@@ -230,10 +230,10 @@ function openStamp(id){var b=B.find(function(x){return x.id===id});if(!b)return;
  if(on)h+='<br><br><b>Behaald op</b><br>'+new Date(E[id]).toLocaleDateString('nl-NL');
  else if(b.manual_only)h+='<br><br><i>Deze stempel wordt door het HN-team toegekend.</i>';
  else{if(typeof v==='number')h+='<br><br><b>Voortgang</b><br>'+Math.min(v,t)+' van '+t;if(l)h+='<br><br><a class="btn dk" href="'+esc(l[0])+'">'+esc(l[1])+'</a>'}
- $('dbody').innerHTML=h;$('dlg').showModal()}
+ $('dbody').innerHTML=h;if(typeof $('dlg').showModal==='function')$('dlg').showModal();else $('dlg').setAttribute('open','')}
 $('grid').onclick=function(e){var c=e.target.closest('.sc');if(c)openStamp(c.dataset.id)};
 $('book').onclick=function(e){var c=e.target.closest('.stp');if(c)openStamp(c.dataset.id)};
-$('dclose').onclick=function(){$('dlg').close()};$('dlg').onclick=function(e){if(e.target===this)this.close()};
+function closeDlg(){if(typeof $('dlg').close==='function')$('dlg').close();else $('dlg').removeAttribute('open')} $('dclose').onclick=closeDlg;$('dlg').onclick=function(e){if(e.target===this)closeDlg()};
 function priv(){$('vis').textContent=P.show_badges?'Aan':'Uit';$('vOn').disabled=!!P.show_badges;$('vOff').disabled=!P.show_badges}
 async function setVis(v){var r=await sb.from('profiles').update({show_badges:v}).eq('id',U.id);if(r.error){show('Opslaan is niet gelukt. Controleer je verbinding en probeer opnieuw.');return}P.show_badges=v;priv()}
 $('vOn').onclick=function(){setVis(true)};$('vOff').onclick=function(){setVis(false)};
