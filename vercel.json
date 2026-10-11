@@ -421,7 +421,7 @@
     },
     {
       "source": "/admin-paspoort",
-      "destination": "/admin-beloningen.html"
+      "destination": "/admin-paspoort.html"
     }
   ],
   "headers": [
