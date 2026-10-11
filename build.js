@@ -170,7 +170,7 @@ for (const file of htmlFiles) {
     'stedengids.html':'/stedengids', 'vergelijken.html':'/vergelijken', 'hulp.html':'/hulp', 'auteursrecht.html':'/auteursrecht'
   };
 
-  const noindexFiles = new Set(['admin-badges.html','login.html','register.html','reset-password.html','update-password.html','dashboard.html','mijn-kaart.html','mijn-badges.html','paspoort.html','admin-paspoort.html','admin.html','admin-hulp.html','admin-kaart.html','admin-wachtlijst.html','admin-bewerkvoorstellen.html','werkruimte.html']);
+  const noindexFiles = new Set(['admin-badges.html','login.html','register.html','reset-password.html','update-password.html','dashboard.html','mijn-kaart.html','mijn-badges.html','admin.html','admin-hulp.html','admin-kaart.html','admin-wachtlijst.html','admin-bewerkvoorstellen.html','werkruimte.html']);
   const canonicalRoute = canonicalRoutes[file];
   if (canonicalRoute && !html.includes('rel="canonical"')) {
     html = html.replace('</head>', '<link rel="canonical" href="' + SITE_URL + canonicalRoute + '">\n</head>');
