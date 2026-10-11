@@ -37,8 +37,8 @@ const editProposalTag = '<script src="/assets/hn-edit-proposals.js"></script>';
 const fontsTag = '<link rel="stylesheet" href="/assets/fonts.css">';
 const globalResponsiveTag = '<link rel="stylesheet" href="/assets/hn-global-responsive.css">';
 const globalRuntimeTag = '<script src="/assets/hn-global-runtime.js"></script>';
-const adminBarTag = '<script src="/assets/hn-admin-bar.js"></script>';
-const adminBarStyleTag = '<link rel="stylesheet" href="/assets/hn-admin-bar.css">';
+const adminBarTag = '<script src="/assets/hn-admin-bar.js?v=20261012"></script>';
+const adminBarStyleTag = '<link rel="stylesheet" href="/assets/hn-admin-bar.css?v=20261012">';
 const footerTag = '<script src="/assets/hn-footer.js?v=20261012" defer></script>';
 const pageEngineTag = '<script src="/assets/hn-page-engine.js"></script>';
 const visualEditorTag = '<script src="/assets/hn-visual-editor-runtime.js"></script>';
@@ -106,8 +106,8 @@ for (const file of htmlFiles) {
     !html.includes(fontsTag) ? fontsTag : '',
     !html.includes(globalResponsiveTag) ? globalResponsiveTag : '',
     !html.includes(globalRuntimeTag) ? globalRuntimeTag : '',
-    !html.includes(adminBarTag) ? adminBarTag : '',
-    !html.includes(adminBarStyleTag) ? adminBarStyleTag : '',
+    !html.includes('/assets/hn-admin-bar.js?v=20261012') ? adminBarTag : '',
+    !html.includes('/assets/hn-admin-bar.css?v=20261012') ? adminBarStyleTag : '',
     !html.includes(visualPolishStyleTag) ? visualPolishStyleTag : '',
     !html.includes(motionTag) ? motionTag : '',
     !html.includes(copyProtectionTag) && !isAdminSurface ? copyProtectionTag : '',
