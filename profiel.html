@@ -94,18 +94,21 @@ body::before{
 <script src="/config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/supabase-client.js"></script>
 <script>
 const db=()=>window.hijrahSupabase,$=x=>document.getElementById(x),esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+const waitFor=(promise,label,ms=12000)=>Promise.race([promise,new Promise((_,reject)=>setTimeout(()=>reject(new Error(label+' duurt langer dan verwacht. Vernieuw de pagina en probeer opnieuw.')),ms))]);
+const loading=message=>{const app=$('app');if(app)app.innerHTML='<div class="hero">'+esc(message)+'</div>'};
 const id=new URLSearchParams(location.search).get('id');
 let statusMap={};
 async function init(){
  try{
+ loading('Verbinding met Hijrah Netwerk controleren…');
  if(!db()){const detail=window.hijrahSupabaseError||'Supabase is niet geïnitialiseerd.';$('app').innerHTML='<div class="hero">De profielpagina kon niet worden geladen.<p class="muted">'+esc(detail)+'</p></div>';return}
- const s=await db().auth.getSession();if(s.error)throw s.error;if(!s.data.session){location='/login?next='+encodeURIComponent(location.pathname+location.search);return}
+ loading('Inlogsessie controleren…');const s=await waitFor(db().auth.getSession(),'Het controleren van de inlogsessie');if(s.error)throw s.error;if(!s.data.session){location='/login?next='+encodeURIComponent(location.pathname+location.search);return}
  if(!id){$('app').innerHTML='<div class="hero">Geen profiel geselecteerd.</div>';return}
- const r=await db().rpc('hn_public_profile',{p_id:id}).maybeSingle();
+ loading('Profielgegevens ophalen…');const r=await waitFor(db().rpc('hn_public_profile',{p_id:id}).maybeSingle(),'Het ophalen van de profielgegevens');
  if(r.error){console.error('[HN profiel] profiel ophalen mislukt:',r.error);$('app').innerHTML='<div class="hero">Het profiel kon niet worden geladen. Probeer de pagina opnieuw.</div>';return}
  if(!r.data){$('app').innerHTML='<div class="hero">Profiel niet gevonden of niet zichtbaar.</div>';return}
  const p=r.data;if(p.application_status!=='approved'||!p.profile_visibility){$('app').innerHTML='<div class="hero">Dit profiel is niet beschikbaar.</div>';return}
- const sr=await db().from('hn_statuses').select('slug,name,show_on_profile').eq('active',true);statusMap=Object.fromEntries((sr.data||[]).map(x=>[x.slug,x])); const name=p.display_name||[p.first_name,p.last_name].filter(Boolean).join(' ')||'HN-lid';
+ loading('Profielgegevens voorbereiden…');const sr=await waitFor(db().from('hn_statuses').select('slug,name,show_on_profile').eq('active',true),'Het ophalen van de profielstatussen');statusMap=Object.fromEntries((sr.data||[]).map(x=>[x.slug,x])); const name=p.display_name||[p.first_name,p.last_name].filter(Boolean).join(' ')||'HN-lid';
  const locIds=[p.current_country_id,p.current_city_id].filter(Boolean);
  let country=null,city=null;
  if(p.show_location&&locIds.length){const [c,s]=await Promise.all([p.current_country_id?db().from('countries').select('name').eq('id',p.current_country_id).maybeSingle():Promise.resolve({data:null}),p.current_city_id?db().from('cities').select('name').eq('id',p.current_city_id).maybeSingle():Promise.resolve({data:null})]);country=c.data?.name;city=s.data?.name}
@@ -115,8 +118,9 @@ async function init(){
    contributions=q.data||[];
  }
  $('app').innerHTML='<section class="hero"><div class="name">'+esc(name)+'</div><div style="margin-top:8px">'+(p.show_status&&statusMap[p.hn_status]?.show_on_profile?'<span class="pill">'+esc(statusMap[p.hn_status].name)+'</span>':'')+(p.verification_status==='verified'?'<span class="pill verified">Geverifieerd lid</span>':'')+'</div>'+(p.bio?'<p style="line-height:1.6">'+esc(p.bio)+'</p>':'')+((p.show_location&&(city||country))?'<div class="muted">Ervaring / locatie: '+esc([city,country].filter(Boolean).join(', '))+'</div>':'')+'</section><section class="section"><h2>HN Paspoort</h2><div id="badges" class="items"><div class="empty">Laden…</div></div></section><section class="section"><h2>Bijdragen aan HN</h2><div id="contribs" class="items">'+(p.show_contributions?(contributions.length?contributions.map(x=>'<div class="item"><a href="/fiche?id='+encodeURIComponent(x.id)+'">'+esc(x.title||'HN-bijdrage')+'</a><div class="muted">'+esc(x.information_type||'Bijdrage')+'</div></div>').join(''):'<div class="empty">Nog geen openbare bijdragen.</div>'):'<div class="empty">Deze gebruiker heeft ervoor gekozen bijdragen niet op het profiel te tonen.</div>')+'</div></section>';
- }catch(error){console.error('[HN profiel] laden mislukt:',error);const app=$('app');if(app)app.innerHTML='<div class="hero">Er ging iets mis bij het laden van dit profiel. Vernieuw de pagina en probeer opnieuw.</div>'}
+   loadBadges().catch(error=>console.error('[HN profiel] badges laden mislukt:',error));
+ }catch(error){console.error('[HN profiel] laden mislukt:',error);loading('Het profiel kon niet worden geladen. '+(error?.message||'Onbekende fout'))}
 }
 init();
-async function loadBadges(){const s=await db().auth.getSession();if(!s.data.session||!id)return;const r=await db().from('hn_user_badges').select('earned_at,badge:hn_badges(name,description,icon,show_on_profile)').eq('user_id',id).order('earned_at',{ascending:false});const el=$('badges');if(r.error||!el)return;const rows=(r.data||[]).filter(x=>x.badge?.show_on_profile);el.innerHTML=rows.length?rows.map(x=>'<div class="item"><b>'+esc(x.badge.icon||'✦')+' '+esc(x.badge.name)+'</b><div class="muted">'+esc(x.badge.description||'')+'</div></div>').join(''):'<div class="empty">Nog geen zichtbare HN-stempels.</div>'}loadBadges();
+async function loadBadges(){if(!db()||!id)return;const r=await waitFor(db().from('hn_user_badges').select('earned_at,badge:hn_badges(name,description,icon,show_on_profile)').eq('user_id',id).order('earned_at',{ascending:false}),'Het ophalen van de HN-paspoortstempels');const el=$('badges');if(r.error||!el)return;const rows=(r.data||[]).filter(x=>x.badge?.show_on_profile);el.innerHTML=rows.length?rows.map(x=>'<div class="item"><b>'+esc(x.badge.icon||'✦')+' '+esc(x.badge.name)+'</b><div class="muted">'+esc(x.badge.description||'')+'</div></div>').join(''):'<div class="empty">Nog geen zichtbare HN-stempels.</div>'}
 </script></body></html>
