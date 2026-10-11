@@ -204,6 +204,10 @@
   ],
   "rewrites": [
     {
+      "source": "/over-hn",
+      "destination": "/cms-page.html?slug=over-hn"
+    },
+    {
       "source": "/paspoort",
       "destination": "/paspoort.html"
     },
