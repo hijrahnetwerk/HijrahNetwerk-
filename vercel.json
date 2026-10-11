@@ -7,11 +7,6 @@
       "permanent": true
     },
     {
-      "source": "/paspoort",
-      "destination": "/mijn-badges",
-      "permanent": true
-    },
-    {
       "source": "/community.html",
       "destination": "/community",
       "permanent": true
@@ -202,17 +197,16 @@
       "permanent": true
     },
     {
-      "source": "/paspoort.html",
-      "destination": "/mijn-badges",
-      "permanent": true
-    },
-    {
       "source": "/admin-paspoort.html",
       "destination": "/admin-paspoort",
       "permanent": true
     }
   ],
   "rewrites": [
+    {
+      "source": "/paspoort",
+      "destination": "/paspoort.html"
+    },
     {
       "source": "/admin-badges",
       "destination": "/admin-badges.html"
