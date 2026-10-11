@@ -55,3 +55,13 @@
 
 /* HN Admin UX: restrained motion, focus states and reduced-motion support. */
 .builder :where(button,.page,.tool,input,textarea,select){transition:transform 160ms cubic-bezier(.22,.61,.36,1),box-shadow 160ms ease,border-color 160ms ease,background-color 160ms ease,color 160ms ease}.builder :where(button,.page,.tool):hover{transform:translateY(-1px)}.builder :where(button,.page,.tool):active{transform:translateY(0) scale(.985)}.builder :where(button,.page,.tool,input,textarea,select):focus-visible{outline:3px solid var(--g);outline-offset:2px}.builder .panel,.builder .inspector-section,.builder .selection-state,.builder .version-row{animation:hnAdminIn 260ms ease both}@keyframes hnAdminIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}@media(prefers-reduced-motion:reduce){.builder *,.builder *::before,.builder *::after{animation-duration:.001ms!important;transition-duration:.001ms!important}}
+
+/* Give the live page more room; focus mode turns the preview into a near full-screen workspace. */
+.builder-layout{grid-template-columns:190px minmax(0,1fr) 280px}
+.builder.focus-mode .builder-head{position:sticky}
+.builder.focus-mode .builder-layout{min-height:calc(100vh - 72px)}
+.builder.focus-mode .canvas-panel{width:100%;min-width:0}
+.builder.focus-mode .canvas-toolbar{height:55px}
+.builder.focus-mode .liveFrameWrap{width:100%;margin:0}
+.builder.focus-mode .liveFrameWrap iframe{width:100%;height:calc(100vh - 127px);min-height:calc(100vh - 127px)}
+@media(max-width:1050px){.builder-layout{grid-template-columns:180px minmax(0,1fr)}}
