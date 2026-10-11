@@ -4,9 +4,9 @@ async function init(){
  if(!db()||!location.pathname.match(/dashboard(?:\.html)?$/))return;
  const {data}=await db().auth.getUser(),u=data?.user;if(!u)return;
  const tabs=document.querySelector('.tabs');if(!tabs||document.getElementById('tab-passport'))return;
- const t=document.createElement('button');t.className='tab';t.type='button';t.textContent='Mijn badges';
+ const t=document.createElement('button');t.className='tab';t.type='button';t.textContent='HN Paspoort';
  const v=document.createElement('div');v.className='tabview';v.id='tab-passport';
- v.innerHTML='<h2>Mijn badges</h2><p class="muted">Je behaalde HN-badges voor betekenisvolle stappen en bijdragen.</p><div id="hnPassportSummary"></div><div id="hnPassportList" class="list"></div><div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap"><a class="button" href="/mijn-badges">Open Mijn badges</a><a class="button secondary" href="/profiel?id='+encodeURIComponent(u.id)+'">Mijn HN Profiel bekijken</a><span id="hnBadgesAdminLink"></span></div>';
+ v.innerHTML='<h2>HN Paspoort</h2><p class="muted">Je behaalde HN-badges voor betekenisvolle stappen en bijdragen.</p><div id="hnPassportSummary"></div><div id="hnPassportList" class="list"></div><div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap"><a class="button" href="/paspoort">Open mijn HN Paspoort</a><a class="button secondary" href="/profiel?id='+encodeURIComponent(u.id)+'">Mijn HN Profiel bekijken</a><span id="hnBadgesAdminLink"></span></div>';
  tabs.appendChild(t);document.querySelector('#tab-profile')?.parentNode?.appendChild(v);
  t.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.tabview').forEach(x=>x.classList.remove('active'));t.classList.add('active');v.classList.add('active')});
  const[a,e,p,sr]=await Promise.all([db().from('hn_badges').select('id,name,description,category,icon,threshold').eq('active',true).order('sort_order').order('name'),db().from('hn_user_badges').select('badge_id,earned_at').eq('user_id',u.id),db().from('profiles').select('hn_status,role').eq('id',u.id).maybeSingle(),db().from('hn_statuses').select('slug,name,show_on_profile').eq('active',true)]);
