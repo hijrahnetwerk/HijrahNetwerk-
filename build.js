@@ -39,6 +39,7 @@ const globalResponsiveTag = '<link rel="stylesheet" href="/assets/hn-global-resp
 const globalRuntimeTag = '<script src="/assets/hn-global-runtime.js"></script>';
 const adminBarTag = '<script src="/assets/hn-admin-bar.js"></script>';
 const adminBarStyleTag = '<link rel="stylesheet" href="/assets/hn-admin-bar.css">';
+const footerTag = '<script src="/assets/hn-footer.js?v=20261011" defer></script>';
 const pageEngineTag = '<script src="/assets/hn-page-engine.js"></script>';
 const visualEditorTag = '<script src="/assets/hn-visual-editor-runtime.js"></script>';
 const visualPolishStyleTag = '<link rel="stylesheet" href="/assets/hn-visual-polish.css">';
@@ -108,7 +109,8 @@ for (const file of htmlFiles) {
     !html.includes(adminBarStyleTag) ? adminBarStyleTag : '',
     !html.includes(visualPolishStyleTag) ? visualPolishStyleTag : '',
     !html.includes(motionTag) ? motionTag : '',
-    !html.includes(copyProtectionTag) && !isAdminSurface ? copyProtectionTag : ''
+    !html.includes(copyProtectionTag) && !isAdminSurface ? copyProtectionTag : '',
+    !html.includes('/assets/hn-footer.js') && !isAdminSurface && !['login.html','register.html','reset-password.html','update-password.html','dashboard.html','paspoort.html','mijn-kaart.html'].includes(file) ? footerTag : ''
   ].filter(Boolean).join('\n') + '\n';
 
   if (!html.includes('/assets/hn-safe-url.js')) {
