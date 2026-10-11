@@ -17,6 +17,10 @@ Disallow: /register
 Disallow: /reset-password
 Disallow: /update-password
 Disallow: /dashboard
+Disallow: /mijn-badges
+Disallow: /admin-badges
+Disallow: /paspoort
+Disallow: /admin-paspoort
 
 # API en config niet indexeren
 Disallow: /assets/config.js
