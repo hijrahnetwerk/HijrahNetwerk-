@@ -16,6 +16,14 @@
   /* ── FOOTER ── */
   function injectFooter() {
     if (document.getElementById('hnFooter')) return;
+    // Laad uitsluitend footer-styling; de volledige design stylesheet reset ook globale pagina-elementen.
+    if (!document.querySelector('link[data-hn-footer-style]')) {
+      const style = document.createElement('link');
+      style.rel = 'stylesheet';
+      style.href = '/assets/hn-footer.css?v=20261011';
+      style.dataset.hnFooterStyle = 'true';
+      document.head.appendChild(style);
+    }
     const footer = document.createElement('footer');
     footer.id = 'hnFooter';
     footer.className = 'hn-footer';
@@ -52,11 +60,10 @@
               <span class="hn-footer-name">Hijrah Netwerk</span>
             </div>
             <p class="hn-footer-tagline">
-              Verbind met gelijkgestemden. Echte ervaringen, eerlijk advies en een netwerk voor elke fase van jouw emigratie.
+              Een netwerk voor emigranten, van oriëntatie tot integratie. Praktische informatie en herkenning, van zuster tot zuster.
             </p>
             <div class="hn-footer-social">
               <a href="https://www.instagram.com/hijrah.netwerk" target="_blank" rel="noopener" aria-label="Instagram">📸</a>
-              <a href="https://wa.me/hn" target="_blank" rel="noopener" aria-label="WhatsApp">💬</a>
               <a href="https://www.facebook.com/hijrahnetwerk" target="_blank" rel="noopener" aria-label="Facebook">📘</a>
             </div>
             <div class="hn-footer-phases">
@@ -86,7 +93,7 @@
             <ul>
               <li><a href="/community">Over de community</a></li>
               <li><a href="/bijdragen">Bijdragen</a></li>
-              <li><a href="/orientatie">HijrahTools</a></li>
+              <li><a href="/hijrahtools">HijrahTools</a></li>
               <li><a href="/stappenplan">Stappenplan</a></li>
               <li><a href="/dashboard">Mijn Hijrah</a></li>
               <li><a href="/register">Aanmelden</a></li>
@@ -99,6 +106,7 @@
             <ul>
               <li><a href="/#over-ons">Over ons</a></li>
               <li><a href="/privacy">Privacybeleid</a></li>
+              <li><a href="/auteursrecht">Auteursrecht & gebruik</a></li>
               <li><a href="/hulp">Hulp & FAQ</a></li>
               <li><a href="/bijdragen?type=correction">Fout melden</a></li>
             </ul>
@@ -109,6 +117,7 @@
           <span>© ${new Date().getFullYear()} Hijrah Netwerk — Alle rechten voorbehouden.</span>
           <div class="hn-footer-bottom-links">
             <a href="/privacy">Privacy</a>
+            <a href="/auteursrecht">Auteursrecht & gebruik</a>
             <a href="/hulp">Hulp</a>
             <a href="/bijdragen">Bijdragen</a>
           </div>
