@@ -58,6 +58,12 @@ const faviconTag = '<link rel="icon" type="image/png" href="' + faviconPath + '"
   '<link rel="shortcut icon" type="image/png" href="' + faviconPath + '">\n' +
   '<link rel="apple-touch-icon" href="' + faviconPath + '">';
 
+  const memberSurfacePages = new Set(['dashboard.html','mijn-badges.html','mijn-kaart.html','profiel.html','bijdragen.html']);
+  const publicNavStyleTag = '<link rel="stylesheet" href="/assets/public-nav.css?v=20261011-1">';
+  const publicNavScriptTag = '<script src="/assets/public-nav.js?v=20261011-1" defer></script>';
+  const memberNavScriptTag = '<script src="/assets/hn-member-nav.js?v=20261011-1" defer></script>';
+  const adminNavScriptTag = '<script src="/assets/hn-admin-nav.js?v=20261011-1" defer></script>';
+
 const htmlFiles = fs.readdirSync(__dirname).filter(name => name.endsWith('.html'));
 let processed = 0;
 
@@ -76,7 +82,7 @@ for (const file of htmlFiles) {
       html = html.replace(tag, '<script src="/' + scriptName + '.js"></script>');
     }
   }
-  html = html.replace(/assets\/public-nav\.(css|js)(?:\?[^"\']*)?/g, 'assets/public-nav.$1?v=20261007');
+  html = html.replace(/assets\/public-nav\.(css|js)(?:\?[^"\']*)?/g, 'assets/public-nav.$1?v=20261011-1');
   html = html.replace(/\/assets\/hn-footer\.js(?:\?[^"']*)?/g, '/assets/hn-footer.js?v=20261013');
   html = html.replace(/\/assets\/hn-passport\.js(?:\?[^"']*)?/g, '/assets/hn-passport.js?v=20261014');
   html = html.replace(/\/assets\/hn-admin-bar\.js(?:\?[^"']*)?/g, '/assets/hn-admin-bar.js?v=20261013');
@@ -101,18 +107,26 @@ for (const file of htmlFiles) {
     html = html.replace('</head>', faviconTag + '\n</head>');
   }
 
+  const isAdminSurface = file.startsWith('admin') || file.startsWith('werkruimte');
+  const isMemberSurface = memberSurfacePages.has(file);
+
+  if (isMemberSurface && !html.includes('public-nav.css')) {
+    html = html.replace('</head>', publicNavStyleTag + '\n</head>');
+  }
+
   // Keep every page usable on phones, including older pages without a viewport declaration.
   if (!/<meta\s+name=[\"']viewport[\"']/i.test(html)) {
     html = html.replace('</head>', '<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n</head>');
   }
-
-  const isAdminSurface = file.startsWith('admin') || file.startsWith('werkruimte');
 
   if (!isAdminSurface && !html.includes('/assets/hn-back-to-top.css?v=20261014')) {
     html = html.replace('</head>', backToTopStyleTag + '\n</head>');
   }
 
   const additions = [
+    isMemberSurface && !html.includes('/assets/public-nav.js') ? publicNavScriptTag : '',
+    isMemberSurface && !html.includes('/assets/hn-member-nav.js') ? memberNavScriptTag : '',
+    isAdminSurface && !html.includes('/assets/hn-admin-nav.js') ? adminNavScriptTag : '',
     !html.includes(pageEngineTag) && file !== 'cms-page.html' && !file.startsWith('admin') && !file.startsWith('login') && !file.startsWith('register') && !file.startsWith('reset-password') && !file.startsWith('update-password') && !file.startsWith('dashboard') && !file.startsWith('werkruimte') ? pageEngineTag : '',
     !html.includes(visualEditorTag) && !file.startsWith('admin') && !file.startsWith('login') && !file.startsWith('register') && !file.startsWith('reset-password') && !file.startsWith('update-password') && !file.startsWith('dashboard') && !file.startsWith('werkruimte') ? visualEditorTag : '',
     !html.includes(translateTag) ? translateTag : '',

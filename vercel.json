@@ -555,5 +555,10 @@
       ]
     }
   ],
-  "$schema": "https://openapi.vercel.sh/vercel.json"
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "git": {
+    "deploymentEnabled": {
+      "work/hn-navigation-integration-20261011": false
+    }
+  }
 }
