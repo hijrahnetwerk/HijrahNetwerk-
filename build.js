@@ -36,6 +36,7 @@ const translateStyleTag = '<link rel="stylesheet" href="/assets/hn-translate.css
 const editProposalTag = '<script src="/assets/hn-edit-proposals.js"></script>';
 const fontsTag = '<link rel="stylesheet" href="/assets/fonts.css">';
 const globalResponsiveTag = '<link rel="stylesheet" href="/assets/hn-global-responsive.css">';
+const mobilePolishTag = '<link rel="stylesheet" href="/assets/hn-mobile-polish.css?v=20261011">';
 const globalRuntimeTag = '<script src="/assets/hn-global-runtime.js"></script>';
 const adminBarTag = '<script src="/assets/hn-admin-bar.js?v=20261013"></script>';
 const adminBarStyleTag = '<link rel="stylesheet" href="/assets/hn-admin-bar.css?v=20261013">';
@@ -99,6 +100,11 @@ for (const file of htmlFiles) {
     html = html.replace('</head>', faviconTag + '\n</head>');
   }
 
+  // Keep every page usable on phones, including older pages without a viewport declaration.
+  if (!/<meta\\s+name=[\"']viewport[\"']/i.test(html)) {
+    html = html.replace('</head>', '<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\\n</head>');
+  }
+
   const isAdminSurface = file.startsWith('admin') || file.startsWith('werkruimte');
 
   if (!isAdminSurface && !html.includes('/assets/hn-back-to-top.css?v=20261011')) {
@@ -113,6 +119,7 @@ for (const file of htmlFiles) {
     !html.includes(editProposalTag) ? editProposalTag : '',
     !html.includes(fontsTag) ? fontsTag : '',
     !html.includes(globalResponsiveTag) ? globalResponsiveTag : '',
+    !html.includes('/assets/hn-mobile-polish.css?v=20261011') ? mobilePolishTag : '',
     !html.includes(globalRuntimeTag) ? globalRuntimeTag : '',
     !html.includes('/assets/hn-admin-bar.js?v=20261013') ? adminBarTag : '',
     !html.includes('/assets/hn-admin-bar.css?v=20261013') ? adminBarStyleTag : '',
