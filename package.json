@@ -4,7 +4,8 @@
   "private": true,
   "description": "Hijrah Netwerk — statische site met Supabase Auth",
   "scripts": {
-    "build": "node build.js"
+    "build": "node build.js",
+    "test": "node scripts/preflight-check.js"
   },
   "dependencies": {
     "@vercel/analytics": "^2.0.1",

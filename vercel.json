@@ -1,5 +1,5 @@
 {
-  "buildCommand": "node build.js",
+  "buildCommand": "npm test && npm run build",
   "redirects": [
     {
       "source": "/admin-badges.html",
