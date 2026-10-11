@@ -20,7 +20,7 @@
     if (!document.querySelector('link[data-hn-footer-style]')) {
       const style = document.createElement('link');
       style.rel = 'stylesheet';
-      style.href = '/assets/hn-footer.css?v=20261011';
+      style.href = '/assets/hn-footer.css?v=20261012';
       style.dataset.hnFooterStyle = 'true';
       document.head.appendChild(style);
     }
@@ -55,9 +55,10 @@
             <li><a href="/verhalen?fase=terugkeren">Terugkeren</a></li>
           </ul></nav>
           <nav class="hn-footer-col" aria-label="Algemene HijrahTools"><h4>HijrahTools</h4><ul>
-            <li><a href="/navigatie">HN Navigatie</a></li>
+            <li><a href="/navigatie">Hijrah Navigatie</a></li>
             <li><a href="/vergelijken">Landen- en stedenvergelijker</a></li>
             <li><a href="/smart-search">Smart Search</a></li>
+            <li><a href="/verhalen">Verhalen &amp; interviews</a></li>
             <li><a href="/hijrahtools">Bekijk alle HijrahTools</a></li>
           </ul></nav>
           <nav class="hn-footer-col" aria-label="Mijn Hijrah Planner"><h4>Mijn Hijrah Planner</h4><ul>
