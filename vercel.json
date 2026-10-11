@@ -2,6 +2,11 @@
   "buildCommand": "npm test && npm run build",
   "redirects": [
     {
+      "source": "/paspoort.html",
+      "destination": "/mijn-badges",
+      "permanent": true
+    },
+    {
       "source": "/admin-badges.html",
       "destination": "/admin-badges",
       "permanent": true
@@ -209,7 +214,7 @@
     },
     {
       "source": "/paspoort",
-      "destination": "/paspoort.html"
+      "destination": "/mijn-badges.html"
     },
     {
       "source": "/admin-badges",
@@ -562,7 +567,8 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "git": {
     "deploymentEnabled": {
-      "work/hn-navigation-integration-20261011": false
+      "work/hn-navigation-integration-20261011": false,
+      "fix/security-audit-2026-10": false
     }
   }
 }
