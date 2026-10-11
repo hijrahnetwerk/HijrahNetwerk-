@@ -601,7 +601,7 @@ function bind(){
   $("dataLimit").oninput=function(){edit("dataLimit",this.value);};
   $("dataFilters").onchange=function(){edit("dataFilters",this.value);};
   $("open").onclick=function(){if(page)window.open(route(page.slug),"_blank");};
-  $("focus").onclick=function(){document.querySelector(".builder").classList.toggle("focus-mode");};
+  $("focus").onclick=function(){var root=document.querySelector(".builder");var focused=root.classList.toggle("focus-mode");$("focus").textContent=focused?"Terug naar editor":"Volledig scherm";};
   $("desktop").onclick=function(){$("liveFrameWrap").className="desktop";$("desktop").classList.add("active");$("mobile").classList.remove("active");};
   $("mobile").onclick=function(){$("liveFrameWrap").className="mobile";$("mobile").classList.add("active");$("desktop").classList.remove("active");};
 
