@@ -1,62 +1,123 @@
 (function () {
   "use strict";
 
-  function isAdminPage() {
-    const p = (window.location.pathname || "").replace(/\/$/, "");
-    return p === "/admin" || p.startsWith("/admin/") || p.startsWith("/admin-");
-  }
+  var path = (window.location.pathname || "").replace(/\/$/, "");
+  // Adminpagina's blijven direct volledig selecteerbaar en kopieerbaar.
+  if (path === "/admin" || path.startsWith("/admin/") || path.startsWith("/admin-") || path === "/werkruimte" || path.startsWith("/werkruimte/")) return;
 
-  // Admin blijft volledig bruikbaar: geen kopieerblokkade.
-  if (isAdminPage()) return;
+  var styleId = "hn-copy-protection-style";
+  var style = document.createElement("style");
+  style.id = styleId;
+  style.textContent = [
+    "html.hn-copy-protected body, html.hn-copy-protected body * {",
+    "  -webkit-user-select: none !important;",
+    "  user-select: none !important;",
+    "  -webkit-touch-callout: none;",
+    "}",
+    "html.hn-copy-protected input, html.hn-copy-protected textarea, html.hn-copy-protected select,",
+    "html.hn-copy-protected [contenteditable=\"true\"], html.hn-copy-protected [contenteditable=\"\"] {",
+    "  -webkit-user-select: text !important;",
+    "  user-select: text !important;",
+    "}"
+  ].join("\n");
+  (document.head || document.documentElement).appendChild(style);
+  document.documentElement.classList.add("hn-copy-protected");
 
   function isEditable(target) {
     if (!target) return false;
-    const tag = target.tagName;
-    return tag === "INPUT" || tag === "TEXTAREA" || target.isContentEditable;
+    var tag = String(target.tagName || "").toUpperCase();
+    return tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" ||
+      !!target.isContentEditable || !!(target.closest && target.closest('[contenteditable="true"],[contenteditable=""]'));
   }
 
-  document.addEventListener("contextmenu", function (event) {
-    if (!isEditable(event.target)) event.preventDefault();
-  });
+  function blockEvent(event) {
+    if (!isEditable(event.target)) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+  }
 
-  document.addEventListener("selectstart", function (event) {
-    if (!isEditable(event.target)) event.preventDefault();
-  });
-
-  document.addEventListener("copy", function (event) {
-    if (!isEditable(event.target)) event.preventDefault();
-  });
-
-  document.addEventListener("cut", function (event) {
-    if (!isEditable(event.target)) event.preventDefault();
-  });
-
-  document.addEventListener("dragstart", function (event) {
-    if (!isEditable(event.target)) event.preventDefault();
-  });
-
-  document.addEventListener("keydown", function (event) {
+  function blockKey(event) {
     if (isEditable(event.target)) return;
-
-    const key = event.key.toLowerCase();
-
-    if (
-      (event.ctrlKey || event.metaKey) &&
-      ["c", "x", "u", "s", "a"].includes(key)
-    ) {
+    var key = String(event.key || "").toLowerCase();
+    if ((event.ctrlKey || event.metaKey) && ["c", "x", "u", "s", "a", "p"].indexOf(key) !== -1) {
       event.preventDefault();
+      event.stopPropagation();
     }
-
-    if (event.key === "F12") {
+    if (event.key === "F12" || ((event.ctrlKey || event.metaKey) && event.shiftKey && ["i", "j", "c"].indexOf(key) !== -1)) {
       event.preventDefault();
+      event.stopPropagation();
     }
+  }
 
-    if (
-      (event.ctrlKey || event.metaKey) &&
-      event.shiftKey &&
-      ["i", "j", "c"].includes(key)
-    ) {
-      event.preventDefault();
+  function protect() {
+    document.addEventListener("contextmenu", blockEvent, true);
+    document.addEventListener("selectstart", blockEvent, true);
+    document.addEventListener("copy", blockEvent, true);
+    document.addEventListener("cut", blockEvent, true);
+    document.addEventListener("dragstart", blockEvent, true);
+    document.addEventListener("keydown", blockKey, true);
+  }
+
+  function allowAdmin() {
+    document.removeEventListener("contextmenu", blockEvent, true);
+    document.removeEventListener("selectstart", blockEvent, true);
+    document.removeEventListener("copy", blockEvent, true);
+    document.removeEventListener("cut", blockEvent, true);
+    document.removeEventListener("dragstart", blockEvent, true);
+    document.removeEventListener("keydown", blockKey, true);
+    document.documentElement.classList.remove("hn-copy-protected");
+    var oldStyle = document.getElementById(styleId);
+    if (oldStyle) oldStyle.remove();
+    // Clear any selection restrictions that may have been applied before auth completed.
+    document.documentElement.style.removeProperty("-webkit-user-select");
+    document.documentElement.style.removeProperty("user-select");
+  }
+
+  protect();
+
+  function loadScript(src) {
+    return new Promise(function (resolve, reject) {
+      var existing = Array.prototype.find.call(document.scripts, function (s) {
+        return s.src && s.src.indexOf(src) !== -1;
+      });
+      if (existing) {
+        if (existing.dataset.hnLoaded === "1") return resolve();
+        existing.addEventListener("load", resolve, { once: true });
+        existing.addEventListener("error", reject, { once: true });
+        // Existing scripts that already executed do not emit another load event.
+        if ((src.indexOf("config.js") !== -1 && window.__ENV) ||
+            (src.indexOf("supabase.js") !== -1 && window.supabase && window.supabase.createClient) ||
+            (src.indexOf("supabase-client.js") !== -1 && window.hijrahSupabase)) resolve();
+        return;
+      }
+      var script = document.createElement("script");
+      script.src = src;
+      script.async = false;
+      script.onload = function () { script.dataset.hnLoaded = "1"; resolve(); };
+      script.onerror = reject;
+      document.head.appendChild(script);
+    });
+  }
+
+  async function verifyAdmin() {
+    try {
+      if (!window.hijrahSupabase) {
+        await loadScript("/assets/config.js");
+        await loadScript("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3/dist/umd/supabase.js");
+        await loadScript("/supabase-client.js");
+      }
+      var client = window.hijrahSupabase;
+      if (!client || !client.auth) return;
+      var sessionResult = await client.auth.getSession();
+      var user = sessionResult && sessionResult.data && sessionResult.data.session && sessionResult.data.session.user;
+      if (!user) return;
+      var result = await client.rpc("is_admin");
+      if (!result.error && result.data === true) allowAdmin();
+    } catch (error) {
+      // Fail closed: zonder bevestigde adminrol blijft kopieerbescherming actief.
     }
-  });
+  }
+
+  verifyAdmin();
 })();
