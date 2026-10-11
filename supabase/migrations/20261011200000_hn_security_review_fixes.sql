@@ -113,4 +113,76 @@ revoke all on function public.hn_admin_reorder_badges(jsonb) from public, anon;
 grant execute on function public.hn_admin_delete_badge(uuid) to authenticated;
 grant execute on function public.hn_admin_reorder_badges(jsonb) to authenticated;
 
+
+-- Openbare profiel-RPC's blijven dezelfde vorm teruggeven voor compatibiliteit,
+-- maar lekken geen moderatie-/verificatiestatus en respecteren show_status.
+create or replace function public.hn_public_profile(p_id uuid)
+returns table(
+  id uuid, display_name text, first_name text, last_name text, bio text,
+  application_status text, verification_status text, profile_visibility boolean,
+  show_location boolean, show_contributions boolean, show_status boolean,
+  current_country_id uuid, current_city_id uuid, hn_status text
+)
+language sql
+stable
+security definer
+set search_path = ''
+as $function$
+  select
+    p.id,
+    p.display_name,
+    null::text as first_name,
+    null::text as last_name,
+    p.bio,
+    null::text as application_status,
+    null::text as verification_status,
+    p.profile_visibility,
+    p.show_location,
+    p.show_contributions,
+    p.show_status,
+    case when p.show_location then p.current_country_id else null end,
+    case when p.show_location then p.current_city_id else null end,
+    case when p.show_status then p.hn_status else null end
+  from public.profiles p
+  where p.id = p_id
+    and p.application_status = 'approved'
+    and p.profile_visibility = true
+    and (select auth.uid()) is not null;
+$function$;
+
+create or replace function public.hn_public_profiles(p_ids uuid[])
+returns table(
+  id uuid, display_name text, first_name text, last_name text, bio text,
+  application_status text, verification_status text, profile_visibility boolean,
+  show_location boolean, show_contributions boolean, show_status boolean,
+  current_country_id uuid, current_city_id uuid, hn_status text
+)
+language sql
+stable
+security definer
+set search_path = ''
+as $function$
+  select
+    p.id,
+    p.display_name,
+    null::text as first_name,
+    null::text as last_name,
+    p.bio,
+    null::text as application_status,
+    null::text as verification_status,
+    p.profile_visibility,
+    p.show_location,
+    p.show_contributions,
+    p.show_status,
+    case when p.show_location then p.current_country_id else null end,
+    case when p.show_location then p.current_city_id else null end,
+    case when p.show_status then p.hn_status else null end
+  from public.profiles p
+  where p.id = any(p_ids)
+    and p.application_status = 'approved'
+    and p.profile_visibility = true
+    and p.show_contributions = true
+    and (select auth.uid()) is not null;
+$function$;
+
 commit;
