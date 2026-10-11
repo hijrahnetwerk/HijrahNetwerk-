@@ -101,8 +101,9 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--orange);
 </head>
 <body>
 <link rel="stylesheet" href="assets/public-nav.css">
-<script src="assets/public-nav.js"></script>
+<script src="/assets/public-nav.js" defer></script>
 
+<main id="main-content">
 <section class="hero">
 <span class="eyebrow hn-eyebrow">Hijrah Navigatie</span>
 <h1>Praktische informatie per land en stad.</h1>
@@ -183,6 +184,7 @@ function updateContext(){
  document.getElementById('resultContext').textContent=parts.length?parts.join(' · '):'Alle informatie';
 }
 function normalizeText(value){return String(value||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim()}
+function safeExternalHref(value){try{const url=new URL(String(value||''),location.origin);return ['http:','https:'].includes(url.protocol)?url.href:''}catch(_){return ''}}
 function categoryForPreset(value){
  if(!value) return '';
  const exact=categories.find(x=>String(x.id)===String(value));
@@ -222,14 +224,18 @@ function slugify(value){return String(value||'').toLowerCase().trim().normalize(
 function publicSlug(value){return String(value||'').replace(/-([0-9a-f]{8})-([0-9a-f]{4})-([0-9a-f]{4})-([0-9a-f]{4})-([0-9a-f]{12})$/i,'');}
 function ficheUrl(topic,city,category){const cityName=city||'';const categoryName=category||'';const slug=publicSlug(topic.slug||topic.id);const parts=['/locaties',slugify(cityName)];if(categoryName)parts.push(slugify(categoryName));parts.push(slugify(slug));return parts.join('/');}
 function render(){
- const q=document.getElementById('q').value.toLowerCase().trim();
+ const q=normalizeText(document.getElementById('q').value);
  const co=document.getElementById('country').value;
  const ci=document.getElementById('city').value;
  const ca=document.getElementById('category').value;
  const filtered=rows.filter(x=>{
    const d=data(x);
-   const text=[x.title,x.summary,x.content,x.information_type,d.address,d.neighborhood,d.service_type,d.languages,d.warning,d.phone].join(' ').toLowerCase();
-   return (!q||text.includes(q))&&(!co||x.country_id===co)&&(!ci||x.city_id===ci)&&(!ca||x.category_id===ca);
+   const countryName=countries.find(y=>String(y.id)===String(x.country_id))?.name||'';
+   const cityName=cities.find(y=>String(y.id)===String(x.city_id))?.name||'';
+   const categoryName=categories.find(y=>String(y.id)===String(x.category_id))?.name||'';
+   const languageText=Array.isArray(d.languages)?d.languages.map(v=>typeof v==='string'?v:(v.language||v.name||'')).join(' '):d.languages;
+   const text=normalizeText([x.title,x.summary,x.content,x.information_type,countryName,cityName,categoryName,d.address,d.neighborhood,d.service_type,languageText,d.warning,d.phone].join(' '));
+   return (!q||text.includes(q))&&(!co||String(x.country_id)===String(co))&&(!ci||String(x.city_id)===String(ci))&&(!ca||String(x.category_id)===String(ca));
  });
  document.getElementById('resultCount').textContent=filtered.length+' resultaat'+(filtered.length===1?'':'en');
  const box=document.getElementById('cards');
@@ -252,9 +258,9 @@ function render(){
  };
  box.innerHTML=filtered.map(x=>{
    const d=data(x);
-   const country=countries.find(y=>y.id===x.country_id)?.name||'';
-   const city=cities.find(y=>y.id===x.city_id)?.name||'';
-   const cat=categories.find(y=>y.id===x.category_id)?.name||'';
+   const country=countries.find(y=>String(y.id)===String(x.country_id))?.name||'';
+   const city=cities.find(y=>String(y.id)===String(x.city_id))?.name||'';
+   const cat=categories.find(y=>String(y.id)===String(x.category_id))?.name||'';
    const location=[city,country].filter(Boolean).join(', ');
    const isFiche=x.visibility==='fiche_only';
    const fiche=isFiche?x:findFicheForArticle(x);
@@ -299,8 +305,8 @@ function render(){
     '<div class="meta">'+esc(location)+'</div>'+
     '<div class="actions">'+
     ficheButton+articleButton+
-    (d.website?'<a class="button secondary" target="_blank" rel="noopener" href="'+esc(d.website)+'">Website</a>':'')+
-    (d.maps_url?'<a class="button secondary" target="_blank" rel="noopener" href="'+esc(d.maps_url)+'">Route</a>':'')+
+    (safeExternalHref(d.website)?'<a class="button secondary" target="_blank" rel="noopener noreferrer" href="'+esc(safeExternalHref(d.website))+'">Website</a>':'')+
+    (safeExternalHref(d.maps_url)?'<a class="button secondary" target="_blank" rel="noopener noreferrer" href="'+esc(safeExternalHref(d.maps_url))+'">Route</a>':'')+
     '</div></article>';
  }).join('');
 }
@@ -356,11 +362,14 @@ async function init(){
   }
   if(presetCountry) document.getElementById('country').value=presetCountry;
   if(presetCity) document.getElementById('city').value=presetCity;
-  if(presetCategory) document.getElementById('category').value=presetCategory;
   
   fillCityOptions();
   fill('category',categories,'Alle categorieën');
+  if(presetCategory) document.getElementById('category').value=presetCategory;
   catButtons();
+  syncCategorySidebar();
+  updateContext();
+  updateQuickLinks();
   render();
 }
 document.getElementById('heroQ').addEventListener('input',e=>{
