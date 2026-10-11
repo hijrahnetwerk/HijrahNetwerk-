@@ -37,9 +37,9 @@ const editProposalTag = '<script src="/assets/hn-edit-proposals.js"></script>';
 const fontsTag = '<link rel="stylesheet" href="/assets/fonts.css">';
 const globalResponsiveTag = '<link rel="stylesheet" href="/assets/hn-global-responsive.css">';
 const globalRuntimeTag = '<script src="/assets/hn-global-runtime.js"></script>';
-const adminBarTag = '<script src="/assets/hn-admin-bar.js?v=20261012"></script>';
-const adminBarStyleTag = '<link rel="stylesheet" href="/assets/hn-admin-bar.css?v=20261012">';
-const footerTag = '<script src="/assets/hn-footer.js?v=20261012" defer></script>';
+const adminBarTag = '<script src="/assets/hn-admin-bar.js?v=20261013"></script>';
+const adminBarStyleTag = '<link rel="stylesheet" href="/assets/hn-admin-bar.css?v=20261013">';
+const footerTag = '<script src="/assets/hn-footer.js?v=20261013" defer></script>';
 const pageEngineTag = '<script src="/assets/hn-page-engine.js"></script>';
 const visualEditorTag = '<script src="/assets/hn-visual-editor-runtime.js"></script>';
 const visualPolishStyleTag = '<link rel="stylesheet" href="/assets/hn-visual-polish.css">';
@@ -74,9 +74,9 @@ for (const file of htmlFiles) {
     }
   }
   html = html.replace(/assets\/public-nav\.(css|js)(?:\?[^"\']*)?/g, 'assets/public-nav.$1?v=20261007');
-  html = html.replace(/\/assets\/hn-footer\.js(?:\?[^"']*)?/g, '/assets/hn-footer.js?v=20261012');
-  html = html.replace(/\/assets\/hn-admin-bar\.js(?:\?[^"']*)?/g, '/assets/hn-admin-bar.js?v=20261012');
-  html = html.replace(/\/assets\/hn-admin-bar\.css(?:\?[^"']*)?/g, '/assets/hn-admin-bar.css?v=20261012');
+  html = html.replace(/\/assets\/hn-footer\.js(?:\?[^"']*)?/g, '/assets/hn-footer.js?v=20261013');
+  html = html.replace(/\/assets\/hn-admin-bar\.js(?:\?[^"']*)?/g, '/assets/hn-admin-bar.js?v=20261013');
+  html = html.replace(/\/assets\/hn-admin-bar\.css(?:\?[^"']*)?/g, '/assets/hn-admin-bar.css?v=20261013');
   html = html.replace(/<script src="\/assets\/private-preview\.js"><\/script>\s*/g, '');
 
   // Verwijder oude favicon-verwijzingen voordat de juiste HN-favicon opnieuw
@@ -108,8 +108,8 @@ for (const file of htmlFiles) {
     !html.includes(fontsTag) ? fontsTag : '',
     !html.includes(globalResponsiveTag) ? globalResponsiveTag : '',
     !html.includes(globalRuntimeTag) ? globalRuntimeTag : '',
-    !html.includes('/assets/hn-admin-bar.js?v=20261012') ? adminBarTag : '',
-    !html.includes('/assets/hn-admin-bar.css?v=20261012') ? adminBarStyleTag : '',
+    !html.includes('/assets/hn-admin-bar.js?v=20261013') ? adminBarTag : '',
+    !html.includes('/assets/hn-admin-bar.css?v=20261013') ? adminBarStyleTag : '',
     !html.includes(visualPolishStyleTag) ? visualPolishStyleTag : '',
     !html.includes(motionTag) ? motionTag : '',
     !html.includes(copyProtectionTag) && !isAdminSurface ? copyProtectionTag : '',
