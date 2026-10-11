@@ -1,5 +1,7 @@
 /* HN taalknop: rond, pictogram-only, in lijn met de terug-naar-boven-knop */
-#hn-language{position:fixed;left:clamp(14px,2.2vw,28px);bottom:calc(22px + env(safe-area-inset-bottom,0px));z-index:9997;font:14px/1.3 Inter,system-ui,-apple-system,Arial,sans-serif;color:#674C2E}
+#hn-language{position:relative;flex:0 0 auto;z-index:1200;font:14px/1.3 Inter,system-ui,-apple-system,Arial,sans-serif;color:#674C2E}
+#hn-language.is-pending{visibility:hidden}
+#hn-language.is-floating{position:fixed;left:clamp(14px,2.2vw,28px);bottom:calc(22px + env(safe-area-inset-bottom,0px));z-index:9997}
 #hn-language,#hn-language *{box-sizing:border-box}
 .hn-lang-btn{position:relative;display:grid;place-items:center;width:50px;height:50px;padding:0;border:1.5px solid #C6A15B;border-radius:50%;background:rgba(255,255,255,.92);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);color:#674C2E;cursor:pointer;box-shadow:0 8px 24px rgba(103,76,46,.22),inset 0 1px 0 #fff;transition:transform .22s ease,box-shadow .22s ease,background .22s ease,color .22s ease;-webkit-tap-highlight-color:transparent}
 .hn-lang-btn svg{width:24px;height:24px}
@@ -24,6 +26,16 @@
 iframe.skiptranslate,.goog-te-banner-frame,.goog-te-balloon-frame,#goog-gt-tt,.goog-tooltip{display:none!important}
 .goog-text-highlight{background:none!important;box-shadow:none!important}
 body{top:0!important}
-@media(max-width:600px){#hn-language{left:12px;bottom:calc(16px + env(safe-area-inset-bottom,0px))}.hn-lang-btn{width:48px;height:48px}}
+@media(max-width:600px){#hn-language.is-floating{left:12px;bottom:calc(16px + env(safe-area-inset-bottom,0px))}#hn-language.is-floating .hn-lang-btn{width:48px;height:48px}}
 @media(prefers-reduced-motion:reduce){.hn-lang-btn,.hn-lang-menu,.hn-lang-item,.hn-lang-item .tick{transition:none;animation:none}}
 @media print{#hn-language{display:none}}
+
+/* ---- in de navigatiebalk: rond knopje van 42px, gelijk aan het hamburgerknopje ---- */
+#hn-language.in-nav .hn-lang-btn{width:42px;height:42px;box-shadow:0 4px 12px rgba(103,76,46,.14),inset 0 1px 0 #fff}
+#hn-language.in-nav .hn-lang-btn svg{width:21px;height:21px}
+#hn-language.in-nav .hn-lang-btn:hover,#hn-language.in-nav.is-open .hn-lang-btn{transform:translateY(-1px)}
+#hn-language.in-nav .hn-lang-code{right:-4px;top:-4px;min-width:19px;height:19px;font-size:9px;padding:0 4px}
+#hn-language.in-nav .hn-lang-menu{top:calc(100% + 10px);bottom:auto;left:auto;right:0;transform-origin:top right;animation-name:hnLangInDown}
+@keyframes hnLangInDown{from{opacity:0;transform:translateY(-8px) scale(.94)}to{opacity:1;transform:none}}
+header.top .nav>#hn-language{margin-left:10px}
+@media(max-width:1199px){.hn-nav-inner>#hn-language{margin-left:auto}.hn-nav-inner>#hn-language ~ .hn-menu{margin-left:0}}
