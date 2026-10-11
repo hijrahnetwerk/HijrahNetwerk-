@@ -94,6 +94,30 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--orange);
   .desktop-only{display:none!important}
   .mobile-menu-toggle{display:flex}
 }
+
+.lang-filter{grid-column:1/-1;border-top:1px solid rgba(198,161,91,.4);padding-top:12px;margin-top:2px}
+.lang-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:9px}
+.lang-title{display:inline-flex;align-items:center;gap:7px;font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#9B7735}
+.lang-title svg{width:16px;height:16px}
+.lang-clear{border:0;background:transparent;color:var(--orange);font-size:12px;font-weight:700;cursor:pointer;padding:4px}
+.lang-chips{display:flex;gap:8px;flex-wrap:wrap}
+.lang-chip{display:inline-flex;align-items:center;gap:8px;border:1.5px solid rgba(198,161,91,.7);background:#fff;color:var(--brown);border-radius:999px;padding:8px 14px;font:inherit;font-size:13px;font-weight:700;cursor:pointer;transition:transform .2s,background .2s,box-shadow .2s,border-color .2s}
+.lang-chip b{font-size:11px;min-width:20px;text-align:center;padding:1px 6px;border-radius:999px;background:rgba(198,161,91,.22);color:#9B7735}
+.lang-chip:hover{transform:translateY(-2px);border-color:var(--gold);box-shadow:0 8px 18px rgba(155,119,53,.18)}
+.lang-chip:focus-visible{outline:2px solid var(--orange);outline-offset:2px}
+.lang-chip.on{background:linear-gradient(135deg,#674C2E,#DD842A);border-color:transparent;color:#fff;box-shadow:0 8px 20px rgba(103,76,46,.25)}
+.lang-chip.on b{background:rgba(255,255,255,.22);color:#fff}
+.lang-chip.zero:not(.on){opacity:.5}
+.lang-hint{margin:8px 0 0;font-size:11px;color:var(--muted)}
+.lang-note{margin:0 0 14px;padding:10px 14px;border:1px dashed rgba(155,119,53,.6);border-radius:12px;font-size:13px;color:var(--brown);background:rgba(198,161,91,.1)}
+.lang-note a{color:var(--orange);font-weight:700}
+.langs{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.info-list .lang-pill{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px;border:1px solid rgba(155,119,53,.55);color:var(--brown);background:rgba(198,161,91,.14)}
+.info-list .lang-pill.is-official:before{content:"✓";font-size:10px;color:#9B7735}
+.info-list .lang-pill.is-community{border-style:dashed;background:#fff}
+.info-list .lang-pill.is-unknown{border-style:dashed;background:#fff;color:var(--muted);font-weight:600}
+@media(max-width:700px){.lang-chips{flex-wrap:nowrap;overflow-x:auto;padding:0 4px 4px;margin:0 -4px;scrollbar-width:none}.lang-chips::-webkit-scrollbar{display:none}.lang-chip{flex:none}}
+@media(prefers-reduced-motion:reduce){.lang-chip{transition:none}}
 </style>
 
 <link rel="stylesheet" href="/assets/hn-sitewide.css?v=1">
@@ -131,6 +155,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--orange);
 <select id="country"><option value="">Alle landen</option></select>
 <select id="city"><option value="">Alle steden</option></select>
 <select id="category"><option value="">Alle categorieën</option></select>
+<div class="lang-filter" id="langFilter" role="group" aria-label="Filter op taal van de aanbieder"><div class="lang-head"><span class="lang-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.2 3 14.8 0 18M12 3c-3 3.2-3 14.8 0 18"/></svg> Taal van de aanbieder</span><button type="button" class="lang-clear" hidden>Taalfilter wissen</button></div><div class="lang-chips" aria-live="polite"></div><p class="lang-hint">✓ = bevestigd door een officiële bron · gestippeld = gemeld door de community</p></div>
 <div class="filter-actions">
 <span id="resultContext" class="result-context">Alle informatie</span>
 <button id="clearFilters" class="clear-filters" type="button">Filters wissen</button>
@@ -148,6 +173,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--orange);
 <strong id="resultCount">Laden...</strong>
 <a class="submit-link" href="/bijdragen">+ Informatie toevoegen</a>
 </div>
+<p id="langNote" class="lang-note" hidden></p>
 <div id="cards" class="cards"><div class="empty">De navigatie wordt geladen...</div></div>
 <p class="note">Fiches geven de belangrijkste informatie kort weer. Artikelen geven meer achtergrond en uitleg. Ervaringen en aanbevelingen worden als zodanig herkenbaar gemaakt.</p>
 </section>
@@ -158,7 +184,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--orange);
 const db=()=>window.hijrahSupabase;
 const esc=v=>v==null?'':String(v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
 const safeHref=v=>window.hnSafeUrl?window.hnSafeUrl(v):'#';
-let rows=[],countries=[],cities=[],categories=[];
+let rows=[],countries=[],cities=[],categories=[],selLangs=new Set();
 
 function data(x){return x&&x.card_data&&typeof x.card_data==='object'?x.card_data:{}}
 function fill(id,items,label){
@@ -181,6 +207,7 @@ function updateContext(){
  if(country&&country!=='Alle landen') parts.push(country);
  if(city&&city!=='Alle steden') parts.push(city);
  if(category&&category!=='Alle categorieën') parts.push(category);
+ if(selLangs.size) parts.push('Talen: '+[...selLangs].join(', '));
  document.getElementById('resultContext').textContent=parts.length?parts.join(' · '):'Alle informatie';
 }
 function normalizeText(value){return String(value||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim()}
@@ -223,26 +250,65 @@ function catButtons(){
 function slugify(value){return String(value||'').toLowerCase().trim().normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').replace(/&/g,'-en-').replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');}
 function publicSlug(value){return String(value||'').replace(/-([0-9a-f]{8})-([0-9a-f]{4})-([0-9a-f]{4})-([0-9a-f]{4})-([0-9a-f]{12})$/i,'');}
 function ficheUrl(topic,city,category){const cityName=city||'';const categoryName=category||'';const slug=publicSlug(topic.slug||topic.id);const parts=['/locaties',slugify(cityName)];if(categoryName)parts.push(slugify(categoryName));parts.push(slugify(slug));return parts.join('/');}
+
+const LANG_ORDER=['Nederlands','Engels','Frans','Arabisch','Darija','Berbers','Turks','Spaans','Duits'],LANG_CORE=['Nederlands','Engels','Frans','Arabisch'];
+const LANG_SYN={nl:'Nederlands',nederlands:'Nederlands',dutch:'Nederlands',vlaams:'Nederlands',en:'Engels',engels:'Engels',english:'Engels',fr:'Frans',frans:'Frans',francais:'Frans',french:'Frans',ar:'Arabisch',arabisch:'Arabisch',arabic:'Arabisch',fusha:'Arabisch',standaardarabisch:'Arabisch',darija:'Darija',marokkaans:'Darija',moroccan:'Darija',berbers:'Berbers',tamazight:'Berbers',amazigh:'Berbers',tarifit:'Berbers',riffijns:'Berbers',turks:'Turks',turkish:'Turks',es:'Spaans',spaans:'Spaans',spanish:'Spaans',de:'Duits',duits:'Duits',german:'Duits'};
+const LANG_UNKNOWN=['niet bevestigd','onbekend','unknown','n.v.t.','nvt','-','?',''];
+const _langCache=new WeakMap();
+function normLang(v){return LANG_SYN[normalizeText(v).replace(/[^a-z]/g,'')]||null}
+function langsOf(x){
+ if(x&&typeof x==='object'&&_langCache.has(x))return _langCache.get(x);
+ const out=[],seen=new Set();let unknown=false;
+ const add=(name,src)=>{const n=String(name||'').trim();if(!n)return;
+  if(LANG_UNKNOWN.includes(normalizeText(n))){unknown=true;return}
+  const canon=normLang(n)||(n.charAt(0).toUpperCase()+n.slice(1).toLowerCase());
+  if(seen.has(canon))return;seen.add(canon);out.push({name:canon,source:src==='official'||src==='community'?src:''})};
+ const eat=(v,src)=>{if(v==null)return;
+  if(Array.isArray(v)){v.forEach(i=>eat(i,src));return}
+  if(typeof v==='object'){eat(v.name||v.language||v.label,v.source||src);return}
+  String(v).split(/[,;/|]|\sen\s|\sand\s|\set\s/i).forEach(p=>add(p,src))};
+ eat(data(x).languages,'');
+ const res={list:out,unknown:unknown&&!out.length};
+ if(x&&typeof x==='object')_langCache.set(x,res);
+ return res}
+function langPill(l){return '<span class="lang-pill'+(l.source?' is-'+l.source:'')+'"'+(l.source==='official'?' title="Bevestigd door een officiële bron"':l.source==='community'?' title="Gemeld door de community"':'')+'>'+esc(l.name)+'</span>'}
+function langRow(x){const L=langsOf(x);
+ if(L.list.length)return '<div class="langs"><span>Talen:</span> '+L.list.map(langPill).join('')+'</div>';
+ if(L.unknown)return '<div class="langs"><span>Talen:</span> <span class="lang-pill is-unknown">Niet bevestigd</span></div>';
+ return ''}
+function syncLangUrl(){try{const u=new URL(location.href);if(selLangs.size)u.searchParams.set('talen',[...selLangs].join(','));else u.searchParams.delete('talen');history.replaceState(null,'',u)}catch(e){}}
+function renderLangChips(base){
+ const box=document.getElementById('langFilter');if(!box)return;
+ const counts=new Map();base.forEach(x=>langsOf(x).list.forEach(l=>counts.set(l.name,(counts.get(l.name)||0)+1)));
+ const names=[...new Set([...LANG_CORE,...counts.keys(),...selLangs])].sort((a,b)=>{const ia=LANG_ORDER.indexOf(a),ib=LANG_ORDER.indexOf(b);return (ia<0?99:ia)-(ib<0?99:ib)||a.localeCompare(b,'nl')});
+ box.querySelector('.lang-chips').innerHTML=names.map(n=>{const on=selLangs.has(n),k=counts.get(n)||0;return '<button type="button" class="lang-chip'+(on?' on':'')+(k?'':' zero')+'" data-lang="'+esc(n)+'" aria-pressed="'+on+'">'+esc(n)+'<b>'+k+'</b></button>'}).join('');
+ box.querySelector('.lang-clear').hidden=!selLangs.size}
+function updateLangNote(base){
+ const el=document.getElementById('langNote');if(!el)return;
+ const missing=selLangs.size?base.filter(x=>!langsOf(x).list.length).length:0;
+ if(!missing){el.hidden=true;el.innerHTML='';return}
+ el.hidden=false;el.innerHTML=missing+(missing===1?' fiche heeft':' fiches hebben')+' nog geen taalinformatie en '+(missing===1?'wordt':'worden')+' daarom niet getoond. <a href="/bijdragen?type=correction">Help de taal aanvullen</a>'}
 function render(){
  const q=normalizeText(document.getElementById('q').value);
  const co=document.getElementById('country').value;
  const ci=document.getElementById('city').value;
  const ca=document.getElementById('category').value;
- const filtered=rows.filter(x=>{
+ const base=rows.filter(x=>{
    const d=data(x);
    const countryName=countries.find(y=>String(y.id)===String(x.country_id))?.name||'';
    const cityName=cities.find(y=>String(y.id)===String(x.city_id))?.name||'';
    const categoryName=categories.find(y=>String(y.id)===String(x.category_id))?.name||'';
-   const languageText=Array.isArray(d.languages)?d.languages.map(v=>typeof v==='string'?v:(v.language||v.name||'')).join(' '):d.languages;
+   const languageText=langsOf(x).list.map(l=>l.name).join(' ');
    const text=normalizeText([x.title,x.summary,x.content,x.information_type,countryName,cityName,categoryName,d.address,d.neighborhood,d.service_type,languageText,d.warning,d.phone].join(' '));
    return (!q||text.includes(q))&&(!co||String(x.country_id)===String(co))&&(!ci||String(x.city_id)===String(ci))&&(!ca||String(x.category_id)===String(ca));
  });
+ renderLangChips(base);updateLangNote(base);updateContext();
+ const filtered=selLangs.size?base.filter(x=>langsOf(x).list.some(l=>selLangs.has(l.name))):base;
  document.getElementById('resultCount').textContent=filtered.length+' resultaat'+(filtered.length===1?'':'en');
  const box=document.getElementById('cards');
  if(!filtered.length){box.innerHTML='<div class="empty">Geen fiches gevonden. Je kunt ontbrekende informatie zelf insturen.</div>';return}
  const ficheRows=rows.filter(item=>item.visibility==='fiche_only');
  const articleRows=rows.filter(item=>item.visibility!=='fiche_only');
- const normalizeText=value=>String(value||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
  const findFicheForArticle=article=>ficheRows.find(f=>{
    const fd=data(f);
    return (fd.article_slug&&article.slug&&fd.article_slug===article.slug) ||
@@ -269,7 +335,7 @@ function render(){
      d.service_type?'<div><span>Type:</span> '+esc(d.service_type)+'</div>':'',
      d.address?'<div><span>Adres:</span> '+esc(d.address)+'</div>':'',
      d.neighborhood?'<div><span>Wijk:</span> '+esc(d.neighborhood)+'</div>':'',
-     d.languages?'<div><span>Talen:</span> '+esc(Array.isArray(d.languages)?d.languages.map(x=>typeof x==='string'?x:(x.language||x.name||'')).filter(Boolean).join(', '):d.languages)+'</div>':'',
+     langRow(x),
      d.phone?'<div><span>Telefoon:</span> '+esc(d.phone)+'</div>':''
    ].join('');
    const verificationMap={
@@ -363,6 +429,8 @@ async function init(){
   if(presetCountry) document.getElementById('country').value=presetCountry;
   if(presetCity) document.getElementById('city').value=presetCity;
   
+  const presetLang=params.get('talen');
+  if(presetLang)presetLang.split(',').forEach(t=>{const n=normLang(t)||t.trim();if(n)selLangs.add(n)});
   fillCityOptions();
   fill('category',categories,'Alle categorieën');
   if(presetCategory) document.getElementById('category').value=presetCategory;
@@ -390,7 +458,13 @@ document.getElementById('category').addEventListener('change',()=>{
  syncCategorySidebar();
  render();
 });
+document.getElementById('langFilter').addEventListener('click',e=>{
+ const chip=e.target.closest('.lang-chip'),clr=e.target.closest('.lang-clear');
+ if(chip){const n=chip.dataset.lang;if(selLangs.has(n))selLangs.delete(n);else selLangs.add(n)}else if(clr){selLangs.clear()}else return;
+ syncLangUrl();render();
+});
 document.getElementById('clearFilters').addEventListener('click',()=>{
+ selLangs.clear();syncLangUrl();
  document.getElementById('q').value='';
  document.getElementById('heroQ').value='';
  document.getElementById('country').value='';
