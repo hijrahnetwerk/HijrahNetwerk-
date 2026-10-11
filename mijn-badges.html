@@ -203,7 +203,7 @@ function route(){var g=groups(),n=g.length,el=$('route');if(!n){el.innerHTML='';
   h+='<circle cx="'+xs[k].toFixed(1)+'" cy="'+ys[k].toFixed(1)+'" r="8" fill="'+(full?'#C6A15B':'#FFFFFF')+'" stroke="'+(d?'#9B7735':'#674C2E')+'" stroke-width="2"'+(d?'':' stroke-dasharray="3 3" opacity=".55"')+'/>';
   if(d&&!full)h+='<circle cx="'+xs[k].toFixed(1)+'" cy="'+ys[k].toFixed(1)+'" r="3.2" fill="#DD842A"/>';
   h+='<text x="'+xs[k].toFixed(1)+'" y="'+(ys[k]+26).toFixed(1)+'" text-anchor="middle" font-size="11" font-weight="700" fill="#674C2E" font-family="Arial,sans-serif">'+esc(cap(x.n))+'</text>'});
- var pi=far<0?0:far,j=pi<n-1?pi+1:pi-1,deg=n>1?Math.atan2(ys[j]-ys[pi],xs[j]-xs[pi])*180/Math.PI*(pi<n-1?1:1):0;
+ var pi=far<0?0:far,j=pi<n-1?pi+1:pi-1,deg=0;if(n>1){deg=(pi<n-1?Math.atan2(ys[j]-ys[pi],xs[j]-xs[pi]):Math.atan2(ys[pi]-ys[j],xs[pi]-xs[j]))*180/Math.PI;}
  h+='<g transform="translate('+xs[pi].toFixed(1)+','+(ys[pi]-22).toFixed(1)+') rotate('+deg.toFixed(1)+') scale(.9)"><polygon points="14,0 3,-3.5 -3,-12 -6,-12 -4,-3.5 -11,-2 -12,-4.5 -14,-4.5 -13,0 -14,4.5 -12,4.5 -11,2 -4,3.5 -6,12 -3,12 3,3.5" fill="#DD842A"/></g></svg>';
  el.innerHTML=h}
 async function cn(q){try{var r=await q;return r.error?null:(r.count||0)}catch(e){return null}}
