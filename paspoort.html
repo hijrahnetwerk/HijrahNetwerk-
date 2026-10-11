@@ -107,7 +107,8 @@ dialog::backdrop{background:rgba(60,38,18,.55)}
 .ac li span.ok{color:var(--gold-d);font-weight:700}
 .nt{margin:14px 0 0;font-size:12px;opacity:.75}
 @media(max-width:760px){.hr{display:none}}
-</style></head><body>
+</style>  <link rel="stylesheet" href="/assets/hn-passport-knowledge.css">
+</head><body>
 <div class="sp" id="sp"></div>
 <header class="top"><div class="nav"><a class="brand" href="/">Hijrah Netwerk</a><nav><a href="/landen">Landen</a><a href="/kennisbank">Kennisbank</a><a href="/verhalen">Verhalen</a><a href="/stappenplan">Stappenplan</a><a href="/dashboard">Dashboard</a></nav></div></header>
 <section class="hero"><svg class="hr" viewBox="0 0 600 300" fill="none" aria-hidden="true"><path d="M10,260 C110,200 200,110 310,80 S510,50 590,20" stroke="#FFFFFF" stroke-width="1.5" stroke-dasharray="6 9"/><circle cx="10" cy="260" r="5" fill="#FFFFFF"/><circle cx="590" cy="20" r="5" fill="#FFFFFF"/><circle cx="470" cy="170" r="58" stroke="#FFFFFF" stroke-width="1"/><path d="M470 112v116M412 170h116" stroke="#FFFFFF" stroke-width=".8"/><polygon points="470,115 466,167 474,167" fill="#FFFFFF"/><g transform="translate(590,20) rotate(-28)"><polygon points="13,0 2.5,-3 -3,-11 -5,-11 -3.5,-3 -10,-2 -10,-4 -13,-4 -12,0 -13,4 -10,4 -10,2 -3.5,3 -5,11 -3,11 2.5,3" fill="#C6A15B"/></g></svg><div class="in">
@@ -127,7 +128,10 @@ dialog::backdrop{background:rgba(60,38,18,.55)}
 <select id="cat" aria-label="Fase"><option value="">Alle fases</option></select><input type="search" id="q" placeholder="⌕  Zoek een stempel" aria-label="Zoek een stempel"></div>
 <div class="grid" id="grid"><div class="empty">Badges laden…</div></div></section>
 <section class="sec" id="ontgrendelen"><h2 class="rv">Ontgrendelen</h2><p class="sub rv">Een stempel opent echte toegang. De server bepaalt of je toegang hebt.</p><div id="ac"></div></section>
-<div class="band rv"><h2>Elke bijdrage telt.</h2><p>Deel een ervaring, schrijf een review of vul informatie aan. Zo help je anderen en ontgrendel je nieuwe onderdelen.</p><a class="btn" href="/bijdragen?type=experience">Naar bijdragen</a></div>
+<div class="band rv"><h2>Elke bijdrage telt.</h2><p>Deel een ervaring, schrijf een review of vul informatie aan. Zo help je anderen en ontgrendel je nieuwe onderdelen.</p><div class="cta">
+<a class="btn" href="/bijdragen?type=experience">Naar bijdragen</a>
+<a class="btn sec" href="/kennisbank">Naar de kennisbank</a>
+</div></div>
 <div class="priv rv"><span>Stempels tonen op mijn gedeelde profiel: <b id="vis">—</b></span><button class="btn dk" id="vOn" type="button">Aan</button><button class="btn dk" id="vOff" type="button">Uit</button><span>Deze badges zijn alleen voor jou zichtbaar. Antwoorden uit Mijn Hijrah blijven altijd privé.</span></div>
 <p class="nt">Het HN Paspoort is geen officieel reisdocument. Je voortgang is gebaseerd op acties die echt op het platform zijn geregistreerd.</p>
 </main><dialog id="dlg"><div class="dh"></div><div class="db" id="dbody"></div><div style="padding:0 24px 22px;text-align:right"><button class="btn dk" id="dclose" type="button">Sluiten</button></div></dialog>
