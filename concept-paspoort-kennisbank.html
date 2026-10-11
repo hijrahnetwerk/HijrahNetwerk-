@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Concept — HN Paspoort & Kennisbank</title>
+<style>
+:root{--brown:#674C2E;--rust:#DD842A;--white:#fff;--gold:#C6A15B;--gold-dark:#9B7735;--ink:#2f281f;--muted:#756b60;--line:#e8dfd3;--paper:#fbf8f3;--green:#47745b;--radius:18px;--shadow:0 12px 32px #674c2e12}
+*{box-sizing:border-box}body{margin:0;background:#f4f0e9;color:var(--ink);font:15px/1.6 Inter,system-ui,-apple-system,"Segoe UI",sans-serif}a{color:inherit}button{font:inherit;cursor:pointer}button:focus-visible,a:focus-visible{outline:3px solid var(--rust);outline-offset:3px}.shell{max-width:1180px;margin:auto;padding:22px}.demo-bar{position:sticky;top:0;z-index:20;background:#2f281f;color:#fff;padding:10px 20px;display:flex;justify-content:space-between;align-items:center;gap:12px;font-size:13px}.demo-bar strong{color:#f2dba6}.switch{display:flex;gap:6px;flex-wrap:wrap}.switch button{border:1px solid #ffffff45;background:transparent;color:#fff;border-radius:999px;padding:6px 12px}.switch button.active{background:var(--gold);color:#241b10;border-color:var(--gold)}.mast{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:16px 0 24px;border-bottom:1px solid var(--line)}.brand{display:flex;align-items:center;gap:12px;font-weight:800;color:var(--brown)}.mark{width:42px;height:42px;display:grid;place-items:center;border-radius:12px;background:var(--brown);color:var(--gold);font-weight:900;font-size:20px}.eyebrow{text-transform:uppercase;letter-spacing:.12em;font-size:11px;font-weight:800;color:var(--gold-dark)}.user-chip{background:#fff;border:1px solid var(--line);border-radius:999px;padding:8px 12px;font-size:13px}.layout{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(280px,.8fr);gap:22px;margin-top:24px}.panel{background:#fff;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}.panel-pad{padding:24px}.hero{background:linear-gradient(125deg,#674c2e 0%,#4a3623 72%);color:#fff;position:relative;overflow:hidden}.hero:after{content:"";position:absolute;width:250px;height:250px;border:1px solid #c6a15b45;border-radius:50%;right:-90px;top:-95px;box-shadow:0 0 0 24px #c6a15b0c,0 0 0 48px #c6a15b0c}.hero h1{font-size:clamp(28px,4vw,42px);line-height:1.1;letter-spacing:-.035em;margin:8px 0 12px;max-width:660px}.hero p{color:#f0e6d8;max-width:640px;margin:0}.hero .eyebrow{color:#e9c982}.hero-row{display:flex;justify-content:space-between;align-items:flex-start;gap:16px}.passport-seal{flex:0 0 78px;height:78px;border:2px solid var(--gold);border-radius:50%;display:grid;place-items:center;color:#f0d58f;font-size:27px;transform:rotate(9deg);background:#ffffff08}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:22px}.stat{background:#ffffff10;border:1px solid #ffffff22;border-radius:12px;padding:12px}.stat b{display:block;font-size:23px;color:#f0d58f}.stat span{font-size:12px;color:#f0e6d8}.section-head{display:flex;justify-content:space-between;align-items:end;gap:12px;margin-bottom:16px}.section-head h2,.section-head h3{margin:0;color:var(--brown);line-height:1.2}.section-head p{margin:5px 0 0;color:var(--muted);font-size:13px}.phases{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}.phase{border:1px solid var(--line);border-radius:14px;background:#fff;padding:12px 10px;text-align:left;min-height:122px;transition:transform .15s,border-color .15s}.phase:hover{transform:translateY(-2px);border-color:var(--gold)}.phase.active{border:2px solid var(--gold);background:#fcf7eb;padding:11px 9px}.phase .num{display:inline-grid;place-items:center;width:25px;height:25px;border-radius:50%;background:#eee7dc;color:var(--brown);font-size:12px;font-weight:800;margin-bottom:9px}.phase.earned .num{background:var(--gold);color:#2f2415}.phase strong{display:block;font-size:13px;color:var(--brown);line-height:1.3}.phase small{display:block;margin-top:5px;color:var(--muted);font-size:11px}.stamp-row{display:flex;gap:12px;overflow:auto;padding:3px 2px 10px}.stamp{flex:0 0 92px;text-align:center}.stamp-art{width:70px;height:70px;margin:0 auto 8px;border-radius:50%;display:grid;place-items:center;border:2px dashed #cfc5b7;color:#b2a697;background:#faf8f4;font-size:25px;position:relative}.stamp.earned .stamp-art{border:2px solid var(--gold-dark);background:#f6e7be;color:var(--brown);box-shadow:inset 0 0 0 4px #fff8e5}.stamp strong{font-size:12px;display:block;color:var(--brown)}.stamp small{font-size:11px;color:var(--muted)}.progress{height:8px;border-radius:999px;background:#eee7dd;overflow:hidden}.progress span{display:block;height:100%;background:linear-gradient(90deg,var(--gold),var(--rust));width:29%;border-radius:999px;transition:width .25s}.micro{font-size:12px;color:var(--muted)}.action-list{display:grid;gap:10px}.action{display:grid;grid-template-columns:42px 1fr auto;gap:12px;align-items:center;border:1px solid var(--line);border-radius:13px;padding:13px}.action-icon{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;background:#f5ecda;color:var(--brown);font-size:20px}.action strong{display:block;font-size:13px;color:var(--brown)}.action p{font-size:12px;margin:2px 0 0;color:var(--muted)}.pill{white-space:nowrap;background:#f5ecda;color:var(--brown);border-radius:999px;padding:5px 9px;font-size:11px;font-weight:800}.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--brown);background:var(--brown);color:#fff;border-radius:10px;padding:10px 14px;font-weight:750;font-size:13px;text-decoration:none}.btn.gold{background:var(--gold);border-color:var(--gold);color:#2f2415}.btn.outline{background:#fff;color:var(--brown)}.btn.small{padding:7px 10px;font-size:12px}.btn:disabled{opacity:.5;cursor:not-allowed}.article-kicker{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:13px}.tag{background:#f5ecda;color:var(--brown);border-radius:6px;padding:4px 8px;font-size:11px;font-weight:750}.article h2{font-size:clamp(25px,3.3vw,36px);line-height:1.15;letter-spacing:-.03em;color:var(--brown);margin:8px 0 12px}.article .intro{font-size:17px;color:#665a4d}.meta{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--muted);padding:13px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}.reading-progress{height:4px;background:#eee5d8}.reading-progress span{display:block;height:100%;width:38%;background:var(--rust)}.article-body{padding-top:20px}.article-body h3{color:var(--brown);margin:24px 0 8px}.article-body p{margin:0 0 14px}.quote{border-left:4px solid var(--gold);padding:12px 16px;background:#fcf7eb;border-radius:0 12px 12px 0;font-weight:650;color:var(--brown)}.gate{border:1px solid #d9c08b;background:linear-gradient(130deg,#fffaf0,#f8efda);border-radius:16px;padding:19px;margin:20px 0}.gate h3{margin:4px 0 6px;color:var(--brown)}.gate p{font-size:13px;margin:0 0 12px;color:#635441}.gate-list{display:grid;gap:8px;margin:14px 0}.gate-item{display:flex;gap:9px;align-items:flex-start;font-size:12px}.gate-item .check{color:var(--green);font-weight:900}.gate-actions{display:flex;gap:8px;flex-wrap:wrap}.gate-note{font-size:11px!important;margin-top:10px!important;color:#756b60!important}.locked-preview{position:relative;max-height:108px;overflow:hidden;user-select:none}.locked-preview:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,#fff0,#fff 95%)}.notice{background:#f5f2ed;border:1px solid var(--line);padding:12px 14px;border-radius:12px;color:var(--muted);font-size:12px}.notice strong{color:var(--brown)}.sidebar{display:grid;gap:18px;align-content:start}.side-title{font-size:16px;margin:0 0 6px;color:var(--brown)}.access-row{display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid var(--line);font-size:12px}.access-row:last-child{border:0}.access-row span{color:var(--muted)}.state{font-size:11px;font-weight:800;color:var(--green)}.state.locked{color:#98652b}.feedback{min-height:22px;font-size:12px;color:var(--green);margin-top:10px}.footer{padding:28px 0 12px;text-align:center;color:var(--muted);font-size:12px}.hide{display:none!important}@media(max-width:850px){.layout{grid-template-columns:1fr}.sidebar{grid-template-columns:repeat(2,minmax(0,1fr))}.phases{grid-template-columns:repeat(4,minmax(0,1fr))}}@media(max-width:560px){.shell{padding:14px}.demo-bar{align-items:flex-start;flex-direction:column}.mast{align-items:flex-start}.hero-row{gap:8px}.passport-seal{flex-basis:54px;width:54px;height:54px;font-size:21px}.panel-pad{padding:18px}.stats{gap:6px}.stat{padding:9px}.stat b{font-size:20px}.phases{grid-template-columns:repeat(2,minmax(0,1fr))}.phase{min-height:100px}.sidebar{grid-template-columns:1fr}.action{grid-template-columns:36px 1fr}.action-icon{width:36px;height:36px}.action .pill{grid-column:2;justify-self:start}.gate-actions .btn{flex:1}.user-chip{font-size:11px}}
+</style>
+</head>
+<body>
+<div class="demo-bar">
+  <div><strong>HN CONCEPT</strong> · Voorbeeldweergave, geen echte account- of toegangscontrole</div>
+  <div class="switch" aria-label="Voorbeeldweergave">
+    <button id="visitorBtn" class="active" type="button">Bezoeker</button>
+    <button id="memberBtn" type="button">Ingelogd lid</button>
+    <button id="contributorBtn" type="button">Bijdrager</button>
+  </div>
+</div>
+<div class="shell">
+  <header class="mast">
+    <div class="brand"><div class="mark">HN</div><div><div>Hijrah Netwerk</div><div class="eyebrow">Van oriëntatie tot integratie</div></div></div>
+    <div class="user-chip" id="statusChip">Bezoekersweergave · beperkte toegang</div>
+  </header>
+
+  <section class="panel hero">
+    <div class="panel-pad">
+      <div class="hero-row">
+        <div>
+          <div class="eyebrow">Mijn HN Paspoort</div>
+          <h1>Elke stap brengt je verder. Elke bijdrage helpt een zuster vooruit.</h1>
+          <p>Volg je eigen hijrah-route, verzamel stempels en ontgrendel verdiepende hulpmiddelen door waardevol bij te dragen. Niet door zoveel mogelijk te klikken, maar door informatie te delen die anderen echt helpt.</p>
+        </div>
+        <div class="passport-seal" aria-hidden="true">✦</div>
+      </div>
+      <div class="stats">
+        <div class="stat"><b id="earnedCount">2/7</b><span>Fasen gestart of afgerond</span></div>
+        <div class="stat"><b id="stampCount">2</b><span>Verdiende stempels</span></div>
+        <div class="stat"><b id="unlockCount">1</b><span>Ontgrendelde onderdelen</span></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="layout">
+    <main>
+      <section class="panel panel-pad">
+        <div class="section-head"><div><div class="eyebrow">Jouw route</div><h2>De zeven fasen</h2><p>Kies een fase om te zien welke stap je nu kunt zetten.</p></div><span class="pill" id="phaseLabel">Fase 1 van 7</span></div>
+        <div class="progress" aria-label="Voorbeeldvoortgang"><span id="phaseProgress"></span></div>
+        <p class="micro" id="phaseHint">Je hoeft nog niet alles te weten. Begin met een realistische oriëntatie.</p>
+        <div class="phases" id="phases" style="margin-top:16px">
+          <button class="phase active earned" data-phase="0"><span class="num">✓</span><strong>Oriënteren</strong><small>Je vertrekpunt</small></button>
+          <button class="phase earned" data-phase="1"><span class="num">✓</span><strong>Onderzoeken</strong><small>Informatie toetsen</small></button>
+          <button class="phase" data-phase="2"><span class="num">3</span><strong>Voorbereiden</strong><small>Plan en voorwaarden</small></button>
+          <button class="phase" data-phase="3"><span class="num">4</span><strong>Vertrekken</strong><small>Praktisch regelen</small></button>
+          <button class="phase" data-phase="4"><span class="num">5</span><strong>Aankomen</strong><small>De eerste weken</small></button>
+          <button class="phase" data-phase="5"><span class="num">6</span><strong>Integreren</strong><small>Een nieuw ritme</small></button>
+          <button class="phase" data-phase="6"><span class="num">7</span><strong>Delen</strong><small>Help de volgende zuster</small></button>
+        </div>
+      </section>
+
+      <section class="panel panel-pad" style="margin-top:18px">
+        <div class="section-head"><div><div class="eyebrow">Zichtbare voortgang</div><h2>Jouw stempels</h2><p>Een stempel wordt pas actief wanneer aan de voorwaarden is voldaan en de bijdrage is gecontroleerd.</p></div></div>
+        <div class="stamp-row">
+          <div class="stamp earned"><div class="stamp-art">⌕</div><strong>Oriëntatie</strong><small>Verdiend</small></div>
+          <div class="stamp earned"><div class="stamp-art">◎</div><strong>Onderzoeker</strong><small>Verdiend</small></div>
+          <div class="stamp"><div class="stamp-art">▤</div><strong>Voorbereider</strong><small>Nog te behalen</small></div>
+          <div class="stamp"><div class="stamp-art">↗</div><strong>Vertrek klaar</strong><small>Nog te behalen</small></div>
+          <div class="stamp"><div class="stamp-art">⌂</div><strong>Aangekomen</strong><small>Nog te behalen</small></div>
+          <div class="stamp"><div class="stamp-art">✧</div><strong>Geïntegreerd</strong><small>Nog te behalen</small></div>
+          <div class="stamp"><div class="stamp-art">♡</div><strong>Doorgever</strong><small>Nog te behalen</small></div>
+        </div>
+      </section>
+
+      <section class="panel panel-pad article" style="margin-top:18px">
+        <div class="reading-progress"><span></span></div>
+        <div class="article-kicker" style="margin-top:18px"><span class="tag">Marokko</span><span class="tag">Praktische gids</span><span class="tag">Bronstatus: voorbeeld</span></div>
+        <div class="eyebrow">Kennisbank · Oriënteren</div>
+        <h2>Een stad beoordelen: wat moet je controleren vóór je een keuze maakt?</h2>
+        <p class="intro">Een bruikbare gids helpt je feiten, persoonlijke ervaringen en nog te controleren informatie van elkaar te onderscheiden. Gebruik deze voorbeeldweergave als ontwerp, niet als feitelijke verhuisinformatie.</p>
+        <div class="meta"><span>HN Redactie · voorbeeldartikel</span><span>6 min leestijd (voorbeeld)</span><span>Bijgewerkt: nog te bepalen</span></div>
+        <div class="article-body">
+          <h3>Begin met controleerbare vragen</h3>
+          <p>Breng eerst je eigen voorwaarden in kaart: verblijfsrecht, inkomen, onderwijs, zorg, huisvesting en je sociale netwerk. Noteer bij iedere belangrijke keuze welke bron de informatie bevestigt en wanneer je die hebt gecontroleerd.</p>
+          <div class="quote">Een ervaring kan waardevol zijn zonder voor iedereen te gelden. Bekijk altijd wie de informatie heeft gedeeld, waar en wanneer die ervaring speelde.</div>
+          <h3>Maak onderscheid tussen drie soorten informatie</h3>
+          <p><strong>Officiële informatie:</strong> afkomstig van een bevoegde instantie. <strong>Bron-bevestigde informatie:</strong> gecontroleerd met betrouwbare publicaties. <strong>Community-ervaring:</strong> een persoonlijke ervaring die context nodig heeft en niet automatisch een algemene regel is.</p>
+          <div id="gatedContent" class="hide">
+            <h3>Verdieping: vergelijk je opties systematisch</h3>
+            <p>Maak per stad een lijst met maandelijkse vaste kosten, eenmalige kosten, documenten, schoolopties, zorg, vervoer en bereikbaarheid van je netwerk. Geef elke post een bronstatus en een datum van laatste controle. Gebruik geen schijnprecisie wanneer prijzen snel veranderen.</p>
+            <h3>Checklist voor je eigen onderzoek</h3>
+            <ul><li>Controleer verblijfsvoorwaarden bij officiële instanties.</li><li>Vraag naar de datum en context van lokale ervaringen.</li><li>Vergelijk meerdere bronnen voordat je een beslissing neemt.</li><li>Noteer open vragen en wie die nog kan bevestigen.</li></ul>
+          </div>
+          <div id="gate" class="gate">
+            <div class="eyebrow">Verdieping ontgrendelen</div>
+            <h3 id="gateTitle">Help mee om HN bruikbaar en betrouwbaar te houden</h3>
+            <p id="gateCopy">De basis blijft leesbaar. Voor de uitgebreide checklist en verdiepende hulpmiddelen vragen we een goedgekeurde bijdrage of een andere duidelijk vermelde toegangsvorm.</p>
+            <div class="gate-list" id="gateList">
+              <div class="gate-item"><span class="check">✓</span><span>Deel een lokale tip met bron of datum.</span></div>
+              <div class="gate-item"><span class="check">✓</span><span>Lever een eigen ervaring aan met voldoende context.</span></div>
+              <div class="gate-item"><span class="check">✓</span><span>Help een bestaande fiche of bronvermelding controleren.</span></div>
+            </div>
+            <div class="gate-actions"><button class="btn gold" id="contributeBtn" type="button">Bekijk manieren om bij te dragen</button><button class="btn outline" id="loginBtn" type="button">Inloggen</button><button class="btn outline hide" id="unlockBtn" type="button">Voorbeeld: ontgrendel</button></div>
+            <p class="gate-note">Voorbeeldweergave. De knoppen voeren geen echte betaling, accountcontrole of toegangsverlening uit. Echte toegang moet server-side worden gecontroleerd.</p>
+          </div>
+          <div id="contributionOptions" class="hide">
+            <h3>Bijdragen op een manier die bij je past</h3>
+            <div class="action-list">
+              <div class="action"><div class="action-icon">⌖</div><div><strong>Lokale informatie aanvullen</strong><p>Een concrete tip met plaats, datum en bron.</p></div><span class="pill">Controle nodig</span></div>
+              <div class="action"><div class="action-icon">✎</div><div><strong>Ervaring delen</strong><p>Een eigen verhaal met context, zonder onbewezen algemene claims.</p></div><span class="pill">Na beoordeling</span></div>
+              <div class="action"><div class="action-icon">✓</div><div><strong>Informatie controleren</strong><p>Help een bestaande fiche of bronvermelding actueel te houden.</p></div><span class="pill">Na goedkeuring</span></div>
+              <div class="action"><div class="action-icon">♡</div><div><strong>Financieel bijdragen</strong><p>Een vrijwillige steunmogelijkheid, apart en transparant van inhoudelijke bijdragen.</p></div><span class="pill">Optioneel</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <aside class="sidebar">
+      <section class="panel panel-pad">
+        <div class="eyebrow">Volgende stap</div><h3 class="side-title" id="nextTitle">Controleer één belangrijke aanname</h3>
+        <p class="micro" id="nextCopy">Kies één punt dat je nog niet met een betrouwbare bron hebt bevestigd en leg vast wat je moet controleren.</p>
+        <button class="btn gold" id="nextAction" type="button">Bekijk actie</button>
+        <div class="feedback" id="feedback" aria-live="polite"></div>
+      </section>
+      <section class="panel panel-pad">
+        <div class="eyebrow">Toegang in één oogopslag</div><h3 class="side-title">Wat is beschikbaar?</h3>
+        <div class="access-row"><div><strong>Publieke basisinformatie</strong><br><span>Leesbaar zonder bijdrage</span></div><b class="state">Open</b></div>
+        <div class="access-row"><div><strong>Persoonlijke voortgang</strong><br><span>Vereist een account</span></div><b class="state locked" id="personalState">Account</b></div>
+        <div class="access-row"><div><strong>Verdiepende hulpmiddelen</strong><br><span>Goedgekeurde bijdrage of expliciete toegang</span></div><b class="state locked" id="deepState">Vergrendeld</b></div>
+        <div class="access-row"><div><strong>Beheer van regels</strong><br><span>Alleen bevoegde beheerders</span></div><b class="state">Admin</b></div>
+      </section>
+      <section class="panel panel-pad">
+        <div class="eyebrow">Eerlijk belonen</div><h3 class="side-title">Hoe werkt een stempel?</h3>
+        <p class="micro">Dezelfde handeling levert niet meerdere keren dezelfde beloning op. Een inzending telt pas mee na controle. Bijdragen worden beoordeeld op bruikbaarheid, bronvermelding, actualiteit en privacy.</p>
+        <div class="notice" style="margin-top:12px"><strong>Geen betaalmuur als verrassing.</strong><br>Vooraf zichtbaar maken wat open is, wat ontgrendelt, welke alternatieven bestaan en of toegang tijdelijk of blijvend is.</div>
+      </section>
+    </aside>
+  </div>
+  <footer class="footer">HN concept · Bruin #674C2E · Roest #DD842A · Goud #C6A15B · Wit #FFFFFF<br>Geen live toegangscontrole, geen echte ledengegevens en geen echte bijdrageverwerking.</footer>
+</div>
+<script>
+(function(){
+  const phases=[
+    {name:"Oriënteren",hint:"Je hoeft nog niet alles te weten. Begin met een realistische oriëntatie.",title:"Verhelder je vertrekpunt",copy:"Schrijf op waarom je wilt vertrekken, welke voorwaarden onmisbaar zijn en welke vragen nog openstaan."},
+    {name:"Onderzoeken",hint:"Vergelijk bronnen en noteer wat bevestigd is en wat nog onzeker blijft.",title:"Controleer één belangrijke aanname",copy:"Kies één punt dat je nog niet met een betrouwbare bron hebt bevestigd en leg vast wat je moet controleren."},
+    {name:"Voorbereiden",hint:"Zet onderzoek om in een haalbaar plan met kosten, documenten en termijnen.",title:"Maak je voorbereidingslijst",copy:"Breng documenten, budget, onderwijs, zorg en verblijfsvoorwaarden in kaart."},
+    {name:"Vertrekken",hint:"Controleer deadlines en regelingen voordat je onomkeerbare stappen zet.",title:"Controleer je vertrekvoorwaarden",copy:"Loop documenten, vervoer, huisvesting en financiële buffer nog één keer na."},
+    {name:"Aankomen",hint:"De eerste periode vraagt vooral om praktische prioriteiten en realistische verwachtingen.",title:"Maak een plan voor de eerste maand",copy:"Bepaal wat meteen geregeld moet worden en waar je betrouwbare lokale hulp kunt vinden."},
+    {name:"Integreren",hint:"Een nieuw ritme kost tijd. Houd bij wat werkt en welke ondersteuning ontbreekt.",title:"Breng je lokale netwerk in kaart",copy:"Noteer voorzieningen, contacten en informatie die je nog wilt controleren."},
+    {name:"Delen",hint:"Deel wat je hebt geleerd met context, bron en datum, zodat een andere zuster er iets aan heeft.",title:"Help de volgende zuster",copy:"Werk een lokale tip bij, deel een ervaring met context of controleer een bron."}
+  ];
+  let view="visitor",selected=0,unlocked=false;
+  const $=id=>document.getElementById(id);
+  function setView(next){view=next;document.querySelectorAll(".switch button").forEach(b=>b.classList.toggle("active",b.id==={visitor:"visitorBtn",member:"memberBtn",contributor:"contributorBtn"}[view]));$("statusChip").textContent={visitor:"Bezoekersweergave · beperkte toegang",member:"Voorbeeldlid · account actief",contributor:"Voorbeeldbijdrager · bijdrage goedgekeurd"}[view];$("personalState").textContent=view==="visitor"?"Account":"Beschikbaar";$("deepState").textContent=unlocked||view==="contributor"?"Ontgrendeld":"Vergrendeld";$("gateTitle").textContent=view==="visitor"?"Help mee om HN bruikbaar en betrouwbaar te houden":view==="member"?"Kies een bijdragevorm om verdieping te ontgrendelen":"Je bijdrage is goedgekeurd";$("gateCopy").textContent=view==="contributor"||unlocked?"In deze voorbeeldweergave is de verdieping zichtbaar. In de echte website bepaalt de server welke inhoud voor jouw account beschikbaar is.":"De basis blijft leesbaar. Voor de uitgebreide checklist en verdiepende hulpmiddelen vragen we een goedgekeurde bijdrage of een andere duidelijk vermelde toegangsvorm.";$("gatedContent").classList.toggle("hide",!(unlocked||view==="contributor"));$("gate").classList.toggle("hide",unlocked||view==="contributor");$("unlockBtn").classList.toggle("hide",view!=="member"||unlocked);$("contributionOptions").classList.add("hide");$("stampCount").textContent=view==="contributor"?"3":"2";$("unlockCount").textContent=(unlocked||view==="contributor")?"2":"1";$("earnedCount").textContent=view==="contributor"?"3/7":"2/7";}
+  function selectPhase(index){selected=index;const p=phases[index];document.querySelectorAll(".phase").forEach((el,i)=>{el.classList.toggle("active",i===index);el.querySelector(".num").textContent=i<2?"✓":i+1});$("phaseLabel").textContent="Fase "+(index+1)+" van 7";$("phaseProgress").style.width=((index+1)/7*100)+"%";$("phaseHint").textContent=p.hint;$("nextTitle").textContent=p.title;$("nextCopy").textContent=p.copy;$("feedback").textContent="";}
+  document.querySelectorAll(".phase").forEach(el=>el.addEventListener("click",()=>selectPhase(Number(el.dataset.phase))));
+  $("visitorBtn").addEventListener("click",()=>setView("visitor"));$("memberBtn").addEventListener("click",()=>setView("member"));$("contributorBtn").addEventListener("click",()=>setView("contributor"));
+  $("contributeBtn").addEventListener("click",()=>{$("contributionOptions").classList.toggle("hide");$("feedback").textContent="Kies een bijdrage die bij je mogelijkheden past. In deze preview wordt niets verzonden.";});
+  $("loginBtn").addEventListener("click",()=>{$("feedback").textContent="In de echte website verwijst deze knop naar de beveiligde inlogpagina.";});
+  $("unlockBtn").addEventListener("click",()=>{unlocked=true;setView("member");$("feedback").textContent="Alleen in deze demo zichtbaar gemaakt. Er is geen echte toegang verleend.";});
+  $("nextAction").addEventListener("click",()=>{$("feedback").textContent="Voorbeeldactie voor de fase ‘"+phases[selected].name+"’. De echte versie bewaart voortgang pas na veilige accountcontrole.";});
+  selectPhase(0);setView("visitor");
+})();
+</script>
+</body>
+</html>
