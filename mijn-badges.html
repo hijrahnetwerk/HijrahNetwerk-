@@ -144,15 +144,15 @@ function cnt(el,t){if(rm){el.textContent=t;return}var st=null;function f(ts){st=
 async function load(){
  try{
   var s=await sb.auth.getSession();if(!s.data||!s.data.session){location.href='/login?next=/mijn-badges';return}U=s.data.session.user;
-  var r=await Promise.all([sb.from('hn_badges').select('*').eq('active',true).order('sort_order'),sb.from('hn_user_badges').select('badge_id,earned_at').eq('user_id',U.id),sb.from('profiles').select('display_name,first_name,created_at,hn_status,show_badges,profile_visibility').eq('id',U.id).maybeSingle(),sb.rpc('hn_my_access')]);
+  var r=await Promise.all([sb.from('hn_badges').select('*').eq('active',true).order('sort_order'),sb.from('hn_user_badges').select('badge_id,earned_at').eq('user_id',U.id),sb.from('profiles').select('display_name,first_name,created_at,hn_status,show_badges,profile_visibility').eq('id',U.id).maybeSingle(),sb.rpc('hn_my_access'),sb.from('hn_statuses').select('slug,name').eq('active',true)]);
   if(r[0].error){show('De stempels konden niet worden geladen. Probeer het later opnieuw.');return}
-  B=r[0].data||[];(r[1].data||[]).forEach(function(x){E[x.badge_id]=x.earned_at});P=r[2].data||{};var A=Array.isArray(r[3].data)?r[3].data:[];
+  B=r[0].data||[];(r[1].data||[]).forEach(function(x){E[x.badge_id]=x.earned_at});P=r[2].data||{};var A=Array.isArray(r[3].data)?r[3].data:[],statusRows=r[4].data||[],statusName=(statusRows.find(function(x){return x.slug===P.hn_status})||{}).name||'Lid';
   if(r[3].error)show('Je stempels zijn geladen, maar de toegangsstatus kon niet worden opgehaald.');
   var cats=[];B.forEach(function(b){if(b.category&&cats.indexOf(b.category)<0)cats.push(b.category)});CT=cats;$('cat').innerHTML='<option value="">Alle fases</option>'+cats.map(function(c){return '<option value="'+esc(c)+'">'+esc(c)+'</option>'}).join('');
   var n=B.filter(function(b){return !!E[b.id]}).length,un=A.filter(function(x){return x.unlocked}).length;
   cnt($('s1'),n);cnt($('s2'),B.length-n);cnt($('s3'),un);
   var nm=P.display_name||P.first_name||'Lid',no='HN-'+U.id.replace(/-/g,'').slice(0,6).toUpperCase();
-  $('pn').textContent=nm;$('pnr').textContent=no;$('ps').textContent=P.created_at?new Date(P.created_at).toLocaleDateString('nl-NL',{month:'long',year:'numeric'}):'—';$('pt').textContent=P.hn_status||'Lid';
+  $('pn').textContent=nm;$('pnr').textContent=no;$('ps').textContent=P.created_at?new Date(P.created_at).toLocaleDateString('nl-NL',{month:'long',year:'numeric'}):'—';$('pt').textContent=statusName;
   var z=nm.toUpperCase().replace(/[^A-Z]/g,'<').slice(0,22).padEnd(22,'<');
   $('mrz').textContent='P<HNL<'+z+'\n'+no.replace('-','')+'<<<<<<<<<<<<<<';
   $('ac').innerHTML=A.map(function(x){var rs=Array.isArray(x.routes)?x.routes:[],own=function(n){return B.some(function(b){return b.name===n&&!!E[b.id]})};
