@@ -107,6 +107,9 @@ for (const file of htmlFiles) {
     html = html.replace('</head>', faviconTag + '\n</head>');
   }
 
+  const isAdminSurface = file.startsWith('admin') || file.startsWith('werkruimte');
+  const isMemberSurface = memberSurfacePages.has(file);
+
   if (isMemberSurface && !html.includes('public-nav.css')) {
     html = html.replace('</head>', publicNavStyleTag + '\\n</head>');
   }
@@ -115,9 +118,6 @@ for (const file of htmlFiles) {
   if (!/<meta\s+name=[\"']viewport[\"']/i.test(html)) {
     html = html.replace('</head>', '<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n</head>');
   }
-
-  const isAdminSurface = file.startsWith('admin') || file.startsWith('werkruimte');
-  const isMemberSurface = memberSurfacePages.has(file);
 
   if (!isAdminSurface && !html.includes('/assets/hn-back-to-top.css?v=20261014')) {
     html = html.replace('</head>', backToTopStyleTag + '\n</head>');
