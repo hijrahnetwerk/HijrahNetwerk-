@@ -20,7 +20,7 @@
     if (!document.querySelector('link[data-hn-footer-style]')) {
       const style = document.createElement('link');
       style.rel = 'stylesheet';
-      style.href = '/assets/hn-footer.css?v=20261012';
+      style.href = '/assets/hn-footer.css?v=20261013';
       style.dataset.hnFooterStyle = 'true';
       document.head.appendChild(style);
     }
@@ -36,7 +36,7 @@
       <div class="hn-wrap hn-footer-inner">
         <div class="hn-footer-brand-row">
           <a class="hn-footer-brand" href="/" aria-label="Hijrah Netwerk — home">
-            <img class="hn-footer-logo" src="/assets/logo-color.pngneddkleinn.png?v=20261012" alt="Hijrah Netwerk" loading="lazy">
+            <img class="hn-footer-logo" src="/assets/logo-color.pngneddkleinn.png?v=20261013" alt="Hijrah Netwerk" loading="lazy">
             <span class="hn-footer-name">Hijrah Netwerk</span>
           </a>
           <div class="hn-footer-brand-copy">
