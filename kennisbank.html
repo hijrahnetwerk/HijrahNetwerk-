@@ -730,6 +730,7 @@
 
 <link rel="stylesheet" href="/assets/hn-sitewide.css?v=1">
 <script src="/assets/hn-motion.js?v=1" defer></script>
+  <link rel="stylesheet" href="/assets/hn-passport-knowledge.css">
 </head>
 
 <body>
@@ -760,6 +761,16 @@
         Zoeken
       </button>
     </form>
+  </section>
+  <section class="hn-passport-knowledge-cta" aria-labelledby="hn-contribution-heading">
+    <div>
+      <h2 id="hn-contribution-heading">Van kennis vinden naar kennis delen</h2>
+      <p>Controleer een bron, vul lokale informatie aan of deel een ervaring met context. HN beoordeelt inzendingen voordat ze als goedgekeurde bijdrage meetellen.</p>
+    </div>
+    <div class="hn-passport-knowledge-cta-actions">
+      <a class="btn btn-secondary" href="/paspoort">Bekijk mijn paspoort</a>
+      <a class="btn btn-primary" href="/bijdragen">Bijdragen</a>
+    </div>
   </section>
 <hr class="hn-divider" aria-hidden="true">
 
@@ -1359,6 +1370,26 @@
   }
 
 
+  function verificationBadge(topic) {
+    const status = String(topic?.verification_status || "");
+    if (status === "gecontroleerd") {
+      return '<span class="hn-verification is-checked">Bron gecontroleerd</span>';
+    }
+    if (status === "in_onderzoek") {
+      return '<span class="hn-verification is-review">In onderzoek</span>';
+    }
+    if (status === "verouderd") {
+      return '<span class="hn-verification is-review">Controle nodig · mogelijk verouderd</span>';
+    }
+    if (topic?.source_type === "community" || ["Ervaring", "Review"].includes(topic?.information_type)) {
+      return '<span class="hn-verification is-community">Community-ervaring · geen officieel feit</span>';
+    }
+    if (topic?.source || topic?.source_url) {
+      return '<span class="hn-verification">Bron vermeld · nog niet bevestigd</span>';
+    }
+    return '<span class="hn-verification">Nog niet gecontroleerd</span>';
+  }
+
   function renderResults() {
 
     const list =
@@ -1410,6 +1441,7 @@
                   ? `<span class="tag">${esc(topic.information_type)}</span>`
                   : ""}
               </div>
+              ${verificationBadge(topic)}
 
               <a class="article-card-title" href="${topicHref}">
                 <h3>${esc(topic.title)}</h3>
@@ -2005,6 +2037,7 @@
         ${topic.subcategories?.name ? `<span class="tag">${esc(topic.subcategories.name)}</span>` : ""}
         ${topic.information_type ? `<span class="tag">${esc(topic.information_type)}</span>` : ""}
       </div>
+      ${verificationBadge(topic)}
 
       <h2>${esc(topic.title)}</h2>
 
@@ -2232,6 +2265,22 @@
       console.warn("HN Kennisbank admin-preview:", error);
     }
 
+    const topicQuery = db()
+      .from("topic")
+      .select(`
+          *,
+          countries(name),
+          cities(name),
+          categories(name),
+          subcategories(name)
+        `)
+      .neq("visibility", "fiche_only")
+      .order("updated_at", { ascending: false });
+
+    // Belangrijk: niet-gepubliceerde inhoud mag niet naar de browser van een bezoeker worden gestuurd.
+    // Alleen een admin-preview mag concepten ophalen; alle andere gebruikers krijgen alleen publicaties.
+    if (!canPreviewDrafts) topicQuery.eq("published", true);
+
     const [
       countriesResult,
       citiesResult,
@@ -2286,26 +2335,7 @@
         .order("sort_order")
         .order("name"),
 
-      db()
-        .from("topic")
-        .select(`
-          *,
-          countries(name),
-          cities(name),
-          categories(name),
-          subcategories(name)
-        `)
-        
-        .neq(
-          "visibility",
-          "fiche_only"
-        )
-        .order(
-          "updated_at",
-          {
-            ascending: false
-          }
-        )
+      topicQuery
 
     ]);
 
