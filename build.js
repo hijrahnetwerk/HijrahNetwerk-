@@ -111,7 +111,7 @@ for (const file of htmlFiles) {
   const isMemberSurface = memberSurfacePages.has(file);
 
   if (isMemberSurface && !html.includes('public-nav.css')) {
-    html = html.replace('</head>', publicNavStyleTag + '\\n</head>');
+    html = html.replace('</head>', publicNavStyleTag + '\n</head>');
   }
 
   // Keep every page usable on phones, including older pages without a viewport declaration.
