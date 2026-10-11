@@ -539,11 +539,19 @@ async function save(pub){
 async function persistOverrides(u){
   var existingRows=await db.from("hn_content_overrides").select("id,selector").eq("route",routeKey());
   if(existingRows.error)return existingRows;
-  var keep={};
+  // Eén selector mag per route maar één keer in een upsert-payload voorkomen.
+  // Bij dubbele selectors wint de laatste bewerkte waarde.
+  var uniqueBySelector={};
   for(var i=0;i<overrides.length;i++){
     var o=overrides[i];
-    keep[o.selector]=true;
-    var q=await db.from("hn_content_overrides").upsert({route:routeKey(),selector:o.selector,element_type:o.element_type||null,original_text:o.original_text||null,content_text:o.content_text||"",updated_by:u},{onConflict:"route,selector"});
+    if(!o||!o.selector)continue;
+    uniqueBySelector[o.selector]={route:routeKey(),selector:o.selector,element_type:o.element_type||null,original_text:o.original_text||null,content_text:o.content_text||"",updated_by:u};
+  }
+  var rows=Object.keys(uniqueBySelector).map(function(selector){return uniqueBySelector[selector];});
+  var keep={};
+  rows.forEach(function(row){keep[row.selector]=true;});
+  if(rows.length){
+    var q=await db.from("hn_content_overrides").upsert(rows,{onConflict:"route,selector"});
     if(q.error)return q;
   }
   for(var j=0;j<(existingRows.data||[]).length;j++)if(!keep[existingRows.data[j].selector]){
