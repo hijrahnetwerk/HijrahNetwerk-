@@ -1,5 +1,6 @@
 (function(){
   if(window.hnTranslateLoaded)return;
+  if(/^\/(admin|werkruimte)/i.test(location.pathname))return;   /* beheeromgeving: geen vertaling */
   window.hnTranslateLoaded=true;
 
   var SRC='nl';
@@ -92,7 +93,6 @@
       '<div class="hn-lang-menu" role="menu" aria-label="Taal" hidden><p class="hn-lang-title">Taal</p>'+
       LANGS.map(function(l){return '<button type="button" class="hn-lang-item" role="menuitemradio" aria-checked="false" data-lang="'+l.c+'" lang="'+l.c+'"><span class="n">'+l.n+'</span><span class="s">'+l.s+'</span>'+TICK+'</button>'}).join('')+
       '</div><div id="google_translate_element" aria-hidden="true"></div>';
-    document.body.appendChild(wrap);
     btn=wrap.querySelector('.hn-lang-btn');menu=wrap.querySelector('.hn-lang-menu');
     btn.addEventListener('click',function(){menu.hidden?open():close(true)});
     ['pointerenter','focus','touchstart'].forEach(function(ev){btn.addEventListener(ev,ensureScript,{once:true,passive:true})});
@@ -100,7 +100,39 @@
     wrap.addEventListener('keydown',onKey);
     document.addEventListener('click',function(e){if(!wrap.contains(e.target))close(false)});
     refresh();
+    wrap.classList.add('is-pending');            /* verborgen tot de plek bekend is (geen verspringende knop) */
+    document.body.appendChild(wrap);
+    place();
+    var mo=new MutationObserver(function(){
+      if(!wrap.isConnected)document.body.appendChild(wrap);      /* nav werd vervangen: knop even redden */
+      if(findHost())place();                                     /* (opnieuw) in de nav zetten */
+      else if(wrap.classList.contains('in-nav'))setMode('is-floating');
+    });
+    mo.observe(document.documentElement,{childList:true,subtree:true});
+    setTimeout(function(){if(wrap.classList.contains('is-pending'))settle()},1200);
+    setTimeout(function(){mo.disconnect();if(wrap.classList.contains('is-pending'))settle()},10000);
     if(cur!==SRC)ensureScript();   /* er is al een taal gekozen: vertaling meteen toepassen */
+  }
+  /* ---------- plek op de site: in de navigatiebalk, zwevend alleen als er geen balk is ---------- */
+  function setMode(m){wrap.classList.remove('is-pending','is-floating','in-nav');wrap.classList.add(m)}
+  function findHost(){
+    var inner=document.querySelector('#hnPublicNav .hn-nav-inner');
+    if(inner)return {el:inner,ref:inner.querySelector('.hn-actions')||inner.querySelector('.hn-menu')};
+    var own=document.querySelector('header.top .nav');
+    if(own)return {el:own,ref:null};
+    return null;
+  }
+  function place(){
+    var h=findHost();if(!h)return false;
+    if(wrap.parentNode!==h.el||(h.ref&&wrap.nextElementSibling!==h.ref)){
+      if(h.ref&&h.ref.parentNode===h.el)h.el.insertBefore(wrap,h.ref);else h.el.appendChild(wrap);
+    }
+    setMode('in-nav');return true;
+  }
+  function settle(){
+    if(place())return;
+    if(wrap.parentNode!==document.body)document.body.appendChild(wrap);
+    setMode('is-floating');
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount);else mount();
 })();
