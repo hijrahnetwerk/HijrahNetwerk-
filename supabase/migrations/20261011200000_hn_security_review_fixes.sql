@@ -185,4 +185,42 @@ as $function$
     and (select auth.uid()) is not null;
 $function$;
 
+
+-- Profielkolommen: geen tabelbrede SELECT/INSERT/UPDATE meer voor gewone leden.
+-- Adminnotities en gebruikte toegangscodes zijn uitsluitend via een beheer-RPC beschikbaar.
+revoke select, insert, update on table public.profiles from authenticated;
+grant select (
+  id, created_at, updated_at, first_name, last_name, whatsapp_number,
+  current_country_id, current_city_id, application_status, verification_status,
+  email, role, whatsapp_verified, approved_at, display_name, bio,
+  profile_visibility, show_location, show_contributions, show_status, hn_status, show_badges
+) on table public.profiles to authenticated;
+
+grant insert (
+  id, email, first_name, last_name, whatsapp_number, current_country_id,
+  current_city_id, display_name, bio, profile_visibility, show_location,
+  show_contributions, show_status, show_badges
+) on table public.profiles to authenticated;
+
+grant update (
+  first_name, last_name, whatsapp_number, current_country_id, current_city_id,
+  display_name, bio, profile_visibility, show_location, show_contributions,
+  show_status, show_badges
+) on table public.profiles to authenticated;
+
+create or replace function public.hn_admin_profiles()
+returns setof public.profiles
+language sql
+stable
+security definer
+set search_path = ''
+as $function$
+  select p.*
+  from public.profiles p
+  where (select private.is_admin());
+$function$;
+
+revoke all on function public.hn_admin_profiles() from public, anon;
+grant execute on function public.hn_admin_profiles() to authenticated;
+
 commit;
