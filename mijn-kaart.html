@@ -77,7 +77,7 @@ async function loadMap(){
  const userR=await db.auth.getUser();
  const user=userR.data?.user||null;
  if(user){
-   const personalR=await db.from('hn_personal_items').select('id,user_id,item_type,title,description,metadata,due_date,created_at,updated_at').eq('user_id',user.id).eq('item_type','place').order('created_at',{ascending:false});
+   const personalR=await db.from('hn_personal_items').select('id,user_id,item_type,title,description,data,due_date,created_at,updated_at').eq('user_id',user.id).eq('item_type','place').order('created_at',{ascending:false});
    if(!personalR.error){
      const personal=(personalR.data||[]).map(x=>({
        id:'personal-'+x.id,
