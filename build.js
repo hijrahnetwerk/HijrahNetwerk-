@@ -61,7 +61,7 @@ const faviconTag = '<link rel="icon" type="image/png" href="' + faviconPath + '"
   const memberSurfacePages = new Set(['dashboard.html','mijn-badges.html','mijn-kaart.html','profiel.html','bijdragen.html']);
   const publicNavStyleTag = '<link rel="stylesheet" href="/assets/public-nav.css?v=20261011-1">';
   const publicNavScriptTag = '<script src="/assets/public-nav.js?v=20261011-1" defer></script>';
-  const memberNavScriptTag = '<script src="/assets/hn-member-nav.js?v=20261011-1" defer></script>';
+  const memberNavScriptTag = '<script src="/assets/hn-member-nav.js?v=20261011-dashboard-nav1" defer></script>';
   const adminNavScriptTag = '<script src="/assets/hn-admin-nav.js?v=20261011-1" defer></script>';
 
 const htmlFiles = fs.readdirSync(__dirname).filter(name => name.endsWith('.html'));
