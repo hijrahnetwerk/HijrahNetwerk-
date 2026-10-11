@@ -2,6 +2,16 @@
   "buildCommand": "npm test && npm run build",
   "redirects": [
     {
+      "source": "/admin-paspoort",
+      "destination": "/admin-badges",
+      "permanent": true
+    },
+    {
+      "source": "/paspoort",
+      "destination": "/mijn-badges",
+      "permanent": true
+    },
+    {
       "source": "/paspoort.html",
       "destination": "/mijn-badges",
       "permanent": true
@@ -203,7 +213,7 @@
     },
     {
       "source": "/admin-paspoort.html",
-      "destination": "/admin-paspoort",
+      "destination": "/admin-badges",
       "permanent": true
     }
   ],
@@ -211,10 +221,6 @@
     {
       "source": "/over-hn",
       "destination": "/cms-page.html?slug=over-hn"
-    },
-    {
-      "source": "/paspoort",
-      "destination": "/mijn-badges.html"
     },
     {
       "source": "/admin-badges",
@@ -427,10 +433,6 @@
     {
       "source": "/stad",
       "destination": "/stad.html"
-    },
-    {
-      "source": "/admin-paspoort",
-      "destination": "/admin-paspoort.html"
     }
   ],
   "headers": [
