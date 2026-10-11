@@ -39,7 +39,7 @@ const globalResponsiveTag = '<link rel="stylesheet" href="/assets/hn-global-resp
 const globalRuntimeTag = '<script src="/assets/hn-global-runtime.js"></script>';
 const adminBarTag = '<script src="/assets/hn-admin-bar.js"></script>';
 const adminBarStyleTag = '<link rel="stylesheet" href="/assets/hn-admin-bar.css">';
-const footerTag = '<script src="/assets/hn-footer.js?v=20261011" defer></script>';
+const footerTag = '<script src="/assets/hn-footer.js?v=20261012" defer></script>';
 const pageEngineTag = '<script src="/assets/hn-page-engine.js"></script>';
 const visualEditorTag = '<script src="/assets/hn-visual-editor-runtime.js"></script>';
 const visualPolishStyleTag = '<link rel="stylesheet" href="/assets/hn-visual-polish.css">';
@@ -74,7 +74,7 @@ for (const file of htmlFiles) {
     }
   }
   html = html.replace(/assets\/public-nav\.(css|js)(?:\?[^"\']*)?/g, 'assets/public-nav.$1?v=20261007');
-  html = html.replace(/\/assets\/hn-footer\.js(?:\?[^"']*)?/g, '/assets/hn-footer.js?v=20261011');
+  html = html.replace(/\/assets\/hn-footer\.js(?:\?[^"']*)?/g, '/assets/hn-footer.js?v=20261012');
   html = html.replace(/<script src="\/assets\/private-preview\.js"><\/script>\s*/g, '');
 
   // Verwijder oude favicon-verwijzingen voordat de juiste HN-favicon opnieuw
