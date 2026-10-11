@@ -923,7 +923,8 @@ window.HN_STAPPENPLAN_VERSION='1';
     if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',()=>setTimeout(init,400),{once:true});
     else setTimeout(init,400);
     const observer=new MutationObserver(()=>{if(window.plan) init()});
-    observer.observe(document.body,{childList:true,subtree:true});
+    const target=document.body||document.documentElement;
+    if(target) observer.observe(target,{childList:true,subtree:true});
   }
 
   watch();
