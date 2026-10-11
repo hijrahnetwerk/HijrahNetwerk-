@@ -778,7 +778,9 @@ window.HN_STAPPENPLAN_VERSION='1';
   const observer=new MutationObserver(()=>{
     if(window.plan && document.getElementById('hnRelevancePanel')) load();
   });
-  observer.observe(document.body,{childList:true,subtree:true});
+  function observeRelevancePanel(){if(document.body)observer.observe(document.body,{childList:true,subtree:true});}
+  if(document.body) observeRelevancePanel();
+  else document.addEventListener("DOMContentLoaded",observeRelevancePanel,{once:true});
 
   setInterval(()=>{
     if(document.getElementById('hnRelevancePanel')) load();
