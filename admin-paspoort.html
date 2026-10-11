@@ -29,12 +29,13 @@ button:disabled{opacity:.5;cursor:not-allowed}
 <script src="/assets/config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="/supabase-client.js"></script>
+  <link rel="stylesheet" href="/assets/hn-passport-knowledge.css">
 </head>
 <body>
 <main class="wrap">
 <header class="top"><div><a href="/admin">← HN Beheer</a><h1>HN Paspoort beheren</h1><p class="small">Beheer toegangsregels, stempeldetails en controleer de auditlog.</p></div><div class="actions"><a class="button" href="/admin-beloningen">Stempels en leden</a><a class="button" href="/dashboard">Dashboard</a></div></header>
 <div id="msg" class="msg" role="status" aria-live="polite"></div>
-<div class="tabs" id="tabs"><button type="button" class="tab active" data-view="access">Toegang</button><button type="button" class="tab" data-view="details">Stempeldetails</button><button type="button" class="tab" data-view="audit">Auditlog</button></div>
+<div class="tabs" id="tabs"><button type="button" class="tab active" data-view="access">Toegang</button><button type="button" class="tab" data-view="details">Stempeldetails</button><button type="button" class="tab" data-view="contributions">Bijdragen beoordelen</button><button type="button" class="tab" data-view="audit">Auditlog</button></div>
 <section class="view active" id="view-access">
 <div class="panel"><h2>Toegangsregel</h2><p class="small">Gebruik een vaste sleutel, bijvoorbeeld <code>hijrah_navigatie</code>. Toegang wordt door de database bepaald; een verborgen knop is geen beveiliging.</p>
 <div class="grid"><div class="field"><label for="feature">Sleutel</label><input id="feature" maxlength="80" placeholder="hijrah_navigatie"></div><div class="field"><label for="ruleName">Naam</label><input id="ruleName" maxlength="160" placeholder="Hijrah Navigatie"></div><div class="field full"><label for="ruleDescription">Beschrijving</label><textarea id="ruleDescription" rows="2"></textarea></div><div class="field"><label><input id="ruleActive" type="checkbox" checked> Regel actief</label></div></div><div class="actions"><button class="primary" id="saveRule" type="button">Regel opslaan</button><button id="newRule" type="button">Nieuwe regel</button></div></div>
@@ -47,6 +48,14 @@ button:disabled{opacity:.5;cursor:not-allowed}
 <section class="view" id="view-details"><div class="panel"><h2>Betekenis en voorwaarden van stempels</h2><p class="small">De betekenis, de echte voorwaarde en het onderdeel dat de stempel ontgrendelt worden bij de stempel opgeslagen.</p>
 <div class="grid"><div class="field full"><label for="detailBadge">Stempel</label><select id="detailBadge"></select></div><div class="field full"><label for="meaning">Betekenis</label><textarea id="meaning" rows="3"></textarea></div><div class="field full"><label for="condition">Voorwaarde</label><textarea id="condition" rows="3"></textarea></div><div class="field full"><label for="unlock">Wat ontgrendelt deze stempel?</label><textarea id="unlock" rows="3"></textarea></div></div><div class="actions"><button class="primary" id="saveDetails" type="button">Stempeldetails opslaan</button></div></div></section>
 <section class="view" id="view-audit"><div class="panel"><h2>Auditlog</h2><p class="small">De nieuwste beheeracties eerst. De log bevat geen wachtwoorden of toegangstokens.</p><div class="actions"><button id="refreshAudit" type="button">Vernieuwen</button></div><div class="table-wrap"><table><thead><tr><th>Datum</th><th>Beheerder</th><th>Actie</th><th>Onderdeel</th><th>Details</th></tr></thead><tbody id="audit"><tr><td colspan="5">Laden…</td></tr></tbody></table></div></div></section>
+<section class="view" id="view-contributions">
+  <div class="panel">
+    <h2>Bijdragen beoordelen</h2>
+    <p class="small">Een inzending is nog geen goedgekeurde bijdrage. Controleer de inhoud, bron, context en privacy. Alleen na goedkeuring kan een stempel of toegang worden toegekend. Dezelfde inzending kan niet meerdere beloningssets opleveren.</p>
+    <div class="actions"><button id="refreshContributions" type="button">Vernieuwen</button></div>
+    <div id="contributionQueue"><p class="small">Open het tabblad om inzendingen te laden.</p></div>
+  </div>
+</section>
 </main>
 <script>
 (function(){
@@ -75,7 +84,74 @@ function renderRulesAndRoutes(){
 }
 function loadDetails(){const b=badges.find(x=>x.id===$('detailBadge').value)||badges[0];if(!b)return;$('meaning').value=b.meaning_text||'';$('condition').value=b.condition_text||'';$('unlock').value=b.unlock_text||''}
 async function loadAudit(){const {data,error}=await db().from('hn_admin_audit_log').select('id,admin_id,action,entity_type,entity_id,details,created_at').order('created_at',{ascending:false}).limit(100);if(error)throw error;$('audit').innerHTML=(data||[]).map(x=>'<tr><td>'+esc(new Date(x.created_at).toLocaleString('nl-NL'))+'</td><td>'+esc(x.admin_id||'—')+'</td><td>'+esc(x.action)+'</td><td>'+esc(x.entity_type||'—')+'<div class="small">'+esc(x.entity_id||'')+'</div></td><td><code>'+esc(JSON.stringify(x.details||{}))+'</code></td></tr>').join('')||'<tr><td colspan="5">Nog geen beheeracties vastgelegd.</td></tr>'}
-$('tabs').addEventListener('click',e=>{const b=e.target.closest('[data-view]');if(!b)return;document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===b));document.querySelectorAll('.view').forEach(x=>x.classList.toggle('active',x.id==='view-'+b.dataset.view));if(b.dataset.view==='audit')loadAudit().catch(fail)});
+async function loadContributions(){
+ const box=$('contributionQueue');
+ box.innerHTML='<p class="small">Inzendingen laden…</p>';
+ const r=await db().from('submissions')
+   .select('id,title,submission_type,content,country_name,city_name,source_url,submitted_by,created_at,status,admin_notes,details')
+   .in('status',['pending','in_review','needs_changes'])
+   .order('created_at',{ascending:false})
+   .limit(100);
+ if(r.error)throw r.error;
+ const rows=r.data||[];
+ if(!rows.length){box.innerHTML='<div class="empty">Er staan geen inzendingen klaar voor beoordeling.</div>';return}
+ const badgeOptions='<option value="">Geen stempel toekennen</option>'+badges.filter(b=>b.active).map(b=>'<option value="'+esc(b.slug)+'">'+esc(b.name)+'</option>').join('');
+ const featureOptions='<option value="">Geen extra toegang</option>'+rules.filter(x=>x.active).map(x=>'<option value="'+esc(x.feature_key)+'">'+esc(x.name)+' ('+esc(x.feature_key)+')</option>').join('');
+ box.innerHTML=rows.map(x=>{
+   const place=[x.city_name,x.country_name].filter(Boolean).map(esc).join(', ');
+   const source=x.source_url?'<p class="hn-admin-note"><b>Bronlink:</b> '+esc(x.source_url)+'</p>':'<p class="hn-admin-note">Geen bronlink toegevoegd.</p>';
+   const details=x.details&&typeof x.details==='object'?JSON.stringify(x.details,null,2):'';
+   return '<article class="contribution-card" data-submission="'+esc(x.id)+'">'+
+     '<div class="small">'+esc(x.submission_type||'Inzending')+' · '+esc(x.status||'pending')+' · '+esc(new Date(x.created_at).toLocaleString('nl-NL'))+'</div>'+
+     '<h3>'+esc(x.title||'Zonder titel')+'</h3>'+
+     (place?'<p class="small">'+place+'</p>':'')+
+     '<div class="submission-content">'+esc(x.content||'Geen inhoud toegevoegd.')+'</div>'+
+     source+
+     (details?'<details><summary>Extra velden bekijken</summary><pre class="submission-content">'+esc(details)+'</pre></details>':'')+
+     '<div class="review-fields">'+
+       '<label>Stempel (optioneel)<select data-review-badge>'+badgeOptions+'</select></label>'+
+       '<label>Toegang (optioneel)<select data-review-feature>'+featureOptions+'</select></label>'+
+     '</div>'+
+     '<label style="display:block;margin-top:12px">Interne notitie / feedback<textarea data-review-notes maxlength="4000" placeholder="Waarom goedgekeurd, wat aangepast moet worden of waarom afgewezen…">'+esc(x.admin_notes||'')+'</textarea></label>'+
+     '<p class="hn-admin-note">Stempel en toegang worden alleen verwerkt bij goedkeuring. De inzender ziet deze interne notitie niet automatisch; gebruik haar niet voor gevoelige persoonsgegevens.</p>'+
+     '<div class="review-actions">'+
+       '<button type="button" data-review-status="in_review">In beoordeling</button>'+
+       '<button type="button" data-review-status="needs_changes">Aanpassing nodig</button>'+
+       '<button type="button" data-review-status="rejected">Afwijzen</button>'+
+       '<button type="button" data-review-status="approved">Goedkeuren</button>'+
+     '</div></article>';
+ }).join('');
+}
+async function reviewContribution(card,status){
+ const submissionId=card?.dataset.submission;
+ if(!submissionId)return;
+ const badge=card.querySelector('[data-review-badge]')?.value||null;
+ const feature=card.querySelector('[data-review-feature]')?.value||null;
+ const notes=card.querySelector('[data-review-notes]')?.value||null;
+ if(status==='approved'&&(badge||feature)&&!confirm('Na goedkeuring wordt de geselecteerde stempel en/of toegang toegekend. Doorgaan?'))return;
+ const buttons=[...card.querySelectorAll('button[data-review-status]')];
+ buttons.forEach(b=>b.disabled=true);
+ try{
+   const r=await db().rpc('hn_admin_review_contribution',{
+     p_submission_id:submissionId,
+     p_status:status,
+     p_admin_notes:notes,
+     p_badge_slug:status==='approved'?badge:null,
+     p_feature_key:status==='approved'?feature:null
+   });
+   if(r.error)throw r.error;
+   message(status==='approved'?'Inzending goedgekeurd. Eventuele beloning is verwerkt.':'Beoordeling opgeslagen: '+status.replace('_',' ')+'.');
+   await loadContributions();
+   if(document.querySelector('.tab.active')?.dataset.view==='audit')await loadAudit();
+ }catch(e){buttons.forEach(b=>b.disabled=false);fail(e)}
+}
+$('contributionQueue').addEventListener('click',e=>{
+ const b=e.target.closest('[data-review-status]');
+ if(!b)return;
+ reviewContribution(b.closest('[data-submission]'),b.dataset.reviewStatus).catch(fail);
+});
+$('refreshContributions').onclick=()=>loadContributions().catch(fail);
+$('tabs').addEventListener('click',e=>{const b=e.target.closest('[data-view]');if(!b)return;document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===b));document.querySelectorAll('.view').forEach(x=>x.classList.toggle('active',x.id==='view-'+b.dataset.view));if(b.dataset.view==='audit')loadAudit().catch(fail);if(b.dataset.view==='contributions')loadContributions().catch(fail)});
 $('newRule').onclick=resetRule;$('newRoute').onclick=resetRoute;$('routeType').onchange=syncType;$('detailBadge').onchange=loadDetails;$('refreshAudit').onclick=()=>loadAudit().catch(fail);
 $('saveRule').onclick=async()=>{try{const key=$('feature').value.trim().toLowerCase(),name=$('ruleName').value.trim();if(!key||!name)throw new Error('Vul een sleutel en naam in.');const {error}=await db().rpc('hn_admin_save_access_rule',{p_feature_key:key,p_name:name,p_description:$('ruleDescription').value,p_active:$('ruleActive').checked});if(error)throw error;message('Toegangsregel opgeslagen.');await loadAll();$('routeFeature').value=key;$('grantFeature').value=key;resetRule()}catch(e){fail(e)}};
 $('saveRoute').onclick=async()=>{try{const key=$('routeFeature').value;if(!key)throw new Error('Maak eerst een toegangsregel aan.');const {error}=await db().rpc('hn_admin_save_access_route',{p_feature_key:key,p_route_id:editingRoute,p_route_type:$('routeType').value,p_badge_slug:$('routeType').value==='badge'?$('routeBadge').value:null,p_label:$('routeLabel').value.trim(),p_active:$('routeActive').checked,p_sort_order:Number($('routeSort').value)||0});if(error)throw error;message('Ontgrendelroute opgeslagen.');await loadAll();resetRoute()}catch(e){fail(e)}};
