@@ -44,6 +44,8 @@ const visualEditorTag = '<script src="/assets/hn-visual-editor-runtime.js"></scr
 const visualPolishStyleTag = '<link rel="stylesheet" href="/assets/hn-visual-polish.css">';
 const motionTag = '<script src="/assets/hn-motion.js"></script>';
 const copyProtectionTag = '<script src="/copy-protection.js"></script>';
+const supabaseUmdUrl = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3/dist/umd/supabase.js';
+const supabaseBootstrapPages = new Set(['integratie.html','orientatie.html','vertrek.html','voorbereiding.html','orientatietest.html']);
 
 // Altijd het echte HN-kleurenlogo gebruiken als favicon. De versieparameter
 // voorkomt dat browsers een oude favicon uit cache blijven tonen.
@@ -112,7 +114,17 @@ for (const file of htmlFiles) {
   if (!html.includes('/assets/hn-safe-url.js')) {
     html = html.replace('</head>', '<script src="/assets/hn-safe-url.js"></script>\n</head>');
   }
-  html = html.replaceAll('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2', 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3');
+  html = html.replace(/https:\/\/cdn\.jsdelivr\.net\/npm\/@supabase\/supabase-js@2(?:\.\d+\.\d+)*(?:\/dist\/umd\/supabase\.js)?/g, supabaseUmdUrl);
+
+  if (supabaseBootstrapPages.has(file)) {
+    const hasSupabaseClientScript = /<script\b[^>]*\bsrc=["'][^"']*supabase-client\.js(?:\?[^"']*)?["'][^>]*>/i.test(html);
+    const hasSupabaseLibraryScript = /<script\b[^>]*\bsrc=["'][^"']*@supabase\/supabase-js/i.test(html);
+    if (!hasSupabaseClientScript) {
+      html = html.replace('</head>', '<script src="/assets/config.js"></script>\n<script src="' + supabaseUmdUrl + '"></script>\n<script src="/supabase-client.js"></script>\n</head>');
+    } else if (!hasSupabaseLibraryScript) {
+      html = html.replace('</head>', '<script src="' + supabaseUmdUrl + '"></script>\n</head>');
+    }
+  }
 
   const canonicalRoutes = {
     'index.html':'/', 'landen.html':'/landen', 'navigatie.html':'/navigatie',

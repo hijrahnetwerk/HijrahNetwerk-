@@ -47,8 +47,11 @@ window.hnSupabaseReady = new Promise((resolve, reject) => {
     document.head.appendChild(script);
   };
   const primary = document.createElement('script');
-  primary.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3';
-  primary.onload = loadClient;
+  primary.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3/dist/umd/supabase.js';
+  primary.onload = () => {
+    if (window.supabase && typeof window.supabase.createClient === 'function') loadClient();
+    else fallback();
+  };
   primary.onerror = fallback;
   document.head.appendChild(primary);
 });
