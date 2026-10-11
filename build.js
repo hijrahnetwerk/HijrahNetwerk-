@@ -41,8 +41,8 @@ const globalRuntimeTag = '<script src="/assets/hn-global-runtime.js"></script>';
 const adminBarTag = '<script src="/assets/hn-admin-bar.js?v=20261013"></script>';
 const adminBarStyleTag = '<link rel="stylesheet" href="/assets/hn-admin-bar.css?v=20261013">';
 const footerTag = '<script src="/assets/hn-footer.js?v=20261013" defer></script>';
-const backToTopStyleTag = '<link rel="stylesheet" href="/assets/hn-back-to-top.css?v=20261011">';
-const backToTopTag = '<script src="/assets/hn-back-to-top.js?v=20261011" defer></script>';
+const backToTopStyleTag = '<link rel="stylesheet" href="/assets/hn-back-to-top.css?v=20261014">';
+const backToTopTag = '<script src="/assets/hn-back-to-top.js?v=20261014" defer></script>';
 const pageEngineTag = '<script src="/assets/hn-page-engine.js"></script>';
 const visualEditorTag = '<script src="/assets/hn-visual-editor-runtime.js"></script>';
 const visualPolishStyleTag = '<link rel="stylesheet" href="/assets/hn-visual-polish.css">';
@@ -107,7 +107,7 @@ for (const file of htmlFiles) {
 
   const isAdminSurface = file.startsWith('admin') || file.startsWith('werkruimte');
 
-  if (!isAdminSurface && !html.includes('/assets/hn-back-to-top.css?v=20261011')) {
+  if (!isAdminSurface && !html.includes('/assets/hn-back-to-top.css?v=20261014')) {
     html = html.replace('</head>', backToTopStyleTag + '\n</head>');
   }
 
@@ -127,7 +127,7 @@ for (const file of htmlFiles) {
     !html.includes(motionTag) ? motionTag : '',
     !html.includes(copyProtectionTag) && !isAdminSurface ? copyProtectionTag : '',
     !html.includes('/assets/hn-footer.js') && !isAdminSurface && !['login.html','register.html','reset-password.html','update-password.html','dashboard.html','paspoort.html','mijn-kaart.html'].includes(file) ? footerTag : '',
-    !isAdminSurface && !['login.html','register.html','reset-password.html','update-password.html','dashboard.html','paspoort.html','mijn-kaart.html'].includes(file) && !html.includes('/assets/hn-back-to-top.js?v=20261011') ? backToTopTag : ''
+    !isAdminSurface && !['login.html','register.html','reset-password.html','update-password.html','mijn-kaart.html'].includes(file) && !html.includes('/assets/hn-back-to-top.js?v=20261014') ? backToTopTag : ''
   ].filter(Boolean).join('\n') + '\n';
 
   if (!html.includes('/assets/hn-safe-url.js')) {
