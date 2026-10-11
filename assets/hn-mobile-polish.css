@@ -33,7 +33,7 @@ button, [role="button"], input[type="button"], input[type="submit"], input[type=
 :where(main, section, article, aside, header, footer, nav, form, fieldset) { min-width: 0; max-width: 100%; }
 :where(h1,h2,h3,h4,h5,h6,p,li,label,legend,summary,td,th) { overflow-wrap: anywhere; }
 :where(.container, .wrap, .hn-wrap, .content, .page-container, .page-content, .main-content) {
-  width: min(100% - (var(--hn-mobile-gutter) * 2), 1180px);
+  width: min(1180px, calc(100% - var(--hn-mobile-gutter) - var(--hn-mobile-gutter)));
   margin-inline: auto;
 }
 :where(.grid, .cards, .card-grid, .results-grid, .directory-grid, .cities-grid, .topics-grid, .feature-grid, .tools-grid, .country-grid, .city-grid, .stats-grid, .admin-stats, .dashboard-grid, .admin-grid, .form-grid, .fields-grid) {
