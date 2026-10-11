@@ -3,7 +3,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex,nofollow">
 <title>Mijn Badges — Hijrah Netwerk</title>
-<meta name="description" content="Jouw persoonlijke voortgang, stempels en ontgrendelde onderdelen binnen Hijrah Netwerk.">
+<meta name="description" content="Jouw persoonlijke voortgang, badges en ontgrendelde onderdelen binnen Hijrah Netwerk.">
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="stylesheet" href="/assets/hn-design.css">
 <style>
@@ -114,21 +114,21 @@ dialog::backdrop{background:rgba(60,38,18,.55)}
 <span class="pill">✦ Mijn Badges</span>
 <h1>Jouw reis, <span class="acc">badge voor badge.</span></h1>
 <p>Zie wat je al hebt gedaan, ontdek wat er nog komt en ontgrendel onderdelen door op jouw manier bij te dragen aan het netwerk.</p>
-<div class="stats"><div class="stat"><b id="s1">—</b><span>Stempels behaald</span></div><div class="stat"><b id="s2">—</b><span>Nog te behalen</span></div><div class="stat"><b id="s3">—</b><span>Ontgrendeld</span></div></div>
-<div class="cta"><a class="btn" href="#stempels">Bekijk mijn stempels ↓</a><a class="btn sec" href="/bijdragen?type=experience">Deel jouw ervaring</a></div>
+<div class="stats"><div class="stat"><b id="s1">—</b><span>Badges behaald</span></div><div class="stat"><b id="s2">—</b><span>Nog te behalen</span></div><div class="stat"><b id="s3">—</b><span>Ontgrendeld</span></div></div>
+<div class="cta"><a class="btn" href="#badges">Bekijk mijn badges ↓</a><a class="btn sec" href="/bijdragen?type=experience">Deel jouw ervaring</a></div>
 </div></section>
 <main class="wrap"><div id="msg" class="msg" style="display:none" role="status" aria-live="polite"></div>
 <div class="pk rv"><div class="crest">HN</div><div><div class="small" style="font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold)">Mijn Hijrah Netwerk Badges</div><h2 id="pn">—</h2>
 <dl><div><dt>Lidcode</dt><dd id="pnr">—</dd></div><div><dt>Lid sinds</dt><dd id="ps">—</dd></div><div><dt>Status</dt><dd id="pt">—</dd></div></dl></div><div class="mrz" id="mrz"></div></div>
-<section class="sec" id="paspoort"><h2 class="rv">Mijn paspoort</h2><p class="sub rv">Je stempels staan per fase op de pagina's van je paspoort. Behaalde stempels zijn ingekleurd, de rest wacht nog op jou. Tik op een stempel voor de details.</p><div class="route rv" id="route"></div><div class="bk" id="book"><div class="empty">Paspoort laden…</div></div></section>
-<section class="sec" id="volgende"><h2 class="rv">Mogelijke volgende stappen</h2><p class="sub rv">Geen verplichting, en iedereen heeft een eigen tempo. Dit zijn de stempels die voor jou het dichtst bij liggen.</p><div class="nx" id="nx"></div></section>
-<section class="sec" id="stempels"><h2 class="rv">Alle stempels</h2><p class="sub rv">Zoek en filter in de volledige lijst. Tik op een stempel om te zien wat erachter zit en wat hij ontgrendelt.</p>
+<section class="sec" id="paspoort"><h2 class="rv">Mijn paspoort</h2><p class="sub rv">Je badges staan per fase op de pagina's van je paspoort. Behaalde badges zijn ingekleurd, de rest wacht nog op jou. Tik op een badge voor de details.</p><div class="route rv" id="route"></div><div class="bk" id="book"><div class="empty">Paspoort laden…</div></div></section>
+<section class="sec" id="volgende"><h2 class="rv">Mogelijke volgende stappen</h2><p class="sub rv">Geen verplichting, en iedereen heeft een eigen tempo. Dit zijn de badges die voor jou het dichtst bij liggen.</p><div class="nx" id="nx"></div></section>
+<section class="sec" id="badges"><h2 class="rv">Alle badges</h2><p class="sub rv">Zoek en filter in de volledige lijst. Tik op een badge om te zien wat erachter zit en wat hij ontgrendelt.</p>
 <div class="bar rv"><div class="pills" id="pills"><button class="pl on" data-f="all" type="button">Alles</button><button class="pl" data-f="on" type="button">Behaald</button><button class="pl" data-f="off" type="button">Nog te behalen</button></div>
-<select id="cat" aria-label="Fase"><option value="">Alle fases</option></select><input type="search" id="q" placeholder="⌕  Zoek een stempel" aria-label="Zoek een stempel"></div>
+<select id="cat" aria-label="Fase"><option value="">Alle fases</option></select><input type="search" id="q" placeholder="⌕  Zoek een badge" aria-label="Zoek een badge"></div>
 <div class="grid" id="grid"><div class="empty">Badges laden…</div></div></section>
-<section class="sec" id="ontgrendelen"><h2 class="rv">Ontgrendelen</h2><p class="sub rv">Een stempel opent echte toegang. De server bepaalt of je toegang hebt.</p><div id="ac"></div></section>
+<section class="sec" id="ontgrendelen"><h2 class="rv">Ontgrendelen</h2><p class="sub rv">Een badge opent echte toegang. De server bepaalt of je toegang hebt.</p><div id="ac"></div></section>
 <div class="band rv"><h2>Elke bijdrage telt.</h2><p>Deel een ervaring, schrijf een review of vul informatie aan. Zo help je anderen en ontgrendel je nieuwe onderdelen.</p><a class="btn" href="/bijdragen?type=experience">Naar bijdragen</a></div>
-<div class="priv rv"><span>Stempels tonen op mijn gedeelde profiel: <b id="vis">—</b></span><button class="btn dk" id="vOn" type="button">Aan</button><button class="btn dk" id="vOff" type="button">Uit</button><span>Deze badges zijn alleen voor jou zichtbaar. Antwoorden uit Mijn Hijrah blijven altijd privé.</span></div>
+<div class="priv rv"><span>Badges tonen op mijn gedeelde profiel: <b id="vis">—</b></span><button class="btn dk" id="vOn" type="button">Aan</button><button class="btn dk" id="vOff" type="button">Uit</button><span>Badges verschijnen op je gedeelde profiel als je ze aanzet. Antwoorden uit Mijn Hijrah blijven altijd privé.</span></div>
 <p class="nt">Het HN Paspoort is geen officieel reisdocument. Je voortgang is gebaseerd op acties die echt op het platform zijn geregistreerd.</p>
 </main><dialog id="dlg"><div class="dh"></div><div class="db" id="dbody"></div><div style="padding:0 24px 22px;text-align:right"><button class="btn dk" id="dclose" type="button">Sluiten</button></div></dialog>
 <script src="/config.js"></script><script src="/assets/config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/supabase-client.js"></script>
@@ -145,9 +145,9 @@ async function load(){
  try{
   var s=await sb.auth.getSession();if(!s.data||!s.data.session){location.href='/login?next=/mijn-badges';return}U=s.data.session.user;
   var r=await Promise.all([sb.from('hn_badges').select('*').eq('active',true).order('sort_order'),sb.from('hn_user_badges').select('badge_id,earned_at').eq('user_id',U.id),sb.from('profiles').select('display_name,first_name,created_at,hn_status,show_badges,profile_visibility').eq('id',U.id).maybeSingle(),sb.rpc('hn_my_access'),sb.from('hn_statuses').select('slug,name').eq('active',true)]);
-  if(r[0].error){show('De stempels konden niet worden geladen. Probeer het later opnieuw.');return}
+  if(r[0].error){show('De badges konden niet worden geladen. Probeer het later opnieuw.');return}
   B=r[0].data||[];(r[1].data||[]).forEach(function(x){E[x.badge_id]=x.earned_at});P=r[2].data||{};var A=Array.isArray(r[3].data)?r[3].data:[],statusRows=r[4].data||[],statusName=(statusRows.find(function(x){return x.slug===P.hn_status})||{}).name||'Lid';
-  if(r[3].error)show('Je stempels zijn geladen, maar de toegangsstatus kon niet worden opgehaald.');
+  if(r[3].error)show('Je badges zijn geladen, maar de toegangsstatus kon niet worden opgehaald.');
   var cats=[];B.forEach(function(b){if(b.category&&cats.indexOf(b.category)<0)cats.push(b.category)});CT=cats;$('cat').innerHTML='<option value="">Alle fases</option>'+cats.map(function(c){return '<option value="'+esc(c)+'">'+esc(c)+'</option>'}).join('');
   var n=B.filter(function(b){return !!E[b.id]}).length,un=A.filter(function(x){return x.unlocked}).length;
   cnt($('s1'),n);cnt($('s2'),B.length-n);cnt($('s3'),un);
@@ -179,7 +179,7 @@ function glyph(k){
  return '<path d="M0 -13l13 13-13 13-13-13z"/>'}
 function stamp(b,on){var id=++SID,ring=on?'#9B7735':'#674C2E',acc=on?'#DD842A':'#674C2E',rot=(hsh(b.slug||b.name||'')%11)-5,
  nm=String(b.name||'').toUpperCase().slice(0,22),ct=('HN · '+(b.category||'')).toUpperCase().slice(0,22),no=/^\d{1,2}$/.test(String(b.icon||''))?b.icon:String(b.sort_order||'');
- return '<svg viewBox="0 0 120 120" role="img" aria-label="Stempel '+esc(b.name)+'"><g transform="rotate('+rot+' 60 60)">'
+ return '<svg viewBox="0 0 120 120" role="img" aria-label="Badge '+esc(b.name)+'"><g transform="rotate('+rot+' 60 60)">'
  +'<circle cx="60" cy="60" r="56" fill="'+(on?'rgba(198,161,91,.18)':'none')+'" stroke="'+ring+'" stroke-width="3"'+(on?'':' stroke-dasharray="5 4"')+'/>'
  +'<circle cx="60" cy="60" r="38" fill="none" stroke="'+ring+'" stroke-width="1.2"/>'
  +'<path id="sa'+id+'" d="M15,60 A45,45 0 0 1 105,60" fill="none"/><path id="sz'+id+'" d="M9,60 A51,51 0 0 0 111,60" fill="none"/>'
@@ -190,8 +190,8 @@ function stamp(b,on){var id=++SID,ring=on?'#9B7735':'#674C2E',acc=on?'#DD842A':'
 function stampBtn(b,j){var on=!!E[b.id];return '<button type="button" class="stp '+(on?'on':'off')+'" data-id="'+esc(b.id)+'" style="--k:'+j+'" aria-label="'+esc(b.name)+' — '+(on?'behaald':'nog niet behaald')+'">'+stamp(b,on)+'<span class="cap">'+esc(b.name)+'</span><span class="when">'+(on?'Behaald':'Nog te behalen')+'</span></button>'}
 function groups(){var g=CT.map(function(c){return{n:c,items:B.filter(function(b){return b.category===c})}}),r=B.filter(function(b){return !b.category});if(r.length)g.push({n:'overig',items:r});return g}
 function book(){var h='';groups().forEach(function(x,i){var d=x.items.filter(function(b){return !!E[b.id]}).length;
- h+='<article class="pg rv"><div class="pgh"><span>Fase '+(ROM[i]||(i+1))+'</span><b>'+esc(cap(x.n))+'</b></div><div class="stg">'+x.items.map(stampBtn).join('')+'</div><div class="pgf"><span>'+d+' van '+x.items.length+' stempels</span><span>HN · '+(i+1)+'</span></div></article>'});
- $('book').innerHTML=h||'<div class="empty">Er zijn nog geen stempels ingesteld.</div>'}
+ h+='<article class="pg rv"><div class="pgh"><span>Fase '+(ROM[i]||(i+1))+'</span><b>'+esc(cap(x.n))+'</b></div><div class="stg">'+x.items.map(stampBtn).join('')+'</div><div class="pgf"><span>'+d+' van '+x.items.length+' badges</span><span>HN · '+(i+1)+'</span></div></article>'});
+ $('book').innerHTML=h||'<div class="empty">Er zijn nog geen badges ingesteld.</div>'}
 function route(){var g=groups(),n=g.length,el=$('route');if(!n){el.innerHTML='';return}
  var W=600,H=120,xs=[],ys=[],i,far=-1;
  for(i=0;i<n;i++){xs.push(n===1?W/2:40+i*(W-80)/(n-1));ys.push(n===1?60:78-36*Math.sin(Math.PI*i/(n-1)))}
@@ -213,14 +213,14 @@ async function progress(){try{var h={count:'exact',head:true},u=U.id;
  PR={progress_completed:r[0],topic_submitted:r[1],experience_shared:r[2],review_shared:r[3],fiche_contribution:r[4],plan_started:r[5],circle_stage:(r[6]&&r[6].data&&Array.isArray(r[6].data.completed_stages))?r[6].data.completed_stages.length:(r[6]&&!r[6].error?0:null)}}catch(e){PR={}}}
 function steps(){var el=$('nx'),L=[];groups().forEach(function(x){x.items.forEach(function(b){if(!E[b.id])L.push(b)})});
  var a=L.filter(function(b){return !b.manual_only}).slice(0,3);
- if(!L.length){el.innerHTML='<div class="empty">Je hebt alle stempels behaald. Nieuwe stempels verschijnen hier zodra het HN-team ze toevoegt.</div>';return}
- if(!a.length){el.innerHTML='<div class="empty">De overige stempels worden door het HN-team toegekend.</div>';return}
+ if(!L.length){el.innerHTML='<div class="empty">Je hebt alle badges behaald. Nieuwe badges verschijnen hier zodra het HN-team ze toevoegt.</div>';return}
+ if(!a.length){el.innerHTML='<div class="empty">De overige badges worden door het HN-team toegekend.</div>';return}
  el.innerHTML=a.map(function(b){var l=LINKS[b.trigger_key],v=PR[b.trigger_key],t=Math.max(b.threshold||1,1);
   return '<div class="nxc"><span style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold-d)">'+esc(cap(b.category||''))+'</span><h3>'+esc(b.name)+'</h3><p>'+esc(b.condition_text||b.description||'')+'</p>'+(typeof v==='number'?'<div class="pr">Voortgang: '+Math.min(v,t)+' van '+t+'</div>':'')+(l?'<a class="btn dk" href="'+esc(l[0])+'">'+esc(l[1])+'</a>':'')+'</div>'}).join('')}
 function grid(){
  var c=$('cat').value,q=$('q').value.trim().toLowerCase();
  var list=B.filter(function(b){var on=!!E[b.id];return(F==='all'||(F==='on')===on)&&(!c||b.category===c)&&(!q||((b.name||'')+' '+(b.description||'')+' '+(b.meaning_text||'')).toLowerCase().indexOf(q)>-1)});
- $('grid').innerHTML=list.map(function(b,j){var on=!!E[b.id];return '<button type="button" class="sc '+(on?'on':'off')+(b.category&&b.category.toLowerCase()==='bijdragen'?' g':'')+(first&&on?' rise':'')+'" style="--k:'+j+'" data-id="'+esc(b.id)+'"><span class="seal">'+esc(code(b))+'</span><span><span class="t">'+esc(b.category||'')+'</span><span class="stamp-title">'+esc(b.name)+'</span><span class="stamp-description">'+esc(b.description||b.meaning_text||'')+'</span><span class="st">'+(on?'Behaald':'Nog te behalen')+'</span></span></button>'}).join('')||'<div class="empty">Geen stempels gevonden voor deze keuze.</div>';
+ $('grid').innerHTML=list.map(function(b,j){var on=!!E[b.id];return '<button type="button" class="sc '+(on?'on':'off')+(b.category&&b.category.toLowerCase()==='bijdragen'?' g':'')+(first&&on?' rise':'')+'" style="--k:'+j+'" data-id="'+esc(b.id)+'"><span class="seal">'+esc(code(b))+'</span><span><span class="t">'+esc(b.category||'')+'</span><span class="stamp-title">'+esc(b.name)+'</span><span class="stamp-description">'+esc(b.description||b.meaning_text||'')+'</span><span class="st">'+(on?'Behaald':'Nog te behalen')+'</span></span></button>'}).join('')||'<div class="empty">Geen badges gevonden voor deze keuze.</div>';
  first=false;
 }
 $('pills').onclick=function(e){var b=e.target.closest('.pl');if(!b)return;document.querySelectorAll('.pl').forEach(function(x){x.classList.remove('on')});b.classList.add('on');F=b.dataset.f;grid()};
@@ -228,7 +228,7 @@ $('cat').onchange=grid;$('q').oninput=grid;
 function openStamp(id){var b=B.find(function(x){return x.id===id});if(!b)return;var on=!!E[id],l=LINKS[b.trigger_key],v=PR[b.trigger_key],t=Math.max(b.threshold||1,1);
  var h='<span class="st">'+(on?'Behaald':'Nog te behalen')+'</span><h3>'+esc(b.name)+'</h3><b>Betekenis</b><br>'+esc(b.meaning_text||b.description||'—')+'<br><br><b>Voorwaarde</b><br>'+esc(b.condition_text||'—')+'<br><br><b>Ontgrendelt</b><br>'+esc(b.unlock_text||'—');
  if(on)h+='<br><br><b>Behaald op</b><br>'+new Date(E[id]).toLocaleDateString('nl-NL');
- else if(b.manual_only)h+='<br><br><i>Deze stempel wordt door het HN-team toegekend.</i>';
+ else if(b.manual_only)h+='<br><br><i>Deze badge wordt door het HN-team toegekend.</i>';
  else{if(typeof v==='number')h+='<br><br><b>Voortgang</b><br>'+Math.min(v,t)+' van '+t;if(l)h+='<br><br><a class="btn dk" href="'+esc(l[0])+'">'+esc(l[1])+'</a>'}
  $('dbody').innerHTML=h;if(typeof $('dlg').showModal==='function')$('dlg').showModal();else $('dlg').setAttribute('open','')}
 $('grid').onclick=function(e){var c=e.target.closest('.sc');if(c)openStamp(c.dataset.id)};
