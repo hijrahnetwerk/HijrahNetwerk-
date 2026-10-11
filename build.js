@@ -96,7 +96,7 @@ for (const file of htmlFiles) {
   const isAdminSurface = file.startsWith('admin') || file.startsWith('werkruimte');
 
   const additions = [
-    !html.includes(pageEngineTag) && !file.startsWith('admin') && !file.startsWith('login') && !file.startsWith('register') && !file.startsWith('reset-password') && !file.startsWith('update-password') && !file.startsWith('dashboard') && !file.startsWith('werkruimte') ? pageEngineTag : '',
+    !html.includes(pageEngineTag) && file !== 'cms-page.html' && !file.startsWith('admin') && !file.startsWith('login') && !file.startsWith('register') && !file.startsWith('reset-password') && !file.startsWith('update-password') && !file.startsWith('dashboard') && !file.startsWith('werkruimte') ? pageEngineTag : '',
     !html.includes(visualEditorTag) && !file.startsWith('admin') && !file.startsWith('login') && !file.startsWith('register') && !file.startsWith('reset-password') && !file.startsWith('update-password') && !file.startsWith('dashboard') && !file.startsWith('werkruimte') ? visualEditorTag : '',
     !html.includes(translateTag) ? translateTag : '',
     !html.includes(translateStyleTag) ? translateStyleTag : '',

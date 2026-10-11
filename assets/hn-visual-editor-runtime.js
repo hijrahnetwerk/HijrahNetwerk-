@@ -17,7 +17,7 @@ function applyStableIds(doc,settings){
   });
 }
 function applyText(row){try{var el=document.querySelector(row.selector);if(el&&row.content_text!=null)el.textContent=row.content_text}catch(e){console.warn('HN visual override selector:',e)}}
-async function run(){
+async function run(){if(window.parent!==window&&new URLSearchParams(location.search).get('hn_builder_preview')==='1')return;
   var sup=db();if(!sup)return;
   var route=path(),settings=null;
   try{var pages=await sup.from('hn_site_pages').select('slug,settings').eq('status','published');if(!pages.error)(pages.data||[]).some(function(p){if(routeForSlug(p.slug)===route){settings=p.settings||{};return true}return false})}catch(e){console.warn('HN stable component mapping:',e)}
