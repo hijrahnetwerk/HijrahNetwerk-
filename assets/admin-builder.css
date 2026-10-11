@@ -65,3 +65,18 @@
 .builder.focus-mode .liveFrameWrap{width:100%;margin:0}
 .builder.focus-mode .liveFrameWrap iframe{width:100%;height:calc(100vh - 127px);min-height:calc(100vh - 127px)}
 @media(max-width:1050px){.builder-layout{grid-template-columns:180px minmax(0,1fr)}}
+
+
+/* Open the selected page in a genuinely full-width preview workspace. */
+.builder.focus-mode .page-panel,
+.builder.focus-mode .inspector{display:none!important}
+.builder.focus-mode .builder-layout{display:grid;grid-template-columns:minmax(0,1fr)!important;width:100%;max-width:none}
+.builder.focus-mode .canvas-panel{grid-column:1/-1;width:100%;min-width:0}
+.builder.focus-mode #editor{display:block;width:100%;min-width:0}
+.builder.focus-mode .liveFrameWrap{width:100%;max-width:none;margin:0;padding:0}
+.builder.focus-mode .liveFrameWrap iframe{display:block;width:100%;max-width:none;height:calc(100vh - 127px);min-height:calc(100vh - 127px);border:0}
+.builder.focus-mode .canvas-toolbar{width:100%}
+@media(max-width:700px){
+ .builder.focus-mode .builder-layout{display:block}
+ .builder.focus-mode .liveFrameWrap iframe{height:calc(100vh - 145px);min-height:calc(100vh - 145px)}
+}

@@ -88,7 +88,7 @@ function drawPages(){
   $("pages").innerHTML=pages.map(function(p){
     return '<button class="page '+(page&&page.id===p.id?"active":"")+'" data-id="'+esc(p.id)+'"><b>'+esc(p.title||"Zonder titel")+'</b><small>'+esc(route(p.slug))+ " · "+esc(p.status||"draft")+"</small></button>";
   }).join("");
-  document.querySelectorAll(".page").forEach(function(b){b.onclick=function(){pick(b.getAttribute("data-id"));};});
+  document.querySelectorAll(".page").forEach(function(b){b.onclick=function(){pick(b.getAttribute("data-id"),true);};});
 }
 
 function palette(){
@@ -138,7 +138,7 @@ async function loadPageData(){
   return true;
 }
 
-async function pick(id){
+async function pick(id,openFullPage){
   for(var i=0;i<pages.length;i++)if(pages[i].id===id)page=pages[i];
   if(!page)return;
   selected=-1;selectedExisting=null;pendingType=null;
@@ -148,6 +148,7 @@ async function pick(id){
   $("seoTitle").value=page.seo_title||"";$("seoDesc").value=page.seo_description||"";$("desc").value=page.description||"";$("cmsMode").checked=page.settings&&page.settings.builder_mode==="cms";
   var ok=await loadPageData();if(!ok)return;
   drawPages();closeInspector();loadLive();
+  if(openFullPage===true)setBuilderFocus(true);
 }
 
 async function loadVersions(){
@@ -601,7 +602,8 @@ function bind(){
   $("dataLimit").oninput=function(){edit("dataLimit",this.value);};
   $("dataFilters").onchange=function(){edit("dataFilters",this.value);};
   $("open").onclick=function(){if(page)window.open(route(page.slug),"_blank");};
-  $("focus").onclick=function(){var root=document.querySelector(".builder");var focused=root.classList.toggle("focus-mode");$("focus").textContent=focused?"Terug naar editor":"Volledig scherm";};
+  function setBuilderFocus(focused){var root=document.querySelector(".builder");if(!root)return;root.classList.toggle("focus-mode",!!focused);$("focus").textContent=focused?"Terug naar editor":"Volledig scherm";}
+  $("focus").onclick=function(){var root=document.querySelector(".builder");setBuilderFocus(!root.classList.contains("focus-mode"));};
   $("desktop").onclick=function(){$("liveFrameWrap").className="desktop";$("desktop").classList.add("active");$("mobile").classList.remove("active");};
   $("mobile").onclick=function(){$("liveFrameWrap").className="mobile";$("mobile").classList.add("active");$("desktop").classList.remove("active");};
 
