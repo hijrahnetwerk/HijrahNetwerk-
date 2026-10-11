@@ -27,6 +27,17 @@
     }[m]));
   }
 
+  // Sanitize navigation destinations before inserting them into href attributes.
+  function safeHref(value){
+    const href=String(value==null?'':value).trim();
+    if(!href) return '#';
+    if(/^(javascript|data|vbscript):/i.test(href)) return '#';
+    if(/^(https?:|mailto:|tel:)/i.test(href) || href.charAt(0)==='/' || href.charAt(0)==='#' || href.charAt(0)==='?') return href;
+    // Treat plain relative paths as local links, never as executable schemes.
+    if(!/^[a-z][a-z0-9+.-]*:/i.test(href)) return href;
+    return '#';
+  }
+
   function normalizeItems(rows){
     const items=(rows||[])
        .filter(x=>x && x.is_visible!==false && x.location==='main' && !x.parent_id)
