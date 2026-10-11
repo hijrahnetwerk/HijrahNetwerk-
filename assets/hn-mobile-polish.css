@@ -1,0 +1,166 @@
+/* HN Mobile Polish — responsive overrides for public pages, forms and HN Beheer. */
+:root {
+  --hn-mobile-gutter: clamp(12px, 3.5vw, 24px);
+  --hn-touch-target: 44px;
+}
+html {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: clip;
+  scroll-padding-top: 88px;
+  -webkit-text-size-adjust: 100%;
+}
+body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: clip;
+}
+*, *::before, *::after { min-width: 0; }
+img, video, iframe, canvas, svg { max-width: 100%; }
+pre, pre code { max-width: 100%; overflow-x: auto; }
+button, input, select, textarea { font: inherit; }
+button, [role="button"], input[type="button"], input[type="submit"], input[type="reset"] { touch-action: manipulation; }
+:where(button, a, input, select, textarea, summary, [role="button"]) { scroll-margin-block: 88px; }
+:where(input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]):not([type="submit"]):not([type="button"]), select, textarea) {
+  max-width: 100%;
+}
+:where(input, select, textarea) { font-size: max(16px, 1em); }
+:where(button, .btn, .button, .hn-btn, .hn-action, input[type="submit"]) { min-height: var(--hn-touch-target); }
+:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline-color: #C6A15B;
+  outline-offset: 3px;
+}
+:where(main, section, article, aside, header, footer, nav, form, fieldset) { min-width: 0; max-width: 100%; }
+:where(h1,h2,h3,h4,h5,h6,p,li,label,legend,summary,td,th) { overflow-wrap: anywhere; }
+:where(.container, .wrap, .hn-wrap, .content, .page-container, .page-content, .main-content) {
+  width: min(100% - (var(--hn-mobile-gutter) * 2), 1180px);
+  margin-inline: auto;
+}
+:where(.grid, .cards, .card-grid, .results-grid, .directory-grid, .cities-grid, .topics-grid, .feature-grid, .tools-grid, .country-grid, .city-grid, .stats-grid, .admin-stats, .dashboard-grid, .admin-grid, .form-grid, .fields-grid) {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
+}
+:where(.flex, .row, .actions, .hero-actions, .filters, .filter-row, .toolbar, .button-row) {
+  min-width: 0;
+  flex-wrap: wrap;
+}
+:where(.card, .panel, .result-card, .topic-card, .country-card, .city-card, .tool-card, .stat-card, .admin-card, .form-card, .modal-card) {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+:where(.table-wrap, .table-responsive, .responsive-table, .overflow-x-auto) {
+  max-width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  -webkit-overflow-scrolling: touch;
+}
+:where(table) { max-width: 100%; }
+:where(.table-wrap, .table-responsive, .responsive-table) table { min-width: 600px; }
+:where(.modal, .dialog, .drawer, [role="dialog"]) { max-width: calc(100vw - 24px); }
+:where(.modal, .dialog, [role="dialog"]) { max-height: calc(100dvh - 24px); overflow: auto; }
+:where(.hn-mobile-panel) { padding-bottom: max(22px, env(safe-area-inset-bottom)); }
+#hn-back-to-top { bottom: calc(14px + env(safe-area-inset-bottom, 0px)); }
+body:has(#hn-admin-bar) { padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px)); }
+#hn-admin-bar { max-width: calc(100vw - 14px); }
+#hn-admin-bar a, #hn-admin-bar button { min-height: 40px; }
+.hn-visual-tools { max-width: calc(100% - 12px); flex-wrap: wrap; }
+.hn-visual-tools span { white-space: normal; overflow-wrap: anywhere; }
+
+@media (max-width: 900px) {
+  :where(.admin-layout, .admin-shell, .admin-wrapper, .dashboard-layout, .workspace-layout, .app-layout) {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+  :where(.admin-sidebar, .sidebar, .dashboard-sidebar, .workspace-sidebar, .side-nav) {
+    position: static;
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    max-height: none;
+  }
+  :where(.admin-main, .admin-content, .dashboard-main, .workspace-main, .main-panel) {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+}
+@media (max-width: 700px) {
+  :root { --hn-mobile-gutter: 12px; }
+  html { scroll-padding-top: 72px; }
+  body { font-size: 16px; line-height: 1.6; }
+  :where(.container, .wrap, .hn-wrap, .content, .page-container, .page-content, .main-content) {
+    width: calc(100% - 24px);
+  }
+  :where(.section, section.section, .section-wrap) { padding-block: clamp(28px, 8vw, 48px); }
+  :where(.hero, .hn-hero, .page-hero) {
+    padding-top: clamp(28px, 8vw, 52px);
+    padding-bottom: clamp(32px, 9vw, 56px);
+  }
+  :where(h1) { font-size: clamp(1.85rem, 8vw, 2.8rem); line-height: 1.1; }
+  :where(h2) { font-size: clamp(1.45rem, 6vw, 2.1rem); line-height: 1.16; }
+  :where(h3) { font-size: clamp(1.15rem, 4.8vw, 1.55rem); line-height: 1.25; }
+  :where(.grid, .cards, .card-grid, .results-grid, .directory-grid, .cities-grid, .topics-grid, .feature-grid, .tools-grid, .country-grid, .city-grid, .stats-grid, .admin-stats, .dashboard-grid, .admin-grid, .form-grid, .fields-grid, .two, .three, .four, .columns, .content-grid, .split) {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+  :where(.flex, .row, .actions, .hero-actions, .filters, .filter-row, .toolbar, .button-row) { gap: 10px; }
+  :where(.hero-actions, .button-row, .actions.mobile-stack) > a,
+  :where(.hero-actions, .button-row, .actions.mobile-stack) > button {
+    max-width: 100%;
+  }
+  :where(.mobile-full, .hero-actions .btn, .hero-actions .button, .hero-actions .hn-btn) { max-width: 100%; }
+  :where(.filters, .filter-row, .toolbar) > input,
+  :where(.filters, .filter-row, .toolbar) > select,
+  :where(.filters, .filter-row, .toolbar) > .searchbox,
+  :where(.filters, .filter-row, .toolbar) > .search-box { flex: 1 1 100%; width: 100%; }
+  :where(.form-row, .form-grid, .fields, .field-grid) {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+  :where(.card, .panel, .result-card, .topic-card, .country-card, .city-card, .tool-card, .stat-card, .admin-card, .form-card) {
+    padding: clamp(14px, 4vw, 20px);
+    border-radius: 16px;
+  }
+  :where(.btn, .button, .hn-btn, .hn-action) {
+    white-space: normal;
+    text-align: center;
+    justify-content: center;
+    overflow-wrap: anywhere;
+  }
+  :where(.hn-nav-inner) { min-height: 62px; }
+  :where(.hn-brand) { max-width: calc(100% - 56px); }
+  :where(.hn-brand span:last-child) { font-size: clamp(14px, 4vw, 16px); }
+  :where(.hn-mobile-panel) {
+    width: min(92vw, 390px);
+    padding: 18px 16px max(22px, env(safe-area-inset-bottom));
+  }
+  :where(.hn-mobile-links) { overflow-wrap: anywhere; }
+  :where(.hn-mobile-link, .hn-mobile-primary) { min-height: 44px; }
+  :where(.admin-header, .admin-topbar, .page-header, .section-header, .toolbar-header) {
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  :where(.admin-header, .page-header, .section-header) > :where(.actions, .toolbar, .button-row) {
+    width: 100%;
+  }
+  :where(.admin-header, .page-header, .section-header) > :where(.actions, .toolbar, .button-row) > * {
+    flex: 1 1 auto;
+  }
+  :where(.table-wrap, .table-responsive, .responsive-table) {
+    margin-inline: -12px;
+    width: calc(100% + 24px);
+    padding-inline: 12px;
+  }
+  :where(.hn-toast) { left: 12px; right: 12px; bottom: calc(12px + env(safe-area-inset-bottom)); max-width: none; }
+  :where(.hn-back-to-top) { right: 12px; bottom: calc(12px + env(safe-area-inset-bottom)); }
+  :where(.hn-admin-bar) { left: 7px; right: 7px; bottom: calc(7px + env(safe-area-inset-bottom)); }
+}
+@media (max-width: 380px) {
+  :where(.hn-brand span:last-child) { max-width: 160px; }
+  :where(.hn-nav-inner) { gap: 8px; }
+  :where(.hn-menu) { width: 40px; height: 40px; flex: 0 0 40px; }
+  :where(.hn-back-to-top-label) { display: none; }
+  :where(.hn-back-to-top) { width: 48px; height: 48px; padding: 8px; }
+  :where(.hn-back-to-top-icon) { width: 28px; height: 28px; flex-basis: 28px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .001ms !important; transition-duration: .001ms !important; }
+}
