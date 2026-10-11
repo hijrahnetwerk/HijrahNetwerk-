@@ -64,11 +64,8 @@ begin
   end if;
 
   delete from public.hn_badges where id = p_badge_id;
-
-  insert into public.hn_admin_audit_log(admin_id, action, entity_type, entity_id, details)
-  values ((select auth.uid()), 'badge_deleted', 'hn_badges', p_badge_id,
-          jsonb_build_object('name', v_name));
-
+ 
+  -- De DELETE-trigger hn_audit_badges_config legt de actie vast.
   return true;
 end;
 $function$;
@@ -105,11 +102,8 @@ begin
   where b.id = x.id;
 
   get diagnostics v_count = row_count;
-
-  insert into public.hn_admin_audit_log(admin_id, action, entity_type, entity_id, details)
-  values ((select auth.uid()), 'badges_reordered', 'hn_badges', null,
-          jsonb_build_object('count', v_count));
-
+ 
+  -- De UPDATE-trigger hn_audit_badges_config legt de gewijzigde badges vast.
   return true;
 end;
 $function$;
