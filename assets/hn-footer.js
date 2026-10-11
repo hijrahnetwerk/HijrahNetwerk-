@@ -28,98 +28,64 @@
     footer.id = 'hnFooter';
     footer.className = 'hn-footer';
     footer.innerHTML = `
-      <!-- Decoratieve route SVG -->
       <svg class="hn-footer-deco" viewBox="0 0 600 400" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <path d="M600,380 C500,340 400,200 300,160 S100,140 0,80" stroke="white" stroke-width="1.5" stroke-dasharray="6 10" fill="none"/>
-        <path d="M600,300 C480,260 360,150 240,120 S80,100 -20,50" stroke="white" stroke-width="1" stroke-dasharray="4 8" fill="none" opacity=".5"/>
-        <!-- Kompas -->
-        <circle cx="480" cy="200" r="70" stroke="white" stroke-width="1" opacity=".35"/>
-        <circle cx="480" cy="200" r="50" stroke="white" stroke-width=".8" opacity=".2"/>
-        <line x1="480" y1="135" x2="480" y2="265" stroke="white" stroke-width=".8" opacity=".3"/>
-        <line x1="415" y1="200" x2="545" y2="200" stroke="white" stroke-width=".8" opacity=".3"/>
-        <polygon points="480,138 476,195 484,195" fill="white" opacity=".5"/>
-        <text x="477" y="132" fill="white" font-size="11" opacity=".5" font-weight="700">N</text>
-        <text x="477" y="278" fill="white" font-size="11" opacity=".3">Z</text>
-        <text x="396" y="204" fill="white" font-size="11" opacity=".3">W</text>
-        <text x="552" y="204" fill="white" font-size="11" opacity=".3">O</text>
-        <!-- Vliegtuig -->
-        <g transform="translate(300,160) rotate(-25)">
-          <polygon points="12,0 2,-3 -3,-10 -5,-10 -3,-3 -9,-2 -10,-4 -12,-4 -11,0 -12,4 -10,4 -9,2 -3,3 -5,10 -3,10 2,3" fill="white" opacity=".6"/>
-        </g>
-        <g transform="translate(140,115) rotate(-20)">
-          <polygon points="9,0 1.5,-2 -2,-8 -4,-8 -2,-2 -7,-1.5 -7,-3 -9,-3 -8,0 -9,3 -7,3 -7,1.5 -2,2 -4,8 -2,8 1.5,2" fill="white" opacity=".35"/>
-        </g>
+        <path d="M600,380 C500,340 400,200 300,160 S100,140 0,80" stroke="white" stroke-width="1.5" stroke-dasharray="6 10"/>
+        <circle cx="480" cy="200" r="70" stroke="white" opacity=".35"/>
+        <circle cx="480" cy="200" r="50" stroke="white" opacity=".2"/>
       </svg>
-
       <div class="hn-wrap hn-footer-inner">
-        <div class="hn-footer-grid">
-          <!-- MERK KOLOM -->
-          <div>
-            <div class="hn-footer-brand">
-              <div class="hn-footer-mark">HN</div>
-              <span class="hn-footer-name">Hijrah Netwerk</span>
-            </div>
-            <p class="hn-footer-tagline">
-              Een netwerk voor emigranten, van oriëntatie tot integratie. Praktische informatie en herkenning, van zuster tot zuster.
-            </p>
-            <div class="hn-footer-social">
-              <a href="https://www.instagram.com/hijrah.netwerk" target="_blank" rel="noopener" aria-label="Instagram">📸</a>
-              <a href="https://www.facebook.com/hijrahnetwerk" target="_blank" rel="noopener" aria-label="Facebook">📘</a>
-            </div>
-            <div class="hn-footer-phases">
-              <a class="hn-footer-phase" href="/verhalen?fase=orienteren">✈ Oriënteren</a>
-              <a class="hn-footer-phase" href="/verhalen?fase=voorbereiden">📋 Voorbereiden</a>
-              <a class="hn-footer-phase" href="/verhalen?fase=integreren">🏡 Integreren</a>
-              <a class="hn-footer-phase" href="/verhalen?fase=terugkeren">↩ Terugkeren</a>
-            </div>
-          </div>
-
-          <!-- PLATFORM -->
-          <div class="hn-footer-col">
-            <h4>Platform</h4>
-            <ul>
-              <li><a href="/landen">Landen & Steden</a></li>
-              <li><a href="/kennisbank">Kennisbank</a></li>
-              <li><a href="/verhalen">Verhalen & Interviews</a></li>
-              <li><a href="/smart-search">Smart Search</a></li>
-              <li><a href="/navigatie">Hijrah Navigatie</a></li>
-              <li><a href="/vergelijken">Vergelijker</a></li>
-            </ul>
-          </div>
-
-          <!-- COMMUNITY -->
-          <div class="hn-footer-col">
-            <h4>Community</h4>
-            <ul>
-              <li><a href="/community">Over de community</a></li>
-              <li><a href="/bijdragen">Bijdragen</a></li>
-              <li><a href="/hijrahtools">HijrahTools</a></li>
-              <li><a href="/stappenplan">Stappenplan</a></li>
-              <li><a href="/dashboard">Mijn Hijrah</a></li>
-              <li><a href="/register">Aanmelden</a></li>
-            </ul>
-          </div>
-
-          <!-- HN -->
-          <div class="hn-footer-col">
-            <h4>Hijrah Netwerk</h4>
-            <ul>
-              <li><a href="/#over-ons">Over ons</a></li>
-              <li><a href="/privacy">Privacybeleid</a></li>
-              <li><a href="/auteursrecht">Auteursrecht & gebruik</a></li>
-              <li><a href="/hulp">Hulp & FAQ</a></li>
-              <li><a href="/bijdragen?type=correction">Fout melden</a></li>
-            </ul>
+        <div class="hn-footer-brand-row">
+          <a class="hn-footer-brand" href="/" aria-label="Hijrah Netwerk — home">
+            <img class="hn-footer-logo" src="/assets/logo-color.pngneddkleinn.png?v=20261012" alt="Hijrah Netwerk" loading="lazy">
+            <span class="hn-footer-name">Hijrah Netwerk</span>
+          </a>
+          <div class="hn-footer-brand-copy">
+            <p class="hn-footer-tagline">Een netwerk voor emigranten, van oriëntatie tot integratie. Praktische informatie en herkenning, van zuster tot zuster.</p>
+            <nav class="hn-footer-social" aria-label="Volg Hijrah Netwerk">
+              <a href="https://www.instagram.com/hijrah.netwerk" target="_blank" rel="noopener noreferrer" aria-label="Volg Hijrah Netwerk op Instagram"><span aria-hidden="true">◎</span><span>Instagram</span></a>
+              <a href="https://www.facebook.com/hijrahnetwerk" target="_blank" rel="noopener noreferrer" aria-label="Volg Hijrah Netwerk op Facebook"><span aria-hidden="true">f</span><span>Facebook</span></a>
+            </nav>
           </div>
         </div>
-
+        <div class="hn-footer-grid">
+          <nav class="hn-footer-col" aria-label="Hijrahfasen"><h4>Hijrahfasen</h4><ul>
+            <li><a href="/orientatie">Oriënteren</a></li>
+            <li><a href="/voorbereiding">Voorbereiden</a></li>
+            <li><a href="/integratie">Integreren</a></li>
+            <li><a href="/verhalen?fase=terugkeren">Terugkeren</a></li>
+          </ul></nav>
+          <nav class="hn-footer-col" aria-label="Algemene HijrahTools"><h4>HijrahTools</h4><ul>
+            <li><a href="/navigatie">HN Navigatie</a></li>
+            <li><a href="/vergelijken">Landen- en stedenvergelijker</a></li>
+            <li><a href="/smart-search">Smart Search</a></li>
+            <li><a href="/hijrahtools">Bekijk alle HijrahTools</a></li>
+          </ul></nav>
+          <nav class="hn-footer-col" aria-label="Mijn Hijrah Planner"><h4>Mijn Hijrah Planner</h4><ul>
+            <li><a href="/dashboard">Mijn Hijrah Planner</a></li>
+            <li><a href="/stappenplan">Mijn stappenplan</a></li>
+            <li><a href="/paspoort">Mijn paspoort en voortgang</a></li>
+            <li><a href="/dashboard">Mijn notities en opgeslagen items</a></li>
+          </ul></nav>
+          <nav class="hn-footer-col" aria-label="Community"><h4>Community</h4><ul>
+            <li><a href="/community">Over de community</a></li>
+            <li><a href="/bijdragen">Bijdragen</a></li>
+            <li><a href="/verhalen">Verhalen &amp; interviews</a></li>
+            <li><a href="/register">Aanmelden</a></li>
+          </ul></nav>
+          <nav class="hn-footer-col" aria-label="Hulp en informatie"><h4>Hulp &amp; informatie</h4><ul>
+            <li><a href="/hulp">Hulp &amp; veelgestelde vragen</a></li>
+            <li><a href="/privacy">Privacybeleid</a></li>
+            <li><a href="/auteursrecht">Auteursrecht &amp; gebruik</a></li>
+            <li><a href="/bijdragen?type=correction">Fout melden</a></li>
+            <li><a href="/#over-ons">Over Hijrah Netwerk</a></li>
+          </ul></nav>
+        </div>
         <div class="hn-footer-bottom">
           <span>© ${new Date().getFullYear()} Hijrah Netwerk — Alle rechten voorbehouden.</span>
           <div class="hn-footer-bottom-links">
-            <a href="/privacy">Privacy</a>
-            <a href="/auteursrecht">Auteursrecht & gebruik</a>
-            <a href="/hulp">Hulp</a>
-            <a href="/bijdragen">Bijdragen</a>
+            <a href="/privacy">Privacy</a><a href="/auteursrecht">Auteursrecht &amp; gebruik</a><a href="/hulp">Hulp</a><a href="/bijdragen">Bijdragen</a>
+            <a href="https://www.instagram.com/hijrah.netwerk" target="_blank" rel="noopener noreferrer">Instagram</a>
+            <a href="https://www.facebook.com/hijrahnetwerk" target="_blank" rel="noopener noreferrer">Facebook</a>
           </div>
         </div>
       </div>
