@@ -770,6 +770,10 @@ body::before{
   z-index:-1;
 }
 
+
+/* Dashboard sections are controlled by the persistent member sidebar. */
+.tabs{display:none!important}
+@media(max-width:900px){.hnm-mobile-button{bottom:16px;left:16px}.hnm{max-width:88vw}}
 </style>
 
 <link rel="stylesheet" href="/assets/hn-sitewide.css?v=1">
@@ -3490,7 +3494,7 @@ init();
 
 </script>
 
-<script src="assets/hn-my-hijrah.js"></script>
+<script src="assets/hn-my-hijrah.js?v=20261011-dashboard-nav1"></script>
 <script src="assets/hn-work-tracker.js"></script>
 <script src="assets/hn-dashboard-complete.js"></script>
 
