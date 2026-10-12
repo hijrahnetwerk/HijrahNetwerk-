@@ -73,6 +73,9 @@ if (vercel.git?.deploymentEnabled?.['work/hn-publication-builder-20261012'] !== 
 if (vercel.git?.deploymentEnabled?.['work/hn-agadir-interactive-preview-20261012'] !== false) {
   failures.push('Vercel preview deployments must remain disabled for the Agadir preview work branch.');
 }
+if (vercel.git?.deploymentEnabled?.['fix/admin-verhalen-editor-ux-20261012'] !== false) {
+  failures.push('Vercel preview deployments must remain disabled for the admin story editor fix branch.');
+}
 for (const relative of ['blog-artikel.html', 'kennisbank.html']) {
   if (/Kopieer link|Link kopiëren/i.test(source(relative))) failures.push('Public copy-link control must be absent from ' + relative);
 }
