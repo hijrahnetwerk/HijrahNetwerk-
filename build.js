@@ -47,7 +47,7 @@ const pageEngineTag = '<script src="/assets/hn-page-engine.js"></script>';
 const visualEditorTag = '<script src="/assets/hn-visual-editor-runtime.js"></script>';
 const visualPolishStyleTag = '<link rel="stylesheet" href="/assets/hn-visual-polish.css">';
 const motionTag = '<script src="/assets/hn-motion.js"></script>';
-const copyProtectionTag = '<script src="/copy-protection.js?v=20261011-admin-copy1"></script>';
+const copyProtectionTag = '<script src="/copy-protection.js?v=20261012-admin-only-copy2"></script>';
 const supabaseUmdUrl = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3/dist/umd/supabase.js';
 const supabaseBootstrapPages = new Set(['integratie.html','orientatie.html','vertrek.html','voorbereiding.html','orientatietest.html']);
 
