@@ -285,13 +285,14 @@ button,input,select,textarea{font:inherit;cursor:pointer}
           <th>Type</th>
           <th>Fase</th>
           <th>Toegang</th>
+          <th>Redactie</th>
           <th>Status</th>
           <th>Datum</th>
           <th>Acties</th>
         </tr>
       </thead>
       <tbody id="tableBody">
-        <tr><td colspan="7" style="text-align:center;padding:40px"><div class="spinner"></div></td></tr>
+        <tr><td colspan="8" style="text-align:center;padding:40px"><div class="spinner"></div></td></tr>
       </tbody>
     </table>
   </div>
@@ -546,7 +547,7 @@ function renderTable(){
   });
 
   if(!list.length){
-    $('tableBody').innerHTML=`<tr class="empty-row"><td colspan="7">Geen verhalen gevonden.</td></tr>`;
+    $('tableBody').innerHTML=`<tr class="empty-row"><td colspan="8">Geen verhalen gevonden.</td></tr>`;
     return;
   }
 
@@ -563,6 +564,7 @@ function renderTable(){
       <td>
         <span class="access-badge">${b.access_level==='public'?'🌍 Publiek':b.access_level==='members'?'👥 Leden':'🔑 Mods'}</span>
       </td>
+      <td><span class="access-badge">${({not_checked:'Nog te controleren',personal_experience:'Ervaring',source_checked:'Bronnen gecontroleerd',officially_verified:'Officieel bevestigd',needs_review:'Controle nodig',outdated:'Mogelijk verouderd'}[b.verification_status]||'Status onbekend')}${(['verhaal','interview','ervaring'].includes(b.type)&&!b.consent_confirmed?' · Toestemming?':'')}</span></td>
       <td><span class="pub-badge ${b.published?'pub-yes':'pub-no'}">${b.published?'✓ Live':'● Concept'}</span></td>
       <td>${date}</td>
       <td><div class="row-actions">
@@ -816,7 +818,7 @@ async function init(){
   for(let i=0;i<80&&!window.hijrahSupabase;i++)await new Promise(r=>setTimeout(r,100));
   db=window.hijrahSupabase;
   if(!db){
-    $('tableBody').innerHTML=`<tr class="empty-row"><td colspan="7">Supabase kon niet worden geladen.</td></tr>`;
+    $('tableBody').innerHTML=`<tr class="empty-row"><td colspan="8">Supabase kon niet worden geladen.</td></tr>`;
     return;
   }
   await Promise.all([loadCountries(),loadBlogs()]);
