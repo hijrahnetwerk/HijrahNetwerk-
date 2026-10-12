@@ -109,5 +109,9 @@
     }
   }
 
-  verifyAdmin();
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", verifyAdmin, { once: true });
+  } else {
+    verifyAdmin();
+  }
 })();
