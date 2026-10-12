@@ -73,6 +73,9 @@ button,input,select,textarea{font:inherit;cursor:pointer}
 .type-verhaal{background:rgba(221,132,42,.1);color:var(--rs)}
 .type-interview{background:rgba(103,76,46,.1);color:var(--br)}
 .type-ervaring{background:rgba(212,175,55,.15);color:var(--gd2)}
+.type-artikel{background:rgba(221,132,42,.12);color:var(--rs)}
+.type-blog{background:rgba(198,161,91,.18);color:var(--br)}
+.type-gids{background:rgba(45,92,76,.10);color:#2d5c4c}
 .pub-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:999px;font-size:10px;font-weight:800}
 .pub-yes{background:rgba(39,174,96,.1);color:#27ae60}
 .pub-no{background:rgba(231,76,60,.08);color:#c0392b}
@@ -254,6 +257,9 @@ button,input,select,textarea{font:inherit;cursor:pointer}
       <button class="tab" data-type="verhaal">✈ Verhalen</button>
       <button class="tab" data-type="interview">🎙 Interviews</button>
       <button class="tab" data-type="ervaring">💬 Ervaringen</button>
+      <button class="tab" data-type="artikel">📚 Artikelen</button>
+      <button class="tab" data-type="blog">✍ Blogs</button>
+      <button class="tab" data-type="gids">🧭 Praktische gidsen</button>
     </div>
     <div class="select-wrap">
       <select id="pubFilter">
@@ -316,6 +322,9 @@ button,input,select,textarea{font:inherit;cursor:pointer}
           <option value="verhaal">✈ Verhaal</option>
           <option value="interview">🎙 Interview</option>
           <option value="ervaring">💬 Ervaring</option>
+          <option value="artikel">📚 Artikel</option>
+          <option value="blog">✍ Blog</option>
+          <option value="gids">🧭 Praktische gids</option>
         </select>
       </div>
 
@@ -352,6 +361,35 @@ button,input,select,textarea{font:inherit;cursor:pointer}
       <div class="field">
         <label>Tags (komma-gescheiden)</label>
         <input type="text" id="fTags" placeholder="marokko, gezin, werk">
+      </div>
+
+      <div class="field">
+        <label>Redactionele status</label>
+        <select id="fVerification">
+          <option value="not_checked">Nog niet gecontroleerd</option>
+          <option value="personal_experience">Persoonlijke ervaring</option>
+          <option value="source_checked">Bronnen gecontroleerd</option>
+          <option value="officially_verified">Officieel bevestigd</option>
+          <option value="needs_review">Controle nodig</option>
+          <option value="outdated">Mogelijk verouderd</option>
+        </select>
+        <div class="field-hint">Maak duidelijk of iets een ervaring is of gecontroleerde informatie.</div>
+      </div>
+
+      <div class="field">
+        <label>Laatst gecontroleerd</label>
+        <input type="date" id="fVerifiedAt">
+      </div>
+
+      <div class="field full">
+        <label>Bronnen (één per regel)</label>
+        <textarea id="fSources" rows="4" placeholder="Titel van bron | https://voorbeeld.nl/pagina"></textarea>
+        <div class="field-hint">Gebruik: naam van de bron, gevolgd door | en de volledige https://-URL. Deze bronnen worden onder het artikel getoond.</div>
+      </div>
+
+      <div class="field full">
+        <label class="consent-field"><input type="checkbox" id="fConsent"> Toestemming voor publicatie is bevestigd</label>
+        <div class="field-hint">Voor interviews, persoonlijke verhalen en ervaringen: alleen aanvinken nadat het lid expliciet akkoord heeft gegeven voor deze publicatie en de gekozen naam/anonimiteit.</div>
       </div>
 
       <div class="field full">
@@ -472,7 +510,7 @@ button,input,select,textarea{font:inherit;cursor:pointer}
 const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 const slug=s=>String(s||'').toLowerCase().trim().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
 const $=id=>document.getElementById(id);
-const typeLabel=t=>({verhaal:'✈ Verhaal',interview:'🎙 Interview',ervaring:'💬 Ervaring'}[t]||t);
+const typeLabel=t=>({verhaal:'✈ Verhaal',interview:'🎙 Interview',ervaring:'💬 Ervaring',artikel:'📚 Artikel',blog:'✍ Blog',gids:'🧭 Praktische gids'}[t]||t);
 const faseLabel=f=>({orienteren:'Oriënteren',voorbereiden:'Voorbereiden',integreren:'Integreren',terugkeren:'Terugkeren'}[f]||f);
 
 let db,allBlogs=[],countries=[],deleteTarget=null;
@@ -571,7 +609,9 @@ function closeModal(){
 }
 
 function clearForm(){
-  ['fId','fTitle','fAuthor','fIntro','fContent','fCover','fTags','fSlug'].forEach(id=>$(id).value='');
+  ['fId','fTitle','fAuthor','fIntro','fContent','fCover','fTags','fSlug','fSources','fVerifiedAt'].forEach(id=>$(id).value='');
+  $('fVerification').value='not_checked';
+  $('fConsent').checked=false;
   $('fType').value='verhaal';
   $('fFase').value='';
   $('fLand').value='';
@@ -634,6 +674,10 @@ window.editBlog=function(id){
   $('fPub').value=b.published?'1':'0';
   $('fReadTime').value=b.read_time_min||'';
   $('fTags').value=(b.tags||[]).join(', ');
+  $('fVerification').value=b.verification_status||'not_checked';
+  $('fVerifiedAt').value=b.last_verified_at||'';
+  $('fSources').value=(Array.isArray(b.sources)?b.sources:[]).map(s=>(s.label||'Bron')+' | '+(s.url||'')).join('\\n');
+  $('fConsent').checked=!!b.consent_confirmed;
   const acc=b.access_level||'public';
   document.querySelector(`input[name=access][value="${acc}"]`).checked=true;
   updatePreview();
@@ -683,8 +727,22 @@ $('btnSave').addEventListener('click',async()=>{
   if(!content){st.textContent='Inhoud is verplicht.';st.className='modal-status err';return}
 
   const tags=$('fTags').value.split(',').map(t=>t.trim()).filter(Boolean);
+  const sourceLines=$('fSources').value.split('\\n').map(line=>line.trim()).filter(Boolean);
+  const sources=[];
+  for(const line of sourceLines){
+    const parts=line.split('|');
+    const url=(parts.length>1?parts.slice(1).join('|'):'').trim();
+    const label=(parts.length>1?parts[0]:line).trim();
+    if(!/^https?:\\/\\//i.test(url)){st.textContent='Controleer de bronregel: gebruik Naam | https://…';st.className='modal-status err';return}
+    sources.push({label:label||url,url});
+  }
   const access=document.querySelector('input[name=access]:checked').value;
   const published=$('fPub').value==='1';
+  const type=$('fType').value;
+  if(published&&['verhaal','interview','ervaring'].includes(type)&&!$('fConsent').checked){
+    st.textContent='Bevestig eerst dat toestemming voor publicatie is verkregen.';
+    st.className='modal-status err';return;
+  }
   const rt=parseInt($('fReadTime').value)||null;
 
   const payload={
@@ -699,6 +757,10 @@ $('btnSave').addEventListener('click',async()=>{
     fase:$('fFase').value||null,
     country_id:$('fLand').value||null,
     tags,
+    sources,
+    verification_status:$('fVerification').value,
+    last_verified_at:$('fVerifiedAt').value||null,
+    consent_confirmed:$('fConsent').checked,
     access_level:access,
     published,
     published_at:published?new Date().toISOString():null,
