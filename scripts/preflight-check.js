@@ -44,6 +44,7 @@ const buildSource = source('build.js');
 const adminBlogs = source('admin-blogs.html');
 const editor = source('assets/hn-publication-editor.js');
 const article = source('blog-artikel.html');
+const articlePreview = source('assets/hn-article-draft-preview.js');
 const vercel = JSON.parse(source('vercel.json'));
 if (!protection.includes('client.rpc("is_admin")') || !protection.includes('result.data === true') || !protection.includes('allowAdmin()')) {
   failures.push('Copy protection must fail closed and only allow a confirmed admin role.');
@@ -60,8 +61,17 @@ for (const type of ['paragraph', 'heading', 'quote', 'callout', 'accordion', 'ch
 if (!article.includes('renderArticleBlocks(b.content_blocks,b.content)') || !article.includes('safeHttpUrl')) {
   failures.push('Public article page must render structured blocks and validate external URLs.');
 }
+if (!adminBlogs.includes('id="btnFullPreview"') || !adminBlogs.includes('id="hnDraftPreviewContent"') || !adminBlogs.includes('/assets/hn-article-draft-preview.js')) {
+  failures.push('Admin article editor must expose the full unsaved article preview.');
+}
+if (!articlePreview.includes('function openPreview') || !articlePreview.includes('initInteractions') || !articlePreview.includes('hn-preview-budget')) {
+  failures.push('Draft preview must render the article blocks and wire its interactive controls.');
+}
 if (vercel.git?.deploymentEnabled?.['work/hn-publication-builder-20261012'] !== false) {
   failures.push('Vercel preview deployments must remain disabled for the publication-builder work branch.');
+}
+if (vercel.git?.deploymentEnabled?.['work/hn-agadir-interactive-preview-20261012'] !== false) {
+  failures.push('Vercel preview deployments must remain disabled for the Agadir preview work branch.');
 }
 for (const relative of ['blog-artikel.html', 'kennisbank.html']) {
   if (/Kopieer link|Link kopiëren/i.test(source(relative))) failures.push('Public copy-link control must be absent from ' + relative);
