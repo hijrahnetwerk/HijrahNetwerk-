@@ -735,7 +735,7 @@ $('btnSave').addEventListener('click',async()=>{
 
   if(!title){st.textContent='Titel is verplicht.';st.className='modal-status err';return}
   if(!intro){st.textContent='Intro is verplicht.';st.className='modal-status err';return}
-  if(!content&&contentBlocks.length===0){st.textContent='Voeg minstens één inhoudsblok met inhoud toe.';st.className='modal-status err';return}
+  if(!content&&!contentBlocks.some(block=>block.type==='image'&&/^https?:\/\//i.test(String(block.url||'')))){st.textContent='Voeg minstens één inhoudsblok met tekst of een geldige afbeelding toe.';st.className='modal-status err';return}
 
   const tags=$('fTags').value.split(',').map(t=>t.trim()).filter(Boolean);
   const sourceLines=$('fSources').value.split('\n').map(line=>line.trim()).filter(Boolean);
