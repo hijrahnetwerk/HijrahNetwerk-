@@ -159,6 +159,10 @@
       if (!old) return;
       var next = newBlock(element.value);
       next.id = old.id;
+      ['text','title','attribution','url','alt','caption','level','items'].forEach(function (key) {
+        var value = old[key];
+        if (Array.isArray(value) ? value.length > 0 : value != null && String(value).trim() !== '') next[key] = value;
+      });
       blocks[index] = next;
       render();
       return;
