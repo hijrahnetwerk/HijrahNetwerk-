@@ -107,6 +107,10 @@ dialog::backdrop{background:rgba(60,38,18,.55)}
 .ac li span.ok{color:var(--gold-d);font-weight:700}
 .nt{margin:14px 0 0;font-size:12px;opacity:.75}
 @media(max-width:760px){.hr{display:none}}
+
+/* Bijdrageoverzicht: status en volgende stap blijven op mobiel leesbaar. */
+.contribution-list{display:grid;gap:12px;margin-top:16px}.contribution-item{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:start;border:1px solid rgba(103,76,46,.24);border-left:4px solid var(--gold);border-radius:14px;padding:15px;background:var(--card)}.contribution-item h3{margin:0 0 5px;font-size:15px}.contribution-item p{margin:0;font-size:13px;opacity:.82}.contribution-status{display:inline-flex;align-items:center;justify-content:center;max-width:100%;padding:5px 9px;border:1px solid var(--gold);border-radius:999px;background:#fffaf0;color:var(--brown);font-size:11px;font-weight:700;white-space:nowrap}.contribution-status.approved{background:#f3ead5;border-color:var(--gold-d)}.contribution-status.rejected{border-color:#b65b42;color:#8b3827;background:#fff7f4}.contribution-empty{border:1px dashed var(--gold);border-radius:14px;padding:18px;background:var(--card)}.contribution-empty p{margin:0 0 12px}
+@media(max-width:560px){.contribution-item{grid-template-columns:1fr}.contribution-status{justify-self:start}}
 </style></head><body>
 <div class="sp" id="sp"></div>
 <header class="top"><div class="nav"><a class="brand" href="/">Hijrah Netwerk</a><nav><a href="/landen">Landen</a><a href="/kennisbank">Kennisbank</a><a href="/verhalen">Verhalen</a><a href="/stappenplan">Stappenplan</a><a href="/dashboard">Dashboard</a></nav></div></header>
@@ -122,6 +126,7 @@ dialog::backdrop{background:rgba(60,38,18,.55)}
 <dl><div><dt>Lidcode</dt><dd id="pnr">—</dd></div><div><dt>Lid sinds</dt><dd id="ps">—</dd></div><div><dt>Status</dt><dd id="pt">—</dd></div></dl></div><div class="mrz" id="mrz"></div></div>
 <section class="sec" id="paspoort"><h2 class="rv">Mijn paspoort</h2><p class="sub rv">Je stempels staan per fase op de pagina's van je paspoort. Behaalde stempels zijn ingekleurd, de rest wacht nog op jou. Tik op een stempel voor de details.</p><div class="route rv" id="route"></div><div class="bk" id="book"><div class="empty">Paspoort laden…</div></div></section>
 <section class="sec" id="volgende"><h2 class="rv">Mogelijke volgende stappen</h2><p class="sub rv">Geen verplichting, en iedereen heeft een eigen tempo. Dit zijn de stempels die voor jou het dichtst bij liggen.</p><div class="nx" id="nx"></div></section>
+<section class="sec" id="mijn-bijdragen"><h2 class="rv">Mijn bijdragen</h2><p class="sub rv">Je ziet hier de bijdragen die je met dit account hebt ingediend. Een bijdrage wordt eerst gecontroleerd. Pas na beoordeling kan het HN-team een bijbehorende stempel of toegang toekennen.</p><div id="contributions" class="contribution-list"><div class="empty">Bijdragen laden…</div></div><p style="margin-top:14px"><a class="btn dk" href="/bijdragen">Bijdrage indienen</a> <a class="btn dk" href="/kennisbank">Kennisbank bekijken</a></p></section>
 <section class="sec" id="stempels"><h2 class="rv">Alle stempels</h2><p class="sub rv">Zoek en filter in de volledige lijst. Tik op een stempel om te zien wat erachter zit en wat hij ontgrendelt.</p>
 <div class="bar rv"><div class="pills" id="pills"><button class="pl on" data-f="all" type="button">Alles</button><button class="pl" data-f="on" type="button">Behaald</button><button class="pl" data-f="off" type="button">Nog te behalen</button></div>
 <select id="cat" aria-label="Fase"><option value="">Alle fases</option></select><input type="search" id="q" placeholder="⌕  Zoek een stempel" aria-label="Zoek een stempel"></div>
@@ -144,9 +149,9 @@ function cnt(el,t){if(rm){el.textContent=t;return}var st=null;function f(ts){st=
 async function load(){
  try{
   var s=await sb.auth.getSession();if(!s.data||!s.data.session){location.href='/login?next=/mijn-badges';return}U=s.data.session.user;
-  var r=await Promise.all([sb.from('hn_badges').select('*').eq('active',true).order('sort_order'),sb.from('hn_user_badges').select('badge_id,earned_at').eq('user_id',U.id),sb.from('profiles').select('display_name,first_name,created_at,hn_status,show_badges,profile_visibility').eq('id',U.id).maybeSingle(),sb.rpc('hn_my_access')]);
+  var r=await Promise.all([sb.from('hn_badges').select('*').eq('active',true).order('sort_order'),sb.from('hn_user_badges').select('badge_id,earned_at').eq('user_id',U.id),sb.from('profiles').select('display_name,first_name,created_at,hn_status,show_badges,profile_visibility').eq('id',U.id).maybeSingle(),sb.rpc('hn_my_access'),sb.from('submissions').select('id,title,submission_type,status,created_at,reviewed_at').eq('submitted_by',U.id).order('created_at',{ascending:false}).limit(8)]);
   if(r[0].error){show('De stempels konden niet worden geladen. Probeer het later opnieuw.');return}
-  B=r[0].data||[];(r[1].data||[]).forEach(function(x){E[x.badge_id]=x.earned_at});P=r[2].data||{};var A=Array.isArray(r[3].data)?r[3].data:[];
+  B=r[0].data||[];(r[1].data||[]).forEach(function(x){E[x.badge_id]=x.earned_at});P=r[2].data||{};var A=Array.isArray(r[3].data)?r[3].data:[];renderContributions(r[4].data||[],!!r[4].error);
   if(r[3].error)show('Je stempels zijn geladen, maar de toegangsstatus kon niet worden opgehaald.');
   var cats=[];B.forEach(function(b){if(b.category&&cats.indexOf(b.category)<0)cats.push(b.category)});CT=cats;$('cat').innerHTML='<option value="">Alle fases</option>'+cats.map(function(c){return '<option value="'+esc(c)+'">'+esc(c)+'</option>'}).join('');
   var n=B.filter(function(b){return !!E[b.id]}).length,un=A.filter(function(x){return x.unlocked}).length;
@@ -161,6 +166,15 @@ async function load(){
   return '<div class="ac rv"><span class="st">'+(x.unlocked?'Ontgrendeld':'Vergrendeld')+'</span><h3>'+esc(x.name||'Onderdeel')+'</h3><div>'+esc(x.description||'')+'</div>'+(rs.length?'<b style="display:block;margin-top:10px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold-d)">Mogelijke routes</b><ul>'+li+'</ul>':'')+go+'</div>'}).join('')||'<div class="empty">Er zijn nog geen ontgrendelbare onderdelen.</div>';
   priv();grid();book();route();observe();progress().then(steps);
  }catch(e){console.error('[HN Badges]',e);show('Er ging iets mis bij het laden van je badgespagina. Vernieuw de pagina of probeer het later opnieuw.')}
+}
+
+function renderContributions(rows,failed){
+ var el=$('contributions');if(!el)return;
+ if(failed){el.innerHTML='<div class="contribution-empty"><p>Je bijdrageoverzicht kon niet worden geladen. Je ingediende bijdragen worden hierdoor niet gewijzigd.</p><a class="btn dk" href="/bijdragen">Naar bijdragen</a></div>';return}
+ if(!rows.length){el.innerHTML='<div class="contribution-empty"><p>Je hebt via dit account nog geen bijdragen ingediend. Je kunt praktische informatie aanvullen, een bron doorgeven of een ervaring delen. Je bepaalt zelf wat je deelt.</p><a class="btn dk" href="/bijdragen">Een bijdrage indienen</a></div>';return}
+ var labels={pending:'Wacht op beoordeling',approved:'Goedgekeurd',rejected:'Niet goedgekeurd',needs_changes:'Aanpassing gevraagd',in_review:'In beoordeling'};
+ var types={information:'Informatie',experience:'Ervaring',review:'Review',correction:'Correctie',source:'Bron'};
+ el.innerHTML=rows.map(function(row){var status=String(row.status||'pending').toLowerCase(),label=labels[status]||'Status: '+status.replace(/[_-]+/g,' '),title=row.title||types[row.submission_type]||'Bijdrage',type=types[row.submission_type]||'Bijdrage',date=row.created_at?new Date(row.created_at).toLocaleDateString('nl-NL',{day:'numeric',month:'short',year:'numeric'}):'';return '<article class="contribution-item"><div><h3>'+esc(title)+'</h3><p>'+esc(type)+(date?' · Ingediend op '+esc(date):'')+'</p>'+(status==='approved'?'<p style="margin-top:6px">Deze bijdrage is goedgekeurd. Eventuele stempels of toegang worden afzonderlijk volgens de HN-regels toegekend.</p>':'')+'</div><span class="contribution-status '+(status==='approved'?'approved':status==='rejected'?'rejected':'')+'">'+esc(label)+'</span></article>'}).join('');
 }
 
 function hsh(s){var h=5381,i;for(i=0;i<s.length;i++)h=((h<<5)+h+s.charCodeAt(i))|0;return Math.abs(h)}
