@@ -134,6 +134,22 @@ button,input,select,textarea{font:inherit;cursor:pointer}
 .modal-status.ok{color:#27ae60}
 .modal-status.err{color:#c0392b}
 
+/* ── MODULAIRE PUBLICATIEBLOKKEN ── */
+.block-toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:10px 0 14px}
+.block-toolbar select{flex:1;min-width:180px;padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:#fff;color:var(--br)}
+.block-add{padding:10px 14px;border:1px solid var(--gd);border-radius:999px;background:#fffaf0;color:var(--br);font-size:12px;font-weight:800}
+.blocks-editor{display:grid;gap:12px}
+.block-card{border:1px solid var(--border);border-radius:14px;background:#fff;overflow:hidden}
+.block-card-head{display:flex;gap:8px;align-items:center;padding:10px 12px;background:rgba(212,175,55,.08);border-bottom:1px solid var(--border)}
+.block-card-head strong{flex:1;font-size:12px}
+.block-card-head button{border:1px solid var(--border);border-radius:8px;background:#fff;color:var(--br);padding:5px 8px;font-size:12px;font-weight:700}
+.block-card-body{padding:14px;display:grid;gap:10px}
+.block-card-body label{display:block;font-size:11px;font-weight:800;color:var(--muted);margin-bottom:5px}
+.block-card-body input,.block-card-body textarea,.block-card-body select{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:#fff;color:var(--br);font-size:13px}
+.block-card-body textarea{min-height:96px;resize:vertical;line-height:1.55}
+.block-empty{border:1px dashed var(--border);border-radius:12px;padding:22px;text-align:center;color:var(--muted);font-size:13px}
+.block-type-select{max-width:190px;padding:5px 8px;border:1px solid var(--border);border-radius:8px;background:#fff;color:var(--br);font-size:11px;font-weight:700}
+@media(max-width:520px){.block-card-head{flex-wrap:wrap}.block-type-select{max-width:100%;flex:1}.block-card-head strong{min-width:100%}}
 /* ── PREVIEW PANEL ── */
 .preview-panel{
   background:linear-gradient(135deg,rgba(103,76,46,.04),rgba(212,175,55,.06));
@@ -345,9 +361,25 @@ button,input,select,textarea{font:inherit;cursor:pointer}
       </div>
 
       <div class="field full content-field">
-        <label>Inhoud (volledig artikel) *</label>
-        <textarea id="fContent" placeholder="Schrijf hier het volledige verhaal, interview of ervaringsverhaal…&#10;&#10;Gebruik lege regels voor alinea's."></textarea>
-        <div class="field-hint">Lege regels worden automatisch omgezet naar alinea's.</div>
+        <label>Artikelinhoud en interactieve onderdelen *</label>
+        <div class="field-hint">Bouw het artikel op met losse blokken. Combineer tekst, hoofdstukken, citaten, uitklapbare verdieping, checklists, afbeeldingen en een budgettool. AI is niet nodig.</div>
+        <div class="block-toolbar">
+          <select id="blockTypeToAdd" aria-label="Soort inhoudsblok">
+            <option value="paragraph">Tekst / alinea</option>
+            <option value="heading">Hoofdstuktitel</option>
+            <option value="quote">Uitgelicht citaat</option>
+            <option value="callout">Informatiekader</option>
+            <option value="accordion">Uitklapbare verdieping</option>
+            <option value="checklist">Checklist</option>
+            <option value="image">Afbeelding met onderschrift</option>
+            <option value="divider">Scheiding</option>
+            <option value="budget">Interactieve gezinsbudgetcalculator</option>
+          </select>
+          <button class="block-add" id="btnAddBlock" type="button">+ Blok toevoegen</button>
+        </div>
+        <div id="blocksEditor" class="blocks-editor" aria-live="polite"></div>
+        <textarea id="fContent" hidden aria-hidden="true"></textarea>
+        <div class="field-hint">Bestaande artikelen blijven behouden. Oude platte tekst wordt bij bewerken automatisch verdeeld in alinea's. Opslaan bewaart zowel de blokken als een tekstuele compatibiliteitsversie.</div>
       </div>
 
       <!-- LIVE PREVIEW -->
@@ -432,6 +464,7 @@ button,input,select,textarea{font:inherit;cursor:pointer}
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 
+<script src="/assets/hn-publication-editor.js"></script>
 <script>
 (function(){
 'use strict';
@@ -545,6 +578,7 @@ function clearForm(){
   $('fPub').value='0';
   $('fReadTime').value='';
   document.querySelector('input[name=access][value=public]').checked=true;
+  window.HNPublicationEditor.setBlocks([], '');
   updatePreview();
 }
 
@@ -591,6 +625,7 @@ window.editBlog=function(id){
   $('fAuthor').value=b.author_name||'';
   $('fIntro').value=b.intro||'';
   $('fContent').value=b.content||'';
+  window.HNPublicationEditor.setBlocks(b.content_blocks,b.content);
   $('fCover').value=b.cover_url||'';
   $('fSlug').value=b.slug||'';
   $('fType').value=b.type||'verhaal';
@@ -657,6 +692,7 @@ $('btnSave').addEventListener('click',async()=>{
     slug:$('fSlug').value||slug(title),
     intro,
     content,
+    content_blocks:window.HNPublicationEditor.getBlocks(),
     author_name:$('fAuthor').value.trim()||'Hijrah Netwerk',
     cover_url:$('fCover').value.trim()||null,
     type:$('fType').value,
