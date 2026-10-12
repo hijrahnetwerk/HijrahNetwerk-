@@ -1349,22 +1349,20 @@ const $=id=>document.getElementById(id);
 ========================= */
 
 function message(text,type='success'){
-
-  const e=$('message');
-
-  e.textContent=text;
-
-  e.className='message show '+type;
-
-  clearTimeout(window.__mt);
-
-  window.__mt=setTimeout(
-    ()=>{
-      e.className='message';
-    },
-    4500
-  );
-
+  const e=$('message');if(!e)return;
+  e.textContent=text;e.className='message show '+type;clearTimeout(window.__mt);
+  window.__mt=setTimeout(()=>{e.className='message';},4500);
+}
+function withTimeout(promise,label,ms=12000){
+  let timer;
+  return Promise.race([Promise.resolve(promise),new Promise((_,reject)=>{timer=setTimeout(()=>reject(new Error(label+' duurde langer dan verwacht.')),ms);})]).finally(()=>clearTimeout(timer));
+}
+async function dashboardTask(label,task,notify=true){
+  try{return {ok:true,value:await withTimeout(Promise.resolve().then(task),label)}}
+  catch(error){console.error('[HN dashboard] '+label+' mislukt:',error);if(notify)message(label+' kon niet worden geladen. Vernieuw de pagina als dit blijft gebeuren.','error');return {ok:false,error}}
+}
+function markPendingDashboardItems(){
+  document.querySelectorAll('.loading,.empty').forEach(el=>{if(/laden|loading/i.test(el.textContent||''))el.textContent='Deze gegevens konden niet worden geladen. Vernieuw de pagina om opnieuw te proberen.'});
 }
 
 function esc(v){
@@ -1814,22 +1812,12 @@ async function loadBase(){
 
   if(co.error){
 
-    message(
-      co.error.message,
-      'error'
-    );
-
-    return;
+    throw co.error;
   }
 
   if(ci.error){
 
-    message(
-      ci.error.message,
-      'error'
-    );
-
-    return;
+    throw ci.error;
   }
 
   countries=co.data||[];
@@ -3453,41 +3441,27 @@ $('homeBtn').onclick=
 ========================= */
 
 async function init(){
-
   tabs();
-
-  if(!(await requireUser())){
-    return;
+  try{
+    const auth=await withTimeout(requireUser(),'Het controleren van de inlogsessie');
+    if(!auth)return;
+    await dashboardTask('Aanwezigheidsregistratie',()=>startPresence(),false);
+    await dashboardTask('Activiteit registreren',()=>logUserActivity('dashboard_opened','Gebruiker heeft het dashboard geopend',{presence_started:presenceAvailable}),false);
+    const results=await Promise.all([
+      dashboardTask('Basisgegevens',()=>loadBase()),
+      dashboardTask('Opgeslagen informatie',()=>loadSaved()),
+      dashboardTask('Voortgang',()=>loadProgress()),
+      dashboardTask('Hijrah-stappenplan',()=>loadPlan()),
+      dashboardTask('Voorkeuren',()=>loadPreferences())
+    ]);
+    if(results.some(result=>!result.ok))markPendingDashboardItems();
+    renderNextStep();renderPlanSummary();
+    if(getActiveModuleKey())openPlanTab();
+  }catch(error){
+    console.error('[HN dashboard] initialisatie mislukt:',error);
+    message('Het dashboard kon niet volledig worden geladen. Vernieuw de pagina en probeer het opnieuw.','error');
+    markPendingDashboardItems();
   }
-
-  const presenceStarted=
-    await startPresence();
-
-  await logUserActivity(
-    'dashboard_opened',
-    'Gebruiker heeft het dashboard geopend',
-    {
-      presence_started:
-        presenceStarted
-    }
-  );
-
-  await loadBase();
-
-  await Promise.all([
-    loadSaved(),
-    loadProgress(),
-    loadPlan(),
-    loadPreferences()
-  ]);
-
-  renderNextStep();
-  renderPlanSummary();
-
-  if(getActiveModuleKey()){
-    openPlanTab();
-  }
-
 }
 
 init();

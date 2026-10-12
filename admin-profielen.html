@@ -28,14 +28,54 @@ body{margin:0;font-family:Arial,sans-serif;color:#674C2E;background:#fff}.wrap{m
 <script>
 const db=()=>window.hijrahSupabase,$=x=>document.getElementById(x),esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
 let rows=[],hnStatuses=[];
+const waitFor=(promise,label,ms=12000)=>Promise.race([Promise.resolve(promise),new Promise((_,reject)=>setTimeout(()=>reject(new Error(label+' duurde langer dan verwacht.')),ms))]);
+function showLoadError(error,label='Profielenbeheer'){
+ console.error('[HN '+label+']',error);
+ const body=$('rows');
+ if(body)body.innerHTML='<tr><td colspan="6">De gegevens konden niet worden geladen. Vernieuw de pagina en probeer opnieuw.</td></tr>';
+ msg(label+' kon niet volledig worden geladen. Vernieuw de pagina en probeer opnieuw.',true);
+}
+window.addEventListener('error',function(){if($('rows')&&$('rows').textContent.trim()==='Profielen laden…')showLoadError(new Error('Een script kon niet worden uitgevoerd.'))});
+window.addEventListener('unhandledrejection',function(event){showLoadError(event.reason||new Error('Onverwachte fout'))});
 function msg(t,e=false){$('msg').textContent=t;$('msg').className='msg show '+(e?'':'ok');setTimeout(()=>$('msg').className='msg',4000)}
-async function guard(){const s=await db().auth.getSession();if(!s.data.session){location='/login?next=/admin-profielen';return false}const r=await db().from('profiles').select('role').eq('id',s.data.session.user.id).single();if(r.error||r.data?.role!=='admin'){document.body.innerHTML='<main style="padding:60px;font-family:Arial"><h1>Geen toegang</h1><p>Alleen HN-beheerders hebben toegang.</p></main>';return false}return true}
+async function guard(){
+ if(!db())throw new Error(window.hijrahSupabaseError||'Supabase is niet beschikbaar.');
+ const s=await waitFor(db().auth.getSession(),'Het controleren van de inlogsessie');
+ if(s.error)throw s.error;
+ if(!s.data?.session){location='/login?next=/admin-profielen';return false}
+ const r=await waitFor(db().from('profiles').select('role').eq('id',s.data.session.user.id).single(),'Het controleren van de beheerrechten');
+ if(r.error)throw r.error;
+ if(r.data?.role!=='admin'){document.body.innerHTML='<main style="padding:60px;font-family:Arial"><h1>Geen toegang</h1><p>Alleen beheerders hebben toegang.</p></main>';return false}
+ return true;
+}
 function populateHNStatusOptions(){const filter=$('hnstatus'),editor=$('hn');if(filter)filter.innerHTML='<option value="">Alle HN-statussen</option>'+hnStatuses.map(s=>'<option value="'+esc(s.slug)+'">'+esc(s.name)+'</option>').join('');if(editor)editor.innerHTML=hnStatuses.map(s=>'<option value="'+esc(s.slug)+'">'+esc(s.name)+'</option>').join('')||'<option value="lid">Lid</option>'}
-async function loadHNStatuses(){const r=await db().from('hn_statuses').select('slug,name').order('sort_order').order('name');if(r.error)return msg(r.error.message,true);hnStatuses=r.data||[];populateHNStatusOptions()}
+async function loadHNStatuses(){const r=await waitFor(db().from('hn_statuses').select('slug,name').order('sort_order').order('name'),'Het ophalen van HN-statussen');if(r.error)throw r.error;hnStatuses=r.data||[];populateHNStatusOptions()}
 function render(){const q=$('q').value.toLowerCase(),st=$('status').value,hs=$('hnstatus').value;const list=rows.filter(x=>(!q||((x.display_name||'')+' '+(x.first_name||'')+' '+(x.last_name||'')+' '+(x.email||'')).toLowerCase().includes(q))&&(!st||x.application_status===st)&&(!hs||x.hn_status===hs));$('rows').innerHTML=list.length?list.map(x=>'<tr><td><b>'+esc(x.display_name||[x.first_name,x.last_name].filter(Boolean).join(' ')||x.email||'Onbekend')+'</b><div>'+esc(x.email||'')+'</div></td><td><span class="status">'+esc(x.application_status||'—')+'</span> '+(x.verification_status==='verified'?'<span class="status ok">geverifieerd</span>':'')+'</td><td>'+esc(x.hn_status||'lid')+'</td><td>'+((x.profile_visibility&&x.application_status==='approved')?'Ja':'Nee')+'</td><td>'+esc(x.contribution_count||0)+' bijdrage(n)</td><td><button class="btn secondary" onclick="edit(\''+x.id+'\')">Bewerken</button> <a class="btn secondary" href="/profiel?id='+encodeURIComponent(x.id)+'" target="_blank">Profiel</a></td></tr>').join(''):'<tr><td colspan="6">Geen profielen gevonden.</td></tr>'}
-async function load(){const r=await db().rpc('hn_admin_profiles');if(r.error)return msg(r.error.message,true);rows=(r.data||[]).sort((a,b)=>String(b.created_at||'').localeCompare(String(a.created_at||'')));const ids=rows.map(x=>x.id);const t=ids.length?await db().from('topic').select('submitted_by').in('submitted_by',ids).eq('published',true):{data:[]};const s=ids.length?await db().from('submissions').select('submitted_by').in('submitted_by',ids):{data:[]};const counts={};[...(t.data||[]),...(s.data||[])].forEach(x=>{if(x.submitted_by)counts[x.submitted_by]=(counts[x.submitted_by]||0)+1});rows=rows.map(x=>({...x,contribution_count:counts[x.id]||0}));render()}
+async function load(){
+ $('rows').innerHTML='<tr><td colspan="6">Profielen laden…</td></tr>';
+ const r=await waitFor(db().rpc('hn_admin_profiles'),'Het ophalen van profielen');
+ if(r.error)throw r.error;
+ rows=(r.data||[]).sort((a,b)=>String(b.created_at||'').localeCompare(String(a.created_at||'')));
+ const ids=rows.map(x=>x.id);
+ const [t,s]=await Promise.all([
+  ids.length?waitFor(db().from('topic').select('submitted_by').in('submitted_by',ids).eq('published',true),'Het ophalen van bijdragen'):{data:[]},
+  ids.length?waitFor(db().from('submissions').select('submitted_by').in('submitted_by',ids),'Het ophalen van inzendingen'):{data:[]}
+ ]);
+ if(t.error)throw t.error;if(s.error)throw s.error;
+ const counts={};[...(t.data||[]),...(s.data||[])].forEach(x=>{if(x.submitted_by)counts[x.submitted_by]=(counts[x.submitted_by]||0)+1});
+ rows=rows.map(x=>({...x,contribution_count:counts[x.id]||0}));render();
+}
 window.edit=id=>{const x=rows.find(y=>y.id===id);if(!x)return;$('id').value=x.id;$('display').value=x.display_name||[x.first_name,x.last_name].filter(Boolean).join(' ')||'';$('bio').value=x.bio||'';$('hn').value=x.hn_status||'lid';$('application').value=x.application_status||'pending';$('verification').value=x.verification_status||'unverified';$('role').value=x.role||'';$('location').checked=x.show_location!==false;$('contrib').checked=x.show_contributions!==false;$('showstatus').checked=x.show_status!==false;$('visible').checked=x.profile_visibility!==false;$('editor').style.display='block';window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'})}
-$('save').onclick=async()=>{const id=$('id').value;if(!id)return;const p={display_name:$('display').value.trim()||null,bio:$('bio').value.trim()||null,hn_status:$('hn').value,application_status:$('application').value,verification_status:$('verification').value,role:$('role').value||'member',profile_visibility:$('visible').checked,show_location:$('location').checked,show_contributions:$('contrib').checked,show_status:$('showstatus').checked,updated_at:new Date().toISOString()};if(p.application_status==='approved'&&p.verification_status==='verified')p.approved_at=new Date().toISOString();const r=await db().rpc('hn_admin_update_profile',{p_profile_id:id,p_payload:p});if(r.error)return msg(r.error.message,true);$('editor').style.display='none';await load();msg('Profiel opgeslagen.')}
-$('cancel').onclick=()=>{$('editor').style.display='none'};$('q').oninput=render;$('status').onchange=render;$('hnstatus').onchange=render;$('refresh').onclick=load;
-(async()=>{if(await guard()){await loadHNStatuses();await load()}})();
+$('save').onclick=async()=>{
+ const id=$('id').value;if(!id)return;
+ const p={display_name:$('display').value.trim()||null,bio:$('bio').value.trim()||null,hn_status:$('hn').value,application_status:$('application').value,verification_status:$('verification').value,role:$('role').value||'member',profile_visibility:$('visible').checked,show_location:$('location').checked,show_contributions:$('contrib').checked,show_status:$('showstatus').checked,updated_at:new Date().toISOString()};
+ if(p.application_status==='approved'&&p.verification_status==='verified')p.approved_at=new Date().toISOString();
+ try{const r=await waitFor(db().rpc('hn_admin_update_profile',{p_profile_id:id,p_payload:p}),'Het opslaan van het profiel');if(r.error)throw r.error;$('editor').style.display='none';await load();msg('Profiel opgeslagen.')}
+ catch(error){msg('Profiel kon niet worden opgeslagen. '+(error?.message||''),true);console.error('[HN Profielenbeheer] opslaan mislukt:',error)}
+};
+$('cancel').onclick=()=>{$('editor').style.display='none'};$('q').oninput=render;$('status').onchange=render;$('hnstatus').onchange=render;$('refresh').onclick=()=>load().catch(error=>showLoadError(error));
+(async()=>{
+ $('rows').innerHTML='<tr><td colspan="6">Profielen laden…</td></tr>';
+ try{if(await guard()){await loadHNStatuses();await load()}}catch(error){showLoadError(error)}
+})();
 </script></body></html>
