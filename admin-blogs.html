@@ -676,7 +676,7 @@ window.editBlog=function(id){
   $('fTags').value=(b.tags||[]).join(', ');
   $('fVerification').value=b.verification_status||'not_checked';
   $('fVerifiedAt').value=b.last_verified_at||'';
-  $('fSources').value=(Array.isArray(b.sources)?b.sources:[]).map(s=>(s.label||'Bron')+' | '+(s.url||'')).join('\\n');
+  $('fSources').value=(Array.isArray(b.sources)?b.sources:[]).map(s=>(s.label||'Bron')+' | '+(s.url||'')).join('\n');
   $('fConsent').checked=!!b.consent_confirmed;
   const acc=b.access_level||'public';
   document.querySelector(`input[name=access][value="${acc}"]`).checked=true;
@@ -727,13 +727,13 @@ $('btnSave').addEventListener('click',async()=>{
   if(!content){st.textContent='Inhoud is verplicht.';st.className='modal-status err';return}
 
   const tags=$('fTags').value.split(',').map(t=>t.trim()).filter(Boolean);
-  const sourceLines=$('fSources').value.split('\\n').map(line=>line.trim()).filter(Boolean);
+  const sourceLines=$('fSources').value.split('\n').map(line=>line.trim()).filter(Boolean);
   const sources=[];
   for(const line of sourceLines){
     const parts=line.split('|');
     const url=(parts.length>1?parts.slice(1).join('|'):'').trim();
     const label=(parts.length>1?parts[0]:line).trim();
-    if(!/^https?:\\/\\//i.test(url)){st.textContent='Controleer de bronregel: gebruik Naam | https://…';st.className='modal-status err';return}
+    if(!/^https?:\/\//i.test(url)){st.textContent='Controleer de bronregel: gebruik Naam | https://…';st.className='modal-status err';return}
     sources.push({label:label||url,url});
   }
   const access=document.querySelector('input[name=access]:checked').value;
