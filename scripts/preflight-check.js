@@ -34,6 +34,38 @@ for (const file of htmlFiles) {
 }
 try { JSON.parse(fs.readFileSync(path.join(root, 'vercel.json'), 'utf8')); }
 catch (error) { failures.push('Invalid vercel.json: ' + error.message); }
+
+// Regression checks for the publication builder and strict admin-only copy protection.
+function source(relative) {
+  return fs.readFileSync(path.join(root, relative), 'utf8');
+}
+const protection = source('copy-protection.js');
+const buildSource = source('build.js');
+const adminBlogs = source('admin-blogs.html');
+const editor = source('assets/hn-publication-editor.js');
+const article = source('blog-artikel.html');
+const vercel = JSON.parse(source('vercel.json'));
+if (!protection.includes('client.rpc("is_admin")') || !protection.includes('result.data === true') || !protection.includes('allowAdmin()')) {
+  failures.push('Copy protection must fail closed and only allow a confirmed admin role.');
+}
+if (!buildSource.includes('copyProtectionTag') || !buildSource.includes("html.replace('</head>', copyProtectionTag")) {
+  failures.push('Build must inject copy protection into the head of every HTML page.');
+}
+if (!adminBlogs.includes('Publiceren geblokkeerd') || !adminBlogs.includes("!$('fConsent').checked")) {
+  failures.push('Publishing a story/interview/experience must require confirmed consent.');
+}
+for (const type of ['paragraph', 'heading', 'quote', 'callout', 'accordion', 'checklist', 'image', 'divider', 'budget']) {
+  if (!editor.includes(type + ':')) failures.push('Publication editor missing block type: ' + type);
+}
+if (!article.includes('renderArticleBlocks(b.content_blocks,b.content)') || !article.includes('safeHttpUrl')) {
+  failures.push('Public article page must render structured blocks and validate external URLs.');
+}
+if (vercel.git?.deploymentEnabled?.['work/hn-publication-builder-20261012'] !== false) {
+  failures.push('Vercel preview deployments must remain disabled for the publication-builder work branch.');
+}
+for (const relative of ['blog-artikel.html', 'kennisbank.html']) {
+  if (/Kopieer link|Link kopiëren/i.test(source(relative))) failures.push('Public copy-link control must be absent from ' + relative);
+}
 console.log('HN preflight: ' + jsFiles.length + ' JavaScript files, ' + htmlFiles.length + ' HTML pages checked.');
 if (failures.length) { console.error(failures.join('\n\n')); process.exitCode = 1; }
 else console.log('HN preflight passed: no JavaScript syntax errors or missing static file references.');
