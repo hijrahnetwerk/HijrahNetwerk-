@@ -122,7 +122,11 @@ a{color:inherit;text-decoration:none}
 .article-checklist h3{margin-bottom:12px;font-size:16px}
 .article-checklist ul{list-style:none;padding:0;margin:0;display:grid;gap:10px}
 .article-checklist li{display:flex;gap:10px;align-items:flex-start}
-.article-checklist li:before{content:'✓';display:grid;place-items:center;flex:0 0 21px;height:21px;border-radius:50%;background:#f4ece1;color:var(--br);font-size:12px;font-weight:900}
+.article-checklist li label{display:flex;gap:10px;align-items:flex-start;cursor:pointer;line-height:1.55}
+.article-checklist li input{flex:0 0 18px;width:18px;height:18px;margin-top:3px;accent-color:var(--br);cursor:pointer}
+.article-checklist li label:has(input:checked) span{text-decoration:line-through;color:var(--muted)}
+.article-checklist-progress{display:flex;justify-content:space-between;gap:12px;margin-top:14px;padding-top:12px;border-top:1px solid var(--border);font-size:12px;color:var(--muted)}
+.article-checklist-progress strong{color:var(--br)}
 .article-image{margin:28px 0}
 .article-image img{display:block;width:100%;max-height:560px;object-fit:cover;border-radius:16px}
 .article-image figcaption{margin-top:9px;font-size:12px;color:var(--muted)}
@@ -279,7 +283,8 @@ function renderArticleBlocks(blocks,legacy){
     if(type==='checklist'){
       var checklistItems=Array.isArray(block.items)?block.items:String(block.items||'').split(/\n/);
       checklistItems=checklistItems.map(function(item){return String(item||'').trim()}).filter(Boolean);
-      return '<section class="article-checklist">'+(block.title?'<h3>'+esc(block.title)+'</h3>':'')+'<ul>'+checklistItems.map(function(item){return '<li>'+esc(item)+'</li>'}).join('')+'</ul></section>';
+      var checklistKey=getSlug()+'-'+index;
+      return '<section class="article-checklist" data-article-checklist data-checklist-key="'+esc(checklistKey)+'">'+(block.title?'<h3>'+esc(block.title)+'</h3>':'')+'<ul>'+checklistItems.map(function(item,itemIndex){return '<li><label><input type="checkbox" data-check-item="'+itemIndex+'"><span>'+esc(item)+'</span></label></li>'}).join('')+'</ul><div class="article-checklist-progress"><span>Jouw voortgang</span><strong data-check-progress>0 van '+checklistItems.length+' afgevinkt</strong></div></section>';
     }
     if(type==='image'){
       var url=safeHttpUrl(block.url);
@@ -312,6 +317,29 @@ function renderArticleSources(sources,status,lastVerified){
     (list.length?'<ul>'+list.map(function(source){return '<li><a href="'+esc(safeHttpUrl(source.url))+'" target="_blank" rel="noopener noreferrer">'+esc(source.label||source.url)+'</a></li>'}).join('')+'</ul>':'')+
     '</section>';
 }
+function initArticleChecklists(){
+  document.querySelectorAll('[data-article-checklist]').forEach(function(root){
+    var key='hn-article-checklist:'+root.dataset.checklistKey;
+    var inputs=Array.from(root.querySelectorAll('[data-check-item]'));
+    var progress=root.querySelector('[data-check-progress]');
+    var saved=[];
+    try{saved=JSON.parse(localStorage.getItem(key)||'[]');if(!Array.isArray(saved))saved=[];}catch(_){saved=[];}
+    inputs.forEach(function(input){
+      input.checked=saved.indexOf(Number(input.dataset.checkItem))!==-1;
+      input.addEventListener('change',function(){
+        var checked=inputs.filter(function(item){return item.checked;}).map(function(item){return Number(item.dataset.checkItem);});
+        try{localStorage.setItem(key,JSON.stringify(checked));}catch(_){}
+        updateProgress();
+      });
+    });
+    function updateProgress(){
+      var count=inputs.filter(function(input){return input.checked;}).length;
+      if(progress)progress.textContent=count+' van '+inputs.length+' afgevinkt';
+    }
+    updateProgress();
+  });
+}
+
 function initBudgetCalculators(){
   document.querySelectorAll('[data-budget]').forEach(function(root){
     function update(){
@@ -465,6 +493,7 @@ function renderArticle(b,related){
   `;
 
   observeReveal();
+  initArticleChecklists();
   initBudgetCalculators();
 }
 
