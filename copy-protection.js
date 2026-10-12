@@ -92,10 +92,15 @@
 
   async function verifyAdmin() {
     try {
-      if (!window.hijrahSupabase) {
-        await loadScript("/assets/config.js");
+      if (!window.__ENV) await loadScript("/assets/config.js");
+      if (!window.supabase || !window.supabase.createClient) {
         await loadScript("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3/dist/umd/supabase.js");
-        await loadScript("/supabase-client.js");
+      }
+      if (!window.hijrahSupabase) {
+        var clientScriptExists = Array.prototype.some.call(document.scripts, function (script) {
+          return script.src && script.src.indexOf("/supabase-client.js") !== -1;
+        });
+        if (!clientScriptExists) await loadScript("/supabase-client.js");
       }
       var client = window.hijrahSupabase;
       if (!client || !client.auth) return;
