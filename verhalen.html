@@ -371,11 +371,11 @@ button,input,select{font:inherit;cursor:pointer}
 
   <div class="wrap">
     <div class="hero-inner hn-reveal">
-      <div class="eyebrow">✈ Verhalen & Interviews</div>
-      <h1>Mensen die de<br><span>stap hebben gezet.</span></h1>
-      <p>Persoonlijke verhalen, eerlijke interviews en ervaringen van families, alleenstaanden en koppels die emigreerden naar een islamitisch land.</p>
+      <div class="eyebrow">✦ Verhalen, interviews & artikelen</div>
+      <h1>Ervaringen en kennis<br><span>uit de praktijk.</span></h1>
+      <p>Persoonlijke verhalen, verdiepende interviews, artikelen, blogs en praktische gidsen over emigreren en leven in een islamitisch land.</p>
       <div class="hero-stats">
-        <div class="stat"><span class="stat-n" id="stat-total">—</span><span class="stat-l">Verhalen & interviews</span></div>
+        <div class="stat"><span class="stat-n" id="stat-total">—</span><span class="stat-l">Publicaties</span></div>
         <div class="stat"><span class="stat-n" id="stat-landen">—</span><span class="stat-l">Landen</span></div>
         <div class="stat"><span class="stat-n" id="stat-interviews">—</span><span class="stat-l">Interviews</span></div>
       </div>
@@ -398,6 +398,9 @@ button,input,select{font:inherit;cursor:pointer}
         <button class="tab" data-type="verhaal">✈ Verhalen</button>
         <button class="tab" data-type="interview">🎙 Interviews</button>
         <button class="tab" data-type="ervaring">💬 Ervaringen</button>
+        <button class="tab" data-type="artikel">📚 Artikelen</button>
+        <button class="tab" data-type="blog">✍ Blogs</button>
+        <button class="tab" data-type="gids">🧭 Praktische gidsen</button>
       </div>
       <div class="filter-sep"></div>
       <div class="select-wrap">
@@ -426,7 +429,7 @@ button,input,select{font:inherit;cursor:pointer}
 <section class="section" id="verhalen">
   <div class="wrap">
     <div class="grid-head reveal">
-      <h2>Alle verhalen</h2>
+      <h2>Alle publicaties</h2>
       <span class="count-badge" id="countBadge">laden…</span>
     </div>
     <div class="blog-grid" id="bloGrid">
@@ -463,7 +466,7 @@ let activeLand='';
 let zoekTerm='';
 
 /* ── RENDER HELPERS ── */
-function typeLabel(t){return{verhaal:'✈ Verhaal',interview:'🎙 Interview',ervaring:'💬 Ervaring'}[t]||t}
+function typeLabel(t){return{verhaal:'✈ Verhaal',interview:'🎙 Interview',ervaring:'💬 Ervaring',artikel:'📚 Artikel',blog:'✍ Blog',gids:'🧭 Praktische gids'}[t]||t}
 function faseLabel(f){return{orienteren:'Oriënteren',voorbereiden:'Voorbereiden',integreren:'Integreren',terugkeren:'Terugkeren'}[f]||f}
 function readTime(content){
   const words=(content||'').split(/\s+/).length;
