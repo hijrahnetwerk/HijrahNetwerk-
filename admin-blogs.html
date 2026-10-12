@@ -137,6 +137,8 @@ button,input,select,textarea{font:inherit;cursor:pointer}
 .modal-status.ok{color:#27ae60}
 .modal-status.err{color:#c0392b}
 
+.field .consent-field{display:flex;align-items:flex-start;gap:10px;text-transform:none;letter-spacing:0;font-size:13px;color:var(--br);line-height:1.45}
+.field .consent-field input{width:auto;flex:0 0 auto;margin-top:3px;accent-color:var(--gd)}
 /* ── MODULAIRE PUBLICATIEBLOKKEN ── */
 .block-toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:10px 0 14px}
 .block-toolbar select{flex:1;min-width:180px;padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:#fff;color:var(--br)}
@@ -502,7 +504,7 @@ button,input,select,textarea{font:inherit;cursor:pointer}
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 
-<script src="/assets/hn-publication-editor.js"></script>
+<script src="/assets/hn-publication-editor.js?v=20261012-blocks1"></script>
 <script>
 (function(){
 'use strict';
