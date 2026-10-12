@@ -691,6 +691,12 @@ window.editBlog=function(id){
 /* ── TOGGLE PUBLICATIE ── */
 window.togglePub=async function(id,currentlyPub){
   const newPub=!currentlyPub;
+  const blog=allBlogs.find(item=>item.id===id);
+  if(!blog){toast('Publicatie niet gevonden. Vernieuw de lijst en probeer opnieuw.','err');return}
+  if(newPub&&['verhaal','interview','ervaring'].includes(blog.type)&&!blog.consent_confirmed){
+    toast('Publiceren geblokkeerd: bevestig eerst de toestemming in het bewerkscherm.','err');
+    return;
+  }
   const payload={published:newPub};
   if(newPub)payload.published_at=new Date().toISOString();
   const {error}=await db.from('blogs').update(payload).eq('id',id);
@@ -724,11 +730,12 @@ $('btnSave').addEventListener('click',async()=>{
   const title=$('fTitle').value.trim();
   const intro=$('fIntro').value.trim();
   const content=$('fContent').value.trim();
+  const contentBlocks=window.HNPublicationEditor.getBlocks();
   const st=$('modalStatus');
 
   if(!title){st.textContent='Titel is verplicht.';st.className='modal-status err';return}
   if(!intro){st.textContent='Intro is verplicht.';st.className='modal-status err';return}
-  if(!content){st.textContent='Inhoud is verplicht.';st.className='modal-status err';return}
+  if(!content&&contentBlocks.length===0){st.textContent='Voeg minstens één inhoudsblok met inhoud toe.';st.className='modal-status err';return}
 
   const tags=$('fTags').value.split(',').map(t=>t.trim()).filter(Boolean);
   const sourceLines=$('fSources').value.split('\n').map(line=>line.trim()).filter(Boolean);
@@ -754,7 +761,7 @@ $('btnSave').addEventListener('click',async()=>{
     slug:$('fSlug').value||slug(title),
     intro,
     content,
-    content_blocks:window.HNPublicationEditor.getBlocks(),
+    content_blocks:contentBlocks,
     author_name:$('fAuthor').value.trim()||'Hijrah Netwerk',
     cover_url:$('fCover').value.trim()||null,
     type:$('fType').value,
