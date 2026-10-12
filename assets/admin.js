@@ -316,8 +316,9 @@ $('reviewerForm')?.addEventListener('submit',async e=>{e.preventDefault();const 
 $('cancelReviewer')?.addEventListener('click',()=>{$('reviewerForm').reset();$('reviewerId').value='';$('reviewerFormTitle').textContent='Nieuwe reviewer';$('cancelReviewer').hidden=true});
 
 async function loadUsers(){
-  const r=await db().from('profiles').select('*').order('created_at',{ascending:false});if(r.error)throw r.error;
-  state.users=r.data||[];if($('totalUsersCount'))$('totalUsersCount').textContent=state.users.length;renderUsers();
+  const r=await db().rpc('hn_admin_profiles');if(r.error)throw r.error;
+  state.users=(r.data||[]).sort((a,b)=>String(b.created_at||'').localeCompare(String(a.created_at||'')));
+  if($('totalUsersCount'))$('totalUsersCount').textContent=state.users.length;renderUsers();
 }
 function renderUsers(){
  const t=$('usersTable');if(!t)return;const q=($('userFilter')?.value||'').toLowerCase();const list=state.users.filter(x=>(x.email||'').toLowerCase().includes(q));
@@ -365,9 +366,9 @@ $('closeUserPlanButton')?.addEventListener('click',()=>{$('userPlanPanel').style
 
 async function loadSubmissions(){
  const box=$('submissionsList'),reg=$('registrationList');if(!box||!reg)return;
- const [s,p]=await Promise.all([db().from('submissions').select('*').eq('status','pending').order('created_at',{ascending:false}),db().from('profiles').select('*').eq('application_status','pending').order('created_at',{ascending:false})]);
- if(s.error||p.error){box.innerHTML='<div class="empty">Inzendingen konden niet worden geladen.</div>';reg.innerHTML='<div class="empty">Registraties konden niet worden geladen.</div>';return}
- const subs=s.data||[],profiles=p.data||[];if($('submissionBadge')){$('submissionBadge').textContent=subs.length+profiles.length;$('submissionBadge').style.display=(subs.length+profiles.length)?'inline-flex':'none'}
+ const [s,p]=await Promise.all([db().from('submissions').select('*').eq('status','pending').order('created_at',{ascending:false}),db().rpc('hn_admin_profiles')]);
+ if(s.error||p.error){console.error('[HN Admin] Registraties/inzendingen laden mislukt:',s.error||p.error);box.innerHTML='<div class="empty">Inzendingen konden niet worden geladen.</div>';reg.innerHTML='<div class="empty">Registraties konden niet worden geladen.</div>';return}
+ const subs=s.data||[],profiles=(p.data||[]).filter(x=>x.application_status==='pending').sort((a,b)=>String(b.created_at||'').localeCompare(String(a.created_at||'')));if($('submissionBadge')){$('submissionBadge').textContent=subs.length+profiles.length;$('submissionBadge').style.display=(subs.length+profiles.length)?'inline-flex':'none'}
  reg.innerHTML=profiles.length?profiles.map(x=>'<div class="activity-item"><div class="activity-main"><div><div class="activity-user">'+esc([x.first_name,x.last_name].filter(Boolean).join(' ')||x.email)+'</div><div class="activity-description">'+esc(x.email||'')+' · WhatsApp: '+esc(x.whatsapp_number||'Niet ingevuld')+'</div></div><div class="actions"><button class="button button-primary" onclick="approveMember(\''+x.id+'\')">Goedkeuren</button><button class="button button-danger" onclick="rejectMember(\''+x.id+'\')">Afwijzen</button></div></div></div>').join(''):'<div class="empty">Geen openstaande registraties.</div>';
  box.innerHTML=subs.length?subs.map(x=>{const names=[[x.country_name||state.countries.find(y=>y.id===x.country_id)?.name,'Land'],[x.city_name||state.cities.find(y=>y.id===x.city_id)?.name,'Stad'],[x.category_name||state.categories.find(y=>y.id===x.category_id)?.name,'Categorie'],[x.subcategory_name||state.subcategories.find(y=>y.id===x.subcategory_id)?.name,'Subcategorie']].filter(y=>y[0]).map(y=>'<span><b>'+y[1]+':</b> '+esc(y[0])+'</span>').join(' · ');return `<div class="activity-item"><div class="activity-main"><div><div class="activity-user">${esc(x.title||'Nieuwe inzending')}</div><div class="activity-description">${esc(x.submission_type||'Informatie')} · ${esc(x.content||'')}</div>${names?'<div class="activity-details">'+names+'</div>':''}<div class="activity-details"><b>Contactgegevens voor HN:</b> ${([x.submitter_name&&'Naam: '+x.submitter_name,x.submitter_email&&'E-mail: '+x.submitter_email,x.submitter_whatsapp&&'WhatsApp: '+x.submitter_whatsapp,x.submitter_social&&'Social media: '+x.submitter_social].filter(Boolean).map(esc).join(' · ')||'Geen contactgegevens opgegeven')}</div><div class="activity-details">Ontvangen: ${esc(x.created_at?new Date(x.created_at).toLocaleString('nl-NL'):'')}</div></div><div class="actions"><button class="button button-primary" onclick="openSubmissionReview('${esc(x.id)}')">Goedkeuren & fiche maken</button><button class="button button-danger" onclick="rejectSubmission('${esc(x.id)}')">Afwijzen</button></div></div></div>`}).join(''):'<div class="empty">Geen openstaande inzendingen.</div>';
 }
