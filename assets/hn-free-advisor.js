@@ -51,9 +51,23 @@ ready(function(){
    return "Je bent een UX-, SEO- en contentadviseur voor Hijrah Netwerk. Analyseer deze pagina nuchter en concreet. Geef maximaal 7 verbeterpunten, prioriteer ze en leg per punt uit waarom. Geef geen marketingcliches en verander niets automatisch. Houd rekening met HN: zusterlijk, praktisch, betrouwbaar, van orientatie tot integratie. Beoordeel ook de volgorde van HN-componenten, interne links, zoekintentie, mobiele UX, H1/H2-structuur, SEO-titel, meta description, databronnen en ontbrekende component-ID's.\n\nPagina: "+page+"\nURL: "+slug+"\nSEO-titel: "+seo+"\nMeta: "+desc+"\nKoppen: "+headings.join(" | ");
  }
  run.onclick=inspect;
- copy.onclick=function(){
-   var p=prompt();
-   navigator.clipboard&&navigator.clipboard.writeText(p).then(function(){copy.textContent="Prompt gekopieerd";setTimeout(function(){copy.textContent="AI-advies voorbereiden"},1800)}).catch(function(){window.prompt("Kopieer deze gratis AI-prompt:",p)});
+ copy.onclick=async function(){
+   var client=window.hijrahSupabase;
+   if(!client||!client.auth){copy.textContent="Alleen voor admin";return}
+   try{
+     var session=await client.auth.getSession();
+     if(!session.data||!session.data.session){copy.textContent="Alleen voor admin";return}
+     var result=await client.rpc("is_admin");
+     if(result.error||result.data!==true){copy.textContent="Alleen voor admin";return}
+     var p=prompt();
+     if(navigator.clipboard&&navigator.clipboard.writeText){
+       await navigator.clipboard.writeText(p);
+       copy.textContent="Prompt gekopieerd";
+       setTimeout(function(){copy.textContent="AI-advies voorbereiden"},1800);
+     }else{
+       window.prompt("Kopieer deze gratis AI-prompt:",p);
+     }
+   }catch(error){copy.textContent="Kopiëren niet beschikbaar"}
  };
  if(focus)focus.onclick=function(){var b=document.querySelector(".builder");b.classList.toggle("focus-mode");focus.textContent=b.classList.contains("focus-mode")?"Zijpanelen tonen":"Volledig scherm"};
  setTimeout(inspect,700);
