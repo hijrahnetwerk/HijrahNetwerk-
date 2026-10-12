@@ -141,7 +141,7 @@ for (const file of htmlFiles) {
     !html.includes('/assets/hn-admin-bar.css?v=20261013') ? adminBarStyleTag : '',
     !html.includes(visualPolishStyleTag) ? visualPolishStyleTag : '',
     !html.includes(motionTag) ? motionTag : '',
-    !html.includes(copyProtectionTag) && !isAdminSurface ? copyProtectionTag : '',
+    !html.includes(copyProtectionTag) ? copyProtectionTag : '',
     !html.includes('/assets/hn-footer.js') && !isAdminSurface && !['login.html','register.html','reset-password.html','update-password.html','dashboard.html','paspoort.html','mijn-kaart.html'].includes(file) ? footerTag : '',
     !isAdminSurface && !['login.html','register.html','reset-password.html','update-password.html','mijn-kaart.html'].includes(file) && !html.includes('/assets/hn-back-to-top.js?v=20261014') ? backToTopTag : ''
   ].filter(Boolean).join('\n') + '\n';
