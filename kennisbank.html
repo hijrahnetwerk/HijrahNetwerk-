@@ -1251,13 +1251,6 @@
     const title = String(topic.title || "Hijrah Netwerk");
     const text = title + " — Hijrah Netwerk";
 
-    if (channel === "copy") {
-      navigator.clipboard?.writeText(url)
-        .then(() => showNotice("Link gekopieerd."))
-        .catch(() => showNotice("De link kon niet automatisch worden gekopieerd."));
-      return;
-    }
-
     const links = {
       whatsapp:
         "https://wa.me/?text=" +
@@ -2108,11 +2101,7 @@
             rel="noopener noreferrer"
           >X</a>
 
-          <button
-            class="share-btn"
-            type="button"
-            onclick="shareArticle(topics.find(x => x.id === '${esc(topic.id)}'),'copy')"
-          >Link kopiëren</button>
+
         </div>
 
         <div class="submission-cta">

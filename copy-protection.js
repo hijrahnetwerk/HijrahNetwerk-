@@ -1,9 +1,7 @@
 (function () {
   "use strict";
 
-  var path = (window.location.pathname || "").replace(/\/$/, "");
-  // Adminpagina's blijven direct volledig selecteerbaar en kopieerbaar.
-  if (path === "/admin" || path.startsWith("/admin/") || path.startsWith("/admin-") || path === "/werkruimte" || path.startsWith("/werkruimte/")) return;
+  // Bescherming geldt op alle pagina's. Alleen een door Supabase bevestigde adminrol heft deze op.
 
   var styleId = "hn-copy-protection-style";
   var style = document.createElement("style");
@@ -14,11 +12,6 @@
     "  user-select: none !important;",
     "  -webkit-touch-callout: none;",
     "}",
-    "html.hn-copy-protected input, html.hn-copy-protected textarea, html.hn-copy-protected select,",
-    "html.hn-copy-protected [contenteditable=\"true\"], html.hn-copy-protected [contenteditable=\"\"] {",
-    "  -webkit-user-select: text !important;",
-    "  user-select: text !important;",
-    "}"
   ].join("\n");
   (document.head || document.documentElement).appendChild(style);
   document.documentElement.classList.add("hn-copy-protected");
@@ -31,14 +24,11 @@
   }
 
   function blockEvent(event) {
-    if (!isEditable(event.target)) {
-      event.preventDefault();
-      event.stopPropagation();
-    }
+    event.preventDefault();
+    event.stopPropagation();
   }
 
   function blockKey(event) {
-    if (isEditable(event.target)) return;
     var key = String(event.key || "").toLowerCase();
     if ((event.ctrlKey || event.metaKey) && ["c", "x", "u", "s", "a", "p"].indexOf(key) !== -1) {
       event.preventDefault();
@@ -102,10 +92,15 @@
 
   async function verifyAdmin() {
     try {
-      if (!window.hijrahSupabase) {
-        await loadScript("/assets/config.js");
+      if (!window.__ENV) await loadScript("/assets/config.js");
+      if (!window.supabase || !window.supabase.createClient) {
         await loadScript("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3/dist/umd/supabase.js");
-        await loadScript("/supabase-client.js");
+      }
+      if (!window.hijrahSupabase) {
+        var clientScriptExists = Array.prototype.some.call(document.scripts, function (script) {
+          return script.src && script.src.indexOf("/supabase-client.js") !== -1;
+        });
+        if (!clientScriptExists) await loadScript("/supabase-client.js");
       }
       var client = window.hijrahSupabase;
       if (!client || !client.auth) return;
@@ -119,5 +114,9 @@
     }
   }
 
-  verifyAdmin();
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", verifyAdmin, { once: true });
+  } else {
+    verifyAdmin();
+  }
 })();

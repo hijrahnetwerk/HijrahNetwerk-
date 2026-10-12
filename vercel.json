@@ -562,7 +562,8 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "git": {
     "deploymentEnabled": {
-      "work/hn-navigation-integration-20261011": false
+      "work/hn-navigation-integration-20261011": false,
+      "work/hn-publication-builder-20261012": false
     }
   }
 }

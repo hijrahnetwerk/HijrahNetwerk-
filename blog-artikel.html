@@ -99,6 +99,45 @@ a{color:inherit;text-decoration:none}
 }
 .art-body p{margin-bottom:1.5em}
 
+/* ── GESTRUCTUREERDE PUBLICATIEBLOKKEN ── */
+.art-body{white-space:normal}
+.article-toc{margin:0 0 30px;padding:20px 22px;border:1px solid var(--border);border-left:4px solid var(--gd);border-radius:14px;background:#fff}
+.article-toc h2{font-size:13px;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px}
+.article-toc ol{margin:0;padding-left:22px;display:grid;gap:6px;font-size:13px}
+.article-toc a{text-decoration:underline;text-decoration-color:rgba(103,76,46,.3);text-underline-offset:3px}
+.article-toc a:hover{color:var(--rs)}
+.article-block-heading{margin:42px 0 16px;font-size:clamp(22px,3vw,30px);line-height:1.2;letter-spacing:-.025em;color:var(--br);scroll-margin-top:100px}
+.article-block-heading.subheading{margin-top:30px;font-size:22px}
+.article-quote{margin:30px 0;padding:24px 26px;border-left:4px solid var(--rs);border-radius:0 16px 16px 0;background:linear-gradient(110deg,#f4ece1,#fff);font-size:clamp(18px,2.5vw,23px);font-family:Georgia,Cambria,serif;font-style:italic;line-height:1.5;color:var(--br)}
+.article-quote cite{display:block;margin-top:12px;font-family:Inter,system-ui,sans-serif;font-style:normal;font-size:12px;font-weight:800;color:var(--rs);letter-spacing:.04em}
+.article-callout{margin:26px 0;padding:20px 22px;border:1px solid rgba(198,161,91,.45);border-radius:16px;background:#fff;box-shadow:0 8px 24px rgba(103,76,46,.06)}
+.article-callout h3{font-size:16px;margin-bottom:7px;color:var(--br)}
+.article-accordion{margin:14px 0;border:1px solid var(--border);border-radius:14px;background:#fff;overflow:hidden}
+.article-accordion summary{cursor:pointer;list-style:none;padding:16px 18px;font-weight:800;color:var(--br)}
+.article-accordion summary::-webkit-details-marker{display:none}
+.article-accordion summary:after{content:'+';float:right;color:var(--rs);font-size:18px}
+.article-accordion[open] summary:after{content:'−'}
+.article-accordion .accordion-content{padding:0 18px 18px;color:#4a3520}
+.article-checklist{margin:24px 0;padding:20px 22px;border-radius:16px;background:#fff;border:1px solid var(--border)}
+.article-checklist h3{margin-bottom:12px;font-size:16px}
+.article-checklist ul{list-style:none;padding:0;margin:0;display:grid;gap:10px}
+.article-checklist li{display:flex;gap:10px;align-items:flex-start}
+.article-checklist li:before{content:'✓';display:grid;place-items:center;flex:0 0 21px;height:21px;border-radius:50%;background:#f4ece1;color:var(--br);font-size:12px;font-weight:900}
+.article-image{margin:28px 0}
+.article-image img{display:block;width:100%;max-height:560px;object-fit:cover;border-radius:16px}
+.article-image figcaption{margin-top:9px;font-size:12px;color:var(--muted)}
+.article-block-divider{height:1px;border:0;background:linear-gradient(90deg,transparent,var(--gd),transparent);margin:36px 0}
+.article-budget{margin:34px 0;padding:24px;border-radius:20px;background:linear-gradient(135deg,#2C1D0E,#674C2E);color:#fff}
+.article-budget h3{font-family:Georgia,Cambria,serif;font-size:23px;color:#fff;margin-bottom:8px}
+.article-budget .budget-description{font-size:13px;color:#e8d8b5;margin-bottom:22px}
+.article-budget-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.article-budget-control{display:grid;gap:7px;font-size:12px;color:#e8d8b5}
+.article-budget-control strong{color:#fff}
+.article-budget-control input{width:100%;accent-color:#C6A15B}
+.article-budget-total{margin-top:22px;padding-top:18px;border-top:1px solid rgba(255,255,255,.18);display:flex;gap:14px;align-items:flex-end;justify-content:space-between;flex-wrap:wrap}
+.article-budget-total strong{font-size:clamp(24px,4vw,34px);font-family:Georgia,Cambria,serif;color:#C6A15B}
+.article-budget-total small{display:block;font-size:11px;color:rgba(255,255,255,.65)}
+@media(max-width:560px){.article-budget{padding:18px}.article-budget-grid{grid-template-columns:1fr}.article-toc{padding:17px}}
 /* ── TAGS / META SIDEBAR ── */
 .art-aside{
   position:sticky;top:90px;
@@ -124,6 +163,13 @@ a{color:inherit;text-decoration:none}
 }
 .share-btn:hover{border-color:var(--gd);background:linear-gradient(135deg,#fff,rgba(212,175,55,.08))}
 
+/* ── BRONNEN EN REDACTIONELE CONTROLE ── */
+.article-sources{margin:34px 0 8px;padding:22px;border:1px solid var(--border);border-radius:16px;background:#fff}
+.article-sources h2{font-size:18px;margin-bottom:8px;color:var(--br)}
+.article-sources .source-status{font-size:12px;color:var(--muted);margin-bottom:12px}
+.article-sources ul{padding-left:20px;display:grid;gap:8px;font-size:13px}
+.article-sources a{text-decoration:underline;text-underline-offset:3px}
+.article-sources a:hover{color:var(--rs)}
 /* ── LAYOUT ── */
 .art-layout{
   display:grid;grid-template-columns:1fr;gap:36px;
@@ -193,10 +239,96 @@ a{color:inherit;text-decoration:none}
 
 const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 
-function typeLabel(t){return{verhaal:'✈ Verhaal',interview:'🎙 Interview',ervaring:'💬 Ervaring'}[t]||t}
+function typeLabel(t){return{verhaal:'✈ Verhaal',interview:'🎙 Interview',ervaring:'💬 Ervaring',artikel:'📚 Artikel',blog:'✍ Blog',gids:'🧭 Praktische gids'}[t]||t}
 function faseLabel(f){return{orienteren:'Oriënteren',voorbereiden:'Voorbereiden',integreren:'Integreren',terugkeren:'Terugkeren'}[f]||f}
 function initials(n){return(n||'HN').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase()}
 function readTime(content){return Math.max(2,Math.round((content||'').split(/\s+/).length/200))}
+function headingSlug(value){return String(value||'hoofdstuk').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'')||'hoofdstuk'}
+function paragraphs(value){return String(value||'').split(/\n\s*\n/).map(function(part){return part.trim()}).filter(Boolean).map(function(part){return '<p>'+esc(part).replace(/\n/g,'<br>')+'</p>'}).join('')}
+function safeHttpUrl(value){return /^https?:\/\/[^\s]+$/i.test(String(value||'').trim())?String(value).trim():''}
+function normalizeArticleBlocks(blocks,legacy){
+  if(Array.isArray(blocks)&&blocks.length)return blocks.filter(function(block){return block&&typeof block==='object'}).map(function(block){return Object.assign({type:'paragraph',text:''},block)});
+  return String(legacy||'').split(/\n\s*\n/).map(function(text){return text.trim()}).filter(Boolean).map(function(text){return{type:'paragraph',text:text}});
+}
+function renderBudgetBlock(block,index){
+  var id='hn-budget-'+index;
+  return '<section class="article-budget" data-budget="'+id+'"><h3>'+esc(block.title||'Gezinsbudget inschatten')+'</h3><p class="budget-description">'+esc(block.text||'Pas de bedragen aan voor een eerste maandinschatting. Dit zijn eigen aannames, geen actuele prijsopgave.')+'</p><div class="article-budget-grid">'+
+    '<label class="article-budget-control">Woninghuur <strong data-budget-label="rent">4.500 MAD</strong><input type="range" min="2500" max="12000" step="500" value="4500" data-budget-input="rent"></label>'+
+    '<label class="article-budget-control">Schoolkosten per kind <strong data-budget-label="school">1.800 MAD</strong><input type="range" min="0" max="5000" step="200" value="1800" data-budget-input="school"></label>'+
+    '<label class="article-budget-control">Schoolgaande kinderen <strong data-budget-label="kids">2 kinderen</strong><input type="range" min="0" max="6" step="1" value="2" data-budget-input="kids"></label>'+
+    '<label class="article-budget-control">Boodschappen en levensonderhoud <strong data-budget-label="food">3.500 MAD</strong><input type="range" min="2000" max="10000" step="500" value="3500" data-budget-input="food"></label></div>'+
+    '<div class="article-budget-total"><div><small>Geschat totaal per maand</small><strong data-budget-total>11.600 MAD</strong><small data-budget-eur>Ongeveer €1.074 bij 10,8 MAD per euro; controleer de actuele koers.</small></div><small>Exclusief zorg, vervoer, nutsvoorzieningen, borg en eenmalige kosten.</small></div></section>';
+}
+function renderArticleBlocks(blocks,legacy){
+  var items=normalizeArticleBlocks(blocks,legacy);
+  var headings=[],ids={};
+  items.forEach(function(block,index){
+    if(block.type==='heading'&&String(block.text||'').trim()){
+      var base=headingSlug(block.text),id=base;
+      if(ids[id])id=base+'-'+(index+1);
+      ids[id]=true;block.__headingId=id;headings.push({id:id,text:block.text,level:Number(block.level)===3?3:2});
+    }
+  });
+  var toc=headings.length>=3?'<nav class="article-toc" aria-label="In dit artikel"><h2>In dit artikel</h2><ol>'+headings.map(function(item){return '<li><a href="#'+esc(item.id)+'">'+esc(item.text)+'</a></li>'}).join('')+'</ol></nav>':'';
+  var html=items.map(function(block,index){
+    var type=block.type||'paragraph',text=String(block.text||'');
+    if(type==='heading')return text.trim()?'<h'+(Number(block.level)===3?'3':'2')+' class="article-block-heading '+(Number(block.level)===3?'subheading':'')+'" id="'+esc(block.__headingId||headingSlug(text))+'">'+esc(text)+'</h'+(Number(block.level)===3?'3':'2')+'>':'';
+    if(type==='quote')return text.trim()?'<blockquote class="article-quote">'+esc(text).replace(/\n/g,'<br>')+(block.attribution?'<cite>— '+esc(block.attribution)+'</cite>':'')+'</blockquote>':'';
+    if(type==='callout')return '<aside class="article-callout">'+(block.title?'<h3>'+esc(block.title)+'</h3>':'')+paragraphs(text)+'</aside>';
+    if(type==='accordion')return '<details class="article-accordion"><summary>'+esc(block.title||'Meer informatie')+'</summary><div class="accordion-content">'+paragraphs(text)+'</div></details>';
+    if(type==='checklist'){
+      var checklistItems=Array.isArray(block.items)?block.items:String(block.items||'').split(/\n/);
+      checklistItems=checklistItems.map(function(item){return String(item||'').trim()}).filter(Boolean);
+      return '<section class="article-checklist">'+(block.title?'<h3>'+esc(block.title)+'</h3>':'')+'<ul>'+checklistItems.map(function(item){return '<li>'+esc(item)+'</li>'}).join('')+'</ul></section>';
+    }
+    if(type==='image'){
+      var url=safeHttpUrl(block.url);
+      return url?'<figure class="article-image"><img src="'+esc(url)+'" alt="'+esc(block.alt||'')+'" loading="lazy">'+(block.caption?'<figcaption>'+esc(block.caption)+'</figcaption>':'')+'</figure>':'';
+    }
+    if(type==='divider')return '<hr class="article-block-divider">';
+    if(type==='budget')return renderBudgetBlock(block,index);
+    return paragraphs(text);
+  }).join('');
+  return toc+html;
+}
+function renderArticleSources(sources,status,lastVerified){
+  var list=Array.isArray(sources)?sources.filter(function(source){return source&&safeHttpUrl(source.url)}):[];
+  var labels={
+    not_checked:'Nog niet inhoudelijk gecontroleerd',
+    personal_experience:'Persoonlijke ervaring — dit is geen garantie dat iedere situatie hetzelfde verloopt',
+    source_checked:'Bronnen gecontroleerd door de redactie',
+    officially_verified:'Officieel bevestigd aan de hand van een bron',
+    needs_review:'Controle nodig — controleer dit vóór je erop vertrouwt',
+    outdated:'Mogelijk verouderd — controleer de actuele situatie'
+  };
+  var statusText=labels[status]||'Redactionele status niet opgegeven';
+  if(!list.length&&(!status||status==='not_checked')&&!lastVerified)return '';
+  var date='';
+  if(lastVerified){
+    var parsed=new Date(String(lastVerified)+'T00:00:00');
+    if(!isNaN(parsed.getTime()))date=parsed.toLocaleDateString('nl-NL',{day:'numeric',month:'long',year:'numeric'});
+  }
+  return '<section class="article-sources"><h2>Bronnen en redactionele controle</h2><p class="source-status">'+esc(statusText)+(date?' · Laatst gecontroleerd: '+esc(date):'')+'</p>'+
+    (list.length?'<ul>'+list.map(function(source){return '<li><a href="'+esc(safeHttpUrl(source.url))+'" target="_blank" rel="noopener noreferrer">'+esc(source.label||source.url)+'</a></li>'}).join('')+'</ul>':'')+
+    '</section>';
+}
+function initBudgetCalculators(){
+  document.querySelectorAll('[data-budget]').forEach(function(root){
+    function update(){
+      var values={};
+      root.querySelectorAll('[data-budget-input]').forEach(function(input){values[input.dataset.budgetInput]=Number(input.value)});
+      var total=(values.rent||0)+(values.school||0)*(values.kids||0)+(values.food||0);
+      root.querySelector('[data-budget-label="rent"]').textContent=(values.rent||0).toLocaleString('nl-NL')+' MAD';
+      root.querySelector('[data-budget-label="school"]').textContent=(values.school||0).toLocaleString('nl-NL')+' MAD';
+      root.querySelector('[data-budget-label="kids"]').textContent=(values.kids||0)+' '+((values.kids||0)===1?'kind':'kinderen');
+      root.querySelector('[data-budget-label="food"]').textContent=(values.food||0).toLocaleString('nl-NL')+' MAD';
+      root.querySelector('[data-budget-total]').textContent=total.toLocaleString('nl-NL')+' MAD';
+      root.querySelector('[data-budget-eur]').textContent='Ongeveer €'+Math.round(total/10.8).toLocaleString('nl-NL')+' bij 10,8 MAD per euro; controleer de actuele koers.';
+    }
+    root.querySelectorAll('[data-budget-input]').forEach(function(input){input.addEventListener('input',update)});
+    update();
+  });
+}
 
 function compassSvg(){
   return`<svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -275,7 +407,7 @@ function renderArticle(b,related){
         <!-- HOOFDTEKST -->
         <div>
           ${b.intro?`<div class="art-intro reveal">${esc(b.intro)}</div>`:''}
-          <div class="art-body reveal">${esc(b.content||'').split('\n\n').map(p=>`<p>${esc(p)}</p>`).join('').replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"')}</div>
+          <div class="art-body reveal">${renderArticleBlocks(b.content_blocks,b.content)}${renderArticleSources(b.sources,b.verification_status,b.last_verified_at)}</div>
         </div>
 
         <!-- ASIDE -->
@@ -295,9 +427,6 @@ function renderArticle(b,related){
 
           <div class="share-btns">
             <h4 style="margin-top:4px">Deel dit verhaal</h4>
-            <button class="share-btn" onclick="navigator.clipboard.writeText(location.href).then(()=>this.textContent='✓ Link gekopieerd!')">
-              🔗 Kopieer link
-            </button>
             <a class="share-btn" href="https://wa.me/?text=${encodeURIComponent(b.title+' — '+location.href)}" target="_blank" rel="noopener">
               💬 Deel via WhatsApp
             </a>
@@ -336,6 +465,7 @@ function renderArticle(b,related){
   `;
 
   observeReveal();
+  initBudgetCalculators();
 }
 
 /* Foutpagina */

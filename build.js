@@ -47,7 +47,7 @@ const pageEngineTag = '<script src="/assets/hn-page-engine.js"></script>';
 const visualEditorTag = '<script src="/assets/hn-visual-editor-runtime.js"></script>';
 const visualPolishStyleTag = '<link rel="stylesheet" href="/assets/hn-visual-polish.css">';
 const motionTag = '<script src="/assets/hn-motion.js"></script>';
-const copyProtectionTag = '<script src="/copy-protection.js?v=20261011-admin-copy1"></script>';
+const copyProtectionTag = '<script src="/copy-protection.js?v=20261012-admin-only-copy2"></script>';
 const supabaseUmdUrl = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3/dist/umd/supabase.js';
 const supabaseBootstrapPages = new Set(['integratie.html','orientatie.html','vertrek.html','voorbereiding.html','orientatietest.html']);
 
@@ -88,7 +88,7 @@ for (const file of htmlFiles) {
   html = html.replace(/\/assets\/hn-admin-bar\.js(?:\?[^"']*)?/g, '/assets/hn-admin-bar.js?v=20261013');
   html = html.replace(/\/assets\/hn-admin-bar\.css(?:\?[^"']*)?/g, '/assets/hn-admin-bar.css?v=20261013');
   html = html.replace(/<script src="\/assets\/private-preview\.js"><\/script>\s*/g, '');
-  html = html.replace(/<script src=["']\/copy-protection\.js(?:\?[^"']*)?["']><\/script>/g, copyProtectionTag);
+  html = html.replace(/<script src=["']\/copy-protection\.js(?:\?[^"']*)?["']><\/script>/g, '');
 
   // Verwijder oude favicon-verwijzingen voordat de juiste HN-favicon opnieuw
   // wordt geplaatst. Hierdoor blijft een eerdere build niet naar een verkeerd
@@ -99,6 +99,12 @@ for (const file of htmlFiles) {
   if (!html.includes('</body>')) {
     console.warn('[HN build] Geen </body> gevonden in ' + file + '; pagina overgeslagen.');
     continue;
+  }
+
+  // Kopieerbescherming wordt in de head gestart, vóórdat de pagina-inhoud interactief wordt.
+  // Alleen een door Supabase bevestigde adminrol kan de bescherming opheffen.
+  if (!html.includes(copyProtectionTag)) {
+    html = html.replace('</head>', copyProtectionTag + '\n</head>');
   }
 
   // Favicon hoort in <head>. Eerder werd hij als onderdeel van de body-additions geplaatst,
@@ -141,7 +147,7 @@ for (const file of htmlFiles) {
     !html.includes('/assets/hn-admin-bar.css?v=20261013') ? adminBarStyleTag : '',
     !html.includes(visualPolishStyleTag) ? visualPolishStyleTag : '',
     !html.includes(motionTag) ? motionTag : '',
-    !html.includes(copyProtectionTag) && !isAdminSurface ? copyProtectionTag : '',
+
     !html.includes('/assets/hn-footer.js') && !isAdminSurface && !['login.html','register.html','reset-password.html','update-password.html','dashboard.html','paspoort.html','mijn-kaart.html'].includes(file) ? footerTag : '',
     !isAdminSurface && !['login.html','register.html','reset-password.html','update-password.html','mijn-kaart.html'].includes(file) && !html.includes('/assets/hn-back-to-top.js?v=20261014') ? backToTopTag : ''
   ].filter(Boolean).join('\n') + '\n';
