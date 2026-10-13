@@ -42,6 +42,7 @@ function source(relative) {
 const protection = source('copy-protection.js');
 const buildSource = source('build.js');
 const adminBlogs = source('admin-blogs.html');
+const adminDashboard = source('admin.html');
 const editor = source('assets/hn-publication-editor.js');
 const article = source('blog-artikel.html');
 const articlePreview = source('assets/hn-article-draft-preview.js');
@@ -75,6 +76,12 @@ if (vercel.git?.deploymentEnabled?.['work/hn-agadir-interactive-preview-20261012
 }
 if (vercel.git?.deploymentEnabled?.['fix/admin-verhalen-editor-ux-20261012'] !== false) {
   failures.push('Vercel preview deployments must remain disabled for the admin story editor fix branch.');
+}
+if (!(adminDashboard.indexOf('id="hn-admin-layout-final-overrides"') > adminDashboard.indexOf('/assets/hn-sitewide.css?v=1')) ||
+    !adminDashboard.includes('min-height:calc(100dvh - 3px)') ||
+    !adminDashboard.includes('.layout > .hn-admin-sidebar') ||
+    !adminDashboard.includes('overflow-x:auto;-webkit-overflow-scrolling:touch')) {
+  failures.push('Admin layout must override shared sidebar height/position rules after shared stylesheets and keep narrow content/tables responsive.');
 }
 for (const relative of ['blog-artikel.html', 'kennisbank.html']) {
   if (/Kopieer link|Link kopiëren/i.test(source(relative))) failures.push('Public copy-link control must be absent from ' + relative);
