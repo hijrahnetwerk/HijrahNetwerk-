@@ -36,7 +36,7 @@
       <div class="hn-wrap hn-footer-inner">
         <div class="hn-footer-brand-row">
           <a class="hn-footer-brand" href="/" aria-label="Hijrah Netwerk — home">
-            <img class="hn-footer-logo" src="/assets/logo-color.pngneddkleinn.png?v=20261013" alt="Hijrah Netwerk" loading="lazy">
+            <img class="hn-footer-logo" src="/assets/hn-logo-192.webp" width="96" height="96" decoding="async" alt="Hijrah Netwerk" loading="lazy">
             <span class="hn-footer-name">Hijrah Netwerk</span>
           </a>
           <div class="hn-footer-brand-copy">
@@ -94,23 +94,32 @@
     document.body.appendChild(footer);
   }
 
-  /* ── SCROLL REVEAL ── */
+  /* ── SCROLL REVEAL ── één observer, bijgewerkt in batches (geen herberekening bij elke DOM-wijziging) */
+  let revealObs = null, revealQueued = false;
   function initReveal() {
-    const obs = new IntersectionObserver((entries) => {
-      entries.forEach(e => {
-        if (e.isIntersecting) {
-          e.target.classList.add('hn-in');
-          obs.unobserve(e.target);
-        }
-      });
-    }, { threshold: .1, rootMargin: '0px 0px -36px 0px' });
-
-    document.querySelectorAll(
-      '.hn-reveal:not(.hn-in), .hn-reveal-left:not(.hn-in), .hn-reveal-scale:not(.hn-in)'
-    ).forEach(el => obs.observe(el));
-
-    // Herrun bij dynamisch toegevoegde elementen
-    return obs;
+    const sel = '.hn-reveal:not(.hn-in), .hn-reveal-left:not(.hn-in), .hn-reveal-scale:not(.hn-in)';
+    if (!('IntersectionObserver' in window)) {
+      document.querySelectorAll(sel).forEach(el => el.classList.add('hn-in'));
+      return;
+    }
+    if (!revealObs) {
+      revealObs = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+          if (e.isIntersecting) {
+            e.target.classList.add('hn-in');
+            revealObs.unobserve(e.target);
+          }
+        });
+      }, { threshold: .1, rootMargin: '0px 0px -36px 0px' });
+    }
+    document.querySelectorAll(sel).forEach(el => {
+      if (!el.__hnWatched) { el.__hnWatched = true; revealObs.observe(el); }
+    });
+  }
+  function queueReveal() {
+    if (revealQueued) return;
+    revealQueued = true;
+    (window.requestAnimationFrame || setTimeout)(() => { revealQueued = false; initReveal(); });
   }
 
   /* ── FILTERBAR SCROLL SHADOW ── */
@@ -200,7 +209,7 @@
     initNav();
 
     // Herrun reveal na dynamisch geladen content
-    const mutObs = new MutationObserver(() => initReveal());
+    const mutObs = new MutationObserver(queueReveal);
     mutObs.observe(document.body, { childList: true, subtree: true });
   }
 

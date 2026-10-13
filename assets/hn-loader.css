@@ -1,0 +1,15 @@
+/* HN loader: pil voor data laden, voortgangsbalk (admin), en vliegtuig-spinner voor bestaande .spinner */
+#hn-loader-pill{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));z-index:2147482990;display:flex;align-items:center;gap:8px;padding:6px 6px;border:1px solid rgba(198,161,91,.75);border-radius:999px;background:rgba(255,255,255,.97);box-shadow:0 8px 24px rgba(103,76,46,.18);font:600 12px/1 Inter,system-ui,-apple-system,Arial,sans-serif;color:#674C2E;opacity:0;transform:translate(-50%,10px);visibility:hidden;pointer-events:none;transition:opacity .2s ease,transform .2s ease,visibility 0s linear .2s}
+#hn-loader-pill.is-admin{padding:6px 14px 6px 8px}
+#hn-loader-pill.is-on{opacity:1;transform:translate(-50%,0);visibility:visible;transition:opacity .2s ease,transform .2s ease}
+#hn-loader-pill .hn-lt{color:#9B7735}
+#hn-loader-pill.is-admin .hn-lt{white-space:nowrap}
+#hn-loader-bar{position:fixed;left:0;top:0;width:100%;height:2px;z-index:2147483001;background:linear-gradient(90deg,#C6A15B,#DD842A);transform-origin:left center;transform:scaleX(0);opacity:0;transition:transform .25s linear,opacity .2s ease;pointer-events:none}
+#hn-loader-bar.on{opacity:1}
+/* bestaande ronde spinners worden een vliegtuigje dat een baan draait */
+.spinner,.hn-spinner{position:relative;width:40px;height:40px;border:0!important;border-radius:0!important;background:none!important;animation:none!important;flex:none}
+.spinner:before,.hn-spinner:before{content:"";position:absolute;inset:7px;border:2.5px solid rgba(198,161,91,.3);border-radius:50%}
+.spinner:after,.hn-spinner:after{content:"";position:absolute;left:11px;top:0;width:18px;height:18px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-12 -12 24 24'%3E%3Cpolygon points='10.5,0 2.25,-2.6 -2.25,-9 -4.5,-9 -3,-2.6 -8.25,-1.5 -9,-3.4 -10.5,-3.4 -9.75,0 -10.5,3.4 -9,3.4 -8.25,1.5 -3,2.6 -4.5,9 -2.25,9 2.25,2.6' fill='%23DD842A' stroke='%23674C2E' stroke-width='.8' stroke-linejoin='round'/%3E%3C/svg%3E") center/contain no-repeat;transform-origin:9px 20px;animation:hnOrbit 1.05s linear infinite;will-change:transform}
+.hn-spinner-sm{transform:scale(.6);transform-origin:center}
+@media(prefers-reduced-motion:reduce){.spinner:after,.hn-spinner:after{animation:none}}
+@media print{#hn-loader-pill,#hn-loader-bar{display:none}}

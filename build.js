@@ -31,6 +31,65 @@ fs.writeFileSync(path.join(assetsDir, 'config.js'), configContent, 'utf8');
 // met exact dezelfde productieconfiguratie zodat de placeholder nooit live wordt gebruikt.
 fs.writeFileSync(path.join(__dirname, 'config.js'), configContent, 'utf8');
 
+// ---------------------------------------------------------------------------
+// PRESTATIES (HN): lokale libs/fonts, loader, resource-hints en versiecodes.
+// ---------------------------------------------------------------------------
+const crypto = require('crypto');
+let SUPABASE_ORIGIN = '';
+try { SUPABASE_ORIGIN = new URL(SUPABASE_URL).origin; } catch (e) { SUPABASE_ORIGIN = ''; }
+
+// hn-ux.css en platform-pages.css gebruiken @import. Een @import is een extra, seriële netwerkronde en
+// werkt alleen bovenaan een bestand. Hier worden ze op build-tijd ingevoegd (in de juiste volgorde en
+// zonder dubbele inhoud), zodat de bestanden zelfstandig zijn.
+function inlineCssImports(relPath) {
+  const p = path.join(__dirname, relPath);
+  if (!fs.existsSync(p)) return;
+  const read = (name) => fs.readFileSync(path.join(assetsDir, name + '.css'), 'utf8');
+  const before = fs.readFileSync(p, 'utf8');
+  let after = before;
+  // hn-ux.css bevat zelf al hn-design.css: dan geen tweede kopie.
+  if (/@import\s+url\((['"]?)\/assets\/hn-ux\.css\1\)/.test(after)) {
+    after = after.replace(/@import\s+url\((['"]?)\/assets\/hn-design\.css\1\)\s*;?/g, '');
+  }
+  after = after.replace(/@import\s+url\((['"]?)\/assets\/(hn-design|hn-ux)\.css\1\)\s*;?/g, (m, q, name) => read(name));
+  if (after !== before) fs.writeFileSync(p, after, 'utf8');
+}
+inlineCssImports('assets/hn-ux.css');          // eerst: platform-pages.css leest de al ingevoegde versie
+inlineCssImports('assets/platform-pages.css');
+
+// Bibliotheken die eerst van een CDN kwamen staan nu op onze eigen server (vast versienummer, jaar-lang cachebaar).
+const VENDOR_REWRITES = [
+  [/https:\/\/cdn\.jsdelivr\.net\/npm\/d3@7(?:\.\d+\.\d+)*(?:\/dist\/d3\.min\.js)?/g, '/assets/vendor/d3-7.9.0.min.js'],
+  [/https:\/\/cdn\.jsdelivr\.net\/npm\/topojson-client@3(?:\.\d+\.\d+)*(?:\/dist\/topojson-client\.min\.js)?/g, '/assets/vendor/topojson-client-3.1.0.min.js'],
+  [/https:\/\/cdn\.jsdelivr\.net\/npm\/world-atlas@2(?:\.\d+\.\d+)*\/countries-110m\.json/g, '/assets/vendor/world-atlas-2-countries-110m.json']
+];
+
+// Versiecode = hash van de bestandsinhoud. Daardoor mogen bestanden met ?v= een jaar gecachet worden
+// (zie vercel.json) en komt een wijziging toch meteen aan.
+const _hashCache = new Map();
+function assetHash(urlPath) {
+  if (_hashCache.has(urlPath)) return _hashCache.get(urlPath);
+  let h = '';
+  try { h = crypto.createHash('sha1').update(fs.readFileSync(path.join(__dirname, urlPath.replace(/^\//, '')))).digest('hex').slice(0, 10); } catch (e) { h = ''; }
+  _hashCache.set(urlPath, h);
+  return h;
+}
+function versionAssets(html) {
+  return html.replace(/\b(href|src)=(["'])(\/assets\/[^"'?#]+\.(?:css|js)|\/(?:config|supabase-client|auth|site-app|copy-protection)\.js)(?:\?[^"']*)?\2/g,
+    (m, attr, q, p) => { const h = assetHash(p); return h ? attr + '=' + q + p + '?v=' + h + q : m; });
+}
+
+// Kritieke loader (inline, ~1,5 KB): rendert vóór alle andere bestanden.
+const _orbit = fs.readFileSync(path.join(assetsDir, 'hn-orbit.svg.txt'), 'utf8').trim();
+const LOADER_CRITICAL_CSS = fs.readFileSync(path.join(assetsDir, 'hn-loader-critical.css'), 'utf8').replace(/\s*\n\s*/g, '');
+const LOADER_CRITICAL_JS = fs.readFileSync(path.join(assetsDir, 'hn-loader-critical.js'), 'utf8')
+  .replace('__ORBIT_SVG__', () => _orbit.replace(/\\/g, '\\\\').replace(/'/g, "\\'")).replace(/\n\s*/g, ' ');
+const PERF_HINTS = [
+  SUPABASE_ORIGIN ? '<link rel="preconnect" href="' + SUPABASE_ORIGIN + '" crossorigin>' : '',
+  '<link rel="preload" href="/assets/fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>',
+  '<link rel="preload" href="/assets/fonts/fraunces-latin-600-normal.woff2" as="font" type="font/woff2" crossorigin>'
+].filter(Boolean).join('\n') + '\n';
+
 const translateTag = '<script src="/assets/hn-translate.js"></script>';
 const translateStyleTag = '<link rel="stylesheet" href="/assets/hn-translate.css">';
 const editProposalTag = '<script src="/assets/hn-edit-proposals.js"></script>';
@@ -48,12 +107,12 @@ const visualEditorTag = '<script src="/assets/hn-visual-editor-runtime.js"></scr
 const visualPolishStyleTag = '<link rel="stylesheet" href="/assets/hn-visual-polish.css">';
 const motionTag = '<script src="/assets/hn-motion.js"></script>';
 const copyProtectionTag = '<script src="/copy-protection.js?v=20261012-admin-only-copy2"></script>';
-const supabaseUmdUrl = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3/dist/umd/supabase.js';
+const supabaseUmdUrl = '/assets/vendor/supabase-js-2.117.3.umd.js'; // zelf gehost: geen extern domein, wel jaar-lang cachebaar
 const supabaseBootstrapPages = new Set(['integratie.html','orientatie.html','vertrek.html','voorbereiding.html','orientatietest.html']);
 
 // Altijd het echte HN-kleurenlogo gebruiken als favicon. De versieparameter
 // voorkomt dat browsers een oude favicon uit cache blijven tonen.
-const faviconPath = '/assets/logo-color.pngneddkleinn.png?v=20261007';
+const faviconPath = '/assets/favicon-64.png';
 const faviconTag = '<link rel="icon" type="image/png" href="' + faviconPath + '">\n' +
   '<link rel="shortcut icon" type="image/png" href="' + faviconPath + '">\n' +
   '<link rel="apple-touch-icon" href="' + faviconPath + '">';
@@ -130,7 +189,7 @@ for (const file of htmlFiles) {
     html = html.replace('</head>', backToTopStyleTag + '\n</head>');
   }
 
-  const additions = [
+  const additionList = [
     isMemberSurface && !html.includes('/assets/public-nav.js') ? publicNavScriptTag : '',
     isMemberSurface && !html.includes('/assets/hn-member-nav.js') ? memberNavScriptTag : '',
     isAdminSurface && !html.includes('/assets/hn-admin-nav.js') ? adminNavScriptTag : '',
@@ -150,12 +209,17 @@ for (const file of htmlFiles) {
 
     !html.includes('/assets/hn-footer.js') && !isAdminSurface && !['login.html','register.html','reset-password.html','update-password.html','dashboard.html','paspoort.html','mijn-kaart.html'].includes(file) ? footerTag : '',
     !isAdminSurface && !['login.html','register.html','reset-password.html','update-password.html','mijn-kaart.html'].includes(file) && !html.includes('/assets/hn-back-to-top.js?v=20261014') ? backToTopTag : ''
-  ].filter(Boolean).join('\n') + '\n';
+  ].filter(Boolean);
+  if (!html.includes('/assets/hn-loader.css')) additionList.push('<link rel="stylesheet" href="/assets/hn-loader.css">');
+  // Stijlen horen in de <head>: onderaan de <body> zorgden ze ervoor dat de pagina eerst ongestyled getekend werd en dan versprong.
+  const headLinks = additionList.filter(t => /^<link\b/i.test(t));
+  const additions = additionList.filter(t => !/^<link\b/i.test(t)).join('\n') + '\n';
 
   if (!html.includes('/assets/hn-safe-url.js')) {
     html = html.replace('</head>', '<script src="/assets/hn-safe-url.js"></script>\n</head>');
   }
   html = html.replace(/https:\/\/cdn\.jsdelivr\.net\/npm\/@supabase\/supabase-js@2(?:\.\d+\.\d+)*(?:\/dist\/umd\/supabase\.js)?/g, supabaseUmdUrl);
+  VENDOR_REWRITES.forEach(([re, to]) => { html = html.replace(re, to); });
 
   if (supabaseBootstrapPages.has(file)) {
     const hasSupabaseClientScript = /<script\b[^>]*\bsrc=["'][^"']*supabase-client\.js(?:\?[^"']*)?["'][^>]*>/i.test(html);
@@ -198,7 +262,12 @@ for (const file of htmlFiles) {
     else html = html.replace('</head>', tag + '\n</head>');
   }
 
-  html = html.replace('</body>', additions + '</body>');
+  const perfHead = (html.includes('id="hn-loader-critical"') ? '' : '<style id="hn-loader-critical">' + LOADER_CRITICAL_CSS + '</style><script id="hn-loader-critical-js">' + LOADER_CRITICAL_JS + '</script>\n') + PERF_HINTS;
+  html = html.replace(/<head(\s[^>]*)?>/i, (m) => m + '\n' + perfHead);
+  if (headLinks.length) html = html.replace('</head>', () => headLinks.join('\n') + '\n</head>');
+  if (!html.includes('/assets/hn-loader.js')) html = html.replace('</head>', () => '<script src="/assets/hn-loader.js" defer></script>\n</head>');
+  html = html.replace('</body>', () => additions + '</body>');
+  html = versionAssets(html);
   fs.writeFileSync(filePath, html, 'utf8');
   processed++;
 }
