@@ -77,6 +77,14 @@ if (vercel.git?.deploymentEnabled?.['work/hn-agadir-interactive-preview-20261012
 if (vercel.git?.deploymentEnabled?.['fix/admin-verhalen-editor-ux-20261012'] !== false) {
   failures.push('Vercel preview deployments must remain disabled for the admin story editor fix branch.');
 }
+if (vercel.git?.deploymentEnabled?.['fix/pagespeed-security-a11y-20261013'] !== false) {
+  failures.push('Vercel preview deployments must remain disabled for the PageSpeed/security/accessibility work branch.');
+}
+const globalHeaders = vercel.headers?.find((entry) => entry.source === '/(.*)')?.headers || [];
+const headerValue = (key) => globalHeaders.find((entry) => entry.key.toLowerCase() === key.toLowerCase())?.value || '';
+if (!headerValue('Content-Security-Policy-Report-Only').includes("require-trusted-types-for 'script'")) failures.push('CSP report-only must include Trusted Types monitoring before enforcement is considered.');
+if (headerValue('Cross-Origin-Opener-Policy') !== 'same-origin-allow-popups') failures.push('COOP must preserve same-origin popup flows used by authentication.');
+if (!headerValue('Strict-Transport-Security').includes('includeSubDomains')) failures.push('HSTS must retain the current includeSubDomains directive.');
 if (!(adminDashboard.indexOf('id="hn-admin-layout-final-overrides"') > adminDashboard.indexOf('/assets/hn-sitewide.css?v=1')) ||
     !adminDashboard.includes('min-height:calc(100dvh - 3px)') ||
     !adminDashboard.includes('.layout > .hn-admin-sidebar') ||
