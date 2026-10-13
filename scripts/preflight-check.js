@@ -50,6 +50,12 @@ const vercel = JSON.parse(source('vercel.json'));
 if (!protection.includes('client.rpc("is_admin")') || !protection.includes('result.data === true') || !protection.includes('allowAdmin()')) {
   failures.push('Copy protection must fail closed and only allow a confirmed admin role.');
 }
+if (!protection.includes('function hasStoredSession()') || !protection.includes('if (adminVerified || !hasStoredSession()) return;')) {
+  failures.push('Copy protection must avoid loading the Supabase client for visitors without a saved session.');
+}
+if (!protection.includes('window.addEventListener("focus", verifyAdmin)') || !protection.includes('event.key === authStorageKey')) {
+  failures.push('Copy protection must recheck admin access after session changes.');
+}
 if (!buildSource.includes('copyProtectionTag') || !buildSource.includes("html.replace('</head>', copyProtectionTag")) {
   failures.push('Build must inject copy protection into the head of every HTML page.');
 }
