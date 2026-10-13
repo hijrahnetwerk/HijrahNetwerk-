@@ -776,6 +776,53 @@ th{
 <link rel="stylesheet" href="/assets/hn-design.css">
 
 <link rel="stylesheet" href="/assets/hn-sitewide.css?v=1">
+<style id="hn-admin-layout-final-overrides">
+/* Deze regels staan na de gedeelde stylesheets, zodat de admin-layout niet
+   opnieuw wordt teruggezet naar een vast 100vh-scrollpaneel. */
+html,body{width:100%;min-width:0}
+.layout{
+  width:100%;
+  min-height:calc(100vh - 3px);
+  min-height:calc(100dvh - 3px);
+  align-items:stretch;
+}
+.layout > .hn-admin-sidebar{
+  width:256px;
+  flex:0 0 256px;
+  height:auto;
+  min-height:calc(100vh - 3px);
+  min-height:calc(100dvh - 3px);
+  max-height:none;
+  align-self:stretch;
+  position:relative;
+  top:auto;
+  overflow:visible;
+}
+.layout > .main{flex:1 1 0%;min-width:0;width:auto;max-width:100%}
+.main,.content,.page,.panel,.table-wrap{min-width:0;max-width:100%}
+.content{overflow-wrap:anywhere}
+.table-wrap{max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+@media(max-width:650px){
+  .layout{display:block;width:100%;min-height:0}
+  .layout > .hn-admin-sidebar{
+    width:100%;
+    max-width:100%;
+    flex:none;
+    min-height:0;
+    height:auto;
+    max-height:none;
+    position:relative;
+    overflow:visible;
+  }
+  .layout > .main{width:100%;max-width:100%}
+  .content{padding:16px;max-width:100%}
+  .topbar{min-width:0;gap:12px;flex-wrap:wrap;padding:14px 16px;height:auto;min-height:64px}
+  .topbar h1{min-width:0;overflow-wrap:anywhere}
+  .form-grid,.cards,.plan-summary,.overview-grid{min-width:0;grid-template-columns:minmax(0,1fr)}
+  .panel{padding:16px;overflow-x:auto}
+  .table-wrap table{min-width:620px}
+}
+</style>
 <script src="/assets/hn-footer.js?v=1" defer></script>
 <script src="/assets/hn-motion.js?v=1" defer></script>
 </head>
