@@ -566,7 +566,8 @@
       "work/hn-publication-builder-20261012": false,
       "work/hn-agadir-interactive-preview-20261012": false,
       "fix/admin-verhalen-editor-ux-20261012": false,
-      "fix/homepage-root-load-20261013": false
+      "fix/homepage-root-load-20261013": false,
+      "fix/restore-public-launch-funnel-20261013": false
     }
   }
 }
