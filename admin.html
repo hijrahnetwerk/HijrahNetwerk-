@@ -799,8 +799,9 @@ html,body{width:100%;min-width:0}
   overflow:visible;
 }
 .layout > .main{flex:1 1 0%;min-width:0;width:auto;max-width:100%}
-.main,.content,.page,.panel,.table-wrap{min-width:0;max-width:100%}
-.content{overflow-wrap:anywhere}
+.main,.content,.page,.panel,.table-wrap{min-width:0}
+.layout > .main,.panel,.table-wrap{max-width:100%}
+.content{max-width:1500px;overflow-wrap:anywhere}
 .table-wrap{max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
 @media(max-width:650px){
   .layout{display:block;width:100%;min-height:0}
