@@ -36,7 +36,7 @@
       <div class="hn-wrap hn-footer-inner">
         <div class="hn-footer-brand-row">
           <a class="hn-footer-brand" href="/" aria-label="Hijrah Netwerk — home">
-            <img class="hn-footer-logo" src="/assets/hn-logo-192.webp" width="96" height="96" decoding="async" alt="Hijrah Netwerk" loading="lazy">
+            <img class="hn-footer-logo" src="/assets/hn-logo-192.webp" width="96" height="96" decoding="async" alt="" loading="lazy">
             <span class="hn-footer-name">Hijrah Netwerk</span>
           </a>
           <div class="hn-footer-brand-copy">
