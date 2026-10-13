@@ -564,7 +564,8 @@
     "deploymentEnabled": {
       "work/hn-navigation-integration-20261011": false,
       "work/hn-publication-builder-20261012": false,
-      "work/hn-agadir-interactive-preview-20261012": false
+      "work/hn-agadir-interactive-preview-20261012": false,
+      "fix/admin-verhalen-editor-ux-20261012": false
     }
   }
 }

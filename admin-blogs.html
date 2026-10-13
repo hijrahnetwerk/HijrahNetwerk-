@@ -92,27 +92,34 @@ button,input,select,textarea{font:inherit;cursor:pointer}
 .modal-overlay{
   position:fixed;inset:0;z-index:500;
   background:rgba(40,20,5,.6);backdrop-filter:blur(6px);
-  display:flex;align-items:flex-start;justify-content:center;
-  padding:24px 16px;overflow-y:auto;
+  display:flex;align-items:center;justify-content:center;
+  padding:16px;overflow-y:auto;overscroll-behavior:contain;
   opacity:0;pointer-events:none;transition:opacity .2s;
 }
 .modal-overlay.open{opacity:1;pointer-events:auto}
 .modal{
   background:#fff;border-radius:var(--r);
-  width:min(900px,100%);box-shadow:0 24px 64px rgba(30,15,0,.3);
-  transform:translateY(20px);transition:transform .25s ease;
+  width:min(980px,100%);max-height:calc(100vh - 32px);max-height:calc(100dvh - 32px);
+  display:flex;flex-direction:column;min-height:0;
+  box-shadow:0 24px 64px rgba(30,15,0,.3);
+  transform:translateY(12px);transition:transform .25s ease;
   overflow:hidden;
 }
 .modal-overlay.open .modal{transform:translateY(0)}
 .modal-head{
+  position:relative;z-index:3;flex:0 0 auto;
   display:flex;align-items:center;justify-content:space-between;
-  padding:20px 24px;border-bottom:1px solid var(--border);
+  padding:16px 24px;border-bottom:1px solid var(--border);
   background:linear-gradient(135deg,rgba(103,76,46,.05),rgba(212,175,55,.08));
 }
 .modal-head h2{font-size:18px;font-weight:800;letter-spacing:-.03em}
 .modal-close{width:36px;height:36px;border-radius:50%;border:1.5px solid var(--border);background:#fff;font-size:20px;color:var(--br);display:grid;place-items:center}
 .modal-close:hover{border-color:var(--rs);color:var(--rs)}
-.modal-body{padding:28px 24px;display:grid;grid-template-columns:1fr;gap:18px}
+.modal-body{
+  padding:22px 24px;display:grid;grid-template-columns:1fr;gap:18px;
+  flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;
+  scrollbar-gutter:stable;
+}
 @media(min-width:700px){.modal-body{grid-template-columns:1fr 1fr}}
 .field{display:flex;flex-direction:column;gap:6px}
 .field.full{grid-column:1/-1}
@@ -128,11 +135,15 @@ button,input,select,textarea{font:inherit;cursor:pointer}
 .field-hint{font-size:11px;color:var(--muted);margin-top:2px}
 .char-count{font-size:11px;color:var(--muted);text-align:right}
 .modal-foot{
-  padding:18px 24px;border-top:1px solid var(--border);
+  position:relative;z-index:3;flex:0 0 auto;
+  padding:12px 24px;border-top:1px solid var(--border);
   display:flex;align-items:center;justify-content:space-between;
   gap:12px;flex-wrap:wrap;
-  background:rgba(253,250,246,.6);
+  background:#fffaf2;box-shadow:0 -6px 18px rgba(40,20,5,.05);
 }
+.modal-foot #btnSave{min-height:44px;min-width:132px;font-size:14px}
+.modal-foot #btnCancel{min-height:44px}
+.modal-status{max-width:100%;overflow-wrap:anywhere}
 .modal-status{font-size:12px;font-weight:600;color:var(--muted)}
 .modal-status.ok{color:#27ae60}
 .modal-status.err{color:#c0392b}
@@ -154,7 +165,23 @@ button,input,select,textarea{font:inherit;cursor:pointer}
 .block-card-body textarea{min-height:96px;resize:vertical;line-height:1.55}
 .block-empty{border:1px dashed var(--border);border-radius:12px;padding:22px;text-align:center;color:var(--muted);font-size:13px}
 .block-type-select{max-width:190px;padding:5px 8px;border:1px solid var(--border);border-radius:8px;background:#fff;color:var(--br);font-size:11px;font-weight:700}
-@media(max-width:520px){.block-card-head{flex-wrap:wrap}.block-type-select{max-width:100%;flex:1}.block-card-head strong{min-width:100%}}
+@media(max-width:600px){
+  .modal-overlay{padding:8px;align-items:center}
+  .modal{width:100%;max-height:calc(100vh - 16px);max-height:calc(100dvh - 16px);border-radius:16px}
+  .modal-head{padding:13px 16px}
+  .modal-head h2{font-size:16px}
+  .modal-body{padding:16px;gap:15px}
+  .modal-foot{padding:10px 14px calc(10px + env(safe-area-inset-bottom));gap:8px}
+  .modal-foot>div{width:100%;display:grid!important;grid-template-columns:1fr 1fr}
+  .modal-foot #btnCancel,.modal-foot #btnSave{width:100%;justify-content:center}
+  .modal-status{width:100%}
+  .block-toolbar{align-items:stretch}
+  .block-toolbar select{min-width:0;width:100%;flex-basis:100%}
+  .block-add{width:100%;min-height:42px}
+  .block-card-head{flex-wrap:wrap}
+  .block-type-select{max-width:100%;flex:1}
+  .block-card-head strong{min-width:100%}
+}
 /* ── PREVIEW PANEL ── */
 .preview-panel{
   background:linear-gradient(135deg,rgba(103,76,46,.04),rgba(212,175,55,.06));
@@ -466,7 +493,7 @@ button,input,select,textarea{font:inherit;cursor:pointer}
 
       <div class="field full content-field">
         <label>Artikelinhoud en interactieve onderdelen *</label>
-        <div class="field-hint">Bouw het artikel op met losse blokken. Combineer tekst, hoofdstukken, citaten, uitklapbare verdieping, checklists, afbeeldingen en een budgettool. AI is niet nodig.</div>
+        <div class="field-hint">Bewerk elk blok rechtstreeks in de velden eronder. Kies eerst een bloksoort en klik op <strong>+ Blok toevoegen</strong>. Met ↑ en ↓ wijzig je de volgorde; met Verwijderen haal je een blok weg. Je wijzigingen worden pas bewaard wanneer je onderaan op <strong>Opslaan</strong> klikt.</div>
         <div class="block-toolbar">
           <select id="blockTypeToAdd" aria-label="Soort inhoudsblok">
             <option value="paragraph">Tekst / alinea</option>
@@ -680,11 +707,21 @@ async function loadBlogs(){
 
 /* ── MODAL OPEN/SLUIT ── */
 function openModal(title){
+  const overlay=$('editorModal');
   $('modalTitle').textContent=title;
-  $('editorModal').classList.add('open');
-  document.body.style.overflow='hidden';
   $('modalStatus').textContent='';
   $('modalStatus').className='modal-status';
+  overlay.scrollTop=0;
+  const body=overlay.querySelector('.modal-body');
+  if(body)body.scrollTop=0;
+  overlay.classList.add('open');
+  document.body.style.overflow='hidden';
+  requestAnimationFrame(()=>{
+    overlay.scrollTop=0;
+    if(body)body.scrollTop=0;
+    const firstField=overlay.querySelector('#fTitle');
+    if(firstField)firstField.focus({preventScroll:true});
+  });
 }
 function closeModal(){
   $('editorModal').classList.remove('open');
