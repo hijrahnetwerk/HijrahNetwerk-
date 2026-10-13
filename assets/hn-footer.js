@@ -48,32 +48,32 @@
           </div>
         </div>
         <div class="hn-footer-grid">
-          <nav class="hn-footer-col" aria-label="Hijrahfasen"><h4>Hijrahfasen</h4><ul>
+          <nav class="hn-footer-col" aria-label="Hijrahfasen"><h3>Hijrahfasen</h3><ul>
             <li><a href="/orientatie">Oriënteren</a></li>
             <li><a href="/voorbereiding">Voorbereiden</a></li>
             <li><a href="/integratie">Integreren</a></li>
             <li><a href="/verhalen?fase=terugkeren">Terugkeren</a></li>
           </ul></nav>
-          <nav class="hn-footer-col" aria-label="Algemene HijrahTools"><h4>HijrahTools</h4><ul>
+          <nav class="hn-footer-col" aria-label="Algemene HijrahTools"><h3>HijrahTools</h3><ul>
             <li><a href="/navigatie">Hijrah Navigatie</a></li>
             <li><a href="/vergelijken">Landen- en stedenvergelijker</a></li>
             <li><a href="/smart-search">Smart Search</a></li>
             <li><a href="/verhalen">Verhalen &amp; interviews</a></li>
             <li><a href="/hijrahtools">Bekijk alle HijrahTools</a></li>
           </ul></nav>
-          <nav class="hn-footer-col" aria-label="Mijn Hijrah Planner"><h4>Mijn Hijrah Planner</h4><ul>
+          <nav class="hn-footer-col" aria-label="Mijn Hijrah Planner"><h3>Mijn Hijrah Planner</h3><ul>
             <li><a href="/dashboard">Mijn Hijrah Planner</a></li>
             <li><a href="/stappenplan">Mijn stappenplan</a></li>
             <li><a href="/paspoort">Mijn paspoort en voortgang</a></li>
             <li><a href="/dashboard">Mijn notities en opgeslagen items</a></li>
           </ul></nav>
-          <nav class="hn-footer-col" aria-label="Community"><h4>Community</h4><ul>
+          <nav class="hn-footer-col" aria-label="Community"><h3>Community</h3><ul>
             <li><a href="/community">Over de community</a></li>
             <li><a href="/bijdragen">Bijdragen</a></li>
             <li><a href="/verhalen">Verhalen &amp; interviews</a></li>
             <li><a href="/register">Aanmelden</a></li>
           </ul></nav>
-          <nav class="hn-footer-col" aria-label="Hulp en informatie"><h4>Hulp &amp; informatie</h4><ul>
+          <nav class="hn-footer-col" aria-label="Hulp en informatie"><h3>Hulp &amp; informatie</h3><ul>
             <li><a href="/hulp">Hulp &amp; veelgestelde vragen</a></li>
             <li><a href="/privacy">Privacybeleid</a></li>
             <li><a href="/auteursrecht">Auteursrecht &amp; gebruik</a></li>
