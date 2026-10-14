@@ -24,14 +24,14 @@ for (const file of jsFiles) {
 const staticExtensions = new Set(['.css', '.js', '.png', '.jpg', '.jpeg', '.webp', '.svg', '.woff', '.woff2', '.ttf', '.ico', '.json', '.xml']);
 for (const file of htmlFiles) {
   const source = fs.readFileSync(file, 'utf8');
-  for (const scriptMatch of source.matchAll(/<script\\b([^>]*)>([\\s\\S]*?)<\\/script\\s*>/gi)) {
+  for (const scriptMatch of source.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script\s*>/gi)) {
     const attributes = scriptMatch[1] || '';
     const body = scriptMatch[2] || '';
-    const typeMatch = attributes.match(/\\btype\\s*=\\s*["']([^"']+)["']/i);
-    if (/\\bsrc\\s*=/.test(attributes) || /\\btype\\s*=\\s*["']module["']/i.test(attributes) || !body.trim()) continue;
-    if (typeMatch && !/^(text|application)\\/javascript$/i.test(typeMatch[1])) continue;
+    const typeMatch = attributes.match(/\btype\s*=\s*["']([^"']+)["']/i);
+    if (/\bsrc\s*=/.test(attributes) || /\btype\s*=\s*["']module["']/i.test(attributes) || !body.trim()) continue;
+    if (typeMatch && !/^(text|application)\/javascript$/i.test(typeMatch[1])) continue;
     try { new vm.Script(body, { filename: path.relative(root, file) + ':inline-script' }); }
-    catch (error) { failures.push('Inline JavaScript syntax: ' + path.relative(root, file) + '\\n' + error.message); }
+    catch (error) { failures.push('Inline JavaScript syntax: ' + path.relative(root, file) + '\n' + error.message); }
   }
   for (const match of source.matchAll(/(src|href)="([^"]+)"/gi)) {
     let url = match[2].trim();
