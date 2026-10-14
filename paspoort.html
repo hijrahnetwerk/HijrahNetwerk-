@@ -134,9 +134,10 @@ dialog::backdrop{background:rgba(60,38,18,.55)}
 <section class="sec" id="ontgrendelen"><h2 class="rv">Ontgrendelen</h2><p class="sub rv">Een stempel opent echte toegang. De server bepaalt of je toegang hebt.</p><div id="ac"></div></section>
 <div class="band rv"><h2>Elke bijdrage telt.</h2><p>Deel een ervaring, schrijf een review of vul informatie aan. Zo help je anderen en ontgrendel je nieuwe onderdelen.</p><a class="btn" href="/bijdragen?type=experience">Naar bijdragen</a></div>
 <div class="priv rv"><span>Stempels tonen op mijn gedeelde profiel: <b id="vis">—</b></span><button class="btn dk" id="vOn" type="button">Aan</button><button class="btn dk" id="vOff" type="button">Uit</button><span>Deze badges zijn alleen voor jou zichtbaar. Antwoorden uit Mijn Hijrah blijven altijd privé.</span></div>
+<div class="priv rv"><span>Mijn gedeelde HN-profiel zichtbaar maken: <b id="profileVis">—</b></span><button class="btn dk" id="profileOn" type="button">Aan</button><button class="btn dk" id="profileOff" type="button">Uit</button><span>Standaard uit. Zet dit alleen aan als je zelf wilt dat anderen je gedeelde profiel kunnen bekijken.</span></div>
 <p class="nt">Het HN Paspoort is geen officieel reisdocument. Je voortgang is gebaseerd op acties die echt op het platform zijn geregistreerd.</p>
 </main><dialog id="dlg"><div class="dh"></div><div class="db" id="dbody"></div><div style="padding:0 24px 22px;text-align:right"><button class="btn dk" id="dclose" type="button">Sluiten</button></div></dialog>
-<script src="/config.js"></script><script src="/assets/config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/supabase-client.js"></script>
+<script src="/config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/supabase-client.js"></script>
 <script>
 (function(){'use strict';
 var sb=window.hijrahSupabase,$=function(i){return document.getElementById(i)};
@@ -151,7 +152,7 @@ async function load(){
   var s=await sb.auth.getSession();if(!s.data||!s.data.session){location.href='/login?next=/mijn-badges';return}U=s.data.session.user;
   var r=await Promise.all([sb.from('hn_badges').select('*').eq('active',true).order('sort_order'),sb.from('hn_user_badges').select('badge_id,earned_at').eq('user_id',U.id),sb.from('profiles').select('display_name,first_name,created_at,hn_status,show_badges,profile_visibility').eq('id',U.id).maybeSingle(),sb.rpc('hn_my_access'),sb.from('submissions').select('id,title,submission_type,status,created_at,reviewed_at').eq('submitted_by',U.id).order('created_at',{ascending:false}).limit(8)]);
   if(r[0].error){show('De stempels konden niet worden geladen. Probeer het later opnieuw.');return}
-  B=r[0].data||[];(r[1].data||[]).forEach(function(x){E[x.badge_id]=x.earned_at});P=r[2].data||{};var A=Array.isArray(r[3].data)?r[3].data:[];renderContributions(r[4].data||[],!!r[4].error);
+  B=r[0].data||[];(r[1].data||[]).forEach(function(x){E[x.badge_id]=x.earned_at});P=r[2].data||{};profilePriv();var A=Array.isArray(r[3].data)?r[3].data:[];renderContributions(r[4].data||[],!!r[4].error);
   if(r[3].error)show('Je stempels zijn geladen, maar de toegangsstatus kon niet worden opgehaald.');
   var cats=[];B.forEach(function(b){if(b.category&&cats.indexOf(b.category)<0)cats.push(b.category)});CT=cats;$('cat').innerHTML='<option value="">Alle fases</option>'+cats.map(function(c){return '<option value="'+esc(c)+'">'+esc(c)+'</option>'}).join('');
   var n=B.filter(function(b){return !!E[b.id]}).length,un=A.filter(function(x){return x.unlocked}).length;
@@ -251,6 +252,9 @@ $('dclose').onclick=function(){$('dlg').close()};$('dlg').onclick=function(e){if
 function priv(){$('vis').textContent=P.show_badges?'Aan':'Uit';$('vOn').disabled=!!P.show_badges;$('vOff').disabled=!P.show_badges}
 async function setVis(v){var r=await sb.rpc('hn_set_my_badge_visibility',{p_show:v});if(r.error){show('Opslaan is niet gelukt. Controleer je verbinding en probeer opnieuw.');return}P.show_badges=v;priv()}
 $('vOn').onclick=function(){setVis(true)};$('vOff').onclick=function(){setVis(false)};
+function profilePriv(){$('profileVis').textContent=P.profile_visibility?'Aan':'Uit';$('profileOn').disabled=!!P.profile_visibility;$('profileOff').disabled=!P.profile_visibility}
+async function setProfileVis(v){var r=await sb.rpc('hn_set_my_profile_visibility',{p_show:v});if(r.error){show('Opslaan van je profielzichtbaarheid is niet gelukt. Probeer het opnieuw.');return}P.profile_visibility=v;profilePriv();show(v?'Je gedeelde HN-profiel is nu zichtbaar.':'Je gedeelde HN-profiel is niet meer zichtbaar.')}
+$('profileOn').onclick=function(){setProfileVis(true)};$('profileOff').onclick=function(){setProfileVis(false)};
 function observe(){var els=document.querySelectorAll('.rv:not(.vis)');if(!('IntersectionObserver'in window)){els.forEach(function(e){e.classList.add('vis')});return}var o=new IntersectionObserver(function(es){es.forEach(function(x){if(x.isIntersecting){x.target.classList.add('vis');o.unobserve(x.target)}})},{threshold:.1});els.forEach(function(e,i){e.style.setProperty('--d',(i%3)*80+'ms');o.observe(e)})}
 var hero=document.querySelector('.hero'),tk=0;
 addEventListener('scroll',function(){if(tk)return;tk=1;requestAnimationFrame(function(){tk=0;var h=document.documentElement.scrollHeight-innerHeight;$('sp').style.width=(h>0?100*scrollY/h:0)+'%';hero.style.setProperty('--py',Math.min(scrollY*.12,50)+'px')})},{passive:true});

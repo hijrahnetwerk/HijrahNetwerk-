@@ -1,10 +1,10 @@
 /* HN sitewide visual layer — scoped enhancements that preserve each page's existing layout */
-:root{--hn-br:#674C2E;--hn-rs:#DD842A;--hn-gd:#C6A15B;--hn-gd2:#D4AF37;--hn-gd3:#F0D060}
+:root{--hn-br:#674C2E;--hn-rs:#DD842A;--hn-gd:#C6A15B;--hn-gd2:#9B7735;--hn-gd3:#C6A15B}
 .hn-stripe{height:3px;width:100%;position:relative;z-index:1000;background:linear-gradient(90deg,var(--hn-br),var(--hn-rs),var(--hn-gd2),var(--hn-gd3),var(--hn-gd2),var(--hn-gd),var(--hn-rs),var(--hn-br));background-size:300% 100%;animation:hn-site-stripe 5s linear infinite;flex-shrink:0}
 @keyframes hn-site-stripe{to{background-position:300% 0}}
 .hn-divider,.gold-divider{height:2px;border:0;background:linear-gradient(90deg,transparent,var(--hn-gd),var(--hn-gd2),var(--hn-gd),transparent);opacity:.7}
 .hn-hero,.hero,.page-hero,.hero-section{position:relative;isolation:isolate}
-.hn-hero,.hero,.page-hero,.hero-section{background-image:radial-gradient(ellipse at 88% 10%,rgba(198,161,91,.24),transparent 42%),radial-gradient(ellipse at 8% 92%,rgba(221,132,42,.17),transparent 40%),linear-gradient(135deg,#3d2a14 0%,#674C2E 46%,#7a4e28 72%,#49301b 100%)}
+.hn-hero,.hero,.page-hero,.hero-section{background-image:radial-gradient(ellipse at 88% 10%,rgba(198,161,91,.24),transparent 42%),radial-gradient(ellipse at 8% 92%,rgba(221,132,42,.17),transparent 40%),linear-gradient(135deg,#674C2E 0%,#674C2E 46%,#674C2E 72%,#674C2E 100%)}
 .hn-hero>*:not(svg),.hero>*:not(svg),.page-hero>*:not(svg),.hero-section>*:not(svg){position:relative;z-index:1}
 :where(.hn-hero,.hero,.page-hero,.hero-section) :where(h1,h2,h3,h4,p,li,label,.eyebrow,.lead){color:#fff}
 :where(.hn-hero,.hero,.page-hero,.hero-section) :where(h1 span,h2 span,.hn-gold){color:var(--hn-gd)}
@@ -12,7 +12,7 @@
 :where(.card,.country-card,.step,.note,.cta,.story,.city,.topic-card,.result-card,.search-result,.fiche-card,.article-card,.panel,.hn-card){transition:transform .24s cubic-bezier(.22,.61,.36,1),box-shadow .24s ease,border-color .24s ease}
 @media(hover:hover){:where(.card,.country-card,.step,.note,.cta,.story,.city,.topic-card,.result-card,.search-result,.fiche-card,.article-card,.panel,.hn-card):hover{transform:translateY(-5px);border-color:rgba(198,161,91,.75);box-shadow:0 16px 36px rgba(103,76,46,.16),0 0 0 1px rgba(198,161,91,.12)}}
 .filter-bar,.hn-filterbar{position:sticky;top:72px;z-index:50;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);background:rgba(255,255,255,.9);border-bottom:1px solid rgba(198,161,91,.28)}
-.filter-bar button.active,.hn-filterbar button.active,.filter-bar [aria-pressed="true"],.hn-filterbar [aria-pressed="true"]{background:linear-gradient(135deg,#674C2E,#9b642e 65%,#C6A15B);color:#fff;border-color:#C6A15B}
+.filter-bar button.active,.hn-filterbar button.active,.filter-bar [aria-pressed="true"],.hn-filterbar [aria-pressed="true"]{background:linear-gradient(135deg,#674C2E,#DD842A 65%,#C6A15B);color:#fff;border-color:#C6A15B}
 .hn-reveal{opacity:0;transform:translateY(18px);transition:opacity .55s cubic-bezier(.22,.61,.36,1),transform .55s cubic-bezier(.22,.61,.36,1)}
 .hn-reveal.hn-visible,.hn-reveal.hn-in{opacity:1;transform:none}
 .hn-stagger>*:nth-child(4n+2){transition-delay:60ms}.hn-stagger>*:nth-child(4n+3){transition-delay:120ms}.hn-stagger>*:nth-child(4n+4){transition-delay:180ms}
