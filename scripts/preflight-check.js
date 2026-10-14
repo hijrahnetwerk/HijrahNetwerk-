@@ -44,6 +44,7 @@ const buildSource = source('build.js');
 const adminBlogs = source('admin-blogs.html');
 const adminDashboard = source('admin.html');
 const adminRewards = source('admin-beloningen.html');
+const passportAdmin = source('admin-paspoort.html');
 const adminScripts = source('assets/admin.js');
 const submissionNotesMigration = source('supabase/migrations/20261014121000_private_submission_admin_notes.sql');
 const profileNotesMigration = source('supabase/migrations/20261014122000_private_profile_admin_notes.sql');
@@ -55,6 +56,14 @@ if (!profileNotesMigration.includes('create table if not exists private.hn_profi
 }
 if (adminScripts.includes(",admin_notes:adminNotes") || adminScripts.includes(",admin_notes:reason")) {
   failures.push('Admin submission notes must not be written directly to the member-readable submissions table.');
+}
+if (!passportAdmin.includes("rpc('hn_admin_reviews'") ||
+    !passportAdmin.includes("rpc('hn_moderate_review'") ||
+    !passportAdmin.includes("rpc('hn_admin_review_reports'") ||
+    !passportAdmin.includes("rpc('hn_resolve_review_report'") ||
+    !passportAdmin.includes('data-view="reviews"') ||
+    !passportAdmin.includes('data-view="reports"')) {
+  failures.push('Passport administration must expose review moderation and report handling through guarded RPCs.');
 }
 if (!adminScripts.includes("rpc('hn_admin_submission_notes'") ||
     !adminScripts.includes("rpc('hn_admin_set_submission_notes'") ||
