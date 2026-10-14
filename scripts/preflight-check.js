@@ -44,7 +44,15 @@ const buildSource = source('build.js');
 const adminBlogs = source('admin-blogs.html');
 const adminDashboard = source('admin.html');
 const adminRewards = source('admin-beloningen.html');
+const adminScripts = source('assets/admin.js');
+const submissionNotesMigration = source('supabase/migrations/20261014121000_private_submission_admin_notes.sql');
 const editor = source('assets/hn-publication-editor.js');
+if (!adminScripts.includes("rpc('hn_admin_submission_notes'") ||
+    !adminScripts.includes("rpc('hn_admin_set_submission_notes'") ||
+    !submissionNotesMigration.includes('create table if not exists private.hn_submission_admin_notes') ||
+    !submissionNotesMigration.includes('create trigger hn_strip_submission_admin_notes')) {
+  failures.push('Submission moderation notes must be private and accessible only through admin RPCs.');
+}
 if (!adminRewards.includes("rpc('hn_admin_save_badge'") ||
     !adminRewards.includes("rpc('hn_admin_save_status'") ||
     !adminRewards.includes("rpc('hn_admin_set_badge'") ||
