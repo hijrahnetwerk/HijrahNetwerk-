@@ -59,8 +59,28 @@ const adminScripts = source('assets/admin.js');
 const submissionNotesMigration = source('supabase/migrations/20261014121000_private_submission_admin_notes.sql');
 const profileNotesMigration = source('supabase/migrations/20261014122000_private_profile_admin_notes.sql');
 const profileVisibilityMigration = source('supabase/migrations/20261014123000_profile_visibility_opt_in.sql');
+const communityMigration = source('supabase/migrations/20260919_hn_community.sql');
+const searchOverviewMigration = source('supabase/migrations/20260920_hn_information_architecture_search.sql');
+const searchAnalyticsMigration = source('supabase/migrations/20260920_hn_search_analytics_rpc.sql');
 const passportPage = source('paspoort.html');
 const editor = source('assets/hn-publication-editor.js');
+const myPassportStart = communityMigration.indexOf('create or replace function public.get_my_hn_passport()');
+const myPassportEnd = communityMigration.indexOf('$;', myPassportStart);
+const myPassportFunction = communityMigration.slice(myPassportStart, myPassportEnd < 0 ? undefined : myPassportEnd);
+if (communityMigration.includes('set search_path = public') ||
+    communityMigration.includes('grant execute on function public.handle_hn_new_user() to') ||
+    !communityMigration.includes('and profile_visibility = true') ||
+    !myPassportFunction.includes('points bigint') ||
+    !myPassportFunction.includes('level integer') ||
+    !myPassportFunction.includes('display_role text')) {
+  failures.push('Community migration must compile safely, protect profile opt-in, and not expose its auth trigger function.');
+}
+if (!searchOverviewMigration.includes("set search_path = ''") ||
+    !searchOverviewMigration.includes('revoke all on function public.get_hn_search_overview() from public, anon;') ||
+    !searchAnalyticsMigration.includes("set search_path = ''") ||
+    !searchAnalyticsMigration.includes('revoke all on function public.log_hn_search_event(text,text,integer,uuid,text) from public, anon, authenticated;')) {
+  failures.push('Search SECURITY DEFINER RPCs must use a pinned search path and explicit execution grants.');
+}
 if (!profileVisibilityMigration.includes('alter column profile_visibility set default false') ||
     !profileVisibilityMigration.includes('hn_set_my_profile_visibility') ||
     !profileVisibilityMigration.includes('hn_guard_profile_visibility_owner') ||
