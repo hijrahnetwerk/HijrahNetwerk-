@@ -12,7 +12,7 @@ create or replace function public.log_hn_search_event(
 returns void
 language plpgsql
 security definer
-set search_path = public
+set search_path = ''
 as $$
 begin
   if p_event_type not in ('search','click') then
@@ -58,5 +58,5 @@ begin
 end;
 $$;
 
-revoke all on function public.log_hn_search_event(text,text,integer,uuid,text) from public;
+revoke all on function public.log_hn_search_event(text,text,integer,uuid,text) from public, anon, authenticated;
 grant execute on function public.log_hn_search_event(text,text,integer,uuid,text) to anon, authenticated;
