@@ -50,6 +50,12 @@ const vercel = JSON.parse(source('vercel.json'));
 if (!protection.includes('client.rpc("is_admin")') || !protection.includes('result.data === true') || !protection.includes('allowAdmin()')) {
   failures.push('Copy protection must fail closed and only allow a confirmed admin role.');
 }
+if (!protection.includes('function hasStoredSession()') || !protection.includes('if (adminVerified || !hasStoredSession()) return;')) {
+  failures.push('Copy protection must avoid loading the Supabase client for visitors without a saved session.');
+}
+if (!protection.includes('window.addEventListener("focus", verifyAdmin)') || !protection.includes('event.key === authStorageKey')) {
+  failures.push('Copy protection must recheck admin access after session changes.');
+}
 if (!buildSource.includes('copyProtectionTag') || !buildSource.includes("html.replace('</head>', copyProtectionTag")) {
   failures.push('Build must inject copy protection into the head of every HTML page.');
 }
@@ -77,6 +83,14 @@ if (vercel.git?.deploymentEnabled?.['work/hn-agadir-interactive-preview-20261012
 if (vercel.git?.deploymentEnabled?.['fix/admin-verhalen-editor-ux-20261012'] !== false) {
   failures.push('Vercel preview deployments must remain disabled for the admin story editor fix branch.');
 }
+if (vercel.git?.deploymentEnabled?.['fix/pagespeed-security-a11y-20261013'] !== false) {
+  failures.push('Vercel preview deployments must remain disabled for the PageSpeed/security/accessibility work branch.');
+}
+const globalHeaders = vercel.headers?.find((entry) => entry.source === '/(.*)')?.headers || [];
+const headerValue = (key) => globalHeaders.find((entry) => entry.key.toLowerCase() === key.toLowerCase())?.value || '';
+if (!headerValue('Content-Security-Policy-Report-Only').includes("require-trusted-types-for 'script'")) failures.push('CSP report-only must include Trusted Types monitoring before enforcement is considered.');
+if (headerValue('Cross-Origin-Opener-Policy') !== 'same-origin-allow-popups') failures.push('COOP must preserve same-origin popup flows used by authentication.');
+if (!headerValue('Strict-Transport-Security').includes('includeSubDomains')) failures.push('HSTS must retain the current includeSubDomains directive.');
 if (!(adminDashboard.indexOf('id="hn-admin-layout-final-overrides"') > adminDashboard.indexOf('/assets/hn-sitewide.css?v=1')) ||
     !adminDashboard.includes('min-height:calc(100dvh - 3px)') ||
     !adminDashboard.includes('.layout > .hn-admin-sidebar') ||

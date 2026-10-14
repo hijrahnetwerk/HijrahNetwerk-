@@ -50,6 +50,7 @@
   }
 
   function allowAdmin() {
+    adminVerified = true;
     document.removeEventListener("contextmenu", blockEvent, true);
     document.removeEventListener("selectstart", blockEvent, true);
     document.removeEventListener("copy", blockEvent, true);
@@ -90,7 +91,23 @@
     });
   }
 
+  var adminVerified = false;
+  var authStorageKey = "sb-dejmckimvstfjeickplx-auth-token";
+
+  function hasStoredSession() {
+    try {
+      var raw = window.localStorage.getItem(authStorageKey);
+      if (!raw) return false;
+      var saved = JSON.parse(raw);
+      return !!(saved && saved.access_token && saved.refresh_token);
+    } catch (error) {
+      // If storage is unavailable, fail closed and attempt explicit server-side role verification.
+      return true;
+    }
+  }
+
   async function verifyAdmin() {
+    if (adminVerified || !hasStoredSession()) return;
     try {
       if (!window.__ENV) await loadScript("/assets/config.js");
       if (!window.supabase || !window.supabase.createClient) {
@@ -113,6 +130,12 @@
       // Fail closed: zonder bevestigde adminrol blijft kopieerbescherming actief.
     }
   }
+
+  // Recheck if a session is created in another tab or after returning from sign-in.
+  window.addEventListener("focus", verifyAdmin);
+  window.addEventListener("storage", function (event) {
+    if (event.key === authStorageKey) verifyAdmin();
+  });
 
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", verifyAdmin, { once: true });
