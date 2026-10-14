@@ -111,7 +111,7 @@ create or replace function public.handle_hn_new_user()
 returns trigger
 language plpgsql
 security definer
-set search_path = public
+set search_path = ''
 as $$
 declare
   v_code text;
@@ -190,7 +190,7 @@ create trigger on_hn_auth_user_created
 after insert on auth.users
 for each row execute procedure public.handle_hn_new_user();
 
-grant execute on function public.handle_hn_new_user() to authenticated, anon;
+revoke all on function public.handle_hn_new_user() from public, anon, authenticated;
 
 -- Publiek profiel: alleen geanonimiseerde communitygegevens.
 create or replace function public.get_public_member_profile(p_code text)
@@ -289,6 +289,7 @@ begin
 end;
 $$;
 
+revoke all on function public.get_public_member_profile(text) from public;
 grant execute on function public.get_public_member_profile(text) to anon, authenticated;
 
 create or replace function public.is_valid_hn_referral(p_code text)
@@ -306,6 +307,7 @@ as $
   );
 $;
 
+revoke all on function public.is_valid_hn_referral(text) from public;
 grant execute on function public.is_valid_hn_referral(text) to anon, authenticated;
 
 -- Eigen paspoort: alle stempels + behaald/nog niet behaald.
@@ -323,6 +325,9 @@ declare
   experience_count bigint := 0;
   correction_count bigint := 0;
   referral_count bigint := 0;
+  points bigint := 0;
+  level integer := 1;
+  display_role text := 'Communitylid';
   stamp_json jsonb := '[]'::jsonb;
 begin
   select *
@@ -402,4 +407,5 @@ begin
 end;
 $$;
 
+revoke all on function public.get_my_hn_passport() from public, anon;
 grant execute on function public.get_my_hn_passport() to authenticated;
