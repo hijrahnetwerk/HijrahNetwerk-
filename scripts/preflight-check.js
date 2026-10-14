@@ -47,6 +47,25 @@ const editor = source('assets/hn-publication-editor.js');
 const article = source('blog-artikel.html');
 const articlePreview = source('assets/hn-article-draft-preview.js');
 const vercel = JSON.parse(source('vercel.json'));
+const passportPage = source('paspoort.html');
+const adminPage = source('admin.html');
+const profileGuard = source('supabase/migrations/20261014120000_guard_profile_privileged_fields.sql');
+if ((passportPage.match(/<script[^>]+config\\.js/gi) || []).length > 1) {
+  failures.push('Paspoort must load the site configuration only once.');
+}
+if ((adminPage.match(/<script[^>]+config\\.js/gi) || []).length > 1) {
+  failures.push('Admin must load the site configuration only once.');
+}
+if (/unpkg\\.com/i.test(adminPage)) {
+  failures.push('Admin page must not load executable code from unpkg.com.');
+}
+for (const protectedField of ['new.role', 'new.application_status', 'new.admin_notes', 'new.approved_at', 'new.verification_status', 'new.hn_status', 'new.whatsapp_verified']) {
+  if (!profileGuard.includes(protectedField)) failures.push('Profile security migration must guard field: ' + protectedField);
+}
+if (!profileGuard.includes('create trigger hn_guard_profile_privileged_fields') ||
+    !profileGuard.includes('before insert or update on public.profiles')) {
+  failures.push('Profile security migration must enforce the privilege guard on inserts and updates.');
+}
 if (!protection.includes('client.rpc("is_admin")') || !protection.includes('result.data === true') || !protection.includes('allowAdmin()')) {
   failures.push('Copy protection must fail closed and only allow a confirmed admin role.');
 }
