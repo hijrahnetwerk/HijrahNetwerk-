@@ -43,7 +43,17 @@ const protection = source('copy-protection.js');
 const buildSource = source('build.js');
 const adminBlogs = source('admin-blogs.html');
 const adminDashboard = source('admin.html');
+const adminRewards = source('admin-beloningen.html');
 const editor = source('assets/hn-publication-editor.js');
+if (!adminRewards.includes("rpc('hn_admin_save_badge'") ||
+    !adminRewards.includes("rpc('hn_admin_save_status'") ||
+    !adminRewards.includes("rpc('hn_admin_set_badge'") ||
+    adminRewards.includes(".from('hn_badges').insert(") ||
+    adminRewards.includes(".from('hn_badges').update(") ||
+    adminRewards.includes(".from('hn_statuses').insert(") ||
+    adminRewards.includes(".from('hn_statuses').update(")) {
+  failures.push('Passport reward administration must use guarded RPCs, not direct table writes.');
+}
 const article = source('blog-artikel.html');
 const articlePreview = source('assets/hn-article-draft-preview.js');
 const vercel = JSON.parse(source('vercel.json'));
