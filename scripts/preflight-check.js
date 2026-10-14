@@ -46,7 +46,16 @@ const adminDashboard = source('admin.html');
 const adminRewards = source('admin-beloningen.html');
 const adminScripts = source('assets/admin.js');
 const submissionNotesMigration = source('supabase/migrations/20261014121000_private_submission_admin_notes.sql');
+const profileNotesMigration = source('supabase/migrations/20261014122000_private_profile_admin_notes.sql');
 const editor = source('assets/hn-publication-editor.js');
+if (!profileNotesMigration.includes('create table if not exists private.hn_profile_admin_notes') ||
+    !profileNotesMigration.includes('update public.profiles set admin_notes = null') ||
+    !profileNotesMigration.includes('create trigger hn_strip_profile_admin_notes')) {
+  failures.push('Profile moderation notes must be moved out of member-readable profile rows.');
+}
+if (adminScripts.includes("admin_notes:adminNotes") || adminScripts.includes("admin_notes:reason")) {
+  failures.push('Admin submission notes must not be written directly to the member-readable submissions table.');
+}
 if (!adminScripts.includes("rpc('hn_admin_submission_notes'") ||
     !adminScripts.includes("rpc('hn_admin_set_submission_notes'") ||
     !submissionNotesMigration.includes('create table if not exists private.hn_submission_admin_notes') ||
