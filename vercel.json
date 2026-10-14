@@ -200,6 +200,21 @@
       "source": "/admin-paspoort.html",
       "destination": "/admin-paspoort",
       "permanent": true
+    },
+    {
+      "source": "/paspoort.html",
+      "destination": "/paspoort",
+      "permanent": true
+    },
+    {
+      "source": "/mijn-badges",
+      "destination": "/paspoort",
+      "permanent": true
+    },
+    {
+      "source": "/mijn-badges.html",
+      "destination": "/paspoort",
+      "permanent": true
     }
   ],
   "rewrites": [
