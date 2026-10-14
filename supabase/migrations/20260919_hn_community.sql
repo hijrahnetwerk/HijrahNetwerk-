@@ -198,7 +198,7 @@ returns jsonb
 language plpgsql
 security definer
 stable
-set search_path = public
+set search_path = ''
 as $$
 declare
   p public.profiles%rowtype;
@@ -297,7 +297,7 @@ returns boolean
 language sql
 security definer
 stable
-set search_path = public
+set search_path = ''
 as $
   select exists(
     select 1
@@ -316,7 +316,7 @@ returns jsonb
 language plpgsql
 security definer
 stable
-set search_path = public
+set search_path = ''
 as $$
 declare
   p public.profiles%rowtype;
