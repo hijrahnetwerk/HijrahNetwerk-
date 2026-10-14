@@ -103,16 +103,15 @@ if (!adminRewards.includes("rpc('hn_admin_save_badge'") ||
 const article = source('blog-artikel.html');
 const articlePreview = source('assets/hn-article-draft-preview.js');
 const vercel = JSON.parse(source('vercel.json'));
-const passportPage = source('paspoort.html');
 const adminPage = source('admin.html');
 const profileGuard = source('supabase/migrations/20261014120000_guard_profile_privileged_fields.sql');
-if ((passportPage.match(/<script[^>]+config\\.js/gi) || []).length > 1) {
+if ((passportPage.match(/<script[^>]+config\.js/gi) || []).length > 1) {
   failures.push('Paspoort must load the site configuration only once.');
 }
-if ((adminPage.match(/<script[^>]+config\\.js/gi) || []).length > 1) {
+if ((adminPage.match(/<script[^>]+config\.js/gi) || []).length > 1) {
   failures.push('Admin must load the site configuration only once.');
 }
-if (/unpkg\\.com/i.test(adminPage)) {
+if (/unpkg\.com/i.test(adminPage)) {
   failures.push('Admin page must not load executable code from unpkg.com.');
 }
 for (const protectedField of ['new.role', 'new.application_status', 'new.admin_notes', 'new.approved_at', 'new.verification_status', 'new.hn_status', 'new.whatsapp_verified']) {
