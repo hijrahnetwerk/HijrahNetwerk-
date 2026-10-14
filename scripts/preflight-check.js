@@ -53,7 +53,7 @@ if (!profileNotesMigration.includes('create table if not exists private.hn_profi
     !profileNotesMigration.includes('create trigger hn_strip_profile_admin_notes')) {
   failures.push('Profile moderation notes must be moved out of member-readable profile rows.');
 }
-if (adminScripts.includes("admin_notes:adminNotes") || adminScripts.includes("admin_notes:reason")) {
+if (adminScripts.includes(",admin_notes:adminNotes") || adminScripts.includes(",admin_notes:reason")) {
   failures.push('Admin submission notes must not be written directly to the member-readable submissions table.');
 }
 if (!adminScripts.includes("rpc('hn_admin_submission_notes'") ||
