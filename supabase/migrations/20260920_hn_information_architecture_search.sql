@@ -155,7 +155,7 @@ returns jsonb
 language plpgsql
 security definer
 stable
-set search_path = public
+set search_path = ''
 as $$
 declare
   top_queries jsonb;
@@ -201,6 +201,7 @@ begin
 end;
 $$;
 
+revoke all on function public.get_hn_search_overview() from public, anon;
 grant execute on function public.get_hn_search_overview() to authenticated;
 
 -- Zoektermen worden bewust per Topic beheerd. De globale herkenning zit in de zoeklaag;\n-- inhoudelijke synoniemen worden niet automatisch aan willekeurige Topics gekoppeld.\n
