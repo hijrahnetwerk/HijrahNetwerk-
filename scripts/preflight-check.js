@@ -58,7 +58,17 @@ const passportAdmin = source('admin-paspoort.html');
 const adminScripts = source('assets/admin.js');
 const submissionNotesMigration = source('supabase/migrations/20261014121000_private_submission_admin_notes.sql');
 const profileNotesMigration = source('supabase/migrations/20261014122000_private_profile_admin_notes.sql');
+const profileVisibilityMigration = source('supabase/migrations/20261014123000_profile_visibility_opt_in.sql');
+const passportPage = source('paspoort.html');
 const editor = source('assets/hn-publication-editor.js');
+if (!profileVisibilityMigration.includes('alter column profile_visibility set default false') ||
+    !profileVisibilityMigration.includes('hn_set_my_profile_visibility') ||
+    !profileVisibilityMigration.includes('hn_guard_profile_visibility_owner') ||
+    !passportPage.includes("rpc('hn_set_my_profile_visibility'") ||
+    !passportPage.includes('id="profileOn"') ||
+    !passportPage.includes('id="profileOff"')) {
+  failures.push('Public HN profiles must be opt-in and controllable by the member.');
+}
 if (!profileNotesMigration.includes('create table if not exists private.hn_profile_admin_notes') ||
     !profileNotesMigration.includes('update public.profiles set admin_notes = null') ||
     !profileNotesMigration.includes('create trigger hn_strip_profile_admin_notes')) {
