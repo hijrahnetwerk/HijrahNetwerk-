@@ -699,7 +699,8 @@
       "fix/admin-verhalen-editor-ux-20261012": false,
       "fix/homepage-root-load-20261013": false,
       "fix/restore-public-launch-funnel-20261013": false,
-      "fix/pagespeed-security-a11y-20261013": false
+      "fix/pagespeed-security-a11y-20261013": false,
+      "integration/resolve-pr-23-pr-29-conflicts": false
     }
   }
 }
