@@ -217,6 +217,7 @@ begin
   from public.profiles
   where upper(public_code) = upper(trim(p_code))
     and application_status = 'approved'
+    and profile_visibility = true
   limit 1;
 
   if not found then
