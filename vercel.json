@@ -205,11 +205,6 @@
       "source": "/mijn-hijrah.html",
       "destination": "/mijn-hijrah",
       "permanent": true
-    },
-    {
-      "source": "/public-member.html",
-      "destination": "/public-member",
-      "permanent": true
     }
   ],
   "rewrites": [
@@ -440,10 +435,6 @@
     {
       "source": "/mijn-hijrah",
       "destination": "/mijn-hijrah.html"
-    },
-    {
-      "source": "/public-member",
-      "destination": "/public-member.html"
     }
   ],
   "headers": [
