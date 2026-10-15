@@ -200,6 +200,11 @@
       "source": "/admin-paspoort.html",
       "destination": "/admin-paspoort",
       "permanent": true
+    },
+    {
+      "source": "/mijn-hijrah.html",
+      "destination": "/mijn-hijrah",
+      "permanent": true
     }
   ],
   "rewrites": [
@@ -426,6 +431,10 @@
     {
       "source": "/admin-paspoort",
       "destination": "/admin-paspoort.html"
+    },
+    {
+      "source": "/mijn-hijrah",
+      "destination": "/mijn-hijrah.html"
     }
   ],
   "headers": [
@@ -671,6 +680,19 @@
         {
           "key": "Cache-Control",
           "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/mijn-hijrah(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "private, no-store, max-age=0"
+        },
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow, noarchive"
         }
       ]
     }
