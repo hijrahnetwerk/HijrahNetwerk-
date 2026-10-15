@@ -404,6 +404,10 @@
 
         .slice(0, 12);
 
+    if (window.HNSearchEngine) {
+      window.HNSearchEngine.logSearch(db, query, results.length);
+    }
+
     const container =
       document.getElementById("results");
 
@@ -582,6 +586,7 @@
   loadTopics();
 </script>
 
+<script src="/assets/hn-search-engine.js"></script>
 <script src="/assets/hn-footer.js" defer></script>
 </body>
 </html>
