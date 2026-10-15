@@ -69,7 +69,7 @@ async function init(){
   }
 
   const result=await db().from('profiles')
-    .select('application_status,my_hijrah_enabled')
+    .select('application_status')
     .eq('id',session.user.id)
     .maybeSingle();
 
@@ -81,13 +81,8 @@ async function init(){
     return;
   }
 
-  if(p?.my_hijrah_enabled){
-    status.innerHTML='<strong>Mijn Hijrah is geactiveerd.</strong> Je kunt nu naar je persoonlijke omgeving.';
-    actions.innerHTML='<a class="button primary" href="/dashboard">Mijn Hijrah openen</a><a class="button secondary" href="/paspoort">Mijn Paspoort</a>';
-  }else{
-    status.innerHTML='<strong>Je bent goedgekeurd als HN-communitylid.</strong> Mijn Hijrah is nog niet geactiveerd voor dit account.';
-    actions.innerHTML='<a class="button secondary" href="/paspoort">Mijn Paspoort bekijken</a>';
-  }
+  status.innerHTML='<strong>Je bent goedgekeurd als HN-communitylid.</strong> De persoonlijke planner van Mijn Hijrah is nog in voorbereiding. Je kunt wel je HN-Paspoort bekijken.';
+  actions.innerHTML='<a class="button primary" href="/paspoort">Mijn Paspoort bekijken</a><a class="button secondary" href="/dashboard">Naar dashboard</a>';
 }
 init();
 </script>
