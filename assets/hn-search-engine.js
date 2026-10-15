@@ -111,7 +111,6 @@
     if(!query || !db())return;
     try{
       const normalizedQuery=normalize(query).slice(0,240);
-      console.log('HN analytics: sending search event', {query, resultCount});
       const response=await db().rpc('log_hn_search_event',{
         p_query:String(query).trim().slice(0,240),
         p_normalized_query:normalizedQuery,
@@ -122,8 +121,6 @@
 
       if(response.error){
         console.error('HN search analytics RPC error:', response.error);
-      }else{
-        console.log('HN analytics: search event accepted', response.data);
       }
     }catch(e){
       console.error('HN search analytics JS error:', e);
@@ -133,7 +130,6 @@
   async function logClick(db,query,topicId){
     if(!query || !topicId || !db())return;
     try{
-      console.log('HN analytics: sending click event', {query, topicId});
       const response=await db().rpc('log_hn_search_event',{
         p_query:String(query).trim().slice(0,240),
         p_normalized_query:normalize(query).slice(0,240),
@@ -144,8 +140,6 @@
 
       if(response.error){
         console.error('HN click analytics RPC error:', response.error);
-      }else{
-        console.log('HN analytics: click event accepted', response.data);
       }
     }catch(e){
       console.error('HN click analytics JS error:', e);
