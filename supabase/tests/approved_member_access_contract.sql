@@ -34,6 +34,12 @@ begin
     raise exception 'Members can view allowed topics is missing its approved-member gate';
   end if;
 
+  -- Reject the legacy direct members branch even if a separate approved_members
+  -- branch in the same policy mentions application_status.
+  if position('visibility = ''members''::text' in v_qual) > 0 then
+    raise exception 'Members can view allowed topics still has an unguarded visibility = members branch';
+  end if;
+
   -- RLS permissive policies are OR-combined. Include policies granted to PUBLIC,
   -- since those apply to authenticated users too. Public-only content policies
   -- are allowed, but they must not expose rows explicitly marked members-only.
@@ -73,12 +79,17 @@ begin
             v_policy;
         end if;
       else
-        if position('private.is_admin' in v_qual) = 0
-           and (
-             position('application_status' in v_qual) = 0
-             or position('approved' in v_qual) = 0
-           ) then
-          raise exception 'Potential RLS bypass: public.%, policy "%" lacks approval/admin gate',
+        if (
+          position('application_status' in v_qual) = 0
+          or position('approved' in v_qual) = 0
+        ) and (
+          position('private.is_admin' in v_qual) = 0
+          or position('active' in v_qual) > 0
+          or position('user_id' in v_qual) > 0
+          or position('access_level' in v_qual) > 0
+          or position('visibility' in v_qual) > 0
+        ) then
+          raise exception 'Potential RLS bypass: public.%, policy "%" lacks an approval gate (or is not admin-only)',
             v_table, v_policy;
         end if;
       end if;
