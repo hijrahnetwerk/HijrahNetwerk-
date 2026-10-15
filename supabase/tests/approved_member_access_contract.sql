@@ -34,9 +34,9 @@ begin
     raise exception 'Members can view allowed topics is missing its approved-member gate';
   end if;
 
-  -- RLS policies are OR-combined. Check every SELECT/ALL policy applicable to
-  -- authenticated users, not merely one correctly named policy. Admin-only
-  -- policies are permitted; any other applicable policy must include approval.
+  -- RLS permissive policies are OR-combined. Include policies granted to PUBLIC,
+  -- since those apply to authenticated users too. Public-only content policies
+  -- are allowed, but they must not expose rows explicitly marked members-only.
   foreach v_table in array array['blogs', 'topic', 'hn_access_rules', 'hn_access_routes', 'hn_user_access'] loop
     for v_policy, v_qual in
       select p.policyname, coalesce(p.qual, '')
@@ -44,15 +44,43 @@ begin
       where p.schemaname = 'public'
         and p.tablename = v_table
         and p.cmd in ('SELECT', 'ALL')
-        and ('authenticated' = any(p.roles))
+        and (
+          'authenticated' = any(p.roles)
+          or 'public' = any(p.roles)
+        )
+        and p.permissive = 'PERMISSIVE'
     loop
-      if position('private.is_admin' in v_qual) = 0
-         and (
-           position('application_status' in v_qual) = 0
-           or position('approved' in v_qual) = 0
-         ) then
-        raise exception 'Potential RLS bypass: public.%, policy "%" lacks approval/admin gate',
-          v_table, v_policy;
+      if v_table = 'blogs' then
+        if position('access_level' in v_qual) > 0
+           and position('members' in v_qual) > 0
+           and (
+             position('application_status' in v_qual) = 0
+             or position('approved' in v_qual) = 0
+           )
+           and position('private.is_admin' in v_qual) = 0 then
+          raise exception 'Potential RLS bypass: public.blogs policy "%" exposes members-only content without approval/admin gate',
+            v_policy;
+        end if;
+      elsif v_table = 'topic' then
+        if position('visibility' in v_qual) > 0
+           and position('members' in v_qual) > 0
+           and (
+             position('application_status' in v_qual) = 0
+             or position('approved' in v_qual) = 0
+           )
+           and position('private.is_admin' in v_qual) = 0 then
+          raise exception 'Potential RLS bypass: public.topic policy "%" exposes member-only fiches without approval/admin gate',
+            v_policy;
+        end if;
+      else
+        if position('private.is_admin' in v_qual) = 0
+           and (
+             position('application_status' in v_qual) = 0
+             or position('approved' in v_qual) = 0
+           ) then
+          raise exception 'Potential RLS bypass: public.%, policy "%" lacks approval/admin gate',
+            v_table, v_policy;
+        end if;
       end if;
     end loop;
   end loop;
