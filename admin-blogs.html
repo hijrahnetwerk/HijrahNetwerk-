@@ -920,10 +920,30 @@ $('btnSave').addEventListener('click',async()=>{
   const sourceLines=$('fSources').value.split('\n').map(line=>line.trim()).filter(Boolean);
   const sources=[];
   for(const line of sourceLines){
-    const parts=line.split('|');
-    const url=(parts.length>1?parts.slice(1).join('|'):'').trim();
-    const label=(parts.length>1?parts[0]:line).trim();
-    if(!/^https?:\/\//i.test(url)){st.textContent='Controleer de bronregel: gebruik Naam | https://…';st.className='modal-status err';return}
+    const separator=line.indexOf('|');
+    let label='', url='';
+    if(separator>=0){
+      label=line.slice(0,separator).trim();
+      url=line.slice(separator+1).trim();
+    }else if(/^https?:\/\//i.test(line)){
+      // Een URL alleen is ook een geldige bronregel.
+      url=line;
+      label=line;
+    }else{
+      st.textContent='Bron niet herkend. Gebruik Naam | https://… of plak alleen een volledige URL. Je kunt bronnen ook leeg laten.';
+      st.className='modal-status err';
+      $('fSources').focus();
+      return;
+    }
+    try{
+      const parsed=new URL(url);
+      if(!['http:','https:'].includes(parsed.protocol))throw new Error('Ongeldig protocol');
+    }catch(_){
+      st.textContent='De bron-URL is ongeldig. Gebruik Naam | https://… of plak alleen een volledige URL. Je kunt bronnen ook leeg laten.';
+      st.className='modal-status err';
+      $('fSources').focus();
+      return;
+    }
     sources.push({label:label||url,url});
   }
   const access=document.querySelector('input[name=access]:checked').value;
