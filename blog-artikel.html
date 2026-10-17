@@ -431,7 +431,7 @@ function renderArticle(b,related){
   const tags=(b.tags||[]);
 
   document.getElementById('pageTitle').textContent=`${b.title} — Hijrah Netwerk`;
-  const description=String(b.intro||b.title||'Lees dit verhaal op Hijrah Netwerk.').replace(/\\s+/g,' ').trim().slice(0,300);
+  const description=String(b.intro||b.title||'Lees dit verhaal op Hijrah Netwerk.').replace(/\s+/g,' ').trim().slice(0,300);
   document.getElementById('pageMeta').setAttribute('content',description);
   document.getElementById('pageOgTitle').setAttribute('content',`${b.title} — Hijrah Netwerk`);
   document.getElementById('pageOgDescription').setAttribute('content',description);
@@ -441,7 +441,7 @@ function renderArticle(b,related){
   const restricted=b.access_level!=='public';
   document.getElementById('pageRobots').setAttribute('content',restricted?'noindex,nofollow':'index,follow');
   const ogImage=document.getElementById('pageOgImage');
-  if(b.cover_url&&/^https?:\\/\\//i.test(b.cover_url)){ogImage.setAttribute('content',b.cover_url)}else{ogImage.removeAttribute('content')}
+  if(b.cover_url&&/^https?:\/\//i.test(b.cover_url)){ogImage.setAttribute('content',b.cover_url)}else{ogImage.removeAttribute('content')}
 
   document.getElementById('articleRoot').innerHTML=`
   <!-- HERO -->
