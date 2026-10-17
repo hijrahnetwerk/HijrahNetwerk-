@@ -5,6 +5,14 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title id="pageTitle">Verhaal — Hijrah Netwerk</title>
 <meta name="description" id="pageMeta" content="Lees dit verhaal op Hijrah Netwerk.">
+<meta name="robots" id="pageRobots" content="noindex,nofollow">
+<link rel="canonical" id="pageCanonical" href="https://hijrah-netwerk.vercel.app/verhalen/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Hijrah Netwerk">
+<meta property="og:title" id="pageOgTitle" content="Verhaal — Hijrah Netwerk">
+<meta property="og:description" id="pageOgDescription" content="Lees dit verhaal op Hijrah Netwerk.">
+<meta property="og:url" id="pageOgUrl" content="https://hijrah-netwerk.vercel.app/verhalen/">
+<meta property="og:image" id="pageOgImage" content="">
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="stylesheet" href="/assets/public-nav.css">
 <style>
@@ -144,7 +152,7 @@ a{color:inherit;text-decoration:none}
 @media(max-width:560px){.article-budget{padding:18px}.article-budget-grid{grid-template-columns:1fr}.article-toc{padding:17px}}
 /* ── TAGS / META SIDEBAR ── */
 .art-aside{
-  position:sticky;top:90px;
+  position:static;
   padding:24px;background:#fff;
   border:1px solid var(--border);border-radius:var(--r);
   box-shadow:0 8px 28px rgba(103,76,46,.08);
@@ -181,7 +189,29 @@ a{color:inherit;text-decoration:none}
 }
 @media(min-width:860px){
   .art-layout{grid-template-columns:1fr 280px}
-  .art-aside{display:block}
+  .art-aside{display:block;position:sticky;top:90px}
+}
+@media(max-width:600px){
+  .art-hero{min-height:0;padding:38px 0 34px}
+  .back-link{margin-bottom:18px}
+  .art-type{margin-bottom:14px}
+  .art-hero h1{font-size:clamp(28px,8vw,38px);line-height:1.12;overflow-wrap:anywhere}
+  .art-meta-row{gap:9px;font-size:12px}
+  .art-content{padding:30px 0 24px}
+  .art-intro{margin-bottom:24px;padding-bottom:24px;font-size:17px}
+  .article-accordion summary{padding:16px;line-height:1.45;padding-right:42px;position:relative}
+  .article-accordion summary:after{position:absolute;right:16px;top:50%;transform:translateY(-50%);float:none}
+  .article-accordion[open] summary:after{transform:translateY(-50%)}
+  .article-accordion .accordion-content{padding:0 16px 16px}
+  .article-callout{padding:17px;margin:20px 0}
+  .art-aside{padding:18px}
+  .related{padding:36px 0}
+  .rel-card{padding:18px}
+}
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .gold-stripe,.spinner,.reveal,.btn,.rel-card{animation:none!important;transition:none!important}
+  .reveal{opacity:1;transform:none}
 }
 
 /* ── GERELATEERD ── */
@@ -401,7 +431,17 @@ function renderArticle(b,related){
   const tags=(b.tags||[]);
 
   document.getElementById('pageTitle').textContent=`${b.title} — Hijrah Netwerk`;
-  document.getElementById('pageMeta').setAttribute('content',b.intro||b.title);
+  const description=String(b.intro||b.title||'Lees dit verhaal op Hijrah Netwerk.').replace(/\\s+/g,' ').trim().slice(0,300);
+  document.getElementById('pageMeta').setAttribute('content',description);
+  document.getElementById('pageOgTitle').setAttribute('content',`${b.title} — Hijrah Netwerk`);
+  document.getElementById('pageOgDescription').setAttribute('content',description);
+  const canonicalUrl=location.origin+'/verhalen/'+encodeURIComponent(b.slug||getSlug());
+  document.getElementById('pageCanonical').setAttribute('href',canonicalUrl);
+  document.getElementById('pageOgUrl').setAttribute('content',canonicalUrl);
+  const restricted=b.access_level!=='public';
+  document.getElementById('pageRobots').setAttribute('content',restricted?'noindex,nofollow':'index,follow');
+  const ogImage=document.getElementById('pageOgImage');
+  if(b.cover_url&&/^https?:\\/\\//i.test(b.cover_url)){ogImage.setAttribute('content',b.cover_url)}else{ogImage.removeAttribute('content')}
 
   document.getElementById('articleRoot').innerHTML=`
   <!-- HERO -->
@@ -453,12 +493,7 @@ function renderArticle(b,related){
           </div>
           ${tags.length?`<div class="aside-stat"><span class="aside-icon">🏷</span><div><div class="aside-label">${tags.map(t=>esc(t)).join(', ')}</div><div class="aside-val">Tags</div></div></div>`:''}
 
-          <div class="share-btns">
-            <h4 style="margin-top:4px">Deel dit verhaal</h4>
-            <a class="share-btn" href="https://wa.me/?text=${encodeURIComponent(b.title+' — '+location.href)}" target="_blank" rel="noopener">
-              💬 Deel via WhatsApp
-            </a>
-          </div>
+          ${b.access_level==='public'?'<div class="share-btns"><h4 style="margin-top:4px">Deel dit verhaal</h4><a class="share-btn" href="https://wa.me/?text='+encodeURIComponent(b.title+' — '+location.href)+'" target="_blank" rel="noopener noreferrer">💬 Deel via WhatsApp</a></div>':'<p class="member-only-note" style="margin-top:18px;padding:12px 14px;border-radius:12px;background:#f8f0df;border:1px solid rgba(198,161,91,.4);font-size:12px;line-height:1.55">Besloten ledenverhaal. Deel de inhoud niet buiten Hijrah Netwerk.</p>'}
         </aside>
       </div>
     </div>
@@ -473,11 +508,11 @@ function renderArticle(b,related){
       <h2 class="reveal">Meer verhalen & interviews</h2>
       <div class="rel-grid">
         ${related.map(r=>`
-        <article class="rel-card reveal" onclick="location.href='/verhalen/${esc(r.slug)}'">
+        <a class="rel-card reveal" href="/verhalen/${esc(r.slug)}">
           <div class="rel-type">${typeLabel(r.type)}</div>
           <h3>${esc(r.title)}</h3>
           <p>${esc((r.intro||'').slice(0,90))}${(r.intro||'').length>90?'…':''}</p>
-        </article>`).join('')}
+        </a>`).join('')}
       </div>
     </div>
   </section>`:''}
