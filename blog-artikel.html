@@ -558,6 +558,22 @@ async function init(){
 
   if(error||!data){renderError('Dit verhaal bestaat niet of is niet gepubliceerd.');return}
 
+  // Members-only verhalen mogen alleen door ingelogde, goedgekeurde leden of admins worden bekeken.
+  if(data.access_level!=='public'){
+    const sessionResult=await db.auth.getSession();
+    const user=sessionResult.data&&sessionResult.data.session&&sessionResult.data.session.user;
+    if(!user){
+      location.href='/login?next='+encodeURIComponent(location.pathname);
+      return;
+    }
+    const profileResult=await db.from('profiles').select('role,application_status').eq('id',user.id).maybeSingle();
+    const profile=profileResult.data||{};
+    if(profile.role!=='admin'&&profile.application_status!=='approved'){
+      renderError('Dit verhaal is alleen beschikbaar voor goedgekeurde HN-leden. Log in met een goedgekeurd account of neem contact op met Hijrah Netwerk.');
+      return;
+    }
+  }
+
   // Gerelateerde verhalen
   const {data:rel}=await db.from('blogs')
     .select('id,title,slug,intro,type')
