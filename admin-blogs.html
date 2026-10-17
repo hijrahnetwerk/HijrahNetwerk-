@@ -481,8 +481,8 @@ button,input,select,textarea{font:inherit;cursor:pointer}
       </div>
 
       <div class="field full">
-        <label class="consent-field"><input type="checkbox" id="fConsent"> Toestemming voor publicatie is bevestigd</label>
-        <div class="field-hint">Voor interviews, persoonlijke verhalen en ervaringen: alleen aanvinken nadat het lid expliciet akkoord heeft gegeven voor deze publicatie en de gekozen naam/anonimiteit.</div>
+        <label class="consent-field"><input type="checkbox" id="fConsent"> Toestemming voor publicatie is bevestigd (optioneel vastleggen)</label>
+        <div class="field-hint">Dit veld is alleen bedoeld om toestemming administratief vast te leggen. Het blokkeren van publicatie hangt niet van dit veld af. Houd wel rekening met privacy, anonimiteit en de afspraken met de inzender.</div>
       </div>
 
       <div class="field full">
@@ -810,10 +810,6 @@ window.togglePub=async function(id,currentlyPub){
   const newPub=!currentlyPub;
   const blog=allBlogs.find(item=>item.id===id);
   if(!blog){toast('Publicatie niet gevonden. Vernieuw de lijst en probeer opnieuw.','err');return}
-  if(newPub&&['verhaal','interview','ervaring'].includes(blog.type)&&!blog.consent_confirmed){
-    toast('Publiceren geblokkeerd: bevestig eerst de toestemming in het bewerkscherm.','err');
-    return;
-  }
   const payload={published:newPub};
   if(newPub)payload.published_at=new Date().toISOString();
   const {error}=await db.from('blogs').update(payload).eq('id',id);
@@ -867,10 +863,6 @@ $('btnSave').addEventListener('click',async()=>{
   const access=document.querySelector('input[name=access]:checked').value;
   const published=$('fPub').value==='1';
   const type=$('fType').value;
-  if(published&&['verhaal','interview','ervaring'].includes(type)&&!$('fConsent').checked){
-    st.textContent='Bevestig eerst dat toestemming voor publicatie is verkregen.';
-    st.className='modal-status err';return;
-  }
   const rt=parseInt($('fReadTime').value)||null;
 
   const payload={
