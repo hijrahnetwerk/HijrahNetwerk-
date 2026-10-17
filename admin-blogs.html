@@ -481,8 +481,8 @@ button,input,select,textarea{font:inherit;cursor:pointer}
       </div>
 
       <div class="field full">
-        <label class="consent-field"><input type="checkbox" id="fConsent"> Toestemming voor publicatie is bevestigd (optioneel vastleggen)</label>
-        <div class="field-hint">Dit veld is alleen bedoeld om toestemming administratief vast te leggen. Het blokkeren van publicatie hangt niet van dit veld af. Houd wel rekening met privacy, anonimiteit en de afspraken met de inzender.</div>
+        <label class="consent-field"><input type="checkbox" id="fConsent"> Toestemming geregistreerd (optioneel, geen publicatieblokkade)</label>
+        <div class="field-hint">Optioneel administratief veld. Dit veld blokkeert opslaan of publiceren niet. Een leeg vak betekent alleen dat toestemming hier niet is geregistreerd; het betekent niet dat toestemming is gegeven.</div>
       </div>
 
       <div class="field full">
@@ -671,7 +671,7 @@ function renderTable(){
       <td>
         <span class="access-badge">${b.access_level==='public'?'🌍 Publiek':b.access_level==='members'?'👥 Leden':'🔑 Mods'}</span>
       </td>
-      <td><span class="access-badge">${({not_checked:'Nog te controleren',personal_experience:'Ervaring',source_checked:'Bronnen gecontroleerd',officially_verified:'Officieel bevestigd',needs_review:'Controle nodig',outdated:'Mogelijk verouderd'}[b.verification_status]||'Status onbekend')}${(['verhaal','interview','ervaring'].includes(b.type)&&!b.consent_confirmed?' · Toestemming?':'')}</span></td>
+      <td><span class="access-badge">${({not_checked:'Nog te controleren',personal_experience:'Ervaring',source_checked:'Bronnen gecontroleerd',officially_verified:'Officieel bevestigd',needs_review:'Controle nodig',outdated:'Mogelijk verouderd'}[b.verification_status]||'Status onbekend')}${(['verhaal','interview','ervaring'].includes(b.type)&&!b.consent_confirmed?' · Geen toestemming geregistreerd':'')}</span></td>
       <td><span class="pub-badge ${b.published?'pub-yes':'pub-no'}">${b.published?'✓ Live':'● Concept'}</span></td>
       <td>${date}</td>
       <td><div class="row-actions">
