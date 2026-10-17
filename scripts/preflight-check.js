@@ -59,8 +59,8 @@ if (!protection.includes('window.addEventListener("focus", verifyAdmin)') || !pr
 if (!buildSource.includes('copyProtectionTag') || !buildSource.includes("html.replace('</head>', copyProtectionTag")) {
   failures.push('Build must inject copy protection into the head of every HTML page.');
 }
-if (!adminBlogs.includes('Publiceren geblokkeerd') || !adminBlogs.includes("!$('fConsent').checked")) {
-  failures.push('Publishing a story/interview/experience must require confirmed consent.');
+if (!adminBlogs.includes('Toestemming geregistreerd (optioneel, geen publicatieblokkade)') || /Publiceren geblokkeerd|!\$\('fConsent'\)\.checked/.test(adminBlogs)) {
+  failures.push('Consent must remain optional and must not block saving or publishing a story/interview/experience.');
 }
 for (const type of ['paragraph', 'heading', 'quote', 'callout', 'accordion', 'checklist', 'image', 'divider', 'budget']) {
   if (!editor.includes(type + ':')) failures.push('Publication editor missing block type: ' + type);
