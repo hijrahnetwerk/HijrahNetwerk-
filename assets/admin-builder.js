@@ -237,7 +237,7 @@ function sectionHtml(s){
   else if(type==="divider")body='<div class="hn-preview-divider"></div>';
   else if(type==="spacer")body='<div style="height:'+Math.max(8,Number(c.height)||80)+'px"></div>';
   else body='<p style="white-space:pre-wrap;line-height:1.7">'+esc(c.text||"")+"</p>";
-  return '<section draggable="true" class="hn-builder-preview" data-hn-component-id="'+esc(cid)+'" data-section-id="'+esc(s.id||"new-"+sections.indexOf(s))+'"><button class="block-delete" data-delete-section="'+esc(s.id||"new-"+sections.indexOf(s))+'">Verwijderen</button>'+(s.title&&type!=="hero"&&type!=="intro"?'<h2>'+esc(s.title)+"</h2>":"")+body+"</section>";
+  return '<section draggable="true" class="hn-builder-preview" data-hn-component-id="'+esc(cid)+'" data-section-id="'+esc(s.id||"new-"+sections.indexOf(s))+'"><button class="block-delete" data-delete-section="'+esc(s.id||"new-"+sections.indexOf(s))+'">Verwijderen</button>'+(s.title&&["hero","intro","article_header","breadcrumbs","quote"].indexOf(type)<0?'<h2>'+esc(s.title)+"</h2>":"")+body+"</section>";
 }
 function selector(el,doc){
   var stable=el&&el.getAttribute&&el.getAttribute("data-hn-id");
