@@ -753,6 +753,7 @@ async function loadEditorOptions(){
   renderOptionSelect('type','fType');
   renderOptionSelect('fase','fFase');
   renderOptionSelect('verification_status','fVerification');
+  renderTable();
 }
 document.querySelectorAll('[data-add-option]').forEach(btn=>btn.addEventListener('click',async()=>{
   const fieldKey=btn.dataset.addOption, selectId=btn.dataset.select;
@@ -974,6 +975,11 @@ $('btnSave').addEventListener('click',async()=>{
   const st=$('modalStatus');
 
   const isPublishing=$('fPub').value==='1';
+  const isMembersOnly=document.querySelector('input[name=access]:checked')?.value==='members';
+  if(isMembersOnly&&$('fMemberPreviewMode').value==='teaser'&&!$('fMemberPreviewText').value.trim()){
+    st.textContent='Je koos voor “Titel + teaser”. Vul in wat niet-leden openbaar mogen zien.';
+    st.className='modal-status err';$('fMemberPreviewText').focus();return;
+  }
   const hasPublishableContent=!!content.trim()||contentBlocks.some(block=>block.type==='image'&&/^https?:\/\//i.test(String(block.url||'')));
   if(isPublishing&&!title){st.textContent='Vul voor publicatie een duidelijke titel in.';st.className='modal-status err';toast('Voor publicatie ontbreekt nog een titel.','err');$('fTitle').focus();return}
   if(isPublishing&&!hasPublishableContent){st.textContent='Voeg voor publicatie minstens één inhoudsblok met tekst of een geldige afbeelding toe.';st.className='modal-status err';toast('Voor publicatie ontbreekt nog inhoud.','err');return}
