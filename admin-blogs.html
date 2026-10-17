@@ -224,15 +224,18 @@ button,input,select,textarea{font:inherit;cursor:pointer}
 
 /* ── TOAST ── */
 .toast{
-  position:fixed;bottom:24px;right:24px;z-index:900;
-  padding:12px 20px;border-radius:12px;font-size:13px;font-weight:700;
+  position:fixed;top:20px;right:20px;z-index:1900;
+  width:min(440px,calc(100vw - 40px));min-height:52px;
+  padding:14px 18px;border-radius:14px;font-size:14px;font-weight:700;
+  line-height:1.45;white-space:normal;overflow-wrap:anywhere;
   background:var(--br);color:#fff;
-  box-shadow:0 8px 28px rgba(30,15,0,.25);
-  transform:translateY(80px);opacity:0;
-  transition:.25s ease;pointer-events:none;
-  display:flex;align-items:center;gap:8px;
+  box-shadow:0 14px 38px rgba(30,15,0,.28);
+  transform:translateY(-16px);opacity:0;
+  transition:.22s ease;pointer-events:none;
+  display:flex;align-items:center;gap:10px;
 }
 .toast.show{transform:translateY(0);opacity:1}
+@media(max-width:600px){.toast{top:12px;right:12px;width:calc(100vw - 24px);padding:13px 15px}}
 .toast.ok{background:linear-gradient(135deg,#1e7e34,#27ae60)}
 .toast.err{background:linear-gradient(135deg,#922b21,#c0392b)}
 
