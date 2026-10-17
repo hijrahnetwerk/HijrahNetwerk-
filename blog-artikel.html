@@ -542,8 +542,8 @@ async function init(){
   const slug=getSlug();
   if(!db||!slug){renderError('Kon de pagina niet laden.');return}
 
-  // Veilige publieke teaser bevat uitsluitend titel, slug en type; nooit de verhaaltekst.
-  const teaserResult=await db.from('blog_member_teasers').select('id,title,slug,type').eq('slug',slug).maybeSingle();
+  // Publieke preview bevat alleen titel, slug, type en optioneel de apart ingevoerde teaser. De volledige inhoud wordt niet opgehaald.
+  const teaserResult=await db.from('blog_member_teasers').select('id,title,slug,type,member_preview_mode,member_preview_text').eq('slug',slug).maybeSingle();
   const teaser=teaserResult.data;
 
   const sessionResult=await db.auth.getSession();
@@ -592,7 +592,9 @@ function renderError(msg){
 function renderMemberTeaser(teaser){
   const canonicalUrl=location.origin+'/verhalen/'+encodeURIComponent(teaser.slug||getSlug());
   const pageTitle=String(teaser.title||'Verhaal voor leden');
-  const description=pageTitle+' is een besloten verhaal op Hijrah Netwerk. Word lid om het volledige verhaal te lezen.';
+  const previewMode=teaser.member_preview_mode==='teaser'?'teaser':'title';
+  const publicTeaser=previewMode==='teaser'?String(teaser.member_preview_text||'').trim():'';
+  const description=pageTitle+' is een besloten verhaal op Hijrah Netwerk.'+(publicTeaser?' '+publicTeaser:' Word lid om het volledige verhaal te lezen.');
   document.getElementById('pageTitle').textContent=pageTitle+' — Hijrah Netwerk';
   document.getElementById('pageMeta').setAttribute('content',description.slice(0,200));
   document.getElementById('pageRobots').setAttribute('content','index,follow');
@@ -616,15 +618,11 @@ function renderMemberTeaser(teaser){
     <section class="art-content"><div class="wrap-wide"><div class="member-gate">
       <div class="member-gate-copy">
         <p class="member-gate-eyebrow">Dit verhaal is onderdeel van de HN-community</p>
+        ${previewMode==='teaser'&&publicTeaser?'<p class="member-public-teaser">'+esc(publicTeaser)+'</p>':''}
         <h2>Lees het volledige verhaal als HN-lid</h2>
-        <p>De titel is openbaar vindbaar. De inhoud blijft besloten en is alleen beschikbaar voor goedgekeurde leden.</p>
+        <p>${previewMode==='teaser'?'Hierboven zie je de openbare samenvatting. Het volledige verhaal blijft alleen beschikbaar voor goedgekeurde leden.':'Dit verhaal is besloten. Word lid om de volledige inhoud te lezen.'}</p>
       </div>
-      <div class="member-gate-blur" aria-hidden="true">
-        <div class="fake-line w95"></div><div class="fake-line w88"></div><div class="fake-line w72"></div>
-        <div class="fake-heading"></div><div class="fake-line w91"></div><div class="fake-line w82"></div><div class="fake-line w66"></div>
-        <div class="fake-heading"></div><div class="fake-line w94"></div><div class="fake-line w78"></div><div class="fake-line w57"></div>
-        <div class="member-gate-blur-overlay"><span>Inhoud voor leden</span></div>
-      </div>
+      ${previewMode==='teaser'?'<div class="member-gate-blur" aria-hidden="true"><div class="fake-line w95"></div><div class="fake-line w88"></div><div class="fake-line w72"></div><div class="fake-heading"></div><div class="fake-line w91"></div><div class="fake-line w82"></div><div class="fake-line w66"></div><div class="fake-heading"></div><div class="fake-line w94"></div><div class="fake-line w78"></div><div class="fake-line w57"></div><div class="member-gate-blur-overlay"><span>Inhoud voor leden</span></div></div>':''}
       <div class="member-gate-actions">
         <a class="btn btn-primary" href="/register?next=${encodeURIComponent(location.pathname)}">Word HN-lid</a>
         <a class="member-login-link" href="/login?next=${encodeURIComponent(location.pathname)}">Al lid? Log in</a>
