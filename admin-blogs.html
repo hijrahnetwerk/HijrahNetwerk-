@@ -402,7 +402,8 @@ button,input,select,textarea{font:inherit;cursor:pointer}
       <input type="hidden" id="fId">
 
       <div class="field">
-        <label>Titel *</label>
+        <label>Titel</label>
+        <div class="field-hint">Voor een concept mag dit leeg blijven. Bij publicatie is een duidelijke titel nodig; een leeg concept krijgt automatisch een tijdelijke titel.</div>
         <input type="text" id="fTitle" placeholder="De stap naar Marokko…" maxlength="160">
         <div class="char-count" id="titleCount">0/160</div>
       </div>
@@ -489,13 +490,13 @@ button,input,select,textarea{font:inherit;cursor:pointer}
       </div>
 
       <div class="field full">
-        <label>Intro (korte samenvatting) *</label>
+        <label>Intro (korte samenvatting, optioneel)</label>
         <textarea id="fIntro" rows="3" maxlength="400" placeholder="Een korte samenvatting die op de kaart en in zoekresultaten verschijnt…"></textarea>
         <div class="char-count" id="introCount">0/400</div>
       </div>
 
       <div class="field full content-field">
-        <label>Artikelinhoud en interactieve onderdelen *</label>
+        <label>Artikelinhoud en interactieve onderdelen</label>
         <div class="field-hint">Bewerk elk blok rechtstreeks in de velden eronder. Kies eerst een bloksoort en klik op <strong>+ Blok toevoegen</strong>. Met ↑ en ↓ wijzig je de volgorde; met Verwijderen haal je een blok weg. Je wijzigingen worden pas bewaard wanneer je onderaan op <strong>Opslaan</strong> klikt.</div>
         <div class="block-toolbar">
           <select id="blockTypeToAdd" aria-label="Soort inhoudsblok">
@@ -766,6 +767,7 @@ function clearForm(){
   $('fLand').value='';
   $('fPub').value='0';
   $('fReadTime').value='';
+  $('fSlug').dataset.manuallyEdited='';
   document.querySelector('input[name=access][value=public]').checked=true;
   window.HNPublicationEditor.setBlocks([], '');
   updatePreview();
@@ -815,6 +817,7 @@ function updateSeoAdvice(){
   else if(words>1800)items.push('Lange inhoud: gebruik beschrijvende H2/H3-koppen, korte alinea’s en uitklapbare verdiepingen waar nuttig.');
   else items.push('Scanbaarheid: gebruik korte alinea’s, beschrijvende tussenkoppen en concrete voorbeelden waar ze iets toevoegen.');
   if(!/\b(bron|officieel|gecontroleerd|ervaring)\b/i.test(body))items.push('Vertrouwen: maak onderscheid tussen persoonlijke ervaring en gecontroleerde feiten. Voeg bronnen toe waar nodig.');
+  items.push('Eerlijke overtuigingskracht: benoem een herkenbare situatie en concrete opbrengst, onderbouw claims en vermijd angst, druk of garanties die je niet kunt waarmaken.');
   if(!/\b(wat|hoe|waar|wanneer|kosten|visum|school|wijk|werk|zorg)\b/i.test(title+' '+intro))items.push('Zoekintentie: benoem waar relevant een concrete vraag, plaats of praktisch thema waar de lezer naar zoekt.');
   $('hnSeoAdviceList').innerHTML=items.map(x=>'<li>'+x.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</li>').join('');
 }
