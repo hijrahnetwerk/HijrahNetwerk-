@@ -77,8 +77,8 @@ a{color:inherit;text-decoration:none}
   font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;
 }
 .art-hero h1{
-  max-width:850px;font-size:clamp(27px,4vw,44px);line-height:1.12;letter-spacing:-.035em;
-  color:#fff;margin-bottom:14px;overflow-wrap:anywhere;
+  max-width:760px;font-size:clamp(25px,3.2vw,38px);line-height:1.16;letter-spacing:-.028em;
+  color:#fff;margin-bottom:14px;overflow-wrap:anywhere;text-wrap:pretty;
 }
 .article-check-meta{display:flex;flex-wrap:wrap;gap:8px 18px;margin:0 0 28px;padding:14px 0;border-bottom:1px solid var(--border);font-size:13px;color:var(--muted)}
 .article-check-meta strong{color:var(--br);font-weight:700}
@@ -196,7 +196,7 @@ a{color:inherit;text-decoration:none}
   .art-hero{min-height:0;padding:30px 0 28px}
   .back-link{margin-bottom:16px}
   .art-type{margin-bottom:12px}
-  .art-hero h1{font-size:clamp(25px,7.5vw,34px);line-height:1.12;overflow-wrap:anywhere}
+  .art-hero h1{font-size:clamp(24px,6.4vw,32px);line-height:1.18;letter-spacing:-.02em;overflow-wrap:anywhere}
   .art-meta-row{gap:9px;font-size:12px}
   .art-content{padding:30px 0 24px}
   .art-intro{margin-bottom:24px;padding-bottom:24px;font-size:17px}
@@ -275,7 +275,7 @@ a{color:inherit;text-decoration:none}
 
 const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 
-function typeLabel(t){return{verhaal:'✈ Verhaal',interview:'🎙 Interview',ervaring:'💬 Ervaring',artikel:'📚 Artikel',blog:'✍ Blog',gids:'🧭 Praktische gids'}[t]||t}
+function typeLabel(t){return{verhaal:'Verhaal',interview:'Interview',ervaring:'Ervaring',artikel:'Artikel',blog:'Blog',gids:'Praktische gids'}[t]||t}
 function faseLabel(f){return{orienteren:'Oriënteren',voorbereiden:'Voorbereiden',integreren:'Integreren',terugkeren:'Terugkeren'}[f]||f}
 function initials(n){return(n||'HN').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase()}
 function readTime(content){return Math.max(2,Math.round((content||'').split(/\s+/).length/200))}
@@ -473,11 +473,11 @@ function renderArticle(b,related){
   <!-- CONTENT -->
   <section class="art-content">
     <div class="wrap-wide">
-      ${date||verifiedDate?'<div class="article-check-meta">'+(date?'<span><strong>Gepubliceerd:</strong> '+esc(date)+'</span>':'')+(verifiedDate?'<span><strong>Laatst gecontroleerd:</strong> '+esc(verifiedDate)+'</span>':'')+'</div>':''}
       <div class="art-layout">
         <!-- HOOFDTEKST -->
         <div>
           ${introDisplay?'<div class="art-intro reveal">'+esc(introDisplay)+'</div>':''}
+          ${date||verifiedDate?'<div class="article-check-meta">'+(date?'<span><strong>Gepubliceerd:</strong> '+esc(date)+'</span>':'')+(verifiedDate?'<span><strong>Laatst gecontroleerd:</strong> '+esc(verifiedDate)+'</span>':'')+'</div>':''}
           <div class="art-body reveal">${renderArticleBlocks(b.content_blocks,b.content)}${renderArticleSources(b.sources,b.verification_status,null)}${verifiedDate?'<div class="article-check-footer"><strong>Laatst gecontroleerd:</strong> '+esc(verifiedDate)+'</div>':''}</div>
         </div>
 
@@ -489,7 +489,7 @@ function renderArticle(b,related){
             <div><div class="aside-label">${typeLabel(b.type)}</div></div>
           </div>
           ${land?`<div class="aside-stat"><span class="aside-icon">📍</span><div><div class="aside-label">${esc(land)}</div><div class="aside-val">Bestemming</div></div></div>`:''}
-          ${b.fase?`<div class="aside-stat"><span class="aside-icon">🧭</span><div><div class="aside-label">${faseLabel(b.fase)}</div><div class="aside-val">Fase</div></div></div>`:''}
+          ${b.fase?`<div class="aside-stat"><span class="aside-icon" aria-hidden="true"></span><div><div class="aside-label">${faseLabel(b.fase)}</div><div class="aside-val">Fase</div></div></div>`:''}
           <div class="aside-stat">
             <span class="aside-icon">⏱</span>
             <div><div class="aside-label">${rt} min lezen</div><div class="aside-val">Leestijd</div></div>
@@ -583,7 +583,7 @@ async function init(){
 function renderError(msg){
   document.getElementById('articleRoot').innerHTML=`
   <div class="loading-state wrap" style="min-height:60vh">
-    <div style="font-size:48px">🧭</div>
+    
     <h2 style="font-size:24px">Verhaal niet gevonden</h2>
     <p style="color:var(--muted)">${esc(msg||'Dit verhaal bestaat niet of is niet gepubliceerd.')}</p>
     <a class="btn btn-primary" href="/verhalen">← Terug naar verhalen</a>
