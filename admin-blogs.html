@@ -686,13 +686,32 @@ function renderTable(){
 
 /* ── LANDEN LADEN ── */
 async function loadCountries(){
-  const {data}=await db.from('countries').select('id,name').order('name');
+  const {data,error}=await db.from('countries').select('id,name').order('name');
+  if(error){toast('Landen konden niet worden geladen: '+error.message,'err');return}
   countries=data||[];
   const sel=$('fLand');
+  sel.innerHTML='<option value="">— Geen land —</option>';
   countries.forEach(c=>{
     const o=document.createElement('option');o.value=c.id;o.textContent=c.name;sel.appendChild(o);
   });
 }
+$('btnAddCountry')?.addEventListener('click',async()=>{
+  const name=window.prompt('Naam van het nieuwe land:');
+  if(name===null)return;
+  if(!name.trim()){window.alert('Vul een landnaam in.');return}
+  if(countries.some(c=>c.name.toLowerCase()===name.trim().toLowerCase())){
+    window.alert('Dit land staat al in de lijst.');
+    const existing=countries.find(c=>c.name.toLowerCase()===name.trim().toLowerCase());
+    if(existing)$('fLand').value=existing.id;
+    return;
+  }
+  const slugValue=slug(name);
+  const {data,error}=await db.from('countries').insert({name:name.trim(),slug:slugValue}).select('id,name').single();
+  if(error){window.alert('Land kon niet worden toegevoegd: '+error.message);return}
+  await loadCountries();
+  $('fLand').value=data.id;
+  toast('Land toegevoegd en geselecteerd.');
+});
 
 /* ── BLOGS LADEN ── */
 async function loadBlogs(){
