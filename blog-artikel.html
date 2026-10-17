@@ -308,7 +308,7 @@ function renderArticleBlocks(blocks,legacy){
     var type=block.type||'paragraph',text=String(block.text||'');
     if(type==='heading')return text.trim()?'<h'+(Number(block.level)===3?'3':'2')+' class="article-block-heading '+(Number(block.level)===3?'subheading':'')+'" id="'+esc(block.__headingId||headingSlug(text))+'">'+esc(text)+'</h'+(Number(block.level)===3?'3':'2')+'>':'';
     if(type==='quote')return text.trim()?'<blockquote class="article-quote">'+esc(text).replace(/\n/g,'<br>')+(block.attribution?'<cite>— '+esc(block.attribution)+'</cite>':'')+'</blockquote>':'';
-    if(type==='callout')return '<aside class="article-callout">'+(block.title?'<h3>'+esc(block.title)+'</h3>':'')+paragraphs(text)+'</aside>';
+    if(type==='callout'){var calloutText=text;if(block.title==='Leeswijzer: persoonlijke ervaring, geen aanbeveling'){calloutText=calloutText.replace(' Om de privacy van de inzendster en haar gezin te beschermen, zijn herkenbare details zoals de naam, specifieke herkomst en bepaalde gezinsgegevens aangepast of weggelaten. Ook binnen de ledenomgeving tonen we deze gegevens niet.','').replace(' Om de privacy van de schrijfster en haar gezin te beschermen, zijn herkenbare details zoals de naam, specifieke herkomst en bepaalde gezinsgegevens aangepast of weggelaten. Ook binnen de ledenomgeving tonen we deze gegevens niet.','')}if(block.title==='Privacy en herkenbaarheid'){calloutText='Om de schrijfster en haar gezin te beschermen, zijn herkenbare details aangepast of weggelaten. Deel geen vermoedens over haar identiteit en verspreid dit verhaal niet buiten de besloten HN-omgeving.'}return '<aside class="article-callout">'+(block.title?'<h3>'+esc(block.title)+'</h3>':'')+paragraphs(calloutText)+'</aside>'}
     if(type==='accordion')return '<details class="article-accordion"><summary>'+esc(block.title||'Meer informatie')+'</summary><div class="accordion-content">'+paragraphs(text)+'</div></details>';
     if(type==='checklist'){
       var checklistItems=Array.isArray(block.items)?block.items:String(block.items||'').split(/\n/);
@@ -431,7 +431,8 @@ function renderArticle(b,related){
   const tags=(b.tags||[]);
 
   document.getElementById('pageTitle').textContent=`${b.title} — Hijrah Netwerk`;
-  const description=String(b.intro||b.title||'Lees dit verhaal op Hijrah Netwerk.').replace(/\s+/g,' ').trim().slice(0,300);
+  const introDisplay=String(b.intro||'').replace(' Herkenbare persoonsgegevens zijn voor privacy aangepast.','').trim();
+  const description=String(introDisplay||b.title||'Lees dit verhaal op Hijrah Netwerk.').replace(/\s+/g,' ').trim().slice(0,300);
   document.getElementById('pageMeta').setAttribute('content',description);
   document.getElementById('pageOgTitle').setAttribute('content',`${b.title} — Hijrah Netwerk`);
   document.getElementById('pageOgDescription').setAttribute('content',description);
@@ -474,7 +475,7 @@ function renderArticle(b,related){
       <div class="art-layout">
         <!-- HOOFDTEKST -->
         <div>
-          ${b.intro?`<div class="art-intro reveal">${esc(b.intro)}</div>`:''}
+          ${introDisplay?'<div class="art-intro reveal">'+esc(introDisplay)+'</div>':''}
           <div class="art-body reveal">${renderArticleBlocks(b.content_blocks,b.content)}${renderArticleSources(b.sources,b.verification_status,b.last_verified_at)}</div>
         </div>
 
