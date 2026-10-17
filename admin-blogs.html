@@ -516,6 +516,12 @@ button,input,select,textarea{font:inherit;cursor:pointer}
         <div class="field-hint">Bestaande artikelen blijven behouden. Oude platte tekst wordt bij bewerken automatisch verdeeld in alinea's. Opslaan bewaart zowel de blokken als een tekstuele compatibiliteitsversie.</div>
       </div>
 
+      <div class="field full" id="hnSeoAdvicePanel" style="border:1px solid rgba(198,161,91,.55);border-radius:14px;padding:16px;background:linear-gradient(135deg,#fffdf8,#f8f0e4)">
+        <h3 style="font-size:16px;margin-bottom:5px">SEO- en inhoudsadvies</h3>
+        <p class="field-hint" style="margin-bottom:10px">Vrijblijvend advies voor vindbaarheid, vertrouwen en leesbaarheid. Dit zijn aanbevelingen, geen verplichte velden en geen garantie op Google-posities.</p>
+        <ul id="hnSeoAdviceList" style="padding-left:20px;display:grid;gap:6px;font-size:13px;line-height:1.5"><li>Vul titel en intro in om gericht advies te krijgen.</li></ul>
+      </div>
+
       <!-- LIVE PREVIEW -->
       <div class="preview-panel full" id="previewPanel">
         <h4>🔍 Live preview kaart</h4>
@@ -786,10 +792,40 @@ function bindChar(inputId,countId,max){
 }
 
 /* ── SLUG AUTO-GENERATE ── */
+function updateSeoAdvice(){
+  const title=$('fTitle').value.trim(), intro=$('fIntro').value.trim(), slugValue=$('fSlug').value.trim();
+  const tags=$('fTags').value.split(',').map(x=>x.trim()).filter(Boolean);
+  const body=window.HNPublicationEditor?.getPlainText?.()||$('fContent').value||'';
+  const words=(body+' '+intro).trim().split(/\s+/).filter(Boolean).length, items=[];
+  if(!title)items.push('Voeg later een concrete titel toe die het hoofdonderwerp benoemt. Richtwaarde: circa 45–65 tekens.');
+  else if(title.length<28)items.push('Titel is kort. Maak het onderwerp specifieker als dat natuurlijk past; stapel geen zoekwoorden.');
+  else if(title.length>70)items.push('Titel is lang. Zet de kern vooraan en probeer ongeveer 45–65 tekens aan te houden.');
+  else items.push('Titel heeft een bruikbare lengte. Zet het belangrijkste onderwerp zo vroeg mogelijk.');
+  if(!intro)items.push('Intro ontbreekt. Aanbevolen: 1–2 zinnen die uitleggen wat de lezer concreet leert. Niet verplicht voor een concept.');
+  else if(intro.length<100)items.push('Intro is kort. Voeg context toe en benoem voor wie dit nuttig is, zonder overdreven beloftes.');
+  else if(intro.length>320)items.push('Intro is lang. Maak de kern compacter, idealiter rond 140–250 tekens.');
+  else items.push('Intro: controleer of die de zoekvraag beantwoordt en geen informatie belooft die de tekst niet levert.');
+  if(!slugValue)items.push('URL: laat een korte, leesbare slug genereren. Gebruik koppeltekens en vermijd onnodige woorden.');
+  else if(slugValue.length>80||/[A-Z\s_]/.test(slugValue))items.push('URL: gebruik kleine letters, koppeltekens en zo weinig mogelijk overbodige woorden.');
+  else items.push('URL is leesbaar. Wijzig een bestaande gepubliceerde slug alleen als je oude links opvangt.');
+  if(!tags.length)items.push('Tags zijn optioneel. Voeg alleen enkele relevante onderwerpen toe die echt in de tekst voorkomen.');
+  else if(tags.length>8)items.push('Veel tags. Beperk ze tot de meest relevante onderwerpen.');
+  else items.push('Tags: controleer of elke tag specifiek is en inhoudelijk terugkomt.');
+  if(words<120)items.push('Inhoud is nog kort. Dat is prima voor een concept; beantwoord bij publicatie de hoofdvraag voldoende volledig.');
+  else if(words>1800)items.push('Lange inhoud: gebruik beschrijvende H2/H3-koppen, korte alinea’s en uitklapbare verdiepingen waar nuttig.');
+  else items.push('Scanbaarheid: gebruik korte alinea’s, beschrijvende tussenkoppen en concrete voorbeelden waar ze iets toevoegen.');
+  if(!/\b(bron|officieel|gecontroleerd|ervaring)\b/i.test(body))items.push('Vertrouwen: maak onderscheid tussen persoonlijke ervaring en gecontroleerde feiten. Voeg bronnen toe waar nodig.');
+  if(!/\b(wat|hoe|waar|wanneer|kosten|visum|school|wijk|werk|zorg)\b/i.test(title+' '+intro))items.push('Zoekintentie: benoem waar relevant een concrete vraag, plaats of praktisch thema waar de lezer naar zoekt.');
+  $('hnSeoAdviceList').innerHTML=items.map(x=>'<li>'+x.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</li>').join('');
+}
+['fTitle','fIntro','fSlug','fTags'].forEach(id=>$(id).addEventListener('input',updateSeoAdvice));
+$('blocksEditor').addEventListener('input',updateSeoAdvice);
+$('blocksEditor').addEventListener('change',updateSeoAdvice);
+$('fSlug').addEventListener('input',function(){this.dataset.manuallyEdited='true';updateSeoAdvice()});
 $('fTitle').addEventListener('input',function(){
   $('titleCount').textContent=`${this.value.length}/160`;
   if(!$('fId').value){
-    $('fSlug').value=slug(this.value);
+    if(!$('fSlug').dataset.manuallyEdited)$('fSlug').value=slug(this.value);
   }
   updatePreview();
 });
@@ -811,6 +847,7 @@ window.editBlog=function(id){
   window.HNPublicationEditor.setBlocks(b.content_blocks,b.content);
   $('fCover').value=b.cover_url||'';
   $('fSlug').value=b.slug||'';
+  $('fSlug').dataset.manuallyEdited=b.slug?'true':'';
   $('fType').value=b.type||'verhaal';
   $('fFase').value=b.fase||'';
   $('fLand').value=b.country_id||'';
@@ -868,9 +905,12 @@ $('btnSave').addEventListener('click',async()=>{
   const contentBlocks=window.HNPublicationEditor.getBlocks();
   const st=$('modalStatus');
 
-  if(!title){st.textContent='Titel is verplicht.';st.className='modal-status err';return}
-  if(!intro){st.textContent='Intro is verplicht.';st.className='modal-status err';return}
-  if(!content&&!contentBlocks.some(block=>block.type==='image'&&/^https?:\/\//i.test(String(block.url||'')))){st.textContent='Voeg minstens één inhoudsblok met tekst of een geldige afbeelding toe.';st.className='modal-status err';return}
+  const isPublishing=$('fPub').value==='1';
+  const hasPublishableContent=!!content.trim()||contentBlocks.some(block=>block.type==='image'&&/^https?:\/\//i.test(String(block.url||'')));
+  if(isPublishing&&!title){st.textContent='Vul voor publicatie een duidelijke titel in.';st.className='modal-status err';toast('Voor publicatie ontbreekt nog een titel.','err');$('fTitle').focus();return}
+  if(isPublishing&&!hasPublishableContent){st.textContent='Voeg voor publicatie minstens één inhoudsblok met tekst of een geldige afbeelding toe.';st.className='modal-status err';toast('Voor publicatie ontbreekt nog inhoud.','err');return}
+  const savedTitle=title||(isPublishing?'':'Concept zonder titel · '+new Date().toLocaleDateString('nl-NL'));
+  if(!savedTitle){st.textContent='Kon geen titel voor het concept maken.';st.className='modal-status err';return}
 
   const tags=$('fTags').value.split(',').map(t=>t.trim()).filter(Boolean);
   const sourceLines=$('fSources').value.split('\n').map(line=>line.trim()).filter(Boolean);
@@ -888,8 +928,8 @@ $('btnSave').addEventListener('click',async()=>{
   const rt=parseInt($('fReadTime').value)||null;
 
   const payload={
-    title,
-    slug:$('fSlug').value||slug(title),
+    title:savedTitle,
+    slug:$('fSlug').value.trim()||slug(savedTitle),
     intro,
     content,
     content_blocks:contentBlocks,
