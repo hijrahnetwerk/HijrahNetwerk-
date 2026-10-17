@@ -824,6 +824,7 @@ function updateSeoAdvice(){
 ['fTitle','fIntro','fSlug','fTags'].forEach(id=>$(id).addEventListener('input',updateSeoAdvice));
 $('blocksEditor').addEventListener('input',updateSeoAdvice);
 $('blocksEditor').addEventListener('change',updateSeoAdvice);
+updateSeoAdvice();
 $('fSlug').addEventListener('input',function(){this.dataset.manuallyEdited='true';updateSeoAdvice()});
 $('fTitle').addEventListener('input',function(){
   $('titleCount').textContent=`${this.value.length}/160`;
