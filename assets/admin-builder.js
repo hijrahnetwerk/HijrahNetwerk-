@@ -5,10 +5,10 @@ var db=null,pages=[],page=null,sections=[],live=[],selected=-1,selectedExisting=
 var overrides=[],layouts=[],versions=[],editorElements=[];
 var $=function(id){return document.getElementById(id);};
 var T={
-  hero:"Hero",intro:"Intro",text:"Tekst",image:"Afbeelding",cards:"Kaarten",cta:"CTA",links:"Links",navigation:"HN Navigatie",
+  breadcrumbs:"HN Kruimelpad",article_header:"HN Paginaheader",quote:"HN Uitgelicht citaat",numbered_cards:"HN Genummerde kaarten",steps_list:"HN Stappen / vragenlijst",hero:"Hero",intro:"Intro",text:"Tekst",image:"Afbeelding",cards:"Kaarten",cta:"CTA",links:"Links",navigation:"HN Navigatie",
   directory:"HN Overzicht",articles:"HN Artikelen",fiches:"HN Fiches",cities:"HN Steden",categories:"HN Categorieën",comparison:"HN Vergelijking",steps:"HN Stappen",community:"HN Community",divider:"Scheidingslijn",spacer:"Ruimte"
 };
-var icons={hero:"H",intro:"I",text:"T",image:"I",cards:"K",cta:"B",links:"L",navigation:"N",directory:"O",articles:"A",fiches:"F",cities:"S",categories:"C",comparison:"V",steps:"ST",community:"CO",divider:"—",spacer:"↕"};
+var icons={breadcrumbs:"KB",article_header:"PH",quote:"C",numbered_cards:"NK",steps_list:"ST",hero:"H",intro:"I",text:"T",image:"I",cards:"K",cta:"B",links:"L",navigation:"N",directory:"O",articles:"A",fiches:"F",cities:"S",categories:"C",comparison:"V",steps:"ST",community:"CO",divider:"—",spacer:"↕"};
 
 function esc(v){return String(v==null?"":v).replace(/[&<>"']/g,function(m){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m];});}
 function cleanSlug(v){return String(v||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().trim().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"");}
@@ -60,6 +60,11 @@ async function admin(){
   return true;
 }
 
+function ensureLayoutFields(){
+if($("hnLayoutFields"))return;var box=document.createElement("div");box.id="hnLayoutFields";box.className="inspector-section";box.hidden=true;
+box.innerHTML='<div class="section-heading">HN layoutopties</div><p class="panel-help">Dit onderdeel staat los van andere secties. Pas de velden hier aan.</p><label>Label / kleine kop<input id="layout_eyebrow" data-layout-field="eyebrow" placeholder="Bijv. PRAKTISCHE GIDS"></label><label>Ondertitel<input id="layout_subtitle" data-layout-field="subtitle" placeholder="Korte kernboodschap"></label><label>Kruimelpad<textarea id="layout_breadcrumbs" data-layout-field="breadcrumbs" rows="3" placeholder="Home | /\nKennisbank | /kennisbank"></textarea></label><small>Per regel: label | URL.</small><label>Tags, één per regel<textarea id="layout_tags" data-layout-field="tags" rows="3"></textarea></label><label>Citaatlabel<input id="layout_quote_label" data-layout-field="quote_label" placeholder="HN NOTITIE"></label><label>Citaat / uitgelichte tekst<textarea id="layout_quote_text" data-layout-field="quote_text" rows="5"></textarea></label><label>Bron / toeschrijving<input id="layout_quote_source" data-layout-field="quote_source"></label>';
+$("blockInspector").appendChild(box);
+}
 function ensureBuilderUI(){
   if(!$("versionPanel")){
     var p=document.createElement("div");p.id="versionPanel";p.className="version-panel";
@@ -183,9 +188,9 @@ async function restoreVersion(id){
 }
 
 function defaults(type){
-  if(window.HNComponentRegistry){var r=window.HNComponentRegistry.create(type);return Object.assign({title:r.content.title,content:r.content},r,{section_type:type});}
+  if(window.HNComponentRegistry){var r=window.HNComponentRegistry.create(type);if(type==="article_header"){r.content.title="Oriënteren op emigratie";r.content.eyebrow="HIJRAH NETWERK · PRAKTISCHE GIDS";r.content.subtitle="Van eerste vragen tot een realistisch plan.";}if(type==="quote"){r.content.title="";r.content.quote_label="HN NOTITIE";}if(type==="numbered_cards"){r.content.title="Belangrijke aandachtspunten";r.content.cards="Onderzoek de situatie | Verzamel informatie uit betrouwbare bronnen | /";}if(type==="steps_list"){r.content.title="Praktische checklist";r.content.eyebrow="STAP VOOR STAP";r.content.cards="Controleer de voorwaarden | Verzamel betrouwbare bronnen | /";}if(type==="breadcrumbs"){r.content.title="";r.content.breadcrumbs="Home | /";}return Object.assign({title:r.content.title,content:r.content},r,{section_type:type});}
   var d={
-    hero:["Nieuwe hero","Voeg hier je belangrijkste boodschap toe."],
+    breadcrumbs:["Kruimelpad",""],article_header:["Oriënteren op emigratie","Van eerste vragen tot een realistisch plan."],quote:["Uitgelicht citaat",""],numbered_cards:["Belangrijke aandachtspunten",""],steps_list:["Praktische checklist",""],hero:["Nieuwe hero","Voeg hier je belangrijkste boodschap toe."],
     text:["Nieuwe tekst","Schrijf hier je inhoud."],
     image:["Nieuwe afbeelding",""],
     cards:["Uitgelicht","Titel | Beschrijving | /link"],
@@ -212,9 +217,18 @@ function addAt(type,before){
   renderPreview();inspect();note("HN-component toegevoegd.");
 }
 
+function builderLayoutHtml(s){
+var c=s.content||{},type=s.component_type||s.section_type||"text",lines=function(v){return String(v||"").split("\n").filter(Boolean);};
+if(type==="breadcrumbs")return '<nav style="display:flex;gap:9px;flex-wrap:wrap;font-size:12px;color:#674C2E;padding:18px 0" aria-label="Kruimelpad">'+lines(c.breadcrumbs).map(function(x,i){var a=x.split("|"),label=(a[0]||"").trim(),url=(a[1]||"").trim();return (i?'<span style="opacity:.4">/</span>':"")+(url?'<a style="color:inherit" href="'+esc(url)+'">'+esc(label)+'</a>':'<span>'+esc(label)+'</span>');}).join("")+'</nav>';
+if(type==="article_header")return '<div style="background:linear-gradient(115deg,#674C2E,#3d2b1b);color:#fff;padding:32px;border-radius:18px"><nav style="display:flex;flex-wrap:wrap;gap:9px;font-size:12px;color:#ffffffb0;margin-bottom:24px">'+lines(c.breadcrumbs).map(function(x,i){var a=x.split("|");return (i?'<span>/</span>':"")+'<a style="color:#ffffffb0" href="'+esc((a[1]||"#").trim())+'">'+esc((a[0]||"").trim())+'</a>';}).join("")+'</nav><div style="font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:#C6A15B">'+esc(c.eyebrow||"HIJRAH NETWERK")+'</div><h1 style="font-size:clamp(27px,4vw,42px);line-height:1.12;letter-spacing:-.03em;margin:15px 0;color:#fff">'+esc(c.title||s.title||"")+'</h1>'+(c.subtitle?'<p style="font:21px/1.55 Georgia,serif;color:#ffffffd9">'+esc(c.subtitle)+'</p>':"")+(c.text?'<p style="max-width:760px;line-height:1.8;color:#ffffffb8">'+esc(c.text)+'</p>':"")+(c.tags?'<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:20px">'+lines(c.tags).map(function(t){return '<span style="border:1px solid #ffffff38;background:#ffffff12;padding:6px 11px;border-radius:999px;font-size:11px">'+esc(t)+'</span>';}).join("")+'</div>':"")+'</div>';
+if(type==="quote")return '<blockquote style="margin:0;padding:26px;border:1px solid #e7dac8;background:#faf7f2;border-radius:18px"><div style="font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:#DD842A">'+esc(c.quote_label||"HN NOTITIE")+'</div><p style="font:22px/1.6 Georgia,serif;color:#674C2E">'+esc(c.quote_text||c.text||"")+'</p>'+(c.quote_source?'<footer style="font-size:12px;color:#674C2E">— '+esc(c.quote_source)+'</footer>':"")+'</blockquote>';
+if(type==="numbered_cards"||type==="steps_list")return (c.eyebrow?'<div style="font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:#DD842A">'+esc(c.eyebrow)+'</div>':"")+(c.text?'<p style="line-height:1.8">'+esc(c.text)+'</p>':"")+'<div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px">'+lines(c.cards).map(function(x,i){var a=x.split("|");return '<article style="padding:20px;border:1px solid #e7dac8;border-radius:16px;background:#faf7f2"><span style="font-size:10px;letter-spacing:.2em;color:#9B7735">'+(type==="steps_list"?String(i+1).padStart(2,"0"):esc((a[0]||String(i+1)).trim()))+'</span><h3 style="font-size:17px;color:#674C2E;margin:10px 0">'+esc((a[0]||"").trim())+'</h3>'+(a[1]?'<p style="font-size:13px;line-height:1.7;color:#674C2E">'+esc(a[1].trim())+'</p>':"")+(a[2]?'<a href="'+esc(a[2].trim())+'" style="color:#DD842A">Bekijk meer →</a>':"")+'</article>';}).join("")+'</div>';
+return "";
+}
 function sectionHtml(s){
   var c=s.content||{},body="",type=s.component_type||s.section_type||"text",cid=s.component_id||(c&&c.component_id)||("new-"+sections.indexOf(s));
-  if(type==="hero"||type==="intro")body='<div class="hn-preview-hero"><div><p style="font:11px monospace;letter-spacing:.12em;color:#DD842A">HIJRAH NETWERK</p><h1>'+esc(c.title||s.title||"")+'</h1><p style="white-space:pre-wrap;line-height:1.7">'+esc(c.text||"")+'</p>'+(c.button?'<a class="hn-preview-cta" href="'+esc(c.url||"#")+'">'+esc(c.button)+'</a>':"")+'</div>'+(c.image?'<img src="'+esc(c.image)+'" alt="'+esc(c.title||s.title||"")+'">':"")+'</div>';
+  body=builderLayoutHtml(s);
+  if(body){}else if(type==="hero"||type==="intro")body='<div class="hn-preview-hero"><div><p style="font:11px monospace;letter-spacing:.12em;color:#DD842A">HIJRAH NETWERK</p><h1>'+esc(c.title||s.title||"")+'</h1><p style="white-space:pre-wrap;line-height:1.7">'+esc(c.text||"")+'</p>'+(c.button?'<a class="hn-preview-cta" href="'+esc(c.url||"#")+'">'+esc(c.button)+'</a>':"")+'</div>'+(c.image?'<img src="'+esc(c.image)+'" alt="'+esc(c.title||s.title||"")+'">':"")+'</div>';
   else if(type==="image")body=c.image?'<img src="'+esc(c.image)+'" alt="'+esc(c.title||"")+'"><p>'+esc(c.text||"")+'</p>':'<p>Afbeelding toevoegen via de instellingen.</p>';
   else if(type==="cards")body='<div class="hn-preview-cards">'+String(c.cards||"").split("\n").filter(Boolean).map(function(x){var a=x.split("|");return'<article><strong>'+esc((a[0]||"").trim())+'</strong><p>'+esc((a[1]||"").trim())+'</p>'+(a[2]?'<a href="'+esc(a[2].trim())+'">Bekijk →</a>':"")+'</article>';}).join("")+"</div>";
   else if(type==="links"||type==="navigation")body='<div class="hn-preview-links">'+String(c.text||"").split("\n").filter(Boolean).map(function(x){var a=x.split("|");return'<a href="'+esc((a[1]||"#").trim())+'">'+esc((a[0]||a[1]||"").trim())+" →</a>";}).join("")+"</div>";
@@ -223,7 +237,7 @@ function sectionHtml(s){
   else if(type==="divider")body='<div class="hn-preview-divider"></div>';
   else if(type==="spacer")body='<div style="height:'+Math.max(8,Number(c.height)||80)+'px"></div>';
   else body='<p style="white-space:pre-wrap;line-height:1.7">'+esc(c.text||"")+"</p>";
-  return '<section draggable="true" class="hn-builder-preview" data-hn-component-id="'+esc(cid)+'" data-section-id="'+esc(s.id||"new-"+sections.indexOf(s))+'"><button class="block-delete" data-delete-section="'+esc(s.id||"new-"+sections.indexOf(s))+'">Verwijderen</button>'+(s.title&&type!=="hero"&&type!=="intro"?'<h2>'+esc(s.title)+"</h2>":"")+body+"</section>";
+  return '<section draggable="true" class="hn-builder-preview" data-hn-component-id="'+esc(cid)+'" data-section-id="'+esc(s.id||"new-"+sections.indexOf(s))+'"><button class="block-delete" data-delete-section="'+esc(s.id||"new-"+sections.indexOf(s))+'">Verwijderen</button>'+(s.title&&["hero","intro","article_header","breadcrumbs","quote"].indexOf(type)<0?'<h2>'+esc(s.title)+"</h2>":"")+body+"</section>";
 }
 function selector(el,doc){
   var stable=el&&el.getAttribute&&el.getAttribute("data-hn-id");
@@ -436,8 +450,10 @@ function inspect(){
   $("type").innerHTML=types.map(function(k){var label=(window.HNComponentRegistry&&window.HNComponentRegistry.definitions[k]&&window.HNComponentRegistry.definitions[k].label)||T[k]||k;return'<option value="'+esc(k)+'">'+esc(label)+(window.HNComponentRegistry&&!window.HNComponentRegistry.definitions[k]?" (inactief)":"")+"</option>";}).join("");
   $("type").value=s.section_type;
   $("bt").value=s.title||"";$("tx").value=c.text||"";$("url").value=c.url||"";
+  ensureLayoutFields();["eyebrow","subtitle","breadcrumbs","tags","quote_label","quote_text","quote_source"].forEach(function(k){var el=$("layout_"+k);if(el)el.value=c[k]||"";});
   $("btn").value=c.button||"";$("img").value=c.image||"";$("align").value=c.align||"left";$("visible").checked=s.is_visible!==false;
-  $("cards").value=c.cards||"";$("cardWrap").style.display=s.section_type==="cards"?"block":"none";
+  $("cards").value=c.cards||"";$("cardWrap").style.display=["cards","numbered_cards","steps_list"].includes(s.section_type)?"block":"none";
+  var layoutTypes=["breadcrumbs","article_header","quote","numbered_cards","steps_list"],lf=$("hnLayoutFields");if(lf){lf.hidden=!layoutTypes.includes(s.section_type);lf.querySelectorAll("[data-layout-field]").forEach(function(el){var k=el.getAttribute("data-layout-field");var allowed=s.section_type==="breadcrumbs"?["breadcrumbs"]:s.section_type==="article_header"?["eyebrow","subtitle","breadcrumbs","tags"]:s.section_type==="quote"?["quote_label","quote_text","quote_source"]:s.section_type==="numbered_cards"?[]:["eyebrow"];el.closest("label").style.display=allowed.includes(k)?"block":"none";});}
   $("existingActions").hidden=true;
   $("dataWrap").hidden=!["directory","articles","fiches","cities","categories","navigation"].includes(s.section_type);
   $("dataSource").value=(c.data_source||(s.data&&s.data.source)||"");
@@ -608,6 +624,7 @@ function bind(){
   ensureBuilderUI();palette();
   $("save").onclick=function(){save(false);};
   $("publish").onclick=function(){save(true);};
+  ensureLayoutFields();document.querySelectorAll("[data-layout-field]").forEach(function(el){el.addEventListener("input",function(){edit(el.getAttribute("data-layout-field"),el.value);});});
   $("dataSource").onchange=function(){edit("dataSource",this.value);};
   $("dataLimit").oninput=function(){edit("dataLimit",this.value);};
   $("dataFilters").onchange=function(){edit("dataFilters",this.value);};
