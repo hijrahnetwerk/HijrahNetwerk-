@@ -489,7 +489,7 @@ function renderArticle(b,related){
             <div><div class="aside-label">${typeLabel(b.type)}</div></div>
           </div>
           ${land?`<div class="aside-stat"><span class="aside-icon">📍</span><div><div class="aside-label">${esc(land)}</div><div class="aside-val">Bestemming</div></div></div>`:''}
-          ${b.fase?`<div class="aside-stat"><span class="aside-icon" aria-hidden="true"></span><div><div class="aside-label">${faseLabel(b.fase)}</div><div class="aside-val">Fase</div></div></div>`:''}
+          ${b.fase?`<div class="aside-stat"><div><div class="aside-label">${faseLabel(b.fase)}</div><div class="aside-val">Fase</div></div></div>`:''}
           <div class="aside-stat">
             <span class="aside-icon">⏱</span>
             <div><div class="aside-label">${rt} min lezen</div><div class="aside-val">Leestijd</div></div>
