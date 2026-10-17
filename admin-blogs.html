@@ -131,6 +131,14 @@ button,input,select,textarea{font:inherit;cursor:pointer}
 }
 .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--gd);box-shadow:0 0 0 3px rgba(212,175,55,.12)}
 .field textarea{min-height:140px;resize:vertical;line-height:1.6}
+.select-with-add{display:flex;gap:7px;align-items:center}
+.select-with-add select{flex:1;min-width:0}
+.select-with-add button{flex:0 0 auto}
+.member-preview-settings{grid-column:1/-1;padding:18px;border:1px solid var(--border);border-radius:14px;background:#fff}
+.member-preview-settings h3{font-size:13px;margin-bottom:6px}
+.member-preview-settings p{font-size:12px;color:var(--muted);margin-bottom:12px}
+.member-preview-settings .field{margin-top:10px}
+.member-preview-settings[hidden]{display:none}
 .field.content-field textarea{min-height:320px}
 .field-hint{font-size:11px;color:var(--muted);margin-top:2px}
 .char-count{font-size:11px;color:var(--muted);text-align:right}
@@ -181,6 +189,8 @@ button,input,select,textarea{font:inherit;cursor:pointer}
   .block-card-head{flex-wrap:wrap}
   .block-type-select{max-width:100%;flex:1}
   .block-card-head strong{min-width:100%}
+  .select-with-add{align-items:stretch}
+  .select-with-add button{white-space:nowrap}
 }
 /* ── PREVIEW PANEL ── */
 .preview-panel{
@@ -415,7 +425,7 @@ button,input,select,textarea{font:inherit;cursor:pointer}
 
       <div class="field">
         <label>Type</label>
-        <select id="fType">
+        <div class="select-with-add"><select id="fType"></select><button type="button" class="btn btn-secondary btn-sm" data-add-option="type" data-select="fType">+ Optie</button></div>
           <option value="verhaal">✈ Verhaal</option>
           <option value="interview">🎙 Interview</option>
           <option value="ervaring">💬 Ervaring</option>
@@ -427,13 +437,7 @@ button,input,select,textarea{font:inherit;cursor:pointer}
 
       <div class="field">
         <label>Fase</label>
-        <select id="fFase">
-          <option value="">— Geen fase —</option>
-          <option value="orienteren">Oriënteren</option>
-          <option value="voorbereiden">Voorbereiden</option>
-          <option value="integreren">Integreren</option>
-          <option value="terugkeren">Terugkeren</option>
-        </select>
+        <div class="select-with-add"><select id="fFase"><option value="">— Geen fase —</option></select><button type="button" class="btn btn-secondary btn-sm" data-add-option="fase" data-select="fFase">+ Optie</button></div>
       </div>
 
       <div class="field">
@@ -462,14 +466,7 @@ button,input,select,textarea{font:inherit;cursor:pointer}
 
       <div class="field">
         <label>Redactionele status</label>
-        <select id="fVerification">
-          <option value="not_checked">Nog niet gecontroleerd</option>
-          <option value="personal_experience">Persoonlijke ervaring</option>
-          <option value="source_checked">Bronnen gecontroleerd</option>
-          <option value="officially_verified">Officieel bevestigd</option>
-          <option value="needs_review">Controle nodig</option>
-          <option value="outdated">Mogelijk verouderd</option>
-        </select>
+        <div class="select-with-add"><select id="fVerification"></select><button type="button" class="btn btn-secondary btn-sm" data-add-option="verification_status" data-select="fVerification">+ Optie</button></div>
         <div class="field-hint">Maak duidelijk of iets een ervaring is of gecontroleerde informatie.</div>
       </div>
 
@@ -568,6 +565,23 @@ button,input,select,textarea{font:inherit;cursor:pointer}
         </div>
       </div>
 
+      <section class="member-preview-settings" id="memberPreviewSettings" hidden>
+        <h3>Wat zien niet-leden?</h3>
+        <p>Kies per verhaal of niet-leden alleen de titel zien, of ook de door jou geschreven teaser. De volledige inhoud blijft alleen voor goedgekeurde leden zichtbaar.</p>
+        <div class="field">
+          <label for="fMemberPreviewMode">Openbare weergave</label>
+          <select id="fMemberPreviewMode">
+            <option value="title">Alleen titel</option>
+            <option value="teaser">Titel + teaser</option>
+          </select>
+        </div>
+        <div class="field" id="memberPreviewTextField" hidden>
+          <label for="fMemberPreviewText">Teaser voor niet-leden</label>
+          <textarea id="fMemberPreviewText" rows="3" maxlength="500" placeholder="Schrijf hier exact wat niet-leden mogen lezen…"></textarea>
+          <span class="field-hint">Alleen deze tekst wordt openbaar getoond. De artikelinhoud zelf wordt niet als teaser gebruikt.</span>
+        </div>
+      </section>
+
       <!-- PUBLICATIE -->
       <div class="field">
         <label>Status</label>
@@ -633,7 +647,7 @@ const $=id=>document.getElementById(id);
 const typeLabel=t=>({verhaal:'✈ Verhaal',interview:'🎙 Interview',ervaring:'💬 Ervaring',artikel:'📚 Artikel',blog:'✍ Blog',gids:'🧭 Praktische gids'}[t]||t);
 const faseLabel=f=>({orienteren:'Oriënteren',voorbereiden:'Voorbereiden',integreren:'Integreren',terugkeren:'Terugkeren'}[f]||f);
 
-let db,allBlogs=[],countries=[],deleteTarget=null;
+let db,allBlogs=[],countries=[],deleteTarget=null,editorOptions={type:[],fase:[],verification_status:[]};
 let activeType='',activePub='',zoekTerm='';
 
 /* ── TOAST ── */
@@ -681,7 +695,7 @@ function renderTable(){
       <td>
         <span class="access-badge">${b.access_level==='public'?'🌍 Publiek':b.access_level==='members'?'👥 Leden':'🔑 Mods'}</span>
       </td>
-      <td><span class="access-badge">${({not_checked:'Nog te controleren',personal_experience:'Ervaring',source_checked:'Bronnen gecontroleerd',officially_verified:'Officieel bevestigd',needs_review:'Controle nodig',outdated:'Mogelijk verouderd'}[b.verification_status]||'Status onbekend')}${(['verhaal','interview','ervaring'].includes(b.type)&&!b.consent_confirmed?' · Geen toestemming geregistreerd':'')}</span></td>
+      <td><span class="access-badge">${({not_checked:'Nog te controleren',personal_experience:'Ervaring',source_checked:'Bronnen gecontroleerd',officially_verified:'Officieel bevestigd',needs_review:'Controle nodig',outdated:'Mogelijk verouderd'}[b.verification_status]||esc(b.verification_status||'Status onbekend'))}${(['verhaal','interview','ervaring'].includes(b.type)&&!b.consent_confirmed?' · Geen toestemming geregistreerd':'')}</span></td>
       <td><span class="pub-badge ${b.published?'pub-yes':'pub-no'}">${b.published?'✓ Live':'● Concept'}</span></td>
       <td>${date}</td>
       <td><div class="row-actions">
@@ -723,6 +737,49 @@ $('btnAddCountry')?.addEventListener('click',async()=>{
   toast('Land toegevoegd en geselecteerd.');
 });
 
+
+// ── AANPASBARE OPTIES VOOR CLASSIFICATIEVELDEN ──
+function renderOptionSelect(fieldKey, selectId, includeEmpty=false){
+  const sel=$(selectId), current=sel.value;
+  const emptyOption=fieldKey==='fase'?'<option value="">— Geen fase —</option>':'';
+  sel.innerHTML=emptyOption+editorOptions[fieldKey].map(o=>'<option value="'+esc(o.option_value)+'">'+esc(o.option_label)+'</option>').join('');
+  if(current && [...sel.options].some(o=>o.value===current))sel.value=current;
+}
+async function loadEditorOptions(){
+  const {data,error}=await db.from('hn_blog_editor_options').select('field_key,option_value,option_label,sort_order').order('sort_order').order('option_label');
+  if(error){toast('Opties konden niet worden geladen: '+error.message,'err');return}
+  editorOptions={type:[],fase:[],verification_status:[]};
+  (data||[]).forEach(o=>{if(editorOptions[o.field_key])editorOptions[o.field_key].push(o)});
+  renderOptionSelect('type','fType');
+  renderOptionSelect('fase','fFase');
+  renderOptionSelect('verification_status','fVerification');
+}
+document.querySelectorAll('[data-add-option]').forEach(btn=>btn.addEventListener('click',async()=>{
+  const fieldKey=btn.dataset.addOption, selectId=btn.dataset.select;
+  const label=window.prompt('Naam van de nieuwe optie:');
+  if(label===null)return;
+  const clean=label.trim();
+  if(!clean){window.alert('Vul een naam in.');return}
+  const value=slug(clean.replace(/^[^\p{L}\p{N}]+/u,''));
+  if(!value){window.alert('Deze naam kan niet als optie worden gebruikt.');return}
+  const exists=editorOptions[fieldKey].some(o=>o.option_value.toLowerCase()===value.toLowerCase()||o.option_label.toLowerCase()===clean.toLowerCase());
+  if(exists){window.alert('Deze optie bestaat al.');return}
+  const {data,error}=await db.from('hn_blog_editor_options').insert({field_key:fieldKey,option_value:value,option_label:clean,sort_order:(editorOptions[fieldKey].length+1)*10}).select('field_key,option_value,option_label,sort_order').single();
+  if(error){toast('Optie toevoegen mislukt: '+error.message,'err');return}
+  editorOptions[fieldKey].push(data);
+  renderOptionSelect(fieldKey,selectId);
+  $(selectId).value=data.option_value;
+  toast('Nieuwe optie toegevoegd.');
+}));
+function updateMemberPreviewSettings(){
+  const members=document.querySelector('input[name=access]:checked')?.value==='members';
+  $('memberPreviewSettings').hidden=!members;
+  $('memberPreviewTextField').hidden=!members||$('fMemberPreviewMode').value!=='teaser';
+}
+document.querySelectorAll('input[name=access]').forEach(el=>el.addEventListener('change',updateMemberPreviewSettings));
+$('fMemberPreviewMode').addEventListener('change',updateMemberPreviewSettings);
+$('fMemberPreviewText').addEventListener('input',updatePreview);
+
 /* ── BLOGS LADEN ── */
 async function loadBlogs(){
   const {data,error}=await db.from('blogs')
@@ -761,6 +818,10 @@ function closeModal(){
 function clearForm(){
   ['fId','fTitle','fAuthor','fIntro','fContent','fCover','fTags','fSlug','fSources','fVerifiedAt'].forEach(id=>$(id).value='');
   $('fVerification').value='not_checked';
+  $('fMemberPreviewMode').value='title';
+  $('fMemberPreviewText').value='';
+  $('memberPreviewSettings').hidden=true;
+  $('memberPreviewTextField').hidden=true;
   $('fConsent').checked=false;
   $('fType').value='verhaal';
   $('fFase').value='';
@@ -864,6 +925,9 @@ window.editBlog=function(id){
   $('fConsent').checked=!!b.consent_confirmed;
   const acc=b.access_level||'public';
   document.querySelector(`input[name=access][value="${acc}"]`).checked=true;
+  $('fMemberPreviewMode').value=b.member_preview_mode||'title';
+  $('fMemberPreviewText').value=b.member_preview_text||'';
+  updateMemberPreviewSettings();
   updatePreview();
   openModal('Verhaal bewerken');
 };
@@ -966,6 +1030,8 @@ $('btnSave').addEventListener('click',async()=>{
     sources,
     verification_status:$('fVerification').value,
     last_verified_at:$('fVerifiedAt').value||null,
+    member_preview_mode:$('fMemberPreviewMode').value||'title',
+    member_preview_text:$('fMemberPreviewText').value.trim(),
     consent_confirmed:$('fConsent').checked,
     access_level:access,
     published,
@@ -1023,7 +1089,8 @@ async function init(){
     $('tableBody').innerHTML=`<tr class="empty-row"><td colspan="8">Supabase kon niet worden geladen.</td></tr>`;
     return;
   }
-  await Promise.all([loadCountries(),loadBlogs()]);
+  await Promise.all([loadCountries(),loadEditorOptions(),loadBlogs()]);
+  updateMemberPreviewSettings();
 }
 
 init();
