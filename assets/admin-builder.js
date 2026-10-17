@@ -188,7 +188,7 @@ async function restoreVersion(id){
 }
 
 function defaults(type){
-  if(window.HNComponentRegistry){var r=window.HNComponentRegistry.create(type);return Object.assign({title:r.content.title,content:r.content},r,{section_type:type});}
+  if(window.HNComponentRegistry){var r=window.HNComponentRegistry.create(type);if(type==="article_header"){r.content.title="Oriënteren op emigratie";r.content.eyebrow="HIJRAH NETWERK · PRAKTISCHE GIDS";r.content.subtitle="Van eerste vragen tot een realistisch plan.";}if(type==="quote"){r.content.title="";r.content.quote_label="HN NOTITIE";}if(type==="numbered_cards"){r.content.title="Belangrijke aandachtspunten";r.content.cards="Onderzoek de situatie | Verzamel informatie uit betrouwbare bronnen | /";}if(type==="steps_list"){r.content.title="Praktische checklist";r.content.eyebrow="STAP VOOR STAP";r.content.cards="Controleer de voorwaarden | Verzamel betrouwbare bronnen | /";}if(type==="breadcrumbs"){r.content.title="";r.content.breadcrumbs="Home | /";}return Object.assign({title:r.content.title,content:r.content},r,{section_type:type});}
   var d={
     breadcrumbs:["Kruimelpad",""],article_header:["Oriënteren op emigratie","Van eerste vragen tot een realistisch plan."],quote:["Uitgelicht citaat",""],numbered_cards:["Belangrijke aandachtspunten",""],steps_list:["Praktische checklist",""],hero:["Nieuwe hero","Voeg hier je belangrijkste boodschap toe."],
     text:["Nieuwe tekst","Schrijf hier je inhoud."],
