@@ -286,7 +286,14 @@ function applyLayouts(doc){
     if(o.settings&&o.settings.css)Object.keys(o.settings.css).forEach(function(k){el.style[k]=o.settings.css[k];});
   });
   var root=rootOf(doc);
-  layouts.slice().sort(function(a,b){return(a.sort_order||0)-(b.sort_order||0);}).forEach(function(o){
+  layouts.filter(function(o){return o.settings&&o.settings.position_mode==="anchor"&&o.settings.parent_selector;}).sort(function(a,b){return(a.sort_order||0)-(b.sort_order||0);}).forEach(function(o){
+    try{
+      var el=doc.querySelector(o.selector),parent=doc.querySelector(o.settings.parent_selector),before=o.settings.before_selector?doc.querySelector(o.settings.before_selector):null;
+      if(!el||!parent||el===parent||el.contains(parent))return;
+      if(before&&before!==el&&before.parentElement===parent)parent.insertBefore(el,before);else parent.appendChild(el);
+    }catch(e){}
+  });
+  layouts.filter(function(o){return !(o.settings&&o.settings.position_mode==="anchor");}).slice().sort(function(a,b){return(a.sort_order||0)-(b.sort_order||0);}).forEach(function(o){
     var el;
     try{el=doc.querySelector(o.selector);}catch(e){return;}
     if(el&&el.parentElement===root)root.appendChild(el);
