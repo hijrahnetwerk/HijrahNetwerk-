@@ -31,7 +31,15 @@ async function run(){if(window.parent!==window&&new URLSearchParams(location.sea
   var l=await layP;if(l.error)return;
   var rows=l.data||[],base=root();
   rows.forEach(function(row){try{var el=document.querySelector(row.selector);if(!el)return;el.hidden=row.is_visible===false;if(row.settings&&row.settings.css)Object.keys(row.settings.css).forEach(function(k){el.style[k]=row.settings.css[k]})}catch(e){console.warn('HN visual layout selector:',e)}});
-  rows.filter(function(x){return x.is_visible!==false&&x.sort_order!=null}).sort(function(a,b){return a.sort_order-b.sort_order}).forEach(function(row){var el=document.querySelector(row.selector);if(el&&el.parentElement===base)base.appendChild(el)});
+  /* Apply explicit drag-and-drop placements first. Selectors are stored by the visual editor. */
+  rows.filter(function(row){return row.settings&&row.settings.position_mode==='anchor'&&row.settings.parent_selector;}).sort(function(a,b){return (a.sort_order||0)-(b.sort_order||0)}).forEach(function(row){
+    try{
+      var el=document.querySelector(row.selector),parent=document.querySelector(row.settings.parent_selector),before=row.settings.before_selector?document.querySelector(row.settings.before_selector):null;
+      if(!el||!parent||el===parent||el.contains(parent))return;
+      if(before&&before!==el&&before.parentElement===parent)parent.insertBefore(el,before);else parent.appendChild(el);
+    }catch(e){console.warn('HN visual drag placement:',e)}
+  });
+  rows.filter(function(x){return x.is_visible!==false&&x.sort_order!=null&&!(x.settings&&x.settings.position_mode==='anchor')}).sort(function(a,b){return a.sort_order-b.sort_order}).forEach(function(row){var el=document.querySelector(row.selector);if(el&&el.parentElement===base)base.appendChild(el)});
 }
 function start(){if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',function(){setTimeout(run,50)});else setTimeout(run,50)}
 start();
