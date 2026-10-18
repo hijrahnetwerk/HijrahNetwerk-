@@ -297,6 +297,7 @@ function renderSaved(doc){
   var root=rootOf(doc);
   sections.forEach(function(s){
     var wrap=doc.createElement("div");wrap.innerHTML=sectionHtml(s);var node=wrap.firstElementChild;if(!node)return;
+    var cssSettings=s.settings&&s.settings.css||{};Object.keys(cssSettings).forEach(function(k){node.style[k]=cssSettings[k];});
     var target=null,ins=(s.content||{}).insert_before;
     if(ins&&ins!=="__end__"){
       var es=existing(doc);
