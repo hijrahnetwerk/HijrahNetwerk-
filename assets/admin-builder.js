@@ -353,6 +353,7 @@ function drawExisting(doc){
   live.forEach(function(x){
     x.el.style.outline="1px dashed #C6A15B";
     x.el.draggable=true;
+    if(!x.el.title)x.el.title="Sleep dit onderdeel naar een andere plek op de pagina";
     x.el.ondragstart=function(e){drag=x;x.el.classList.add("hn-component-dragging");if(e.dataTransfer){e.dataTransfer.effectAllowed="move";e.dataTransfer.setData("text/plain",x.selector);}};
     x.el.ondragend=function(){x.el.classList.remove("hn-component-dragging");live.forEach(function(y){y.el.classList.remove("hn-drop-target")});drag=null;};
     x.el.ondragover=function(e){if(!drag||drag.el===x.el||drag.el.contains(x.el))return;e.preventDefault();x.el.classList.add("hn-drop-target");if(e.dataTransfer)e.dataTransfer.dropEffect="move";};
@@ -362,11 +363,11 @@ function drawExisting(doc){
       if(!drag||drag.el===x.el||drag.el.contains(x.el))return;
       var rect=x.el.getBoundingClientRect(),after=e.clientY>rect.top+rect.height/2;
       if(after)x.el.parentElement.insertBefore(drag.el,x.el.nextSibling);else x.el.parentElement.insertBefore(drag.el,x.el);
-      var moved=drag.el, movedSelector=selector(moved,doc), parentSelector=selector(moved.parentElement,doc), next=moved.nextElementSibling;
+      var moved=drag.el, movedId=elementId(moved,doc), movedSelector=movedId?stableSelector(movedId):selector(moved,doc), parentId=elementId(moved.parentElement,doc), parentSelector=parentId?stableSelector(parentId):selector(moved.parentElement,doc), next=moved.nextElementSibling, nextId=next&&elementId(next,doc), nextSelector=next?(nextId?stableSelector(nextId):selector(next,doc)):null;
       layouts=layouts.filter(function(o){return o.selector!==movedSelector;});
-      layouts.push({selector:movedSelector,sort_order:layouts.length,is_visible:!moved.hidden,settings:{position_mode:"anchor",parent_selector:parentSelector,before_selector:next?selector(next,doc):null,component_id:elementId(moved,doc)}});
+      layouts.push({selector:movedSelector,sort_order:layouts.length,is_visible:!moved.hidden,settings:{position_mode:"anchor",parent_selector:parentSelector,before_selector:nextSelector,component_id:movedId}});
       rebuildLayoutsFromDom(doc,moved);
-      note("Onderdeel verplaatst. Klik Opslaan als concept of Publiceren om de nieuwe plek te bewaren.");
+      note("Onderdeel verplaatst. Klik ‘Concept opslaan’ of ‘Publiceren’ om de nieuwe plek te bewaren.");
     };
   });
 }
