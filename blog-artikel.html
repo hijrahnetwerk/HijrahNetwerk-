@@ -421,7 +421,7 @@ function renderArticle(b,related){
   const verifiedDate=b.last_verified_at?new Date(String(b.last_verified_at)+'T00:00:00').toLocaleDateString('nl-NL',{day:'numeric',month:'long',year:'numeric'}):'';
   const tags=(b.tags||[]);
 
-  document.getElementById('pageTitle').textContent=\`\${b.title} — Hijrah Netwerk\`;
+  document.getElementById('pageTitle').textContent=`${b.title} — Hijrah Netwerk`;
   const rawIntro=String(b.intro||'').replace(' Herkenbare persoonsgegevens zijn voor privacy aangepast.','').trim();
   const introMatch=rawIntro.match(/^(.+?\?)\s*(.*)$/s);
   const subtitle=introMatch?introMatch[1].trim():'';
@@ -441,21 +441,21 @@ function renderArticle(b,related){
   document.getElementById('articleRoot').innerHTML=`
   <!-- COMPACTE ARTIKELHEADER -->
   <section class="art-hero">
-    \${b.cover_url?\`<img class="art-hero-img" src="\${esc(b.cover_url)}" alt="" loading="eager">\`:''}
+    ${b.cover_url?`<img class="art-hero-img" src="${esc(b.cover_url)}" alt="" loading="eager">`:''}
     <div class="art-hero-overlay"></div>
     <div class="wrap">
       <div class="art-hero-inner">
-        <div class="art-type">\${typeLabel(b.type)}</div>
-        <h1>\${esc(b.title)}</h1>
+        <div class="art-type">${typeLabel(b.type)}</div>
+        <h1>${esc(b.title)}</h1>
         <div class="art-author-row">
-          <span class="art-author-dot">\${initials(b.author_name)}</span>
-          <span>\${esc(b.author_name||'Hijrah Netwerk')}</span>
+          <span class="art-author-dot">${initials(b.author_name)}</span>
+          <span>${esc(b.author_name||'Hijrah Netwerk')}</span>
         </div>
-        \${subtitle?'<p class="art-subtitle">'+esc(subtitle)+'</p>':''}
-        \${introDisplay?'<p class="art-hero-intro">'+esc(introDisplay)+'</p>':''}
+        ${subtitle?'<p class="art-subtitle">'+esc(subtitle)+'</p>':''}
+        ${introDisplay?'<p class="art-hero-intro">'+esc(introDisplay)+'</p>':''}
       </div>
       <div class="art-breadcrumb-wrap">
-        <nav class="art-breadcrumb" aria-label="Broodkruimel"><a href="/verhalen">← Terug naar verhalen</a><span aria-hidden="true">/</span><span aria-current="page">\${esc(typeLabel(b.type))}</span></nav>
+        <nav class="art-breadcrumb" aria-label="Broodkruimel"><a href="/verhalen">← Terug naar verhalen</a><span aria-hidden="true">/</span><span aria-current="page">${esc(typeLabel(b.type))}</span></nav>
       </div>
     </div>
   </section>
