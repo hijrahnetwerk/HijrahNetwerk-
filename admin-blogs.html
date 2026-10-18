@@ -319,6 +319,33 @@ button,input,select,textarea{font:inherit;cursor:pointer}
 .hn-preview-aside p{margin:0 0 10px;line-height:1.7}
 .hn-preview-aside a{display:inline-block;margin-top:6px;color:#674C2E;text-decoration:underline;text-decoration-color:#C6A15B;text-underline-offset:3px}
 @media(max-width:760px){.hn-draft-preview{padding:0}.hn-draft-preview-shell{min-height:100vh;border-radius:0}.hn-preview-layout{grid-template-columns:1fr;width:calc(100% - 24px);margin:14px auto 28px;gap:14px}.hn-preview-aside{position:static;order:-1}.hn-preview-hero-inner{padding:30px 18px 24px}.hn-preview-main{padding:18px}.hn-preview-warning{padding:10px 14px}}
+
+/* Country and city manager in the blog editor */
+.location-manager{border:1px solid #e2d4bf;border-radius:13px;background:#fffdf9;overflow:hidden}
+.location-manager>summary{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 16px;cursor:pointer;list-style:none;color:#674c2e}
+.location-manager>summary::-webkit-details-marker{display:none}
+.location-manager>summary strong,.location-manager>summary small{display:block}
+.location-manager>summary strong{font-size:14px}
+.location-manager>summary small{margin-top:3px;font-size:12px;color:#786b5a}
+.location-manager[open]>summary{border-bottom:1px solid #e8ddcd;background:#faf5ed}
+.location-manager-body{padding:15px;display:grid;gap:16px}
+.location-manager-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.location-manager-card{border:1px solid #e8ddcd;border-radius:10px;padding:13px;min-width:0;background:white}
+.location-manager-card h4,.location-list-heading h4{font-size:13px;margin:0 0 10px;color:#674c2e}
+.location-manager-card label{display:block;font-size:12px;font-weight:600;margin:8px 0 5px}
+.location-manager-card input,.location-manager-card select{min-width:0;width:100%}
+.location-manager-card .select-with-add{display:flex;gap:6px;align-items:stretch}
+.location-manager-card .select-with-add input{flex:1}
+.location-manager-card .select-with-add button{flex-shrink:0;white-space:nowrap}
+.location-manager-card>small{display:block;margin-top:8px;color:#786b5a;font-size:11px;line-height:1.45}
+.location-list-wrap{border-top:1px solid #e8ddcd;padding-top:13px}
+.location-list-heading{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.location-list-heading h4{margin:0}
+.managed-cities{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}
+.managed-city-chip{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border:1px solid #e2d4bf;border-radius:999px;background:#faf5ed;color:#674c2e;font-size:12px}
+.location-manager-status{margin:0;font-size:12px;min-height:16px;color:#674c2e}
+.location-manager-status.error{color:#a33324}
+@media(max-width:680px){.location-manager-grid{grid-template-columns:1fr}.location-manager-body{padding:10px}.location-manager-card .select-with-add{flex-wrap:wrap}.location-manager-card .select-with-add button{min-height:38px}}
 </style>
 <link rel="stylesheet" href="/assets/hn-design.css">
 
@@ -441,12 +468,24 @@ button,input,select,textarea{font:inherit;cursor:pointer}
       </div>
 
       <div class="field">
-        <label>Land</label>
-        <select id="fLand">
-          <option value="">— Geen land —</option>
-        </select>
+        <label>Land bij dit artikel</label>
+        <div class="select-with-add"><select id="fLand"><option value="">— Geen land —</option></select><button type="button" class="btn btn-secondary btn-sm" id="btnAddCountry">+ Land</button></div>
+        <div class="field-hint">Beheer landen en steden via ‘Locaties beheren’ hieronder.</div>
       </div>
 
+      <div class="field full">
+        <details id="locationManager" class="location-manager">
+          <summary><span><strong>Locaties beheren</strong><small>Voeg landen en steden toe aan de HN-database.</small></span><span aria-hidden="true">＋</span></summary>
+          <div class="location-manager-body">
+            <div class="location-manager-grid">
+              <section class="location-manager-card"><h4>Land toevoegen</h4><label for="newCountryName">Naam van het land</label><div class="select-with-add"><input id="newCountryName" type="text" placeholder="Bijv. Maleisië" maxlength="120"><button type="button" class="btn btn-primary btn-sm" id="saveCountry">Toevoegen</button></div><small>Het land wordt opgeslagen en direct beschikbaar in het artikelveld.</small></section>
+              <section class="location-manager-card"><h4>Stad toevoegen</h4><label for="manageCountry">Land waartoe de stad behoort</label><select id="manageCountry"><option value="">— Kies eerst een land —</option></select><label for="newCityName">Naam van de stad</label><div class="select-with-add"><input id="newCityName" type="text" placeholder="Bijv. Kuala Lumpur" maxlength="120"><button type="button" class="btn btn-primary btn-sm" id="saveCity">Toevoegen</button></div><small>De stad wordt gekoppeld aan het gekozen land en opgeslagen in de HN-stedendatabase.</small></section>
+            </div>
+            <div class="location-list-wrap"><div class="location-list-heading"><h4>Steden in geselecteerd land</h4><button type="button" class="btn btn-secondary btn-sm" id="refreshCities">Vernieuwen</button></div><div id="managedCities" class="managed-cities"><p class="field-hint">Kies een land om de bijbehorende steden te bekijken.</p></div></div>
+            <p id="locationManagerStatus" class="location-manager-status" role="status" aria-live="polite"></p>
+          </div>
+        </details>
+      </div>
       <div class="field">
         <label>Cover afbeelding URL</label>
         <input type="url" id="fCover" placeholder="https://…">
@@ -710,32 +749,47 @@ function renderTable(){
 
 /* ── LANDEN LADEN ── */
 async function loadCountries(){
-  const {data,error}=await db.from('countries').select('id,name').order('name');
-  if(error){toast('Landen konden niet worden geladen: '+error.message,'err');return}
+  const {data,error}=await db.from('countries').select('id,name,slug').order('name');
+  if(error){toast('Landen konden niet worden geladen: '+error.message,'err');setLocationStatus('Landen laden mislukt: '+error.message,true);return}
   countries=data||[];
-  const sel=$('fLand');
-  sel.innerHTML='<option value="">— Geen land —</option>';
-  countries.forEach(c=>{
-    const o=document.createElement('option');o.value=c.id;o.textContent=c.name;sel.appendChild(o);
-  });
+  ['fLand','manageCountry'].forEach(id=>{const sel=$(id);if(!sel)return;const previous=sel.value;sel.innerHTML='<option value="">— Kies een land —</option>';countries.forEach(c=>{const o=document.createElement('option');o.value=c.id;o.textContent=c.name;sel.appendChild(o)});if(previous&&countries.some(c=>c.id===previous))sel.value=previous});
+  if($('manageCountry')&&$('manageCountry').value)await loadManagedCities();
 }
-$('btnAddCountry')?.addEventListener('click',async()=>{
-  const name=window.prompt('Naam van het nieuwe land:');
-  if(name===null)return;
-  if(!name.trim()){window.alert('Vul een landnaam in.');return}
-  if(countries.some(c=>c.name.toLowerCase()===name.trim().toLowerCase())){
-    window.alert('Dit land staat al in de lijst.');
-    const existing=countries.find(c=>c.name.toLowerCase()===name.trim().toLowerCase());
-    if(existing)$('fLand').value=existing.id;
-    return;
-  }
-  const slugValue=slug(name);
-  const {data,error}=await db.from('countries').insert({name:name.trim(),slug:slugValue}).select('id,name').single();
-  if(error){window.alert('Land kon niet worden toegevoegd: '+error.message);return}
-  await loadCountries();
-  $('fLand').value=data.id;
-  toast('Land toegevoegd en geselecteerd.');
-});
+function setLocationStatus(message,isError=false){const el=$('locationManagerStatus');if(el){el.textContent=message||'';el.classList.toggle('error',!!isError)}}
+async function saveNewCountry(){
+  const input=$('newCountryName'),name=(input.value||'').trim();if(!name){setLocationStatus('Vul eerst een landnaam in.',true);input.focus();return}
+  const existing=countries.find(c=>c.name.toLocaleLowerCase()===name.toLocaleLowerCase());
+  if(existing){$('fLand').value=existing.id;$('manageCountry').value=existing.id;setLocationStatus('Dit land bestaat al; het is geselecteerd.');await loadManagedCities();return}
+  $('saveCountry').disabled=true;setLocationStatus('Land opslaan…');
+  const {data,error}=await db.from('countries').insert({name,slug:slug(name)}).select('id,name,slug').single();$('saveCountry').disabled=false;
+  if(error){setLocationStatus('Land niet toegevoegd: '+error.message,true);return}
+  input.value='';await loadCountries();$('fLand').value=data.id;$('manageCountry').value=data.id;setLocationStatus('Land toegevoegd en geselecteerd.');toast('Land toegevoegd.');await loadManagedCities();
+}
+async function loadManagedCities(){
+  const countryId=$('manageCountry')&&$('manageCountry').value,box=$('managedCities');if(!box)return;
+  if(!countryId){box.innerHTML='<p class="field-hint">Kies een land om de bijbehorende steden te bekijken.</p>';return}
+  box.innerHTML='<p class="field-hint">Steden laden…</p>';
+  const {data,error}=await db.from('cities').select('id,name,slug,country_id').eq('country_id',countryId).order('name');
+  if(error){box.innerHTML='<p class="field-hint">Steden konden niet worden geladen.</p>';setLocationStatus('Steden laden mislukt: '+error.message,true);return}
+  if(!data||!data.length){box.innerHTML='<p class="field-hint">Nog geen steden voor dit land.</p>';return}
+  box.innerHTML=data.map(c=>'<span class="managed-city-chip">'+esc(c.name)+'</span>').join('');
+}
+async function saveNewCity(){
+  const countryId=$('manageCountry').value,input=$('newCityName'),name=(input.value||'').trim();
+  if(!countryId){setLocationStatus('Kies eerst het land waartoe de stad behoort.',true);$('manageCountry').focus();return}
+  if(!name){setLocationStatus('Vul eerst een stadsnaam in.',true);input.focus();return}
+  const {data:existing,error:checkError}=await db.from('cities').select('id,name').eq('country_id',countryId).ilike('name',name).limit(1);
+  if(checkError){setLocationStatus('Controleren op bestaande steden mislukt: '+checkError.message,true);return}
+  if(existing&&existing.length){setLocationStatus('Deze stad bestaat al onder dit land.');return}
+  $('saveCity').disabled=true;setLocationStatus('Stad opslaan…');const {error}=await db.from('cities').insert({name,slug:slug(name),country_id:countryId});$('saveCity').disabled=false;
+  if(error){setLocationStatus('Stad niet toegevoegd: '+error.message,true);return}
+  input.value='';setLocationStatus('Stad toegevoegd.');toast('Stad toegevoegd.');await loadManagedCities();
+}
+$('btnAddCountry')?.addEventListener('click',()=>{$('locationManager').open=true;$('newCountryName').focus()});
+$('saveCountry')?.addEventListener('click',saveNewCountry);$('saveCity')?.addEventListener('click',saveNewCity);
+$('manageCountry')?.addEventListener('change',loadManagedCities);$('refreshCities')?.addEventListener('click',loadManagedCities);
+$('newCountryName')?.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();saveNewCountry()}});
+$('newCityName')?.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();saveNewCity()}});
 
 
 // ── AANPASBARE OPTIES VOOR CLASSIFICATIEVELDEN ──
