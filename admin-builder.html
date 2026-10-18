@@ -7,14 +7,14 @@
 <title>HN Pagina-bouwer</title>
 <link rel="stylesheet" href="/assets/fonts.css">
 <link rel="stylesheet" href="/assets/platform-pages.css">
-<link rel="stylesheet" href="/assets/admin-builder.css?v=20261011-frame">
+<link rel="stylesheet" href="/assets/admin-builder.css?v=20261018-workspace">
 <script src="/assets/config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="/config.js"></script>
   <script src="/supabase-client.js"></script>
 <script src="/auth.js"></script>
 <script src="/assets/hn-component-registry.js"></script>
-<script src="/assets/admin-builder.js?v=20261011-cmsfix1" defer></script>
+<script src="/assets/admin-builder.js?v=20261018-workspace" defer></script>
 <link rel="stylesheet" href="/assets/hn-design.css">
 
 <link rel="stylesheet" href="/assets/hn-sitewide.css?v=1">
@@ -32,17 +32,14 @@
     </div>
   </div>
   <div class="head-actions">
-    <button id="save">Opslaan als concept</button>
-    <button id="publish" class="primary">Publiceren</button>
-    <button id="restorePreviousLayout" title="Herstel de laatst bewaarde vorige opmaak">Vorige opmaak herstellen</button>
-    <button id="resetAllLayout" class="danger" title="Zet alle via de visuele editor opgeslagen opmaakwijzigingen terug">Alle opmaak resetten</button>
-  </div>
+  <div class="action-group action-group-save" aria-label="Opslaan en publiceren"><button id="save" title="Bewaar je werk als concept">Concept opslaan</button><button id="publish" class="primary" title="Publiceer de wijzigingen">Publiceren</button></div>
+  <details class="more-actions"><summary>Meer <span aria-hidden="true">▾</span></summary><div class="more-actions-menu"><button id="restorePreviousLayout" title="Herstel de laatst bewaarde vorige opmaak">Vorige opmaak herstellen</button><button id="resetAllLayout" class="danger" title="Zet alle via de visuele editor opgeslagen opmaakwijzigingen terug">Alle opmaak resetten</button></div></details>
+</div>
 </header>
 <div id="msg" hidden></div>
 
 <div class="builder-layout">
-  <aside class="page-panel">
-    <div class="panel-title">Pagina</div>
+  <aside class="page-panel"><div class="panel-head"><div class="panel-title">Pagina</div><button id="toggleLeftSidebar" class="sidebar-toggle" type="button" aria-label="Linkerzijbalk inklappen" title="Linkerzijbalk inklappen">‹</button></div>
     <div id="pages"></div>
     <button id="new" class="new-page">+ Nieuwe pagina</button>
 
@@ -58,11 +55,7 @@
         <strong id="heading">Pagina</strong>
         <span id="route"></span>
       </div>
-      <div class="toolbar-actions">
-        <button id="desktop" class="active">Desktop</button>
-        <button id="mobile">Mobiel</button>
-        <button id="focus">Volledig scherm</button><button id="open">Open ↗</button>
-      </div>
+      <div class="toolbar-actions"><div class="device-switcher" aria-label="Voorbeeldformaat"><button id="desktop" class="active">Desktop</button><button id="mobile">Mobiel</button></div><button id="focus">Werkruimte vergroten</button><button id="open">Live bekijken ↗</button></div>
     </div>
     <div id="empty" class="empty">Kies een pagina.</div>
     <div id="editor" hidden>
@@ -73,7 +66,7 @@
   </section>
 
   <aside id="inspector" class="inspector">
-    <div class="inspector-title">Pagina-instellingen</div>
+    <div class="panel-head inspector-head"><div class="inspector-title">Instellingen</div><button id="toggleRightSidebar" class="sidebar-toggle" type="button" aria-label="Rechterzijbalk inklappen" title="Rechterzijbalk inklappen">›</button></div>
     <div class="inspector-section">
       <label>Titel<input id="title"></label>
       <label>URL-slug<input id="slug"></label>
@@ -89,7 +82,15 @@
     </div>
 
     <div id="blockInspector" class="inspector-section" hidden>
-      <div class="section-heading">Geselecteerd blok</div>
+      <div class="section-heading">Geselecteerd onderdeel</div>
+      <div id="hnTypography" class="typography-panel">
+        <div class="section-heading">Lettertype & tekststijl</div>
+        <label>Lettertype<select id="typoFont" data-typo="fontFamily"><option value="">Thema standaard</option><option value="Inter, Arial, sans-serif">Inter</option><option value="Manrope, Arial, sans-serif">Manrope</option><option value="Georgia, serif">Georgia</option><option value="'IBM Plex Mono', monospace">IBM Plex Mono</option><option value="Arial, sans-serif">Arial</option></select></label>
+        <div class="typography-row"><label>Grootte<input id="typoSize" data-typo="fontSize" placeholder="18px"></label><label>Regelhoogte<input id="typoLine" data-typo="lineHeight" placeholder="1.5"></label></div>
+        <div class="typography-row"><label>Dikte<select id="typoWeight" data-typo="fontWeight"><option value="">Thema standaard</option><option value="400">Normaal</option><option value="500">Medium</option><option value="600">Halfvet</option><option value="700">Vet</option><option value="800">Extra vet</option></select></label><label>Uitlijning<select id="typoAlign" data-typo="textAlign"><option value="">Thema standaard</option><option value="left">Links</option><option value="center">Midden</option><option value="right">Rechts</option><option value="justify">Uitvullen</option></select></label></div>
+        <label>Tekstkleur<input id="typoColor" data-typo="color" placeholder="#674C2E of CSS-kleur"></label>
+        <small>Pas de tekststijl van het geselecteerde element aan. De instellingen worden meegenomen bij publiceren.</small>
+      </div>
       <div class="selected-kind" id="kind"></div>
       <label>Type<select id="type"></select></label>
       <label>Titel<input id="bt"></label>
