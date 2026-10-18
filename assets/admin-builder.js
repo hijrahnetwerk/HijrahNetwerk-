@@ -143,7 +143,11 @@ async function loadPageData(){
   return true;
 }
 
-function setBuilderFocus(focused){var root=document.querySelector(".builder");if(!root)return;root.classList.toggle("focus-mode",!!focused);var button=$("focus");if(button)button.textContent=focused?"Terug naar editor":"Volledig scherm";}
+function setBuilderFocus(focused){var root=document.querySelector(".builder");if(!root)return;root.classList.toggle("focus-mode",!!focused);var button=$("focus");if(button)button.textContent=focused?"Terug naar editor":"Werkruimte vergroten";}
+function setSidebar(which,collapsed){var root=document.querySelector(".builder-layout");if(!root)return;root.classList.toggle(which+"-collapsed",!!collapsed);var left=which==="left",b=$(left?"toggleLeftSidebar":"toggleRightSidebar");if(b){b.textContent=left?(collapsed?"›":"‹"):(collapsed?"‹":"›");b.setAttribute("aria-label",(left?"Linker":"Rechter")+"zijbalk "+(collapsed?"uitklappen":"inklappen"));b.title=(left?"Linker":"Rechter")+"zijbalk "+(collapsed?"uitklappen":"inklappen");}try{sessionStorage.setItem("hn-builder-"+which+"-collapsed",collapsed?"1":"0");}catch(e){}}
+function restoreSidebarState(){try{setSidebar("left",sessionStorage.getItem("hn-builder-left-collapsed")==="1");setSidebar("right",sessionStorage.getItem("hn-builder-right-collapsed")==="1");}catch(e){}}
+function inspectTypography(){if(!selectedExisting)return;var item=layouts.find(function(x){return x.selector===selectedExisting.legacySelector;}),css=item&&item.settings&&item.settings.css||{};var vals={fontFamily:css.fontFamily||"",fontSize:css.fontSize||"",lineHeight:css.lineHeight||"",fontWeight:css.fontWeight||"",textAlign:css.textAlign||"",color:css.color||""};Object.keys(vals).forEach(function(k){var control=document.querySelector('[data-typo="'+k+'"]');if(control)control.value=vals[k];});}
+function editTypography(key,value){if(!selectedExisting)return;var selectorValue=selectedExisting.legacySelector,item=layouts.find(function(x){return x.selector===selectorValue;});if(!item){item={selector:selectorValue,sort_order:layouts.length,is_visible:true,settings:{css:{}}};layouts.push(item);}item.settings=item.settings||{};item.settings.css=item.settings.css||{};if(value)item.settings.css[key]=value;else delete item.settings.css[key];if(!Object.keys(item.settings.css).length)delete item.settings.css;if(!Object.keys(item.settings).length)item.settings={};try{selectedExisting.element.style[key]=value||"";}catch(e){}}
 
 async function pick(id,openFullPage){
   for(var i=0;i<pages.length;i++)if(pages[i].id===id)page=pages[i];
@@ -436,7 +440,8 @@ function inspectExisting(){
   $("existingActions").hidden=false;
   $("dataWrap").hidden=true;
   $("componentMeta").hidden=true;
-  setSelection("existing","Bestaand element","Component-ID: "+selectedExisting.id);
+  setSelection("existing","Bestaand element","Tekst, typografie en opmaak");
+  inspectTypography();
 }
 
 function inspect(){
@@ -621,7 +626,10 @@ async function globalLayoutAction(action){
   finally{if(resetButton){resetButton.disabled=false;resetButton.textContent="Alle opmaak resetten";}if(restoreButton){restoreButton.disabled=false;restoreButton.textContent="Vorige opmaak herstellen";}}
 }
 function bind(){
-  ensureBuilderUI();palette();
+  ensureBuilderUI();palette();restoreSidebarState();
+  $("toggleLeftSidebar").onclick=function(){setSidebar("left",!document.querySelector(".builder-layout").classList.contains("left-collapsed"));};
+  $("toggleRightSidebar").onclick=function(){setSidebar("right",!document.querySelector(".builder-layout").classList.contains("right-collapsed"));};
+  document.querySelectorAll("[data-typo]").forEach(function(el){el.addEventListener("input",function(){editTypography(el.getAttribute("data-typo"),el.value);});el.addEventListener("change",function(){editTypography(el.getAttribute("data-typo"),el.value);});});
   $("save").onclick=function(){save(false);};
   $("publish").onclick=function(){save(true);};
   ensureLayoutFields();document.querySelectorAll("[data-layout-field]").forEach(function(el){el.addEventListener("input",function(){edit(el.getAttribute("data-layout-field"),el.value);});});
