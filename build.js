@@ -103,7 +103,7 @@ const footerTag = '<script src="/assets/hn-footer.js?v=20261013" defer></script>
 const backToTopStyleTag = '<link rel="stylesheet" href="/assets/hn-back-to-top.css?v=20261014">';
 const backToTopTag = '<script src="/assets/hn-back-to-top.js?v=20261014" defer></script>';
 const pageEngineTag = '<script src="/assets/hn-page-engine.js"></script>';
-const visualEditorTag = '<script src="/assets/hn-visual-editor-runtime.js"></script>';
+const visualEditorTag = '<script src="/assets/hn-visual-editor-runtime.js?v=20261018-dragdrop"></script>';
 const visualPolishStyleTag = '<link rel="stylesheet" href="/assets/hn-visual-polish.css">';
 const motionTag = '<script src="/assets/hn-motion.js"></script>';
 const copyProtectionTag = '<script src="/copy-protection.js?v=20261012-admin-only-copy2"></script>';

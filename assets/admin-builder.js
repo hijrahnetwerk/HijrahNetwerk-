@@ -286,7 +286,14 @@ function applyLayouts(doc){
     if(o.settings&&o.settings.css)Object.keys(o.settings.css).forEach(function(k){el.style[k]=o.settings.css[k];});
   });
   var root=rootOf(doc);
-  layouts.slice().sort(function(a,b){return(a.sort_order||0)-(b.sort_order||0);}).forEach(function(o){
+  layouts.filter(function(o){return o.settings&&o.settings.position_mode==="anchor"&&o.settings.parent_selector;}).sort(function(a,b){return(a.sort_order||0)-(b.sort_order||0);}).forEach(function(o){
+    try{
+      var el=doc.querySelector(o.selector),parent=doc.querySelector(o.settings.parent_selector),before=o.settings.before_selector?doc.querySelector(o.settings.before_selector):null;
+      if(!el||!parent||el===parent||el.contains(parent))return;
+      if(before&&before!==el&&before.parentElement===parent)parent.insertBefore(el,before);else parent.appendChild(el);
+    }catch(e){}
+  });
+  layouts.filter(function(o){return !(o.settings&&o.settings.position_mode==="anchor");}).slice().sort(function(a,b){return(a.sort_order||0)-(b.sort_order||0);}).forEach(function(o){
     var el;
     try{el=doc.querySelector(o.selector);}catch(e){return;}
     if(el&&el.parentElement===root)root.appendChild(el);
@@ -340,27 +347,40 @@ function bindExisting(doc){
 }
 
 function drawExisting(doc){
-  live=existing(doc).map(function(el,i){return{el:el,index:i,selector:selector(el,doc)};});
+  var root=rootOf(doc),all=editableCandidates(doc).concat(existing(doc));
+  var seen=new Set();
+  live=all.filter(function(el){if(!el||seen.has(el)||el.closest(".hn-builder-add,.hn-builder-preview,.hn-builder-tools,header,footer,nav"))return false;seen.add(el);return true;}).map(function(el,i){return{el:el,index:i,selector:selector(el,doc)};});
   live.forEach(function(x){
     x.el.style.outline="1px dashed #C6A15B";
     x.el.draggable=true;
-    x.el.ondragstart=function(){drag=x;};
-    x.el.ondragover=function(e){e.preventDefault();x.el.classList.add("hn-drop-target");};
+    x.el.ondragstart=function(e){drag=x;x.el.classList.add("hn-component-dragging");if(e.dataTransfer){e.dataTransfer.effectAllowed="move";e.dataTransfer.setData("text/plain",x.selector);}};
+    x.el.ondragend=function(){x.el.classList.remove("hn-component-dragging");live.forEach(function(y){y.el.classList.remove("hn-drop-target")});drag=null;};
+    x.el.ondragover=function(e){if(!drag||drag.el===x.el||drag.el.contains(x.el))return;e.preventDefault();x.el.classList.add("hn-drop-target");if(e.dataTransfer)e.dataTransfer.dropEffect="move";};
     x.el.ondragleave=function(){x.el.classList.remove("hn-drop-target");};
     x.el.ondrop=function(e){
-      e.preventDefault();x.el.classList.remove("hn-drop-target");
-      if(!drag||drag.el===x.el||drag.el.parentElement!==x.el.parentElement)return;
-      if(drag.el.compareDocumentPosition(x.el)&Node.DOCUMENT_POSITION_FOLLOWING)x.el.before(drag.el);else x.el.after(drag.el);
-      rebuildLayoutsFromDom(doc);
-      note("Volgorde aangepast. Klik Opslaan als concept of Publiceren.");
+      e.preventDefault();e.stopPropagation();x.el.classList.remove("hn-drop-target");
+      if(!drag||drag.el===x.el||drag.el.contains(x.el))return;
+      var rect=x.el.getBoundingClientRect(),after=e.clientY>rect.top+rect.height/2;
+      if(after)x.el.parentElement.insertBefore(drag.el,x.el.nextSibling);else x.el.parentElement.insertBefore(drag.el,x.el);
+      var moved=drag.el, movedSelector=selector(moved,doc), parentSelector=selector(moved.parentElement,doc), next=moved.nextElementSibling;
+      layouts=layouts.filter(function(o){return o.selector!==movedSelector;});
+      layouts.push({selector:movedSelector,sort_order:layouts.length,is_visible:!moved.hidden,settings:{position_mode:"anchor",parent_selector:parentSelector,before_selector:next?selector(next,doc):null,component_id:elementId(moved,doc)}});
+      rebuildLayoutsFromDom(doc,moved);
+      note("Onderdeel verplaatst. Klik Opslaan als concept of Publiceren om de nieuwe plek te bewaren.");
     };
   });
 }
 
-function rebuildLayoutsFromDom(doc){
+function rebuildLayoutsFromDom(doc,moved){
   var els=existing(doc),map=[];
-  els.forEach(function(el,i){var id=elementId(el,doc);if(id)map.push({selector:stableSelector(id),sort_order:i,is_visible:!el.hidden,settings:{component_id:id}});});
-  layouts=map;
+  els.forEach(function(el,i){
+    var id=elementId(el,doc),sel=id?stableSelector(id):selector(el,doc);
+    var old=layouts.find(function(o){return o.selector===sel;});
+    if(id&&!old)map.push({selector:sel,sort_order:i,is_visible:!el.hidden,settings:{component_id:id}});
+    else if(old)old.sort_order=i;
+  });
+  map.forEach(function(o){layouts.push(o);});
+  layouts.sort(function(a,b){return (a.sort_order||0)-(b.sort_order||0);});
 }
 
 function bindComponentDrag(doc){
