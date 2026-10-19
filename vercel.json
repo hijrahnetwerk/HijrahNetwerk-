@@ -209,6 +209,10 @@
   ],
   "rewrites": [
     {
+      "source": "/privacy",
+      "destination": "/privacy.html"
+    },
+    {
       "source": "/over-hn",
       "destination": "/cms-page.html?slug=over-hn"
     },
