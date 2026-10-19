@@ -50,6 +50,8 @@ const privacy = source('privacy.html');
 const registration = source('register.html');
 const myHijrah = source('mijn-hijrah.html');
 const footer = source('assets/hn-footer.js');
+const passport = source('paspoort.html');
+const authStyles = source('auth-style.css');
 const articlePreview = source('assets/hn-article-draft-preview.js');
 const vercel = JSON.parse(source('vercel.json'));
 if (!buildSource.includes('function validateSupabaseUrl') ||
@@ -100,6 +102,15 @@ if (!myHijrah.includes('href="/#inschrijven">Aanmelden voor de wachtlijst</a>') 
 }
 if (!footer.includes('href="/#inschrijven">Wachtlijst voor de community</a>') || footer.includes('href="/register">Aanmelden</a>')) {
   failures.push('The public footer must not imply that community account registration is open.');
+}
+if (!passport.includes('.bk{grid-template-columns:minmax(0,1fr)}') || !passport.includes('@media(max-width:380px)') || !passport.includes('.stp svg{width:min(100%,96px);height:auto}')) {
+  failures.push('HN Paspoort must include narrow-screen layout rules for page cards and stamps.');
+}
+if (!authStyles.includes('linear-gradient(135deg,var(--brown),var(--orange))') || !authStyles.includes('@media(max-width:360px)')) {
+  failures.push('Authentication pages must keep the brand mark valid and include narrow-screen styles.');
+}
+if (!myHijrah.includes('@media(max-width:420px)') || !myHijrah.includes('.action .button{width:100%;min-height:46px}')) {
+  failures.push('Mijn Hijrah action buttons must remain touch-friendly on narrow screens.');
 }
 if (!adminBlogs.includes('id="btnFullPreview"') || !adminBlogs.includes('id="hnDraftPreviewContent"') || !adminBlogs.includes('/assets/hn-article-draft-preview.js')) {
   failures.push('Admin article editor must expose the full unsaved article preview.');
