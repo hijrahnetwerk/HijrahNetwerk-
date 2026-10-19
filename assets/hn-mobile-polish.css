@@ -334,3 +334,37 @@ body:has(#hn-admin-bar) { padding-bottom: calc(96px + env(safe-area-inset-bottom
 @media (prefers-reduced-motion: reduce) {
   .hn-footer-deco, .hero::before, .hero::after { animation: none !important; }
 }
+
+/* Ensure legacy flex-based admin shells actually collapse to one column on tablets and phones. */
+@media (max-width: 900px) {
+  body .layout {
+    display: block !important;
+    min-height: 100dvh;
+  }
+  body .layout > .sidebar {
+    position: static !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+  }
+  body .layout > .main,
+  body .shell > main {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+  body .shell {
+    display: block !important;
+    min-height: 100dvh;
+  }
+  body .shell > .side {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+  }
+}
+@media (max-width: 700px) {
+  body .layout .cards,
+  body .shell .cards {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+}
