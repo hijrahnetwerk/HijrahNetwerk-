@@ -112,6 +112,17 @@ if (!authStyles.includes('linear-gradient(135deg,var(--brown),var(--orange))') |
 if (!myHijrah.includes('@media(max-width:420px)') || !myHijrah.includes('.action .button{width:100%;min-height:46px}')) {
   failures.push('Mijn Hijrah action buttons must remain touch-friendly on narrow screens.');
 }
+const mobilePolish = source('assets/hn-mobile-polish.css');
+if (!mobilePolish.includes('.layout:has(> .sidebar)') ||
+    !mobilePolish.includes('.builder-layout .page-panel') ||
+    !mobilePolish.includes('@media (max-width: 380px)') ||
+    !mobilePolish.includes('env(safe-area-inset-bottom')) {
+  failures.push('Global mobile hardening must cover legacy admin layouts, the page builder, narrow phones, and safe-area insets.');
+}
+if (!buildSource.includes("const mobilePolishTag = '<link rel=\"stylesheet\" href=\"/assets/hn-mobile-polish.css\">';") ||
+    !buildSource.includes("!html.includes('/assets/hn-mobile-polish.css') ? mobilePolishTag : ''")) {
+  failures.push('Build must inject one cache-hashed mobile stylesheet per page without duplicate stale-version links.');
+}
 if (!adminBlogs.includes('id="btnFullPreview"') || !adminBlogs.includes('id="hnDraftPreviewContent"') || !adminBlogs.includes('/assets/hn-article-draft-preview.js')) {
   failures.push('Admin article editor must expose the full unsaved article preview.');
 }
