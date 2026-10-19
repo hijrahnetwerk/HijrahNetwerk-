@@ -63,8 +63,8 @@ async function init(){
   const session=data?.session||null;
 
   if(!session){
-    status.innerHTML='<strong>Nog geen HN-account?</strong> Je kunt de openbare uitleg bekijken en daarna een account aanvragen.';
-    actions.innerHTML='<a class="button primary" href="/register">Account aanvragen</a><a class="button secondary" href="/login">Inloggen</a>';
+    status.innerHTML='<strong>Nog geen HN-account?</strong> Je kunt de openbare uitleg bekijken en je aanmelden voor de wachtlijst.';
+    actions.innerHTML='<a class="button primary" href="/#inschrijven">Aanmelden voor de wachtlijst</a><a class="button secondary" href="/login">Inloggen</a>';
     return;
   }
 
