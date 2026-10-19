@@ -71,7 +71,7 @@
             <li><a href="/community">Over de community</a></li>
             <li><a href="/bijdragen">Bijdragen</a></li>
             <li><a href="/verhalen">Verhalen &amp; interviews</a></li>
-            <li><a href="/register">Aanmelden</a></li>
+            <li><a href="/#inschrijven">Wachtlijst voor de community</a></li>
           </ul></nav>
           <nav class="hn-footer-col" aria-label="Hulp en informatie"><h3>Hulp &amp; informatie</h3><ul>
             <li><a href="/hulp">Hulp &amp; veelgestelde vragen</a></li>
