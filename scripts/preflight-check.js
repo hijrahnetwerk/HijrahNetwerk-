@@ -41,12 +41,23 @@ function source(relative) {
 }
 const protection = source('copy-protection.js');
 const buildSource = source('build.js');
+const supabaseClientSource = source('supabase-client.js');
 const adminBlogs = source('admin-blogs.html');
 const adminDashboard = source('admin.html');
 const editor = source('assets/hn-publication-editor.js');
 const article = source('blog-artikel.html');
 const articlePreview = source('assets/hn-article-draft-preview.js');
 const vercel = JSON.parse(source('vercel.json'));
+if (!buildSource.includes('function validateSupabaseUrl') ||
+    !buildSource.includes('function validatePublicSupabaseKey') ||
+    !buildSource.includes("payload.role !== 'anon'")) {
+  failures.push('Build must validate the Supabase HTTPS URL and reject privileged browser keys.');
+}
+if (!supabaseClientSource.includes('new URL(env.SUPABASE_URL)') ||
+    !supabaseClientSource.includes('parsed.origin') ||
+    !supabaseClientSource.includes('payload.role !== \'anon\'')) {
+  failures.push('Runtime Supabase client must validate URL and reject privileged browser keys.');
+}
 if (!protection.includes('client.rpc("is_admin")') || !protection.includes('result.data === true') || !protection.includes('allowAdmin()')) {
   failures.push('Copy protection must fail closed and only allow a confirmed admin role.');
 }
@@ -68,6 +79,9 @@ for (const type of ['paragraph', 'heading', 'quote', 'callout', 'accordion', 'ch
 if (!article.includes('renderArticleBlocks(b.content_blocks,b.content)') || !article.includes('safeHttpUrl')) {
   failures.push('Public article page must render structured blocks and validate external URLs.');
 }
+if (!article.includes("db.rpc('hn_public_blog_member_teaser'") || article.includes("from('blog_member_teasers')")) {
+  failures.push('Member article previews must use the restricted teaser RPC rather than a SECURITY DEFINER view.');
+}
 if (!adminBlogs.includes('id="btnFullPreview"') || !adminBlogs.includes('id="hnDraftPreviewContent"') || !adminBlogs.includes('/assets/hn-article-draft-preview.js')) {
   failures.push('Admin article editor must expose the full unsaved article preview.');
 }
@@ -85,6 +99,9 @@ if (vercel.git?.deploymentEnabled?.['fix/admin-verhalen-editor-ux-20261012'] !==
 }
 if (vercel.git?.deploymentEnabled?.['fix/pagespeed-security-a11y-20261013'] !== false) {
   failures.push('Vercel preview deployments must remain disabled for the PageSpeed/security/accessibility work branch.');
+}
+if (vercel.git?.deploymentEnabled?.['fix/site-audit-20261019'] !== false) {
+  failures.push('Vercel preview deployments must remain disabled for the site audit fix branch.');
 }
 const globalHeaders = vercel.headers?.find((entry) => entry.source === '/(.*)')?.headers || [];
 const headerValue = (key) => globalHeaders.find((entry) => entry.key.toLowerCase() === key.toLowerCase())?.value || '';

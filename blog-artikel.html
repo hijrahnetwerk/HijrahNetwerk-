@@ -534,9 +534,9 @@ async function init(){
   const slug=getSlug();
   if(!db||!slug){renderError('Kon de pagina niet laden.');return}
 
-  // Publieke preview bevat alleen titel, slug, type en optioneel de apart ingevoerde teaser. De volledige inhoud wordt niet opgehaald.
-  const teaserResult=await db.from('blog_member_teasers').select('id,title,slug,type,member_preview_mode,member_preview_text').eq('slug',slug).maybeSingle();
-  const teaser=teaserResult.data;
+  // De publieke preview komt uit een strikt beperkte RPC: nooit de volledige ledeninhoud ophalen.
+  const teaserResult=await db.rpc('hn_public_blog_member_teaser',{p_slug:slug});
+  const teaser=teaserResult.error ? null : teaserResult.data;
 
   const sessionResult=await db.auth.getSession();
   const user=sessionResult.data&&sessionResult.data.session&&sessionResult.data.session.user;

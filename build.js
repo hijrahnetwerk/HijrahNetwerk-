@@ -13,8 +13,49 @@ const configuredKey = envKey && envKey !== 'test' ? envKey : '';
 if (!configuredUrl || !configuredKey) {
   throw new Error('[HN build] VITE_SUPABASE_URL en VITE_SUPABASE_ANON_KEY zijn verplicht. Geen fallback-credentials toegestaan.');
 }
-const SUPABASE_URL = configuredUrl;
-const SUPABASE_ANON_KEY = configuredKey;
+
+function validateSupabaseUrl(value) {
+  let parsed;
+  try {
+    parsed = new URL(value);
+  } catch (_) {
+    throw new Error('[HN build] VITE_SUPABASE_URL is geen geldige URL.');
+  }
+  const localHost = ['localhost', '127.0.0.1', '[::1]'].includes(parsed.hostname);
+  const localHttp = parsed.protocol === 'http:' && localHost && !process.env.VERCEL;
+  if (parsed.protocol !== 'https:' && !localHttp) {
+    throw new Error('[HN build] VITE_SUPABASE_URL moet HTTPS gebruiken (behalve lokale ontwikkeling).');
+  }
+  if (!parsed.hostname || parsed.username || parsed.password || parsed.search || parsed.hash ||
+      (parsed.pathname !== '' && parsed.pathname !== '/')) {
+    throw new Error('[HN build] VITE_SUPABASE_URL moet de basis-URL zijn, zonder pad, login, query of hash.');
+  }
+  return parsed.origin;
+}
+
+function validatePublicSupabaseKey(value) {
+  if (!value || /\s/.test(value) || /^sb_secret_/i.test(value)) {
+    throw new Error('[HN build] VITE_SUPABASE_ANON_KEY moet een publieke anon/publishable key zijn; secret-keys zijn verboden.');
+  }
+  if (value.startsWith('sb_publishable_')) return value;
+  const parts = value.split('.');
+  if (parts.length !== 3) {
+    throw new Error('[HN build] VITE_SUPABASE_ANON_KEY heeft geen herkend publiek key-formaat.');
+  }
+  let payload;
+  try {
+    payload = JSON.parse(Buffer.from(parts[1], 'base64url').toString('utf8'));
+  } catch (_) {
+    throw new Error('[HN build] VITE_SUPABASE_ANON_KEY bevat geen geldige JWT-payload.');
+  }
+  if (payload.role !== 'anon') {
+    throw new Error('[HN build] VITE_SUPABASE_ANON_KEY mag geen service_role- of andere geprivilegieerde key bevatten.');
+  }
+  return value;
+}
+
+const SUPABASE_URL = validateSupabaseUrl(configuredUrl);
+const SUPABASE_ANON_KEY = validatePublicSupabaseKey(configuredKey);
 const vercelProductionUrl = String(process.env.VERCEL_PROJECT_PRODUCTION_URL || '').trim();
 const configuredSiteUrl = String(process.env.HN_SITE_URL || '').trim();
 const SITE_URL = (configuredSiteUrl || (vercelProductionUrl ? 'https://' + vercelProductionUrl : 'https://hijrah-netwerk.vercel.app')).replace(/\/$/, '');
