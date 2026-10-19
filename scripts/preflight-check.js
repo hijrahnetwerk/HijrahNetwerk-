@@ -107,6 +107,9 @@ if (vercel.git?.deploymentEnabled?.['fix/admin-verhalen-editor-ux-20261012'] !==
 if (vercel.git?.deploymentEnabled?.['fix/pagespeed-security-a11y-20261013'] !== false) {
   failures.push('Vercel preview deployments must remain disabled for the PageSpeed/security/accessibility work branch.');
 }
+if (vercel.git?.deploymentEnabled?.['fix/supabase-migration-history-20261019'] !== false) {
+  failures.push('Vercel preview deployments must remain disabled for the Supabase migration-history/privacy fix branch.');
+}
 if (vercel.git?.deploymentEnabled?.['fix/site-audit-20261019'] !== false) {
   failures.push('Vercel preview deployments must remain disabled for the site audit fix branch.');
 }
