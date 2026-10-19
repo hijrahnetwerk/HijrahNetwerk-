@@ -48,6 +48,16 @@ const editor = source('assets/hn-publication-editor.js');
 const article = source('blog-artikel.html');
 const articlePreview = source('assets/hn-article-draft-preview.js');
 const vercel = JSON.parse(source('vercel.json'));
+if (!buildSource.includes('function validateSupabaseUrl') ||
+    !buildSource.includes('function validatePublicSupabaseKey') ||
+    !buildSource.includes("payload.role !== 'anon'")) {
+  failures.push('Build must validate the Supabase HTTPS URL and reject privileged browser keys.');
+}
+if (!supabaseClientSource.includes('new URL(env.SUPABASE_URL)') ||
+    !supabaseClientSource.includes('parsed.origin') ||
+    !supabaseClientSource.includes('payload.role !== \'anon\'')) {
+  failures.push('Runtime Supabase client must validate URL and reject privileged browser keys.');
+}
 if (!protection.includes('client.rpc("is_admin")') || !protection.includes('result.data === true') || !protection.includes('allowAdmin()')) {
   failures.push('Copy protection must fail closed and only allow a confirmed admin role.');
 }
