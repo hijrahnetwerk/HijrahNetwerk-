@@ -34,7 +34,7 @@ function validateSupabaseUrl(value) {
 }
 
 function validatePublicSupabaseKey(value) {
-  if (!value || /\\s/.test(value) || /^sb_secret_/i.test(value)) {
+  if (!value || /\s/.test(value) || /^sb_secret_/i.test(value)) {
     throw new Error('[HN build] VITE_SUPABASE_ANON_KEY moet een publieke anon/publishable key zijn; secret-keys zijn verboden.');
   }
   if (value.startsWith('sb_publishable_')) return value;
