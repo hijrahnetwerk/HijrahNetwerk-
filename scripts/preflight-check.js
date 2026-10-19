@@ -119,6 +119,14 @@ if (!mobilePolish.includes('.layout:has(> .sidebar)') ||
     !mobilePolish.includes('env(safe-area-inset-bottom')) {
   failures.push('Global mobile hardening must cover legacy admin layouts, the page builder, narrow phones, and safe-area insets.');
 }
+if (!mobilePolish.includes('body .layout > .sidebar') ||
+    !mobilePolish.includes('body .layout > .main') ||
+    !mobilePolish.includes('body .shell > .side') ||
+    !mobilePolish.includes('body .shell > main') ||
+    !mobilePolish.includes('body .layout .cards') ||
+    !mobilePolish.includes('body .shell .cards')) {
+  failures.push('Legacy admin dashboard and workspace must explicitly collapse their flex shells and card grids on mobile.');
+}
 if (!buildSource.includes("const mobilePolishTag = '<link rel=\"stylesheet\" href=\"/assets/hn-mobile-polish.css\">';") ||
     !buildSource.includes("!html.includes('/assets/hn-mobile-polish.css') ? mobilePolishTag : ''")) {
   failures.push('Build must inject one cache-hashed mobile stylesheet per page without duplicate stale-version links.');
