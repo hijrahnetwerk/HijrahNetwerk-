@@ -43,8 +43,10 @@
       const parts = env.SUPABASE_ANON_KEY.split('.');
       if (parts.length !== 3) throw new Error('De publieke Supabase-key heeft een ongeldig JWT-formaat.');
       let payload;
-      try { payload = JSON.parse(atob(parts[1].replace(/-/g, '+').replace(/_/g, '/'))); }
-      catch (_) { throw new Error('De publieke Supabase-key bevat een ongeldige JWT-payload.'); }
+      try {
+        const encoded = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+        payload = JSON.parse(atob(encoded + '='.repeat((4 - encoded.length % 4) % 4)));
+      } catch (_) { throw new Error('De publieke Supabase-key bevat een ongeldige JWT-payload.'); }
       if (payload.role !== 'anon') throw new Error('Een service_role-key mag nooit in de browser worden gebruikt.');
     } else if (!env.SUPABASE_ANON_KEY.startsWith('sb_publishable_')) {
       throw new Error('Gebruik een publieke anon- of publishable-key.');
