@@ -47,6 +47,9 @@ const adminDashboard = source('admin.html');
 const editor = source('assets/hn-publication-editor.js');
 const article = source('blog-artikel.html');
 const privacy = source('privacy.html');
+const registration = source('register.html');
+const myHijrah = source('mijn-hijrah.html');
+const footer = source('assets/hn-footer.js');
 const articlePreview = source('assets/hn-article-draft-preview.js');
 const vercel = JSON.parse(source('vercel.json'));
 if (!buildSource.includes('function validateSupabaseUrl') ||
@@ -88,6 +91,15 @@ if (!vercel.rewrites?.some((rule) => rule.source === '/privacy' && rule.destinat
 }
 if (!privacy.includes('<h1>Privacybeleid</h1>') || !privacy.includes('Jouw rechten') || !privacy.includes('Cookies, lokale opslag en analyse')) {
   failures.push('The public privacy policy must include its main heading, data-subject rights, and storage/analytics disclosure.');
+}
+if (!registration.includes('De community gaat stap voor stap open') || !registration.includes('/#inschrijven')) {
+  failures.push('Registration must remain closed and direct new users to the launch waitlist.');
+}
+if (!myHijrah.includes('href="/#inschrijven">Aanmelden voor de wachtlijst</a>') || myHijrah.includes('href="/register">Account aanvragen')) {
+  failures.push('The Mijn Hijrah logged-out CTA must point to the waitlist while registration is closed.');
+}
+if (!footer.includes('href="/#inschrijven">Wachtlijst voor de community</a>') || footer.includes('href="/register">Aanmelden</a>')) {
+  failures.push('The public footer must not imply that community account registration is open.');
 }
 if (!adminBlogs.includes('id="btnFullPreview"') || !adminBlogs.includes('id="hnDraftPreviewContent"') || !adminBlogs.includes('/assets/hn-article-draft-preview.js')) {
   failures.push('Admin article editor must expose the full unsaved article preview.');
