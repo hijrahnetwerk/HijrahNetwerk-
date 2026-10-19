@@ -136,7 +136,7 @@ const translateStyleTag = '<link rel="stylesheet" href="/assets/hn-translate.css
 const editProposalTag = '<script src="/assets/hn-edit-proposals.js"></script>';
 const fontsTag = '<link rel="stylesheet" href="/assets/fonts.css">';
 const globalResponsiveTag = '<link rel="stylesheet" href="/assets/hn-global-responsive.css">';
-const mobilePolishTag = '<link rel="stylesheet" href="/assets/hn-mobile-polish.css?v=20261012">';
+const mobilePolishTag = '<link rel="stylesheet" href="/assets/hn-mobile-polish.css">';
 const globalRuntimeTag = '<script src="/assets/hn-global-runtime.js"></script>';
 const adminBarTag = '<script src="/assets/hn-admin-bar.js?v=20261013"></script>';
 const adminBarStyleTag = '<link rel="stylesheet" href="/assets/hn-admin-bar.css?v=20261013">';
@@ -241,7 +241,7 @@ for (const file of htmlFiles) {
     !html.includes(editProposalTag) ? editProposalTag : '',
     !html.includes(fontsTag) ? fontsTag : '',
     !html.includes(globalResponsiveTag) ? globalResponsiveTag : '',
-    !html.includes('/assets/hn-mobile-polish.css?v=20261012') ? mobilePolishTag : '',
+    !html.includes('/assets/hn-mobile-polish.css') ? mobilePolishTag : '',
     !html.includes(globalRuntimeTag) ? globalRuntimeTag : '',
     !html.includes('/assets/hn-admin-bar.js?v=20261013') ? adminBarTag : '',
     !html.includes('/assets/hn-admin-bar.css?v=20261013') ? adminBarStyleTag : '',
