@@ -335,36 +335,36 @@ body:has(#hn-admin-bar) { padding-bottom: calc(96px + env(safe-area-inset-bottom
   .hn-footer-deco, .hero::before, .hero::after { animation: none !important; }
 }
 
-/* Ensure legacy flex-based admin shells actually collapse to one column on tablets and phones. */
+/* Ensure only the legacy admin shells collapse to one column on tablets and phones. */
 @media (max-width: 900px) {
-  body .layout {
+  body .layout:has(> .sidebar) {
     display: block !important;
     min-height: 100dvh;
   }
-  body .layout > .sidebar {
+  body .layout:has(> .sidebar) > .sidebar {
     position: static !important;
     width: 100% !important;
     max-width: 100% !important;
     height: auto !important;
   }
-  body .layout > .main,
-  body .shell > main {
+  body .layout:has(> .sidebar) > .main,
+  body .shell:has(> .side) > main {
     width: 100% !important;
     min-width: 0 !important;
   }
-  body .shell {
+  body .shell:has(> .side) {
     display: block !important;
     min-height: 100dvh;
   }
-  body .shell > .side {
+  body .shell:has(> .side) > .side {
     width: 100% !important;
     max-width: 100% !important;
     height: auto !important;
   }
 }
 @media (max-width: 700px) {
-  body .layout .cards,
-  body .shell .cards {
+  body .layout:has(> .sidebar) .cards,
+  body .shell:has(> .side) .cards {
     grid-template-columns: minmax(0, 1fr) !important;
   }
 }
