@@ -79,6 +79,9 @@ for (const type of ['paragraph', 'heading', 'quote', 'callout', 'accordion', 'ch
 if (!article.includes('renderArticleBlocks(b.content_blocks,b.content)') || !article.includes('safeHttpUrl')) {
   failures.push('Public article page must render structured blocks and validate external URLs.');
 }
+if (!article.includes("db.rpc('hn_public_blog_member_teaser'") || article.includes("from('blog_member_teasers')")) {
+  failures.push('Member article previews must use the restricted teaser RPC rather than a SECURITY DEFINER view.');
+}
 if (!adminBlogs.includes('id="btnFullPreview"') || !adminBlogs.includes('id="hnDraftPreviewContent"') || !adminBlogs.includes('/assets/hn-article-draft-preview.js')) {
   failures.push('Admin article editor must expose the full unsaved article preview.');
 }
