@@ -97,6 +97,9 @@ if (vercel.git?.deploymentEnabled?.['fix/admin-verhalen-editor-ux-20261012'] !==
 if (vercel.git?.deploymentEnabled?.['fix/pagespeed-security-a11y-20261013'] !== false) {
   failures.push('Vercel preview deployments must remain disabled for the PageSpeed/security/accessibility work branch.');
 }
+if (vercel.git?.deploymentEnabled?.['fix/site-audit-20261019'] !== false) {
+  failures.push('Vercel preview deployments must remain disabled for the site audit fix branch.');
+}
 const globalHeaders = vercel.headers?.find((entry) => entry.source === '/(.*)')?.headers || [];
 const headerValue = (key) => globalHeaders.find((entry) => entry.key.toLowerCase() === key.toLowerCase())?.value || '';
 if (!headerValue('Content-Security-Policy-Report-Only').includes("require-trusted-types-for 'script'")) failures.push('CSP report-only must include Trusted Types monitoring before enforcement is considered.');
