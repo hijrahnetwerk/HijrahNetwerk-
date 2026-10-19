@@ -46,6 +46,7 @@ const adminBlogs = source('admin-blogs.html');
 const adminDashboard = source('admin.html');
 const editor = source('assets/hn-publication-editor.js');
 const article = source('blog-artikel.html');
+const privacy = source('privacy.html');
 const articlePreview = source('assets/hn-article-draft-preview.js');
 const vercel = JSON.parse(source('vercel.json'));
 if (!buildSource.includes('function validateSupabaseUrl') ||
@@ -81,6 +82,12 @@ if (!article.includes('renderArticleBlocks(b.content_blocks,b.content)') || !art
 }
 if (!article.includes("db.rpc('hn_public_blog_member_teaser'") || article.includes("from('blog_member_teasers')")) {
   failures.push('Member article previews must use the restricted teaser RPC rather than a SECURITY DEFINER view.');
+}
+if (!vercel.rewrites?.some((rule) => rule.source === '/privacy' && rule.destination === '/privacy.html')) {
+  failures.push('The public /privacy route must resolve to privacy.html.');
+}
+if (!privacy.includes('<h1>Privacybeleid</h1>') || !privacy.includes('Jouw rechten') || !privacy.includes('Cookies, lokale opslag en analyse')) {
+  failures.push('The public privacy policy must include its main heading, data-subject rights, and storage/analytics disclosure.');
 }
 if (!adminBlogs.includes('id="btnFullPreview"') || !adminBlogs.includes('id="hnDraftPreviewContent"') || !adminBlogs.includes('/assets/hn-article-draft-preview.js')) {
   failures.push('Admin article editor must expose the full unsaved article preview.');
