@@ -26,9 +26,38 @@
     return;
   }
 
+  let validatedUrl;
+  try {
+    const parsed = new URL(env.SUPABASE_URL);
+    const localHost = ['localhost', '127.0.0.1', '[::1]'].includes(parsed.hostname);
+    const localHttp = parsed.protocol === 'http:' && localHost;
+    if ((parsed.protocol !== 'https:' && !localHttp) || !parsed.hostname ||
+        parsed.username || parsed.password || parsed.search || parsed.hash ||
+        (parsed.pathname !== '' && parsed.pathname !== '/')) {
+      throw new Error('Gebruik een geldige HTTPS-basis-URL zonder pad of extra parameters.');
+    }
+    if (/^sb_secret_/i.test(env.SUPABASE_ANON_KEY)) {
+      throw new Error('Een secret-key mag nooit in de browser worden gebruikt.');
+    }
+    if (env.SUPABASE_ANON_KEY.includes('.')) {
+      const parts = env.SUPABASE_ANON_KEY.split('.');
+      if (parts.length !== 3) throw new Error('De publieke Supabase-key heeft een ongeldig JWT-formaat.');
+      let payload;
+      try { payload = JSON.parse(atob(parts[1].replace(/-/g, '+').replace(/_/g, '/'))); }
+      catch (_) { throw new Error('De publieke Supabase-key bevat een ongeldige JWT-payload.'); }
+      if (payload.role !== 'anon') throw new Error('Een service_role-key mag nooit in de browser worden gebruikt.');
+    } else if (!env.SUPABASE_ANON_KEY.startsWith('sb_publishable_')) {
+      throw new Error('Gebruik een publieke anon- of publishable-key.');
+    }
+    validatedUrl = parsed.origin;
+  } catch (error) {
+    configError('Supabase-configuratie ongeldig: ' + (error && error.message ? error.message : 'controle mislukt'));
+    return;
+  }
+
   try {
     const client = window.supabase.createClient(
-      env.SUPABASE_URL,
+      validatedUrl,
       env.SUPABASE_ANON_KEY,
       {
         auth: {
