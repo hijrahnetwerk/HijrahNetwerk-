@@ -41,6 +41,7 @@ function source(relative) {
 }
 const protection = source('copy-protection.js');
 const buildSource = source('build.js');
+const supabaseClientSource = source('supabase-client.js');
 const adminBlogs = source('admin-blogs.html');
 const adminDashboard = source('admin.html');
 const editor = source('assets/hn-publication-editor.js');
