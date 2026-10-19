@@ -97,6 +97,9 @@ if (!privacy.includes('<h1>Privacybeleid</h1>') || !privacy.includes('Jouw recht
 if (!registration.includes('De community gaat stap voor stap open') || !registration.includes('/#inschrijven')) {
   failures.push('Registration must remain closed and direct new users to the launch waitlist.');
 }
+if (/auth\.signUp|\bsignUp\s*\(/i.test(registration) || /<form\b/i.test(registration)) {
+  failures.push('Registration must not expose an account-creation form or call Supabase signUp while the community is closed.');
+}
 if (!myHijrah.includes('href="/#inschrijven">Aanmelden voor de wachtlijst</a>') || myHijrah.includes('href="/register">Account aanvragen')) {
   failures.push('The Mijn Hijrah logged-out CTA must point to the waitlist while registration is closed.');
 }
