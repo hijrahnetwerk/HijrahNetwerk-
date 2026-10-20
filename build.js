@@ -145,7 +145,7 @@ const backToTopStyleTag = '<link rel="stylesheet" href="/assets/hn-back-to-top.c
 const backToTopTag = '<script src="/assets/hn-back-to-top.js?v=20261014" defer></script>';
 const pageEngineTag = '<script src="/assets/hn-page-engine.js"></script>';
 const visualEditorTag = '<script src="/assets/hn-visual-editor-runtime.js?v=20261018-dragdrop"></script>';
-const visualPolishStyleTag = '<link rel="stylesheet" href="/assets/hn-visual-polish.css">';
+const visualPolishStyleTag = '<link rel="stylesheet" href="/assets/hn-visual-polish.css?v=20261020-unified-ui1">';
 const motionTag = '<script src="/assets/hn-motion.js"></script>';
 const copyProtectionTag = '<script src="/copy-protection.js?v=20261012-admin-only-copy2"></script>';
 const supabaseUmdUrl = '/assets/vendor/supabase-js-2.117.3.umd.js'; // zelf gehost: geen extern domein, wel jaar-lang cachebaar
