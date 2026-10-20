@@ -118,3 +118,12 @@ a:hover{color:var(--hn-orange)}
   html{scroll-behavior:auto}
   *,*:before,*:after{transition-duration:.01ms!important;animation-duration:.01ms!important;animation-iteration-count:1!important}
 }
+
+
+/* Semantic brand-color rules: contrast first, decoration second. */
+.soon{color:var(--hn-brown);border-color:rgba(198,161,91,.72);background:#fff}
+.lbs span.on{color:var(--hn-brown);text-decoration:underline;text-decoration-color:var(--hn-orange);text-decoration-thickness:2px;text-underline-offset:4px}
+.go{background:var(--hn-brown);color:#fff;border:1px solid var(--hn-brown);font-weight:750}
+.go:hover{background:var(--hn-brown-deep);color:#fff;border-color:var(--hn-brown-deep)}
+.go:focus-visible,.chip:focus-visible,.ph input:focus-visible+span{outline:3px solid var(--hn-gold);outline-offset:3px}
+.chip[aria-pressed=true]{background:var(--hn-brown);border-color:var(--hn-brown);color:#fff}
