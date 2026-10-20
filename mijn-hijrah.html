@@ -8,6 +8,8 @@
 <style>
 :root{--brown:#684a25;--brown-dark:#4d3819;--orange:#df842c;--gold:#e9a74b;--cream:#fbf8f4;--soft:#f5efe7;--line:#e3d8ca;--text:#302820;--muted:#756c61}
 *{box-sizing:border-box}body{margin:0;background:var(--cream);color:var(--text);font-family:Arial,sans-serif}.wrap{width:min(1050px,calc(100% - 32px));margin:auto;padding:55px 0 80px}.hero{text-align:center;max-width:760px;margin:0 auto 40px}.hero span{display:block;color:#a55e16;font-size:10px;font-weight:800;letter-spacing:.15em;text-transform:uppercase}.hero h1{margin:8px 0 12px;color:var(--brown-dark);font-size:clamp(32px,5vw,48px)}.hero p{margin:0;color:var(--muted);font-size:16px;line-height:1.7}.box{padding:24px;border:1px solid var(--line);border-radius:20px;background:#fff;box-shadow:0 14px 38px rgba(104,74,37,.05)}.box h2{margin:0 0 9px;color:var(--brown-dark);font-size:21px}.box p{margin:0;color:var(--muted);line-height:1.65;font-size:13px}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;margin-top:20px}.feature{padding:20px;border:1px solid var(--line);border-radius:16px;background:#fff}.icon{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:var(--soft);color:var(--brown);font-weight:900;margin-bottom:13px}.feature strong{display:block;color:var(--brown-dark);font-size:14px}.feature p{margin-top:6px;font-size:12px}.action{margin-top:24px;display:flex;justify-content:center;gap:10px;flex-wrap:wrap}.button{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:10px 17px;border-radius:10px;text-decoration:none;font-size:12px;font-weight:800}.primary{background:var(--orange);color:#fff}.secondary{background:#fff;color:var(--brown-dark);border:1px solid var(--line)}.status{margin-top:22px;padding:15px;border-radius:13px;background:#faf7f2;border:1px solid var(--line);text-align:center;color:var(--muted);font-size:12px}.status strong{color:var(--brown-dark)}@media(max-width:700px){.wrap{width:min(100% - 24px,1050px);padding:35px 0 55px}.grid{grid-template-columns:1fr}}
+@media(max-width:420px){.wrap{width:calc(100% - 24px);padding-top:28px}.box,.feature{padding:18px 15px}.action{flex-direction:column;align-items:stretch}.action .button{width:100%;min-height:46px}.hero{margin-bottom:26px}.hero p{font-size:15px;line-height:1.65}}
+
 </style>
 </head>
 <body>
@@ -63,8 +65,8 @@ async function init(){
   const session=data?.session||null;
 
   if(!session){
-    status.innerHTML='<strong>Nog geen HN-account?</strong> Je kunt de openbare uitleg bekijken en daarna een account aanvragen.';
-    actions.innerHTML='<a class="button primary" href="/register">Account aanvragen</a><a class="button secondary" href="/login">Inloggen</a>';
+    status.innerHTML='<strong>Nog geen HN-account?</strong> Je kunt de openbare uitleg bekijken en je aanmelden voor de wachtlijst.';
+    actions.innerHTML='<a class="button primary" href="/#inschrijven">Aanmelden voor de wachtlijst</a><a class="button secondary" href="/login">Inloggen</a>';
     return;
   }
 

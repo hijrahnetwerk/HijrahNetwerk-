@@ -25,12 +25,12 @@ jobs:
       - name: Build static site
         env:
           VITE_SUPABASE_URL: https://dejmckimvstfjeickplx.supabase.co
-          VITE_SUPABASE_ANON_KEY: ci-public-placeholder-not-a-secret
+          VITE_SUPABASE_ANON_KEY: sb_publishable_ci_placeholder_not_a_secret
           HN_SITE_URL: https://hijrah-netwerk.vercel.app
         run: npm run build
       - name: Run preflight checks
         env:
           VITE_SUPABASE_URL: https://dejmckimvstfjeickplx.supabase.co
-          VITE_SUPABASE_ANON_KEY: ci-public-placeholder-not-a-secret
+          VITE_SUPABASE_ANON_KEY: sb_publishable_ci_placeholder_not_a_secret
           HN_SITE_URL: https://hijrah-netwerk.vercel.app
         run: npm test

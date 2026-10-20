@@ -46,6 +46,12 @@ const adminBlogs = source('admin-blogs.html');
 const adminDashboard = source('admin.html');
 const editor = source('assets/hn-publication-editor.js');
 const article = source('blog-artikel.html');
+const privacy = source('privacy.html');
+const registration = source('register.html');
+const myHijrah = source('mijn-hijrah.html');
+const footer = source('assets/hn-footer.js');
+const passport = source('paspoort.html');
+const authStyles = source('auth-style.css');
 const articlePreview = source('assets/hn-article-draft-preview.js');
 const vercel = JSON.parse(source('vercel.json'));
 if (!buildSource.includes('function validateSupabaseUrl') ||
@@ -82,6 +88,54 @@ if (!article.includes('renderArticleBlocks(b.content_blocks,b.content)') || !art
 if (!article.includes("db.rpc('hn_public_blog_member_teaser'") || article.includes("from('blog_member_teasers')")) {
   failures.push('Member article previews must use the restricted teaser RPC rather than a SECURITY DEFINER view.');
 }
+if (!vercel.rewrites?.some((rule) => rule.source === '/privacy' && rule.destination === '/privacy.html')) {
+  failures.push('The public /privacy route must resolve to privacy.html.');
+}
+if (!privacy.includes('<h1>Privacybeleid</h1>') || !privacy.includes('Jouw rechten') || !privacy.includes('Cookies, lokale opslag en analyse')) {
+  failures.push('The public privacy policy must include its main heading, data-subject rights, and storage/analytics disclosure.');
+}
+if (!registration.includes('De community gaat stap voor stap open') || !registration.includes('/#inschrijven')) {
+  failures.push('Registration must remain closed and direct new users to the launch waitlist.');
+}
+if (/auth\.signUp|\bsignUp\s*\(/i.test(registration) || /<form\b/i.test(registration)) {
+  failures.push('Registration must not expose an account-creation form or call Supabase signUp while the community is closed.');
+}
+if (!myHijrah.includes('href="/#inschrijven">Aanmelden voor de wachtlijst</a>') || myHijrah.includes('href="/register">Account aanvragen')) {
+  failures.push('The Mijn Hijrah logged-out CTA must point to the waitlist while registration is closed.');
+}
+if (!footer.includes('href="/#inschrijven">Wachtlijst voor de community</a>') || footer.includes('href="/register">Aanmelden</a>')) {
+  failures.push('The public footer must not imply that community account registration is open.');
+}
+if (!passport.includes('.bk{grid-template-columns:minmax(0,1fr)}') || !passport.includes('@media(max-width:380px)') || !passport.includes('.stp svg{width:min(100%,96px);height:auto}')) {
+  failures.push('HN Paspoort must include narrow-screen layout rules for page cards and stamps.');
+}
+if (!authStyles.includes('linear-gradient(135deg,var(--brown),var(--orange))') || !authStyles.includes('@media(max-width:360px)')) {
+  failures.push('Authentication pages must keep the brand mark valid and include narrow-screen styles.');
+}
+if (!myHijrah.includes('@media(max-width:420px)') || !myHijrah.includes('.action .button{width:100%;min-height:46px}')) {
+  failures.push('Mijn Hijrah action buttons must remain touch-friendly on narrow screens.');
+}
+const mobilePolish = source('assets/hn-mobile-polish.css');
+if (!mobilePolish.includes('.layout:has(> .sidebar)') ||
+    !mobilePolish.includes('.builder-layout .page-panel') ||
+    !mobilePolish.includes('@media (max-width: 380px)') ||
+    !mobilePolish.includes('env(safe-area-inset-bottom')) {
+  failures.push('Global mobile hardening must cover legacy admin layouts, the page builder, narrow phones, and safe-area insets.');
+}
+if (!mobilePolish.includes('body .layout:has(') ||
+    !mobilePolish.includes('.sidebar) > .sidebar') ||
+    !mobilePolish.includes('.sidebar) > .main') ||
+    !mobilePolish.includes('body .shell:has(') ||
+    !mobilePolish.includes('.side) > .side') ||
+    !mobilePolish.includes('.side) > main') ||
+    !mobilePolish.includes('.sidebar) .cards') ||
+    !mobilePolish.includes('.side) .cards')) {
+  failures.push('Legacy admin dashboard and workspace must explicitly collapse their own flex shells and card grids on mobile without affecting unrelated layouts.');
+}
+if (!buildSource.includes("const mobilePolishTag = '<link rel=\"stylesheet\" href=\"/assets/hn-mobile-polish.css\">';") ||
+    !buildSource.includes("!html.includes('/assets/hn-mobile-polish.css') ? mobilePolishTag : ''")) {
+  failures.push('Build must inject one cache-hashed mobile stylesheet per page without duplicate stale-version links.');
+}
 if (!adminBlogs.includes('id="btnFullPreview"') || !adminBlogs.includes('id="hnDraftPreviewContent"') || !adminBlogs.includes('/assets/hn-article-draft-preview.js')) {
   failures.push('Admin article editor must expose the full unsaved article preview.');
 }
@@ -99,6 +153,9 @@ if (vercel.git?.deploymentEnabled?.['fix/admin-verhalen-editor-ux-20261012'] !==
 }
 if (vercel.git?.deploymentEnabled?.['fix/pagespeed-security-a11y-20261013'] !== false) {
   failures.push('Vercel preview deployments must remain disabled for the PageSpeed/security/accessibility work branch.');
+}
+if (vercel.git?.deploymentEnabled?.['fix/supabase-migration-history-20261019'] !== false) {
+  failures.push('Vercel preview deployments must remain disabled for the Supabase migration-history/privacy fix branch.');
 }
 if (vercel.git?.deploymentEnabled?.['fix/site-audit-20261019'] !== false) {
   failures.push('Vercel preview deployments must remain disabled for the site audit fix branch.');

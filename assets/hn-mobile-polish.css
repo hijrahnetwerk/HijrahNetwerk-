@@ -164,3 +164,207 @@ body:has(#hn-admin-bar) { padding-bottom: calc(96px + env(safe-area-inset-bottom
   html { scroll-behavior: auto; }
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .001ms !important; transition-duration: .001ms !important; }
 }
+
+
+/* Additional mobile hardening: older layouts, admin tools, safe areas and dense controls. */
+:where(.hn-footer-grid, .footer-grid, .footer-columns) {
+  min-width: 0;
+}
+@media (max-width: 1100px) {
+  :where(.builder-layout) {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+  :where(.builder-layout .page-panel, .builder-layout .inspector) {
+    position: static;
+    inset: auto;
+    width: 100%;
+    height: auto;
+    max-height: 34vh;
+    overflow: auto;
+    border: 0;
+    border-bottom: 1px solid #C6A15B;
+  }
+  :where(.builder-layout .inspector) {
+    border-top: 1px solid #C6A15B;
+    border-bottom: 0;
+  }
+  :where(.builder-layout .canvas-panel) { min-width: 0; width: 100%; }
+  :where(.builder-layout .canvas-toolbar, .builder-head, .builder-head .head-title, .builder-head .head-actions) {
+    min-width: 0;
+    flex-wrap: wrap;
+    height: auto;
+  }
+  :where(.builder-layout .canvas-toolbar) { position: static; }
+  :where(.builder-layout #liveFrameWrap, .builder-layout #liveFrameWrap iframe) {
+    max-width: 100%;
+    width: 100%;
+  }
+}
+@media (max-width: 900px) {
+  /* The legacy admin dashboard uses .layout > .sidebar, not the newer admin-* names. */
+  .layout:has(> .sidebar) {
+    display: block;
+    min-height: 100dvh;
+  }
+  .layout:has(> .sidebar) > .sidebar {
+    position: static;
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    padding: 16px 14px;
+  }
+  .layout:has(> .sidebar) > .main {
+    width: 100%;
+    min-width: 0;
+  }
+  .layout:has(> .sidebar) .topbar {
+    height: auto;
+    min-height: 60px;
+    padding: 12px 16px;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .layout:has(> .sidebar) .content {
+    width: 100%;
+    padding: 16px 12px;
+  }
+  .layout:has(> .sidebar) .cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .layout:has(> .sidebar) .panel {
+    min-width: 0;
+    padding: 14px;
+    overflow-wrap: anywhere;
+  }
+  .shell:has(> .side) {
+    display: block;
+    min-height: 100dvh;
+  }
+  .shell:has(> .side) > .side {
+    width: 100%;
+    max-width: 100%;
+    padding: 16px 12px;
+  }
+  .shell:has(> .side) > main {
+    width: 100%;
+    min-width: 0;
+  }
+  .shell:has(> .side) .top {
+    height: auto;
+    min-height: 60px;
+    padding: 12px 16px;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .shell:has(> .side) .content {
+    width: 100%;
+    padding: 16px 12px;
+  }
+  .shell:has(> .side) .cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 700px) {
+  :where(.hn-footer-grid, .footer-grid, .footer-columns) {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 20px 14px;
+  }
+  :where(.hn-footer-brand-row) {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 14px;
+  }
+  :where(.hn-footer-bottom) {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 10px;
+    overflow-wrap: anywhere;
+  }
+  :where(.nav, .topbar, .top, .page-header, .builder-top, .builder-head) {
+    gap: 10px;
+  }
+  :where(.nav nav, .navlinks, .nav-links) {
+    max-width: 100%;
+    flex-wrap: wrap;
+  }
+  :where(.layout:has(> .sidebar) .cards, .shell:has(> .side) .cards) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  :where(.layout:has(> .sidebar) .form-grid, .shell:has(> .side) .form) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  :where(.layout:has(> .sidebar) .form-actions, .layout:has(> .sidebar) .panel-header) {
+    align-items: stretch;
+    flex-wrap: wrap;
+  }
+  :where(.layout:has(> .sidebar) .form-actions > *, .layout:has(> .sidebar) .panel-header > *) {
+    max-width: 100%;
+  }
+  :where(.layout:has(> .sidebar) table, .shell:has(> .side) table) {
+    min-width: 640px;
+  }
+  :where(.layout:has(> .sidebar) .table-wrap, .shell:has(> .side) .table-wrap) {
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  :where(.nav-item .section-head, .panel-header, .editorbar) {
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+  :where(.nav-item .nav-actions, .actions, .form-actions) {
+    flex-wrap: wrap;
+  }
+}
+@media (max-width: 380px) {
+  :where(.hn-footer-grid, .footer-grid, .footer-columns) {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+  .layout:has(> .sidebar) .cards,
+  .shell:has(> .side) .cards {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  :where(.panel, .card, .box, .feature) {
+    padding-inline: 12px;
+  }
+  :where(.btn, .button, .nav-button, .hn-mobile-link) {
+    overflow-wrap: anywhere;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hn-footer-deco, .hero::before, .hero::after { animation: none !important; }
+}
+
+/* Ensure only the legacy admin shells collapse to one column on tablets and phones. */
+@media (max-width: 900px) {
+  body .layout:has(> .sidebar) {
+    display: block !important;
+    min-height: 100dvh;
+  }
+  body .layout:has(> .sidebar) > .sidebar {
+    position: static !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+  }
+  body .layout:has(> .sidebar) > .main,
+  body .shell:has(> .side) > main {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+  body .shell:has(> .side) {
+    display: block !important;
+    min-height: 100dvh;
+  }
+  body .shell:has(> .side) > .side {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+  }
+}
+@media (max-width: 700px) {
+  body .layout:has(> .sidebar) .cards,
+  body .shell:has(> .side) .cards {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+}
