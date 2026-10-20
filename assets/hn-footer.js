@@ -169,23 +169,14 @@
       svg.style.cssText = 'position:absolute;right:0;top:50%;transform:translateY(-50%);width:52%;height:auto;pointer-events:none;opacity:.14';
       svg.setAttribute('aria-hidden', 'true');
       svg.innerHTML = `
-        <path d="M10,280 C120,220 200,120 320,90 S520,60 690,30"
-              stroke="white" stroke-width="1.5" stroke-dasharray="6 9" fill="none"
+        <path d="M12,272 C118,218 204,137 326,100 S520,63 686,28"
+              stroke="#C6A15B" stroke-width="2" stroke-dasharray="5 8" fill="none"
               class="hn-plane-path"/>
-        <path d="M10,230 C100,180 190,100 300,75 S490,48 680,18"
-              stroke="white" stroke-width="1" stroke-dasharray="4 7" fill="none" opacity=".5"/>
-        <circle cx="10"  cy="280" r="5" fill="white" opacity=".5"/>
-        <circle cx="690" cy="30"  r="5" fill="white" opacity=".5"/>
-        <!-- Kompas -->
-        <circle cx="560" cy="170" r="62" stroke="white" stroke-width="1" opacity=".28"/>
-        <circle cx="560" cy="170" r="44" stroke="white" stroke-width=".7" opacity=".15"/>
-        <line x1="560" y1="112" x2="560" y2="228" stroke="white" stroke-width=".8" opacity=".25"/>
-        <line x1="502" y1="170" x2="618" y2="170" stroke="white" stroke-width=".8" opacity=".25"/>
-        <polygon points="560,115 556,165 564,165" fill="white" opacity=".45"/>
-        <text x="557" y="110" fill="white" font-size="10" opacity=".5" font-weight="700">N</text>
-        <!-- Vliegtuig -->
-        <g class="hn-plane-icon" transform="translate(690,30) rotate(-30)">
-          <polygon points="14,0 3,-3.5 -3,-12 -6,-12 -4,-3.5 -11,-2 -12,-4.5 -14,-4.5 -13,0 -14,4.5 -12,4.5 -11,2 -4,3.5 -6,12 -3,12 3,3.5" fill="#C6A15B" opacity=".9"/>
+        <path d="M12,238 C116,183 202,108 314,80 S500,49 674,16"
+              stroke="#DD842A" stroke-width="1.5" stroke-dasharray="3 8" fill="none" opacity=".8"/>
+        <!-- Vliegtuig als eindpunt van de reisroute; geen kompas of decoratieve cirkels. -->
+        <g class="hn-plane-icon" transform="translate(686,28) rotate(-30)">
+          <polygon points="14,0 3,-3.5 -3,-12 -6,-12 -4,-3.5 -11,-2 -12,-4.5 -14,-4.5 -13,0 -14,4.5 -12,4.5 -11,2 -4,3.5 -6,12 -3,12 3,3.5" fill="#DD842A"/>
         </g>
       `;
       hero.appendChild(svg);
@@ -289,7 +280,8 @@
     injectStripe();
     // Admin is an application workspace: keep its shell, but do not append the public footer.
     if (!/(^|\/)admin(?:-[^/]+)?\.html$/i.test(location.pathname)) injectFooter();
-    // Decorative flight paths, compasses and floating circles are intentionally disabled.
+    // Purposeful flight routes and a plane icon; no compass or decorative circles.
+    injectPlaneRoutes();
     initReveal();
     initFilterbar();
     initNav();
