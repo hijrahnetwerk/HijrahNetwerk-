@@ -29,52 +29,60 @@ details{border-top:1px solid rgba(103,76,46,.18);padding:1rem 0}details:last-of-
 <link rel="stylesheet" href="/assets/hn-public-refresh.css?v=4">
 
 <style id="hn-homepage-contrast-fix">
-/* Hijrah Netwerk homepage: purposeful section variation in the existing brand palette. */
+/* Homepage UI/UX: white canvas, brand-color sections only, readable contrast. */
 body{background:#FFFFFF;color:#674C2E}
-.pbar{background:#674C2E;color:#FFFFFF;border-bottom:1px solid #C6A15B}
+.pbar{background:#674C2E;color:#FFFFFF;border-bottom:1px solid rgba(198,161,91,.45)}
 .pbar .tr .ln{border-color:rgba(255,255,255,.4)}
-.pbar .tr .dn{background:#DD842A}
+.pbar .tr .dn{background:#C6A15B}
 .pbar .tr svg polygon{fill:#C6A15B}
 .pbar .cnt,.pbar .lbs{color:#FFFFFF}
 .pbar .lbs span.on{color:#FFFFFF;text-decoration-color:#C6A15B}
-.hero{background:#FFFFFF!important;background-image:none!important;color:#674C2E;border-bottom:1px solid rgba(198,161,91,.5)}
-.hero:before{content:none!important;display:none!important}
-.hero :where(h1,h2,h3,p,legend,.lead,.cue,.react,.soon){color:#674C2E}
-.soon{border:1px solid #C6A15B;background:#FFFFFF;color:#674C2E;padding:.4rem .8rem;border-radius:.45rem}
-#over-ons{background:#FFFFFF}
-.goldwash{background:rgba(198,161,91,.12)!important;color:#674C2E;border-top:1px solid rgba(198,161,91,.45);border-bottom:1px solid rgba(198,161,91,.45)}
-.mom{background:#FFFFFF;color:#674C2E}
-.card{background:#FFFFFF;color:#674C2E;border:1px solid #C6A15B;border-radius:1rem;box-shadow:0 8px 24px rgba(103,76,46,.08)}
+.hero{background:radial-gradient(ellipse at 88% 8%,rgba(198,161,91,.18),transparent 36%),radial-gradient(ellipse at 5% 94%,rgba(221,132,42,.08),transparent 32%),linear-gradient(135deg,#FFFFFF 0%,#FFFFFF 65%,rgba(198,161,91,.08) 100%);color:#674C2E}
+.hero :where(h1,h2,h3,p,legend,.lead,.cue,.react){color:#674C2E}
+section#over-ons{background:#FFFFFF}
+.goldwash{background:linear-gradient(125deg,rgba(198,161,91,.13),#FFFFFF 68%,rgba(221,132,42,.055))}
+.mom{background:linear-gradient(180deg,#FFFFFF,rgba(198,161,91,.045) 50%,#FFFFFF);color:#674C2E}
+.card{background:#FFFFFF;color:#674C2E;border-color:rgba(103,76,46,.2)}
 .card :where(h2,p,.hint,.react,.skip){color:#674C2E}
-.story{background:#674C2E!important;background-image:none!important;color:#FFFFFF;border-top:4px solid #C6A15B;border-bottom:4px solid #C6A15B}
+.story{background:radial-gradient(ellipse at 92% 8%,rgba(198,161,91,.22),transparent 42%),linear-gradient(120deg,#674C2E 0%,#674C2E 100%);color:#FFFFFF}
 .story :where(h1,h2,h3,p,li,a){color:#FFFFFF}
-main>section:not(.story):not(.goldwash):not(.fin){background:#FFFFFF}
-.fin{background:#674C2E!important;background-image:none!important;color:#FFFFFF;border-top:5px solid #DD842A}
+.fin{background:radial-gradient(ellipse at 8% 100%,rgba(198,161,91,.2),transparent 40%),linear-gradient(120deg,#674C2E 0%,#674C2E 68%,#674C2E 100%);color:#FFFFFF}
 .fin h2{color:#FFFFFF}
-.pass{background:#FFFFFF;color:#674C2E;border:1px solid #C6A15B;border-radius:1rem;box-shadow:none}
+.pass{background:#FFFFFF;color:#674C2E}
 .pass :where(h3,label,.rt,.rt div,.rt div span:first-child,.consent,.s,.s b){color:#674C2E}
-.pass .s{background:rgba(198,161,91,.14);border-color:#C6A15B}
-.go{background:#DD842A!important;background-image:none!important;color:#FFFFFF;border:1px solid #DD842A}
-.go:hover{background:#674C2E!important;background-image:none!important;color:#FFFFFF;border-color:#C6A15B}
-footer{background:#FFFFFF!important;background-image:none!important;color:#674C2E;border-top:1px solid #C6A15B}
+.pass .s{background:linear-gradient(145deg,rgba(198,161,91,.12),#FFFFFF);border-color:#C6A15B}
+.go{background:#DD842A;color:#FFFFFF;border:1px solid #DD842A}
+.go:hover{background:#674C2E;color:#FFFFFF;border-color:#674C2E}
+footer{background:linear-gradient(115deg,rgba(198,161,91,.14),#FFFFFF 68%,rgba(221,132,42,.06));color:#674C2E;border-top:1px solid rgba(198,161,91,.4)}
 footer :where(h2,h3,p,a,small,.small){color:#674C2E}
+/* Calm interactive states, using only the established brand palette. */
 .card,.ph span,.chip,.go,footer a,.logo,.pbar .lbs span{transition:background-color .2s ease,border-color .2s ease,color .2s ease,box-shadow .2s ease,transform .2s ease}
-.card:hover{border-color:#DD842A;box-shadow:0 10px 26px rgba(103,76,46,.12);transform:translateY(-2px)}
-.ph span{background:#FFFFFF;border:1px solid rgba(103,76,46,.35);color:#674C2E;border-radius:.65rem}
-.ph b,.ph i{color:#674C2E}
-.ph:hover span,.chip:hover{border-color:#DD842A;box-shadow:0 4px 14px rgba(198,161,91,.2)}
-.ph input:checked+span{background:#674C2E;border-color:#C6A15B;color:#FFFFFF}
-.ph input:checked+span :where(b,i){color:#FFFFFF}
-.chip{background:#FFFFFF;color:#674C2E;border-radius:.65rem;border-color:rgba(103,76,46,.35)}
-.chip[aria-pressed=true]{background:#674C2E;border-color:#674C2E;color:#FFFFFF}
-#base{stroke:#C6A15B;stroke-opacity:.8}
-#trail{stroke:#DD842A}
-#plane{fill:#DD842A}
-:where(input,button,a,summary):focus-visible{outline:3px solid #C6A15B;outline-offset:3px}
+.card:hover{border-color:#C6A15B;box-shadow:0 10px 26px rgba(103,76,46,.12);transform:translateY(-2px)}
+.ph span:hover,.chip:hover{border-color:#C6A15B;box-shadow:0 4px 14px rgba(198,161,91,.22)}
 footer a:hover{color:#DD842A;text-decoration-color:#C6A15B}
 .pbar .lbs span:hover{text-decoration:underline;text-decoration-color:#C6A15B;text-underline-offset:4px}
 @media(hover:none){.card:hover,.ph span:hover,.chip:hover{transform:none;box-shadow:none}}
+.ph input:checked+span{background:#674C2E;border-color:#674C2E;color:#FFFFFF}
+.ph input:checked+span :where(b,i){color:#FFFFFF}
+:where(input,button,a,summary):focus-visible{outline:3px solid #C6A15B;outline-offset:3px}
 @media(prefers-reduced-motion:reduce){.hero,.card,.ph span,.chip,.go{transition:none!important}}
+
+/* Strict HN palette and contrast guard: white, brown, gold and rust only. */
+.hero{background:radial-gradient(ellipse at 88% 8%,rgba(198,161,91,.18),transparent 36%),radial-gradient(ellipse at 5% 94%,rgba(221,132,42,.08),transparent 32%),linear-gradient(135deg,#FFFFFF,#FFFFFF 65%,rgba(198,161,91,.08));color:#674C2E}
+.hero :where(h1,h2,h3,p,legend,.lead,.cue,.react,.soon){color:#674C2E}
+.ph span{background:#FFFFFF;border-color:rgba(103,76,46,.35);color:#674C2E}
+.ph b,.ph i{color:#674C2E}
+.ph:hover span{background:linear-gradient(135deg,#FFFFFF,rgba(198,161,91,.12));border-color:#C6A15B}
+.ph input:checked+span{background:linear-gradient(135deg,#674C2E,#674C2E 72%,rgba(198,161,91,.35));border-color:#674C2E;color:#FFFFFF}
+.ph input:checked+span :where(b,i){color:#FFFFFF}
+#base{stroke:#C6A15B;stroke-opacity:.8}
+#trail{stroke:#DD842A}
+#plane{fill:#674C2E}
+.go{background:linear-gradient(120deg,#DD842A,#DD842A 70%,#C6A15B);color:#FFFFFF;border-color:#DD842A}
+.go:hover{background:linear-gradient(120deg,#674C2E,#674C2E 75%,#C6A15B);color:#FFFFFF;border-color:#674C2E}
+.pbar .tr .dn{background:#C6A15B}
+.pbar .tr svg polygon{fill:#674C2E}
+
 </style>
 <script src="/assets/hn-footer.js?v=1" defer></script>
 <script src="/assets/hn-motion.js?v=1" defer></script>
