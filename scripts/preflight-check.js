@@ -210,6 +210,19 @@ if (!(adminDashboard.indexOf('id="hn-admin-layout-final-overrides"') > adminDash
 for (const relative of ['blog-artikel.html', 'kennisbank.html']) {
   if (/Kopieer link|Link kopiëren/i.test(source(relative))) failures.push('Public copy-link control must be absent from ' + relative);
 }
+const unifiedUiCss = fs.readFileSync(path.join(root, 'assets/hn-visual-polish.css'), 'utf8');
+const builderUiCss = fs.readFileSync(path.join(root, 'assets/admin-builder.css'), 'utf8');
+const builderHtml = fs.readFileSync(path.join(root, 'admin-builder.html'), 'utf8');
+const buildScript = fs.readFileSync(path.join(root, 'build.js'), 'utf8');
+if (!unifiedUiCss.includes('HN Unified UI') || !unifiedUiCss.includes('--hn-focus') || !unifiedUiCss.includes('prefers-reduced-motion')) {
+  failures.push('Global HN design layer must retain branded design tokens, keyboard focus states and reduced-motion support.');
+}
+if (!builderUiCss.includes('HN Unified UI') || !builderUiCss.includes('#fbf8f3') || !builderHtml.includes('admin-builder.css?v=20261020-unified-ui1')) {
+  failures.push('HN page builder must use the unified branded admin styling with a cache-busted stylesheet.');
+}
+if (!buildScript.includes('hn-visual-polish.css?v=20261020-unified-ui1')) {
+  failures.push('Production build must cache-bust the unified sitewide design layer.');
+}
 console.log('HN preflight: ' + jsFiles.length + ' JavaScript files, ' + htmlFiles.length + ' HTML pages checked.');
 if (failures.length) { console.error(failures.join('\n\n')); process.exitCode = 1; }
 else console.log('HN preflight passed: no JavaScript syntax errors or missing static file references.');
