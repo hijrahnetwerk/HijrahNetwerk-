@@ -240,23 +240,28 @@ body:not(.hn-admin-page):not(.hn-home):not(.home-page) .hero :where(.eyebrow,.hn
   background:transparent;
   border-color:#D4AF37;
 }
+body:not(.hn-admin-page):not(.hn-home):not(.home-page) > section.section:nth-of-type(odd),
 body:not(.hn-admin-page):not(.hn-home):not(.home-page) main > .section:nth-of-type(odd),
 body:not(.hn-admin-page):not(.hn-home):not(.home-page) main > section.section:nth-of-type(odd){
   background:#FFFFFF;
   color:#674C2E;
 }
+body:not(.hn-admin-page):not(.hn-home):not(.home-page) > section.section:nth-of-type(even),
 body:not(.hn-admin-page):not(.hn-home):not(.home-page) main > .section:nth-of-type(even),
 body:not(.hn-admin-page):not(.hn-home):not(.home-page) main > section.section:nth-of-type(even){
   background:#674C2E;
   color:#FFFFFF;
   border-block:1px solid rgba(212,175,55,.55);
 }
+body:not(.hn-admin-page):not(.hn-home):not(.home-page) > section.section:nth-of-type(even) :where(h1,h2,h3,h4,h5,h6,p,li,strong,label,.section-head p),
 body:not(.hn-admin-page):not(.hn-home):not(.home-page) main > .section:nth-of-type(even) :where(h1,h2,h3,h4,h5,h6,p,li,strong,label,.section-head p){color:#FFFFFF}
+body:not(.hn-admin-page):not(.hn-home):not(.home-page) > section.section:nth-of-type(even) :where(.card,.list,.list-item,.table-wrap,.filter,.search-empty,.note,.panel),
 body:not(.hn-admin-page):not(.hn-home):not(.home-page) main > .section:nth-of-type(even) :where(.card,.list,.list-item,.table-wrap,.filter,.search-empty,.note,.panel){
   background:#FFFFFF;
   color:#674C2E;
   border-color:#D4AF37;
 }
+body:not(.hn-admin-page):not(.hn-home):not(.home-page) > section.section:nth-of-type(even) :where(.card,.list,.list-item,.table-wrap,.filter,.search-empty,.note,.panel) :where(h1,h2,h3,h4,h5,h6,p,li,strong,label,small,span),
 body:not(.hn-admin-page):not(.hn-home):not(.home-page) main > .section:nth-of-type(even) :where(.card,.list,.list-item,.table-wrap,.filter,.search-empty,.note,.panel) :where(h1,h2,h3,h4,h5,h6,p,li,strong,label,small,span){color:#674C2E}
 body:not(.hn-admin-page):not(.hn-home):not(.home-page) :where(.card,.country-card,.city,.topic-card,.result-card,.search-result,.article-card,.panel,.hn-card){
   border-color:rgba(212,175,55,.6);
@@ -282,6 +287,7 @@ body:not(.hn-admin-page):not(.hn-home):not(.home-page) :where(input,select,texta
   outline-offset:2px;
 }
 @media(max-width:700px){
+  body:not(.hn-admin-page):not(.hn-home):not(.home-page) > section.section:nth-of-type(even),
   body:not(.hn-admin-page):not(.hn-home):not(.home-page) main > .section:nth-of-type(even){padding-inline:0}
 }
 @media(prefers-reduced-motion:reduce){
