@@ -130,3 +130,21 @@ body{background:#FFFFFF;color:#674C2E}
 @media(max-width:760px){.admin-sidebar{box-shadow:12px 0 40px rgba(103,76,46,.2)!important}}
 /* Admin and builder statuses/icons may not introduce extra palette colors. */
 body:where(.hn-admin-page) :where(.success,.published,.draft,.warning,.error,.danger,.info){color:#674C2E}
+
+
+/* Shared admin surfaces beyond /admin-cms use the same fixed HN palette. */
+:where(.admin-header,.admin-topbar,.admin-content,.admin-panel,.admin-card,.admin-section,.admin-toolbar,.admin-table-wrap,.admin-modal,.admin-dialog,.admin-form,.admin-widget){
+  background-color:#FFFFFF!important;color:#674C2E!important;border-color:rgba(198,161,91,.65)!important;
+}
+:where(.admin-header,.admin-topbar,.admin-content,.admin-panel,.admin-card,.admin-section,.admin-toolbar,.admin-table-wrap,.admin-modal,.admin-dialog,.admin-form,.admin-widget) :where(h1,h2,h3,h4,p,small,label,th,td,strong,b){color:#674C2E!important}
+:where(.admin-nav,.admin-sidebar,.admin-menu,.admin-drawer){background:#674C2E!important;color:#FFFFFF!important;border-color:#C6A15B!important}
+:where(.admin-nav,.admin-sidebar,.admin-menu,.admin-drawer) :where(a,button,span,strong,small){color:#FFFFFF}
+:where(.admin-nav,.admin-sidebar,.admin-menu,.admin-drawer) :where(a:hover,button:hover,.active){background:#DD842A!important;color:#FFFFFF!important}
+:where(.admin-primary,.admin-save,.admin-submit,.admin-create,.admin-action-primary){background:#DD842A!important;color:#FFFFFF!important;border:1px solid #C6A15B!important}
+:where(.admin-secondary,.admin-cancel,.admin-action-secondary){background:#FFFFFF!important;color:#674C2E!important;border:1px solid #C6A15B!important}
+:where(.success,.published,.draft,.warning,.error,.danger,.info,.status-success,.status-warning,.status-error,.status-info,.badge-success,.badge-warning,.badge-danger,.badge-info){
+  background:#FFFFFF!important;color:#674C2E!important;border-color:#C6A15B!important;
+}
+:where(.success,.published,.status-success,.badge-success){border-left:4px solid #DD842A!important}
+:where(.warning,.draft,.status-warning,.badge-warning){border-left:4px solid #C6A15B!important}
+:where(.error,.danger,.status-error,.badge-danger){border-left:4px solid #674C2E!important}
