@@ -105,6 +105,22 @@ if (!privacy.includes("eq(\"key\", \"privacy_contact\")") ||
     !adminCmsScript.includes("upsert({ key: 'privacy_contact', value: value }")) {
   failures.push('Privacy contact details must be editable in HN Beheer and rendered from the public privacy_contact setting.');
 }
+// HN Beheercentrum: list-first, responsive, searchable admin experience; no embedded full-page previews.
+if (!adminCmsPage.includes('id="pageTableBody"') ||
+    !adminCmsPage.includes('id="pageSearch"') ||
+    !adminCmsPage.includes('data-status="published"') ||
+    !adminCmsPage.includes('id="pageSort"') ||
+    !adminCmsPage.includes('id="mobileMenu"') ||
+    adminCmsPage.includes('<iframe')) {
+  failures.push('HN Beheercentrum must use a responsive page list with search/status filters and no large iframe previews.');
+}
+if (!adminCmsScript.includes("function escapeHtml") ||
+    !adminCmsScript.includes("encodeURIComponent(slug)") ||
+    !adminCmsScript.includes("function render") ||
+    !adminCmsScript.includes("ctrlKey||e.metaKey") ||
+    !adminCmsScript.includes("upsert({ key: 'privacy_contact', value: value }")) {
+  failures.push('HN Beheercentrum must escape database content, support page-list interactions, and preserve privacy settings saving.');
+}
 if (!registration.includes('De community gaat stap voor stap open') || !registration.includes('/#inschrijven')) {
   failures.push('Registration must remain closed and direct new users to the launch waitlist.');
 }
