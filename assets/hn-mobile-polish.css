@@ -15,7 +15,7 @@ body {
   max-width: 100%;
   overflow-x: clip;
 }
-*, *::before, *::after { min-width: 0; }
+/* Avoid forcing min-width: 0 on every element; scope it to layout containers below. */
 img, video, iframe, canvas, svg { max-width: 100%; }
 pre, pre code { max-width: 100%; overflow-x: auto; }
 button, input, select, textarea { font: inherit; }
