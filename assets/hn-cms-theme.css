@@ -1,0 +1,132 @@
+/* Hijrah Netwerk unified brand theme.
+   Loaded on every page except index.html. Presentation only: routes and behavior remain unchanged. */
+:root{
+  --hn-brown:#674C2E;
+  --hn-rust:#DD842A;
+  --hn-gold:#C6A15B;
+  --hn-white:#FFFFFF;
+  --hn-ink:#674C2E;
+  --hn-muted:rgba(103,76,46,.78);
+  --hn-line:rgba(198,161,91,.58);
+  --hn-shadow:0 12px 32px rgba(103,76,46,.09);
+  --hn-bg:#FFFFFF;
+}
+html{scroll-behavior:smooth}
+body{background:#FFFFFF;color:#674C2E}
+:where(h1,h2,h3,h4,h5,h6,strong,b,legend){color:#674C2E}
+:where(p,li,small,label,figcaption,.muted,.description,.section-description,.lead){color:rgba(103,76,46,.88)}
+:where(hr,.hn-divider,.gold-divider){border-color:#C6A15B!important}
+:where(a,button,input,select,textarea,summary):focus-visible{outline:3px solid #C6A15B!important;outline-offset:3px}
+
+/* Public navigation: same compact, structured visual language as the HN management centre. */
+.hn-nav{background:#674C2E!important;color:#FFFFFF!important;border-bottom:2px solid #C6A15B!important;box-shadow:0 5px 20px rgba(103,76,46,.14)!important}
+.hn-nav :where(.hn-brand,.hn-links>a,.hn-more-trigger,.hn-account-trigger){color:#FFFFFF!important}
+.hn-nav .hn-mark{background:#FFFFFF!important;border:1px solid #C6A15B!important}
+.hn-nav :where(.hn-links>a:hover,.hn-more-trigger:hover,.hn-links>a.hn-active){background:#DD842A!important;color:#FFFFFF!important}
+.hn-nav .hn-links>a.hn-active{box-shadow:inset 0 -3px #C6A15B!important}
+.hn-nav :where(.hn-nav-special,.hn-action.primary,.hn-mobile-primary){background:#DD842A!important;background-image:none!important;color:#FFFFFF!important;border:1px solid #C6A15B!important}
+.hn-nav :where(.hn-action.secondary,.hn-account-trigger,.hn-menu){background:#674C2E!important;color:#FFFFFF!important;border:1px solid #C6A15B!important}
+.hn-nav .hn-menu span{background:#FFFFFF!important}
+.hn-nav .hn-avatar{background:#C6A15B!important;color:#674C2E!important}
+.hn-mobile-panel{background:#674C2E!important;border-left:2px solid #C6A15B!important}
+.hn-mobile :where(.hn-mobile-head,.hn-mobile-link,.hn-mobile-close){color:#FFFFFF!important}
+.hn-mobile-close{background:#674C2E!important;border-color:#C6A15B!important}
+.hn-mobile-link:hover,.hn-mobile-link.hn-active{background:#DD842A!important;color:#FFFFFF!important}
+.hn-mobile-divider{background:#C6A15B!important}
+.hn-more-menu,.hn-account-menu{background:#674C2E!important;border:1px solid #C6A15B!important}
+.hn-more-menu :where(a,button),.hn-account-menu :where(a,button){color:#FFFFFF!important}
+.hn-more-menu :where(a,button):hover,.hn-account-menu :where(a,button):hover{background:#DD842A!important;color:#FFFFFF!important}
+
+/* Page headers: HN brown with clear white type and a gold rule. */
+:where(.hn-hero,.hero,.page-hero,.hero-section){
+  background:#674C2E!important;
+  background-image:linear-gradient(135deg,#674C2E 0%,#674C2E 72%,#674C2E 100%)!important;
+  color:#FFFFFF!important;
+  border-bottom:2px solid #C6A15B!important;
+}
+:where(.hn-hero,.hero,.page-hero,.hero-section) :where(h1,h2,h3,h4,p,li,label,.eyebrow,.lead,.subtitle,.intro){color:#FFFFFF!important}
+:where(.hn-hero,.hero,.page-hero,.hero-section) :where(.eyebrow,.hn-label){background:#674C2E!important;color:#FFFFFF!important;border-color:#C6A15B!important}
+:where(.hn-hero,.hero,.page-hero,.hero-section) :where(h1,h2):after{content:"";display:block;width:3.5rem;height:3px;margin-top:.8rem;background:#C6A15B;border-radius:3px}
+:where(.hn-hero,.hero,.page-hero,.hero-section) :where(h1 span,h2 span,.hn-gold){color:#FFFFFF!important;text-decoration-color:#C6A15B!important}
+
+/* Consistent white workspace, brown typography, restrained gold edges and brand buttons. */
+:where(.section.soft,.hn-section.soft,.soft,.goldwash,.gold-wash){background:#FFFFFF!important;background-image:none!important}
+:where(.card,.country-card,.step,.note,.city,.topic-card,.result-card,.search-result,.fiche-card,.article-card,.panel,.hn-card,.feature-card,.highlight-card,.quote-card,.tool-card,.content-card){
+  background:#FFFFFF!important;background-image:none!important;color:#674C2E!important;border:1px solid rgba(198,161,91,.65)!important;box-shadow:0 4px 18px rgba(103,76,46,.06)
+}
+:where(.card,.country-card,.step,.note,.city,.topic-card,.result-card,.search-result,.fiche-card,.article-card,.panel,.hn-card,.feature-card,.highlight-card,.quote-card,.tool-card,.content-card) :where(h2,h3,h4,p,li,small,strong,label){color:#674C2E!important}
+:where(.card,.country-card,.step,.note,.city,.topic-card,.result-card,.search-result,.fiche-card,.article-card,.panel,.hn-card,.feature-card,.highlight-card,.quote-card,.tool-card,.content-card):hover{border-color:#C6A15B!important;box-shadow:0 10px 26px rgba(103,76,46,.11)}
+:where(.btn-primary,.button.primary,.nav-action.primary,.hn-action.primary,.hn-mobile-primary,.go,.cta-button,.primary-button,.btn-primary,.button-primary,.submit-button){
+  background:#DD842A!important;background-image:none!important;color:#FFFFFF!important;border:1px solid #C6A15B!important;box-shadow:0 4px 12px rgba(103,76,46,.12)
+}
+:where(.btn-primary,.button.primary,.nav-action.primary,.hn-action.primary,.hn-mobile-primary,.go,.cta-button,.primary-button,.button-primary,.submit-button):hover{background:#674C2E!important;background-image:none!important;color:#FFFFFF!important;border-color:#C6A15B!important}
+:where(.btn-secondary,.button.secondary,.nav-action.secondary,.hn-action.secondary,.secondary-button,.row-action,.pagination button){
+  background:#FFFFFF!important;color:#674C2E!important;border:1px solid #C6A15B!important
+}
+:where(.btn-secondary,.button.secondary,.nav-action.secondary,.hn-action.secondary,.secondary-button,.row-action,.pagination button):hover{background:#674C2E!important;color:#FFFFFF!important;border-color:#C6A15B!important}
+:where(.icon,.step-num,.check,.stat-symbol,.disclosure-icon){background:#674C2E!important;color:#FFFFFF!important;box-shadow:none!important}
+:where(.hn-divider,.gold-divider,hr){background-color:#C6A15B!important}
+:where(.filter-bar,.hn-filterbar){background:#FFFFFF!important;border-color:#C6A15B!important}
+:where(.filter-bar button.active,.hn-filterbar button.active,.filter-bar [aria-pressed="true"],.hn-filterbar [aria-pressed="true"],.hn-tab.active,.chip[aria-pressed="true"]){background:#674C2E!important;color:#FFFFFF!important;border-color:#C6A15B!important}
+:where(input,select,textarea,.input,.select){background:#FFFFFF!important;color:#674C2E!important;border-color:rgba(198,161,91,.85)!important}
+:where(input,select,textarea,.input,.select)::placeholder{color:rgba(103,76,46,.58)!important}
+:where(input,select,textarea,.input,.select):focus{border-color:#DD842A!important;box-shadow:0 0 0 3px rgba(198,161,91,.22)!important}
+:where(table){background:#FFFFFF!important;color:#674C2E!important}
+:where(th){background:#674C2E!important;color:#FFFFFF!important;border-color:#C6A15B!important}
+:where(td){color:#674C2E!important;border-color:rgba(198,161,91,.4)!important}
+:where(footer,.site-footer,.hn-footer){background:#FFFFFF!important;background-image:none!important;color:#674C2E!important;border-top:2px solid #C6A15B!important}
+:where(footer,.site-footer,.hn-footer) :where(h2,h3,p,a,small,li){color:#674C2E!important}
+:where(.cta,.cta-band,.quote-band,.story,.fin){background:#674C2E!important;background-image:none!important;color:#FFFFFF!important;border-top:2px solid #C6A15B!important;border-bottom:2px solid #C6A15B!important}
+:where(.cta,.cta-band,.quote-band,.story,.fin) :where(h2,h3,h4,p,li,a,small){color:#FFFFFF!important}
+:where(.status-pill.published,.status-pill.draft,.status-pill.other,.status-badge,.badge,.tag){background:#FFFFFF!important;color:#674C2E!important;border:1px solid #C6A15B!important}
+:where(.status-pill.published,.status-badge.success){border-left:4px solid #DD842A!important}
+:where(.status-pill.draft,.status-badge.warning){border-left:4px solid #C6A15B!important}
+:where(.status-dot,.published-dot,.draft-dot,.online-dot,.live-indicator span){background:#DD842A!important;box-shadow:none!important}
+
+/* Admin-CMS: preserve the dashboard structure and controls, recolor the complete workspace. */
+.admin-shell{background:#FFFFFF!important;color:#674C2E!important}
+.admin-sidebar{background:#674C2E!important;border-right:2px solid #C6A15B!important}
+.admin-sidebar :where(.brand,.brand strong,.brand small,.sidebar-label,.nav-link,.nav-icon,.sidebar-note,.sidebar-note strong,.sidebar-note small,.back-site){color:#FFFFFF!important}
+.admin-sidebar .brand-mark{background:#FFFFFF!important;color:#674C2E!important;border:1px solid #C6A15B!important;box-shadow:none!important}
+.admin-sidebar .sidebar-label{opacity:.82}
+.admin-sidebar .nav-link:hover,.admin-sidebar .nav-link.active{background:#DD842A!important;color:#FFFFFF!important}
+.admin-sidebar .nav-link.active:before{background:#C6A15B!important}
+.admin-sidebar .nav-icon,.admin-sidebar .nav-link.active .nav-icon{color:#FFFFFF!important}
+.admin-sidebar .nav-count{background:#674C2E!important;color:#FFFFFF!important;border:1px solid #C6A15B!important}
+.admin-sidebar .sidebar-note{background:#674C2E!important;border-color:#C6A15B!important}
+.admin-sidebar .online-dot{background:#DD842A!important}
+.admin-sidebar .back-site{border-color:#C6A15B!important}
+.admin-main,.page-content{background:#FFFFFF!important;color:#674C2E!important}
+.admin-main .topbar{background:#FFFFFF!important;border-bottom:1px solid #C6A15B!important}
+.admin-main :where(.breadcrumbs,.breadcrumbs strong,.crumb-sep,.live-indicator,.topbar-site-link){color:#674C2E!important}
+.admin-main :where(.welcome-row h1,.section-head h2,.stat-value,.stat-label,.stat-foot,.page-title-link,.page-slug,.pages-table td,.settings-disclosure summary strong,.settings-disclosure summary small,.disclosure-content>p,.settings-form label,.field-note,.admin-footer,.admin-footer a){color:#674C2E!important}
+.admin-main .eyebrow{color:#DD842A!important}
+.admin-main :where(.stat-card,.list-panel,.settings-disclosure,.tools-section){background:#FFFFFF!important;border:1px solid rgba(198,161,91,.65)!important;box-shadow:0 6px 22px rgba(103,76,46,.06)!important}
+.admin-main .stat-symbol{background:#674C2E!important;color:#FFFFFF!important;border:1px solid #C6A15B!important}
+.admin-main .primary-button{background:#DD842A!important;color:#FFFFFF!important;border:1px solid #C6A15B!important}
+.admin-main .primary-button:hover{background:#674C2E!important;color:#FFFFFF!important}
+.admin-main .secondary-button{background:#FFFFFF!important;color:#674C2E!important;border:1px solid #C6A15B!important}
+.admin-main .secondary-button:hover{background:#674C2E!important;color:#FFFFFF!important}
+.admin-main :where(.page-tabs,.list-footer,.pages-table thead th,.pages-table tbody td,.settings-disclosure summary,.disclosure-content){border-color:rgba(198,161,91,.48)!important}
+.admin-main .page-tab{color:#674C2E!important}
+.admin-main .page-tab.active{color:#674C2E!important}
+.admin-main .page-tab.active:after{background:#DD842A!important}
+.admin-main .page-tab span{background:#FFFFFF!important;color:#674C2E!important;border:1px solid #C6A15B!important}
+.admin-main .search-field,.admin-main .sort-field select,.admin-main .settings-form :where(input,textarea),.admin-main .general-settings textarea{background:#FFFFFF!important;color:#674C2E!important;border-color:#C6A15B!important}
+.admin-main .search-field :where(input,kbd,.sort-field){color:#674C2E!important}
+.admin-main .pages-table thead th{background:#674C2E!important;color:#FFFFFF!important;border-color:#C6A15B!important}
+.admin-main .pages-table tbody tr:hover{background:rgba(198,161,91,.10)!important}
+.admin-main .status-pill.published,.admin-main .status-pill.draft,.admin-main .status-pill.other{background:#FFFFFF!important;color:#674C2E!important;border-color:#C6A15B!important}
+.admin-main .status-pill.published:before,.admin-main .status-pill.draft:before,.admin-main .status-pill.other:before{background:#DD842A!important}
+.admin-main .row-action{background:#FFFFFF!important;color:#674C2E!important;border-color:#C6A15B!important}
+.admin-main .row-action.edit{background:#DD842A!important;color:#FFFFFF!important;border-color:#C6A15B!important}
+.admin-main .tool-icon{background:#674C2E!important;color:#FFFFFF!important;border:1px solid #C6A15B!important}
+.admin-main .settings-disclosure summary:hover{background:rgba(198,161,91,.10)!important}
+.admin-main .disclosure-icon{background:#674C2E!important;color:#FFFFFF!important}
+.admin-main .disclosure-content a,.admin-main .text-button{color:#DD842A!important}
+.admin-main .field-note{opacity:.82}
+.admin-main .admin-footer{border-color:#C6A15B!important}
+.admin-main .mobile-menu{background:#674C2E!important;color:#FFFFFF!important;border-color:#C6A15B!important}
+@media(max-width:760px){.admin-sidebar{box-shadow:12px 0 40px rgba(103,76,46,.2)!important}}
+/* Admin and builder statuses/icons may not introduce extra palette colors. */
+body:where(.hn-admin-page) :where(.success,.published,.draft,.warning,.error,.danger,.info){color:#674C2E}
