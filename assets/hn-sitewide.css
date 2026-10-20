@@ -89,3 +89,40 @@ body:has(#hnPublicNav) :where(.story,.quote-band,.hn-feature-band,.cta-band) :wh
 body:has(#hnPublicNav) :where(.feature-card,.highlight-card,.quote-card){background:linear-gradient(145deg,rgba(198,161,91,.12),#FFFFFF 72%);border-color:rgba(198,161,91,.45)}
 body:has(#hnPublicNav) footer{background:linear-gradient(115deg,rgba(198,161,91,.16),#FFFFFF 65%,rgba(221,132,42,.08));color:#674C2E;border-top:1px solid rgba(198,161,91,.45)}
 body:has(#hnPublicNav) footer :where(h2,h3,p,a,small){color:#674C2E}
+
+/* HN elevated public design: white canvas, layered white cards, gold detail, rust CTAs. */
+body:has(#hnPublicNav){background:#FFFFFF;color:#674C2E}
+body:has(#hnPublicNav) :where(.card,.country-card,.step,.note,.story,.city,.topic-card,.result-card,.search-result,.fiche-card,.article-card,.panel,.hn-card,.feature-card,.highlight-card,.quote-card){
+  background:#FFFFFF;
+  border:1px solid rgba(198,161,91,.48);
+  box-shadow:0 10px 28px rgba(103,76,46,.08),0 2px 6px rgba(103,76,46,.035);
+  border-radius:1rem;
+  transition:transform .22s ease,box-shadow .22s ease,border-color .22s ease;
+}
+@media(hover:hover){
+body:has(#hnPublicNav) :where(.card,.country-card,.step,.note,.story,.city,.topic-card,.result-card,.search-result,.fiche-card,.article-card,.panel,.hn-card,.feature-card,.highlight-card,.quote-card):hover{
+  transform:translateY(-3px);
+  border-color:#C6A15B;
+  box-shadow:0 16px 34px rgba(103,76,46,.12),0 0 0 1px rgba(198,161,91,.15);
+}
+}
+body:has(#hnPublicNav) :where(.icon,.step-num,.check){box-shadow:inset 0 -3px #C6A15B}
+body:has(#hnPublicNav) :where(.btn-primary,.nav-action.primary,.hn-action.primary,.hn-mobile-primary,.go){
+  background:linear-gradient(120deg,#DD842A 0%,#DD842A 76%,#C6A15B 150%);
+  color:#FFFFFF;border-color:#DD842A;
+  box-shadow:0 5px 14px rgba(221,132,42,.18);
+  transition:transform .18s ease,box-shadow .18s ease,background .18s ease;
+}
+body:has(#hnPublicNav) :where(.btn-primary,.nav-action.primary,.hn-action.primary,.hn-mobile-primary,.go):hover{
+  background:linear-gradient(120deg,#674C2E 0%,#674C2E 78%,#C6A15B 150%);
+  color:#FFFFFF;border-color:#674C2E;transform:translateY(-1px);
+  box-shadow:0 8px 18px rgba(103,76,46,.2);
+}
+body:has(#hnPublicNav) :where(.btn-secondary,.nav-action.secondary,.hn-action.secondary,.btn-soft){
+  background:#FFFFFF;color:#674C2E;border-color:rgba(198,161,91,.8);
+}
+body:has(#hnPublicNav) :where(.btn-secondary,.nav-action.secondary,.hn-action.secondary,.btn-soft):hover{
+  background:linear-gradient(120deg,#FFFFFF,rgba(198,161,91,.14));border-color:#C6A15B;color:#674C2E;
+}
+body:has(#hnPublicNav) :where(.hn-divider,.gold-divider){background:linear-gradient(90deg,transparent,#C6A15B,#DD842A,#C6A15B,transparent);opacity:.85}
+@media(prefers-reduced-motion:reduce){body:has(#hnPublicNav) :where(.card,.country-card,.step,.note,.story,.city,.topic-card,.result-card,.search-result,.fiche-card,.article-card,.panel,.hn-card,.feature-card,.highlight-card,.quote-card,.btn-primary,.nav-action.primary,.hn-action.primary,.hn-mobile-primary,.go){transition:none!important;transform:none!important}}
