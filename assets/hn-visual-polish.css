@@ -25,3 +25,34 @@ input:focus,select:focus,textarea:focus{border-color:var(--hn-rust)!important;bo
 .sidebar{box-shadow:8px 0 28px rgba(103,76,46,.1)}.nav-button{border-radius:12px!important}.nav-button:hover,.nav-button.active{background:rgba(255,255,255,.14)!important;transform:translateX(3px)}.topbar{box-shadow:0 4px 18px rgba(103,76,46,.05);position:sticky;top:0;z-index:30}.content{max-width:1500px;margin:0 auto}
 @media(max-width:700px){.hn-builder{padding:12px}.hn-builder .builder-top{padding:17px;border-radius:17px;align-items:flex-start}.hn-builder .builder-top .button{width:100%}.hn-builder .panel{border-radius:17px}.hn-builder #items>*{padding:12px}.content{padding:14px!important}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.hn-reveal,.hn-stagger>*{transition:none!important;transform:none!important}.card,.panel,.button,button{transition:none!important}}
+
+/* HN Unified UI — consistent surfaces, controls and spacing across public pages and dashboards. */
+:root{
+  --hn-surface:#fff;--hn-surface-soft:#fbf8f3;--hn-ink:#4d3926;--hn-muted:#766b60;
+  --hn-line:rgba(103,76,46,.16);--hn-line-strong:rgba(103,76,46,.25);
+  --hn-shadow-soft:0 8px 24px rgba(66,45,25,.06);--hn-shadow-raised:0 14px 34px rgba(66,45,25,.10);
+  --hn-focus:0 0 0 3px rgba(221,132,42,.18);
+}
+:where(button,input,select,textarea){font:inherit}
+:where(button,.btn,.button,[role="button"]){min-height:38px}
+:where(button,.btn,.button,a.button){font-weight:650}
+:where(input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),select,textarea){
+  max-width:100%;background-color:#fff;color:var(--hn-ink);border-color:var(--hn-line-strong)!important;
+}
+:where(input,select,textarea,button,a):focus-visible{outline:2px solid var(--hn-rust);outline-offset:2px}
+:where(input,select,textarea):focus{box-shadow:var(--hn-focus)!important}
+:where(table){border-collapse:separate;border-spacing:0;width:100%;border:1px solid var(--hn-line);border-radius:14px;overflow:hidden;background:#fff}
+:where(th){background:#f8f3eb;color:var(--hn-brown);font-weight:750;text-align:left}
+:where(th,td){padding:11px 13px;border-bottom:1px solid var(--hn-line)}
+:where(tr:last-child td){border-bottom:0}
+:where(hr){border:0;border-top:1px solid var(--hn-line)}
+:where(summary){cursor:pointer}
+:where(.notice,.alert,.message,.flash,.empty-state){border-radius:13px}
+:where(.status,.badge,.pill,.tag){border-radius:999px}
+:where(.card,.panel,.surface,.settings-card,.content-card,.stat-card,.metric-card,.list-card){border-color:var(--hn-line)}
+:where(.card,.surface,.settings-card,.content-card,.stat-card,.metric-card,.list-card){box-shadow:var(--hn-shadow-soft)}
+:where(.card,.surface,.settings-card,.content-card,.stat-card,.metric-card,.list-card):hover{box-shadow:var(--hn-shadow-raised)}
+:where(h1,h2,h3,h4){text-wrap:balance}
+:where(p,li){text-wrap:pretty}
+@media(max-width:760px){:where(th,td){padding:9px 10px}:where(button,.btn,.button){max-width:100%}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
