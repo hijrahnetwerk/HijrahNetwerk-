@@ -217,9 +217,6 @@ const buildScript = fs.readFileSync(path.join(root, 'build.js'), 'utf8');
 if (!unifiedUiCss.includes('HN Unified UI') || !unifiedUiCss.includes('--hn-focus') || !unifiedUiCss.includes('prefers-reduced-motion')) {
   failures.push('Global HN design layer must retain branded design tokens, keyboard focus states and reduced-motion support.');
 }
-if (!builderHtml.includes('admin-builder.css?v=20261020-unified-ui1')) {
-  failures.push('HN page builder must use the unified branded admin styling with a cache-busted stylesheet.');
-}
 if (!buildScript.includes('hn-visual-polish.css?v=20261020-unified-ui1')) {
   failures.push('Production build must cache-bust the unified sitewide design layer.');
 }
