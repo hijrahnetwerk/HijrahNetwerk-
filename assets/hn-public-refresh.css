@@ -129,14 +129,15 @@ a:hover{color:var(--hn-orange)}
 .chip[aria-pressed=true]{background:var(--hn-brown);border-color:var(--hn-brown);color:#fff}
 
 
-/* Homepage art direction: warm ivory, clean white, and deep-brown feature bands. */
-.hero{background:linear-gradient(135deg,#FBF8F2 0%,#F2E9DA 58%,#F8F2E8 100%)}
+
+/* Homepage art direction: only existing HN brand colors; depth comes from gradients. */
+.hero{background:radial-gradient(ellipse at 88% 8%,rgba(198,161,91,.20),transparent 36%),radial-gradient(ellipse at 5% 94%,rgba(221,132,42,.10),transparent 32%),linear-gradient(125deg,rgba(198,161,91,.08),#FFFFFF 58%,rgba(103,76,46,.05))}
 #over-ons{background:#FFFFFF}
-.goldwash{background:linear-gradient(135deg,#F7F1E7 0%,#EFE3D0 100%)}
+.goldwash{background:linear-gradient(125deg,rgba(198,161,91,.16),#FFFFFF 70%,rgba(221,132,42,.07))}
 .mom{background:#FFFFFF}
-.story{background:linear-gradient(135deg,#674C2E 0%,#49301B 100%);color:#fff}
-.fin{background:linear-gradient(135deg,#49301B 0%,#674C2E 58%,#7B5731 100%)}
-footer{background:#F1E8D9;color:#49301B;border-top:1px solid rgba(198,161,91,.45)}
+.story{background:linear-gradient(120deg,#674C2E 0%,#49301B 100%);color:#FFFFFF}
+.fin{background:linear-gradient(120deg,#49301B 0%,#674C2E 58%,#DD842A 150%);color:#FFFFFF}
+footer{background:linear-gradient(115deg,rgba(198,161,91,.16),#FFFFFF 65%,rgba(221,132,42,.08));color:#49301B;border-top:1px solid rgba(198,161,91,.45)}
 footer :where(h2,p,a,.small){color:#49301B}
 .ph span{background:rgba(255,255,255,.88)}
 .card{background:#FFFFFF}
