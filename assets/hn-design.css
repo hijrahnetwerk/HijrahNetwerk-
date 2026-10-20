@@ -35,7 +35,8 @@ body {
   overflow-x: hidden;
 }
 a { color: inherit; text-decoration: none; }
-button, input, select, textarea { font: inherit; cursor: pointer; }
+button, input, select, textarea { font: inherit; }
+button, select, input[type="button"], input[type="submit"], input[type="reset"], input[type="checkbox"], input[type="radio"], input[type="range"] { cursor: pointer; }
 img { max-width: 100%; }
 .hn-wrap { width: min(var(--max), calc(100% - 32px)); margin-inline: auto; }
 
