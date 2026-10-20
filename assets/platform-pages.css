@@ -169,3 +169,36 @@ footer{padding:36px 0;border-top:1px solid rgba(103,76,46,.25);background:linear
 /* Real HN brand logo overrides the legacy text mark. */
 .hn-mark{background:#fff!important;overflow:hidden!important;}
 .hn-mark img{display:block!important;width:100%!important;height:100%!important;max-width:100%!important;max-height:100%!important;object-fit:contain!important;padding:3px!important;}
+
+/* Public frontend palette refinement — white canvas, restrained brand accents, readable contrast. */
+body:not(.hn-admin-page) .hero{
+  background:
+    radial-gradient(ellipse at 88% 8%,rgba(198,161,91,.12),transparent 34%),
+    radial-gradient(ellipse at 5% 95%,rgba(221,132,42,.07),transparent 30%),
+    #fff;
+  color:var(--hn-brown);
+  border-bottom:1px solid rgba(103,76,46,.14);
+}
+body:not(.hn-admin-page) .hero h1,
+body:not(.hn-admin-page) .hero h2,
+body:not(.hn-admin-page) .hero h3,
+body:not(.hn-admin-page) .hero p{color:var(--hn-brown)}
+body:not(.hn-admin-page) .hero h1 span{color:var(--hn-rust)}
+body:not(.hn-admin-page) .hero:after{border-color:rgba(198,161,91,.35);box-shadow:0 0 0 32px rgba(198,161,91,.05),0 0 0 64px rgba(198,161,91,.025)}
+body:not(.hn-admin-page) .eyebrow,
+body:not(.hn-admin-page) .hn-label{background:#fff;color:var(--hn-brown);border-color:rgba(198,161,91,.75)}
+body:not(.hn-admin-page) .section.soft{background:#fff}
+body:not(.hn-admin-page) .btn-primary,
+body:not(.hn-admin-page) .nav-action.primary,
+body:not(.hn-admin-page) .hn-action.primary{background:var(--hn-brown);color:#fff;border-color:var(--hn-brown);box-shadow:none}
+body:not(.hn-admin-page) .btn-primary:hover,
+body:not(.hn-admin-page) .nav-action.primary:hover,
+body:not(.hn-admin-page) .hn-action.primary:hover{background:#49301b;color:#fff;border-color:#49301b}
+body:not(.hn-admin-page) .btn-soft{background:#fff;color:var(--hn-brown);border-color:rgba(198,161,91,.8)}
+body:not(.hn-admin-page) .btn-soft:hover{background:#fff;border-color:var(--hn-rust);color:var(--hn-brown)}
+body:not(.hn-admin-page) .icon{background:var(--hn-brown);box-shadow:inset 0 -3px var(--hn-gold);color:#fff}
+body:not(.hn-admin-page) .check{background:var(--hn-brown);color:#fff}
+body:not(.hn-admin-page) .note{background:#fff;border-color:rgba(198,161,91,.65)}
+body:not(.hn-admin-page) footer{background:#fff}
+@media(prefers-reduced-motion:reduce){body:not(.hn-admin-page) .hero:after{display:none}}
+
