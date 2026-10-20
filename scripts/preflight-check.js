@@ -105,6 +105,15 @@ if (!privacy.includes("eq(\"key\", \"privacy_contact\")") ||
     !adminCmsScript.includes("upsert({ key: 'privacy_contact', value: value }")) {
   failures.push('Privacy contact details must be editable in HN Beheer and rendered from the public privacy_contact setting.');
 }
+// Navigation regression checks: custom HN Beheer and member surfaces must not receive a second global navigation.
+if (!buildSource.includes("file !== 'admin-cms.html'") ||
+    !buildSource.includes("!html.includes('/assets/hn-member-nav.js') && !html.includes('/assets/public-nav.js')")) {
+  failures.push('Custom admin and member layouts must not receive duplicate global navigation menus.');
+}
+if (adminCmsPage.includes('class="tools-section"') ||
+    adminCmsPage.includes('/assets/hn-footer.js')) {
+  failures.push('HN Beheer must not repeat sidebar links in a second tools menu or inject the public multi-column footer.');
+}
 // HN Beheercentrum: list-first, responsive, searchable admin experience; no embedded full-page previews.
 if (!adminCmsPage.includes('id="pageTableBody"') ||
     !adminCmsPage.includes('id="pageSearch"') ||
