@@ -47,6 +47,8 @@ const adminDashboard = source('admin.html');
 const editor = source('assets/hn-publication-editor.js');
 const article = source('blog-artikel.html');
 const privacy = source('privacy.html');
+const adminCmsPage = source('admin-cms.html');
+const adminCmsScript = source('assets/admin-cms.js');
 const registration = source('register.html');
 const myHijrah = source('mijn-hijrah.html');
 const footer = source('assets/hn-footer.js');
@@ -93,6 +95,15 @@ if (!vercel.rewrites?.some((rule) => rule.source === '/privacy' && rule.destinat
 }
 if (!privacy.includes('<h1>Privacybeleid</h1>') || !privacy.includes('Jouw rechten') || !privacy.includes('Cookies, lokale opslag en analyse')) {
   failures.push('The public privacy policy must include its main heading, data-subject rights, and storage/analytics disclosure.');
+}
+if (!privacy.includes("eq(\"key\", \"privacy_contact\")") ||
+    !privacy.includes("responsible_name") || !privacy.includes("privacy_email") ||
+    !adminCmsPage.includes('id="privacyResponsibleName"') ||
+    !adminCmsPage.includes('id="privacyEmail"') ||
+    !adminCmsPage.includes('id="privacyPostalAddress"') ||
+    !adminCmsPage.includes('id="savePrivacySettings"') ||
+    !adminCmsScript.includes("upsert({ key: 'privacy_contact', value: value }")) {
+  failures.push('Privacy contact details must be editable in HN Beheer and rendered from the public privacy_contact setting.');
 }
 if (!registration.includes('De community gaat stap voor stap open') || !registration.includes('/#inschrijven')) {
   failures.push('Registration must remain closed and direct new users to the launch waitlist.');
