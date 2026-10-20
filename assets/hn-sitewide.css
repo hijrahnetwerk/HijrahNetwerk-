@@ -166,6 +166,17 @@ body:has(#hnPublicNav) :where(.btn-secondary,.nav-action.secondary,.hn-action.se
 body:has(#hnPublicNav) :where(.icon,.step-num,.check){box-shadow:none}
 .hn-footer-deco,.hn-compass-deco{display:none!important}
 /* Flight-route decoration is intentionally allowed; compass and floating footer shapes stay hidden. */
+
+/* Section rhythm inspired by Riyadah: alternate clean white and subtle gold-tinted brand sections. */
+body:has(#hnPublicNav) main>section:nth-of-type(even){background:rgba(198,161,91,.11)!important;background-image:none!important}
+body:has(#hnPublicNav) main>section:nth-of-type(odd){background:#FFFFFF!important;background-image:none!important}
+body:has(#hnPublicNav) main>section:where(.story,.quote-band,.hn-feature-band,.cta-band){background:#674C2E!important;background-image:none!important;color:#FFFFFF!important;border-top:3px solid #C6A15B;border-bottom:3px solid #C6A15B}
+body:has(#hnPublicNav) main>section:where(.story,.quote-band,.hn-feature-band,.cta-band) :where(h1,h2,h3,h4,p,li,a,small){color:#FFFFFF!important}
+body:has(#hnPublicNav) main>section:where(.cta,.cta-section,.newsletter,.signup-section){background:#674C2E!important;background-image:none!important;color:#FFFFFF!important;border-top:4px solid #DD842A}
+body:has(#hnPublicNav) main>section:where(.cta,.cta-section,.newsletter,.signup-section) :where(h1,h2,h3,h4,p,li,a,small){color:#FFFFFF!important}
+body:has(#hnPublicNav) main>section :where(.card,.country-card,.step,.note,.city,.topic-card,.result-card,.search-result,.fiche-card,.article-card,.panel,.hn-card,.feature-card,.highlight-card,.quote-card){background:#FFFFFF!important;background-image:none!important;color:#674C2E!important;border-color:#C6A15B}
+@media(max-width:640px){body:has(#hnPublicNav) main>section{padding-block:clamp(2.5rem,8vw,3.5rem)}}
+
 .hn-plane-path{stroke-linecap:round}
 .hn-plane-icon{filter:none}
 .hn-overlay{background:rgba(103,76,46,.35);backdrop-filter:none;-webkit-backdrop-filter:none}
