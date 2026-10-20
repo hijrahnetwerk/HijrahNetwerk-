@@ -5,8 +5,8 @@
   --hn-paper-deep:#fff;
   --hn-white:#fff;
   --hn-brown:#674C2E;
-  --hn-brown-deep:#49301b;
-  --hn-ink:#49301b;
+  --hn-brown-deep:#674C2E;
+  --hn-ink:#674C2E;
   --hn-muted:#674C2E;
   --hn-gold:#c6a15b;
   --hn-orange:#dd842a;
@@ -135,9 +135,9 @@ a:hover{color:var(--hn-orange)}
 #over-ons{background:#FFFFFF}
 .goldwash{background:linear-gradient(125deg,rgba(198,161,91,.16),#FFFFFF 70%,rgba(221,132,42,.07))}
 .mom{background:#FFFFFF}
-.story{background:linear-gradient(120deg,#674C2E 0%,#49301B 100%);color:#FFFFFF}
-.fin{background:linear-gradient(120deg,#49301B 0%,#674C2E 58%,#DD842A 150%);color:#FFFFFF}
-footer{background:linear-gradient(115deg,rgba(198,161,91,.16),#FFFFFF 65%,rgba(221,132,42,.08));color:#49301B;border-top:1px solid rgba(198,161,91,.45)}
-footer :where(h2,p,a,.small){color:#49301B}
+.story{background:linear-gradient(120deg,#674C2E 0%,#674C2E 100%);color:#FFFFFF}
+.fin{background:linear-gradient(120deg,#674C2E 0%,#674C2E 58%,#DD842A 150%);color:#FFFFFF}
+footer{background:linear-gradient(115deg,rgba(198,161,91,.16),#FFFFFF 65%,rgba(221,132,42,.08));color:#674C2E;border-top:1px solid rgba(198,161,91,.45)}
+footer :where(h2,p,a,.small){color:#674C2E}
 .ph span{background:rgba(255,255,255,.88)}
 .card{background:#FFFFFF}
