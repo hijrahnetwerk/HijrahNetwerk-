@@ -5,7 +5,7 @@
 :root{
   --hn-brown:#674C2E;
   --hn-rust:#DD842A;
-  --hn-gold:#C6A15B;
+  --hn-gold:#D4AF37;
   --hn-white:#FFFFFF;
   --hn-max:1180px;
   --hn-radius:20px;
@@ -173,7 +173,7 @@ footer{padding:36px 0;border-top:1px solid rgba(103,76,46,.25);background:linear
 /* Public frontend palette refinement — white canvas, restrained brand accents, readable contrast. */
 body:not(.hn-admin-page) .hero{
   background:
-    radial-gradient(ellipse at 88% 8%,rgba(198,161,91,.12),transparent 34%),
+    radial-gradient(ellipse at 88% 8%,rgba(212,175,55,.12),transparent 34%),
     radial-gradient(ellipse at 5% 95%,rgba(221,132,42,.07),transparent 30%),
     #fff;
   color:var(--hn-brown);
@@ -184,9 +184,9 @@ body:not(.hn-admin-page) .hero h2,
 body:not(.hn-admin-page) .hero h3,
 body:not(.hn-admin-page) .hero p{color:var(--hn-brown)}
 body:not(.hn-admin-page) .hero h1 span{color:var(--hn-rust)}
-body:not(.hn-admin-page) .hero:after{border-color:rgba(198,161,91,.35);box-shadow:0 0 0 32px rgba(198,161,91,.05),0 0 0 64px rgba(198,161,91,.025)}
+body:not(.hn-admin-page) .hero:after{border-color:rgba(212,175,55,.35);box-shadow:0 0 0 32px rgba(212,175,55,.05),0 0 0 64px rgba(212,175,55,.025)}
 body:not(.hn-admin-page) .eyebrow,
-body:not(.hn-admin-page) .hn-label{background:#fff;color:var(--hn-brown);border-color:rgba(198,161,91,.75)}
+body:not(.hn-admin-page) .hn-label{background:#fff;color:var(--hn-brown);border-color:rgba(212,175,55,.75)}
 body:not(.hn-admin-page) .section.soft{background:#fff}
 body:not(.hn-admin-page) .btn-primary,
 body:not(.hn-admin-page) .nav-action.primary,
@@ -194,11 +194,96 @@ body:not(.hn-admin-page) .hn-action.primary{background:var(--hn-brown);color:#ff
 body:not(.hn-admin-page) .btn-primary:hover,
 body:not(.hn-admin-page) .nav-action.primary:hover,
 body:not(.hn-admin-page) .hn-action.primary:hover{background:#674C2E;color:#fff;border-color:#674C2E}
-body:not(.hn-admin-page) .btn-soft{background:#fff;color:var(--hn-brown);border-color:rgba(198,161,91,.8)}
+body:not(.hn-admin-page) .btn-soft{background:#fff;color:var(--hn-brown);border-color:rgba(212,175,55,.8)}
 body:not(.hn-admin-page) .btn-soft:hover{background:#fff;border-color:var(--hn-rust);color:var(--hn-brown)}
 body:not(.hn-admin-page) .icon{background:var(--hn-brown);box-shadow:inset 0 -3px var(--hn-gold);color:#fff}
 body:not(.hn-admin-page) .check{background:var(--hn-brown);color:#fff}
-body:not(.hn-admin-page) .note{background:#fff;border-color:rgba(198,161,91,.65)}
+body:not(.hn-admin-page) .note{background:#fff;border-color:rgba(212,175,55,.65)}
 body:not(.hn-admin-page) footer{background:#fff}
 @media(prefers-reduced-motion:reduce){body:not(.hn-admin-page) .hero:after{display:none}}
 
+
+
+/* HN page-by-page visual system — classic gold, alternating white/brown sections, crisp typography.
+   Public content pages only; deliberately does not restyle the footer or homepage. */
+:root{
+  --hn-gold:#D4AF37;
+  --hn-heading-font:Inter,Manrope,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --hn-body-font:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+body:not(.hn-admin-page):not(.hn-home):not(.home-page){
+  font-family:var(--hn-body-font);
+  color:#674C2E;
+  background:#FFFFFF;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+body:not(.hn-admin-page):not(.hn-home):not(.home-page) :where(h1,h2,h3,h4,h5,h6,.brand,.hn-brand,.nav-links a,.hn-links a,.section-head h2,.hero h1,.hero h2,.card h3,.card h4){
+  font-family:var(--hn-heading-font);
+  letter-spacing:-.025em;
+  text-wrap:balance;
+}
+body:not(.hn-admin-page):not(.hn-home):not(.home-page) :where(h1,h2){font-weight:750;line-height:1.1}
+body:not(.hn-admin-page):not(.hn-home):not(.home-page) :where(h3,h4,h5,h6){font-weight:700;line-height:1.25}
+body:not(.hn-admin-page):not(.hn-home):not(.home-page) :where(.eyebrow,.hn-label,.step-num,.meta-label,.overline){
+  font-family:"IBM Plex Mono","SFMono-Regular",Consolas,monospace;
+  letter-spacing:.055em;
+}
+body:not(.hn-admin-page):not(.hn-home):not(.home-page) .hero{
+  background:#674C2E;
+  color:#FFFFFF;
+  border-bottom:2px solid #D4AF37;
+}
+body:not(.hn-admin-page):not(.hn-home):not(.home-page) .hero :where(h1,h2,h3,h4,p,li,.lead){color:#FFFFFF}
+body:not(.hn-admin-page):not(.hn-home):not(.home-page) .hero :where(.eyebrow,.hn-eyebrow,.hn-label){
+  color:#D4AF37;
+  background:transparent;
+  border-color:#D4AF37;
+}
+body:not(.hn-admin-page):not(.hn-home):not(.home-page) main > .section:nth-of-type(odd),
+body:not(.hn-admin-page):not(.hn-home):not(.home-page) main > section.section:nth-of-type(odd){
+  background:#FFFFFF;
+  color:#674C2E;
+}
+body:not(.hn-admin-page):not(.hn-home):not(.home-page) main > .section:nth-of-type(even),
+body:not(.hn-admin-page):not(.hn-home):not(.home-page) main > section.section:nth-of-type(even){
+  background:#674C2E;
+  color:#FFFFFF;
+  border-block:1px solid rgba(212,175,55,.55);
+}
+body:not(.hn-admin-page):not(.hn-home):not(.home-page) main > .section:nth-of-type(even) :where(h1,h2,h3,h4,h5,h6,p,li,strong,label,.section-head p){color:#FFFFFF}
+body:not(.hn-admin-page):not(.hn-home):not(.home-page) main > .section:nth-of-type(even) :where(.card,.list,.list-item,.table-wrap,.filter,.search-empty,.note,.panel){
+  background:#FFFFFF;
+  color:#674C2E;
+  border-color:#D4AF37;
+}
+body:not(.hn-admin-page):not(.hn-home):not(.home-page) main > .section:nth-of-type(even) :where(.card,.list,.list-item,.table-wrap,.filter,.search-empty,.note,.panel) :where(h1,h2,h3,h4,h5,h6,p,li,strong,label,small,span){color:#674C2E}
+body:not(.hn-admin-page):not(.hn-home):not(.home-page) :where(.card,.country-card,.city,.topic-card,.result-card,.search-result,.article-card,.panel,.hn-card){
+  border-color:rgba(212,175,55,.6);
+}
+body:not(.hn-admin-page):not(.hn-home):not(.home-page) :where(.btn,.button,.nav-action,.hn-action,.btn-primary,.btn-secondary,.btn-soft){
+  background:#DD842A;
+  color:#FFFFFF;
+  border:1px solid #DD842A;
+  box-shadow:none;
+  font-family:var(--hn-body-font);
+  font-weight:700;
+}
+body:not(.hn-admin-page):not(.hn-home):not(.home-page) :where(.btn,.button,.nav-action,.hn-action,.btn-primary,.btn-secondary,.btn-soft):hover{
+  background:#674C2E;
+  color:#FFFFFF;
+  border-color:#D4AF37;
+}
+body:not(.hn-admin-page):not(.hn-home):not(.home-page) :where(.icon,.step-num,.check){
+  border-color:#D4AF37;
+}
+body:not(.hn-admin-page):not(.hn-home):not(.home-page) :where(input,select,textarea):focus-visible{
+  outline:3px solid #D4AF37;
+  outline-offset:2px;
+}
+@media(max-width:700px){
+  body:not(.hn-admin-page):not(.hn-home):not(.home-page) main > .section:nth-of-type(even){padding-inline:0}
+}
+@media(prefers-reduced-motion:reduce){
+  body:not(.hn-admin-page):not(.hn-home):not(.home-page) *{scroll-behavior:auto}
+}
