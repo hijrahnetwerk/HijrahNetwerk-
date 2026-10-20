@@ -28,11 +28,6 @@
     footer.id = 'hnFooter';
     footer.className = 'hn-footer';
     footer.innerHTML = `
-      <svg class="hn-footer-deco" viewBox="0 0 600 400" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <path d="M600,380 C500,340 400,200 300,160 S100,140 0,80" stroke="white" stroke-width="1.5" stroke-dasharray="6 10"/>
-        <circle cx="480" cy="200" r="70" stroke="white" opacity=".35"/>
-        <circle cx="480" cy="200" r="50" stroke="white" opacity=".2"/>
-      </svg>
       <div class="hn-wrap hn-footer-inner">
         <div class="hn-footer-brand-row">
           <a class="hn-footer-brand" href="/" aria-label="Hijrah Netwerk — home">
@@ -294,7 +289,7 @@
     injectStripe();
     // Admin is an application workspace: keep its shell, but do not append the public footer.
     if (!/(^|\/)admin(?:-[^/]+)?\.html$/i.test(location.pathname)) injectFooter();
-    injectPlaneRoutes();
+    // Decorative flight paths, compasses and floating circles are intentionally disabled.
     initReveal();
     initFilterbar();
     initNav();
