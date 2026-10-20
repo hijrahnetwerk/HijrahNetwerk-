@@ -197,6 +197,98 @@
     });
   }
 
+  /* ── APP-STYLE DRAWERS / MODALS (opt-in; normal links are never hijacked) ── */
+  function initOverlays() {
+    if (window.__hnOverlayInit) return;
+    window.__hnOverlayInit = true;
+    let active = null, returnFocus = null, previousOverflow = '';
+    function closeOverlay() {
+      if (!active) return;
+      const overlay = active;
+      overlay.classList.remove('is-open');
+      overlay.setAttribute('aria-hidden', 'true');
+      document.body.classList.remove('hn-overlay-open');
+      document.body.style.overflow = previousOverflow;
+      active = null;
+      window.setTimeout(() => {
+        if (overlay.parentNode) overlay.remove();
+        if (returnFocus && returnFocus.isConnected) returnFocus.focus({preventScroll:true});
+        returnFocus = null;
+      }, 240);
+    }
+    function openOverlay(trigger) {
+      const selector = trigger.getAttribute('data-hn-open');
+      if (!selector) return;
+      let source;
+      try { source = document.querySelector(selector); } catch (_) { return; }
+      if (!source || active) return;
+      const mode = trigger.getAttribute('data-hn-mode') === 'modal' || source.getAttribute('data-hn-panel') === 'modal' ? 'modal' : 'drawer';
+      returnFocus = trigger;
+      previousOverflow = document.body.style.overflow;
+      const overlay = document.createElement('div');
+      overlay.className = 'hn-overlay';
+      overlay.dataset.mode = mode;
+      overlay.setAttribute('aria-hidden', 'true');
+      const panel = document.createElement('section');
+      panel.className = 'hn-overlay-panel';
+      panel.setAttribute('role', 'dialog');
+      panel.setAttribute('aria-modal', 'true');
+      panel.setAttribute('tabindex', '-1');
+      const title = source.querySelector('[data-hn-panel-title],h1,h2,h3');
+      if (title) {
+        if (!title.id) title.id = 'hn-overlay-title-' + Math.random().toString(36).slice(2, 9);
+        panel.setAttribute('aria-labelledby', title.id);
+      } else {
+        panel.setAttribute('aria-label', mode === 'drawer' ? 'Zijpaneel' : 'Dialoogvenster');
+      }
+      const head = document.createElement('div');
+      head.className = 'hn-overlay-head';
+      const close = document.createElement('button');
+      close.type = 'button';
+      close.className = 'hn-overlay-close';
+      close.setAttribute('aria-label', 'Sluiten');
+      close.textContent = '×';
+      close.addEventListener('click', closeOverlay);
+      head.appendChild(close);
+      const content = document.createElement('div');
+      content.className = 'hn-overlay-content';
+      // Clone the marked content so opening a panel never detaches forms or app state.
+      const clone = source.cloneNode(true);
+      clone.removeAttribute('id');
+      clone.removeAttribute('hidden');
+      clone.querySelectorAll('[id]').forEach(el => el.removeAttribute('id'));
+      clone.querySelectorAll('[data-hn-open]').forEach(el => {
+        el.addEventListener('click', function () { openOverlay(el); });
+      });
+      content.appendChild(clone);
+      panel.append(head, content);
+      overlay.appendChild(panel);
+      overlay.addEventListener('click', event => { if (event.target === overlay) closeOverlay(); });
+      document.body.appendChild(overlay);
+      active = overlay;
+      document.body.classList.add('hn-overlay-open');
+      document.body.style.overflow = 'hidden';
+      overlay.setAttribute('aria-hidden', 'false');
+      requestAnimationFrame(() => {
+        overlay.classList.add('is-open');
+        close.focus({preventScroll:true});
+      });
+      panel.addEventListener('keydown', event => {
+        if (event.key !== 'Tab') return;
+        const items = panel.querySelectorAll('a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])');
+        if (!items.length) { event.preventDefault(); panel.focus(); return; }
+        const first = items[0], last = items[items.length - 1];
+        if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+        else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+      });
+    }
+    document.addEventListener('click', event => {
+      const trigger = event.target.closest('[data-hn-open]');
+      if (trigger) { event.preventDefault(); openOverlay(trigger); }
+    });
+    document.addEventListener('keydown', event => { if (event.key === 'Escape' && active) closeOverlay(); });
+  }
+
   /* ── INIT ── */
   function init() {
     if (/(^|\/)admin(?:-[^/]+)?\.html$/i.test(location.pathname)) document.body.classList.add('hn-admin-page');
@@ -207,6 +299,7 @@
     initReveal();
     initFilterbar();
     initNav();
+    initOverlays();
 
     // Herrun reveal na dynamisch geladen content
     const mutObs = new MutationObserver(queueReveal);
