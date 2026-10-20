@@ -42,3 +42,44 @@
 @media(min-width:1200px) and (max-width:1390px){.hn-nav-inner{gap:8px;padding-inline:12px}.hn-links>a,.hn-more-trigger{padding-inline:8px;font-size:12px}}
 @media(max-width:600px){.hn-nav-inner{padding:0 13px}.hn-brand{font-size:15px}.hn-mark{width:38px;height:38px}}
 @media(prefers-reduced-motion:reduce){.hn-mobile,.hn-mobile-panel{transition:none!important}}
+
+
+/* HN brand correction: brown navigation/header, white type, rust actions, gold detail. */
+.hn-nav{
+  background:#674C2E!important;
+  color:#FFFFFF!important;
+  border-bottom:2px solid #C6A15B!important;
+  box-shadow:0 5px 20px rgba(103,76,46,.16)!important;
+}
+.hn-nav :where(.hn-brand,.hn-links>a,.hn-more-trigger,.hn-account-trigger){color:#FFFFFF!important}
+.hn-nav .hn-mark{background:#FFFFFF;border:1px solid #C6A15B}
+.hn-nav .hn-links>a:hover,
+.hn-nav .hn-more-trigger:hover,
+.hn-nav .hn-links>a.hn-active{
+  background:#DD842A!important;color:#FFFFFF!important;
+}
+.hn-nav .hn-links>a.hn-active{box-shadow:inset 0 -3px #C6A15B!important}
+.hn-nav .hn-nav-special,
+.hn-nav .hn-action.primary,
+.hn-nav .hn-mobile-primary{
+  background:#DD842A!important;color:#FFFFFF!important;border:1px solid #C6A15B!important;
+}
+.hn-nav .hn-nav-special:hover,
+.hn-nav .hn-action.primary:hover,
+.hn-nav .hn-mobile-primary:hover{background:#674C2E!important;border-color:#C6A15B!important}
+.hn-nav .hn-action.secondary,
+.hn-nav .hn-account-trigger,
+.hn-nav .hn-menu{
+  background:#674C2E!important;color:#FFFFFF!important;border:1px solid #C6A15B!important;
+}
+.hn-nav .hn-avatar{background:#C6A15B!important;color:#674C2E!important}
+.hn-nav .hn-menu span{background:#FFFFFF!important}
+.hn-mobile-panel{background:#674C2E!important;border-left:2px solid #C6A15B}
+.hn-mobile-head,.hn-mobile-link,.hn-mobile-close{color:#FFFFFF!important}
+.hn-mobile-close{background:#674C2E!important;border-color:#C6A15B!important}
+.hn-mobile-link:hover,.hn-mobile-link.hn-active{background:#DD842A!important;color:#FFFFFF!important}
+.hn-mobile-divider{background:#C6A15B!important}
+.hn-more-menu,.hn-account-menu{background:#674C2E!important;border:1px solid #C6A15B!important}
+.hn-more-menu a,.hn-account-menu a,.hn-account-menu button{color:#FFFFFF!important}
+.hn-more-menu a:hover,.hn-account-menu a:hover,.hn-account-menu button:hover{background:#DD842A!important;color:#FFFFFF!important}
+.hn-nav :where(a,button):focus-visible,.hn-mobile :where(a,button):focus-visible{outline:3px solid #C6A15B!important;outline-offset:3px}
