@@ -193,7 +193,7 @@ body:not(.hn-admin-page) .nav-action.primary,
 body:not(.hn-admin-page) .hn-action.primary{background:var(--hn-brown);color:#fff;border-color:var(--hn-brown);box-shadow:none}
 body:not(.hn-admin-page) .btn-primary:hover,
 body:not(.hn-admin-page) .nav-action.primary:hover,
-body:not(.hn-admin-page) .hn-action.primary:hover{background:#49301b;color:#fff;border-color:#49301b}
+body:not(.hn-admin-page) .hn-action.primary:hover{background:#674C2E;color:#fff;border-color:#674C2E}
 body:not(.hn-admin-page) .btn-soft{background:#fff;color:var(--hn-brown);border-color:rgba(198,161,91,.8)}
 body:not(.hn-admin-page) .btn-soft:hover{background:#fff;border-color:var(--hn-rust);color:var(--hn-brown)}
 body:not(.hn-admin-page) .icon{background:var(--hn-brown);box-shadow:inset 0 -3px var(--hn-gold);color:#fff}
