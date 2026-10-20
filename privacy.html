@@ -39,9 +39,9 @@
     </div>
 
     <h2>1. Wie is verantwoordelijk?</h2>
-    <p id="privacy-controller">Hijrah Netwerk is een particulier initiatief dat vanuit Marokko wordt beheerd. De volledige naam van de natuurlijke persoon die verantwoordelijk is voor de verwerking wordt aangevuld zodra deze is bevestigd. Registratie blijft gesloten zolang de verantwoordelijke en het privacycontact nog niet zijn ingevuld.</p>
+    <p id="privacy-controller">Hijrah Netwerk is een particulier initiatief dat vanuit Marokko wordt beheerd. De identiteit van de verantwoordelijke wordt via HN Beheer aangevuld zodra deze is bevestigd.</p>
     <p id="privacy-address" hidden></p>
-    <p id="privacy-email-line">Het e-mailadres voor privacyvragen wordt aangevuld voordat registratie wordt geopend.</p>
+    <p id="privacy-email-line">Het e-mailadres voor privacyvragen wordt via HN Beheer aangevuld zodra het is bevestigd.</p>
     <p>Vermeld in je bericht duidelijk welke vraag of welk verzoek je hebt. Stuur geen wachtwoorden of onnodige gevoelige persoonsgegevens mee. Wanneer dat nodig is om een verzoek correct te behandelen, kunnen we om aanvullende informatie vragen om je identiteit te controleren.</p>
 
     <h2>2. Welke gegevens kunnen we verwerken?</h2>
@@ -92,49 +92,45 @@
 
     <div class="privacy-contact">
       <h2 style="margin-top:0">Privacyvraag?</h2>
-      <p id="privacy-contact-footer">Het e-mailadres voor privacyvragen wordt aangevuld voordat registratie wordt geopend.</p>
+      <p id="privacy-contact-footer">Het e-mailadres voor privacyvragen wordt via HN Beheer aangevuld zodra het is bevestigd.</p>
       <p>Stuur geen wachtwoorden, identiteitsdocumenten of andere gevoelige gegevens mee tenzij dat noodzakelijk is en je daarvoor een veilig kanaal hebt afgesproken.</p>
       <p><a href="/">Terug naar Hijrah Netwerk</a> · <a href="/hulp">Hulpcentrum</a> · <a href="/auteursrecht">Auteursrecht en gebruik</a></p>
     </div>
   </main>
+  <script src="/assets/config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/config.js"></script>
+  <script src="/supabase-client.js"></script>
   <script>
-    /*
-     * HIJRAH NETWERK — PRIVACYGEGEVENS
-     * Vul alleen deze waarden in wanneer ze bevestigd zijn.
-     * responsibleName: volledige naam van de natuurlijke persoon die werkelijk verantwoordelijk is.
-     * privacyEmail: bestaand e-mailadres dat je beheert en voor privacyverzoeken opvolgt.
-     * postalAddress: optioneel; vul alleen in na controle of publicatie ervan vereist/passend is.
-     * Verzin geen gegevens. Laat registratie gesloten totdat identiteit, contact en toepasselijke formaliteiten zijn gecontroleerd.
-     */
-    const HN_PRIVACY_DETAILS = {
-      responsibleName: "",
-      privacyEmail: "",
-      postalAddress: ""
-    };
-
-    const controller = document.getElementById("privacy-controller");
-    const address = document.getElementById("privacy-address");
-    const emailLine = document.getElementById("privacy-email-line");
-    const footer = document.getElementById("privacy-contact-footer");
-    const name = HN_PRIVACY_DETAILS.responsibleName.trim();
-    const email = HN_PRIVACY_DETAILS.privacyEmail.trim();
-    const postalAddress = HN_PRIVACY_DETAILS.postalAddress.trim();
-
-    if (name) {
-      controller.textContent = "De verwerkingsverantwoordelijke voor persoonsgegevens via Hijrah Netwerk is " + name + ". Hijrah Netwerk is een particulier initiatief dat vanuit Marokko wordt beheerd.";
-    }
-    if (postalAddress) {
-      address.hidden = false;
-      address.textContent = "Contactadres: " + postalAddress;
-    }
-    if (email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      const link = document.createElement("a");
-      link.href = "mailto:" + email;
-      link.textContent = email;
-      emailLine.replaceChildren(document.createTextNode("Voor privacyvragen of verzoeken kun je contact opnemen via "), link, document.createTextNode("."));
-      const footerLink = link.cloneNode(true);
-      footer.replaceChildren(document.createTextNode("Neem voor privacyvragen contact op via "), footerLink, document.createTextNode("."));
-    }
+    (async function () {
+      const controller = document.getElementById("privacy-controller");
+      const address = document.getElementById("privacy-address");
+      const emailLine = document.getElementById("privacy-email-line");
+      const footer = document.getElementById("privacy-contact-footer");
+      const db = window.hijrahSupabase;
+      if (!db) return;
+      const result = await db.from("hn_site_settings").select("value").eq("key", "privacy_contact").maybeSingle();
+      if (result.error || !result.data || !result.data.value) return;
+      const details = result.data.value;
+      const name = typeof details.responsible_name === "string" ? details.responsible_name.trim() : "";
+      const email = typeof details.privacy_email === "string" ? details.privacy_email.trim() : "";
+      const postalAddress = typeof details.postal_address === "string" ? details.postal_address.trim() : "";
+      if (name) controller.textContent = "De verwerkingsverantwoordelijke voor persoonsgegevens via Hijrah Netwerk is " + name + ". Hijrah Netwerk is een particulier initiatief dat vanuit Marokko wordt beheerd.";
+      if (postalAddress) {
+        address.hidden = false;
+        address.textContent = "Contactadres: " + postalAddress;
+      }
+      if (email && /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email)) {
+        const makeLink = function () {
+          const link = document.createElement("a");
+          link.href = "mailto:" + email;
+          link.textContent = email;
+          return link;
+        };
+        emailLine.replaceChildren(document.createTextNode("Voor privacyvragen of verzoeken kun je contact opnemen via "), makeLink(), document.createTextNode("."));
+        footer.replaceChildren(document.createTextNode("Neem voor privacyvragen contact op via "), makeLink(), document.createTextNode("."));
+      }
+    })();
   </script>
 </body>
 </html>
