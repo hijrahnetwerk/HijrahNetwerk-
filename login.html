@@ -3,74 +3,128 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex,nofollow">
   <title>Inloggen — Hijrah Netwerk</title>
-  <link rel="stylesheet" href="auth-style.css">
-
-<link rel="stylesheet" href="/assets/hn-sitewide.css?v=1">
-<script src="/assets/hn-footer.js?v=1" defer></script>
-<script src="/assets/hn-motion.js?v=1" defer></script>
+  <link rel="stylesheet" href="/auth-style.css">
+  <link rel="stylesheet" href="/assets/hn-sitewide.css">
+  <style>
+    .auth-page{width:100%;max-width:460px;margin:0 auto}
+    .back-link{display:inline-block;margin:0 0 20px;color:#674C2E;font-size:14px}
+    .auth-card{display:block;width:100%;max-width:460px;margin:0 auto;background:#fff;border:1px solid #ece5da;border-radius:22px;padding:clamp(22px,5vw,36px);box-shadow:0 8px 24px rgba(103,76,46,.08)}
+    .brand{display:flex;align-items:center;gap:10px;margin-bottom:24px;font-weight:800;color:#674C2E}
+    .brand-mark{display:grid;place-items:center;width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,#674C2E,#DD842A);color:#fff;font-weight:800}
+    h1{margin:0 0 8px;font-size:clamp(23px,5vw,28px);color:#674C2E}
+    .lead{margin:0 0 24px;color:#5c5346;font-size:14.5px;line-height:1.55}
+    .field{margin-bottom:16px}
+    .field label{display:block;margin-bottom:7px;font-size:13px;font-weight:700;color:#674C2E}
+    .field input{display:block;width:100%;min-height:46px;padding:12px 14px;border:1px solid #d8cec0;border-radius:10px;background:#fff;color:#2f2419;font:inherit}
+    .field input:focus{outline:2px solid rgba(221,132,42,.3);border-color:#DD842A}
+    .btn{display:flex;justify-content:center;align-items:center;width:100%;min-height:46px;border:0;border-radius:999px;background:#DD842A;color:#fff;font:700 15px inherit;cursor:pointer}
+    .btn:disabled{opacity:.65;cursor:wait}
+    .msg{display:none;margin:14px 0 0;padding:11px 13px;border-radius:10px;font-size:13px;line-height:1.5;overflow-wrap:anywhere}
+    .msg.error,.msg.success{display:block}
+    .msg.error{background:#fbebe9;color:#8e2f28}
+    .msg.success{background:#e9f5ee;color:#276749}
+    .auth-links{display:flex;flex-direction:column;gap:12px;margin-top:20px;text-align:center;font-size:13.5px;color:#5c5346}
+    .auth-links a{color:#9b5721;font-weight:700}
+    .hn-stripe{height:3px;margin:-24px -24px 26px}
+    @media(max-width:380px){body{padding:14px}.auth-card{padding:20px}.hn-stripe{margin:-20px -20px 22px}}
+  </style>
 </head>
 <body>
-<div class="hn-stripe" style="height:3px;background:linear-gradient(90deg,#674C2E,#DD842A,#D4AF37,#F0D060,#D4AF37,#DD842A,#674C2E);background-size:300% 100%;animation:hn-stripe 5s linear infinite"></div>
-  <div class="auth-page">
+  <main class="auth-page">
     <a href="/" class="back-link">← Terug naar de website</a>
-    <div class="auth-card">
-      <div class="auth-logo"><strong>HN</strong><span>Hijrah Netwerk</span></div>
-      <h1>Welkom terug</h1>
-      <p class="auth-intro">Log in op jouw Hijrah Netwerk-account.</p>
+    <section class="auth-card" aria-labelledby="login-title">
+      <div class="hn-stripe" aria-hidden="true" style="background:linear-gradient(90deg,#674C2E,#DD842A,#D4AF37,#F0D060,#D4AF37,#DD842A,#674C2E)"></div>
+      <div class="brand"><span class="brand-mark" aria-hidden="true">HN</span><span>Hijrah Netwerk</span></div>
+      <h1 id="login-title">Welkom terug</h1>
+      <p class="lead">Log in op jouw Hijrah Netwerk-account om verder te gaan naar HN Beheercentrum.</p>
+
+      <div id="login-message" class="msg" role="status" aria-live="polite"></div>
       <form id="login-form">
-        <div class="form-group">
+        <div class="field">
           <label for="email">E-mailadres</label>
-          <input type="email" id="email" name="email" autocomplete="email" required>
+          <input type="email" id="email" name="email" autocomplete="username" required>
         </div>
-        <div class="form-group">
+        <div class="field">
           <label for="password">Wachtwoord</label>
           <input type="password" id="password" name="password" autocomplete="current-password" required>
         </div>
-        <button type="submit" class="auth-button">Inloggen</button>
-        <p id="login-message" class="auth-message"></p>
+        <button type="submit" class="btn" id="login-submit">Inloggen</button>
       </form>
-      <p class="auth-forgot"><a href="/reset-password">Wachtwoord vergeten?</a></p>
-      <p class="auth-switch">Nog geen account? <a href="/register">Account aanmaken</a></p>
-    </div>
-  </div>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+      <nav class="auth-links" aria-label="Hulp bij inloggen">
+        <a href="/reset-password">Wachtwoord vergeten?</a>
+        <span>Nieuwe accountregistraties zijn momenteel gesloten. <a href="/#inschrijven">Bekijk de wachtlijst voor de lancering</a>.</span>
+      </nav>
+    </section>
+  </main>
+
+  <script src="/assets/vendor/supabase-js-2.117.3.umd.js"></script>
   <script src="/config.js"></script>
-  <script src="supabase-client.js"></script>
-  <script src="auth.js"></script>
-  <script type="module" src="assets/speed-insights-init.js"></script>
-  <script type="module" src="assets/analytics-init.js"></script>
+  <script src="/supabase-client.js"></script>
+  <script src="/auth.js"></script>
   <script>
-    (async function () {
-      const { data } = await hnGetSession();
-      if (data && data.session) window.location.href = (function(){var n=new URLSearchParams(location.search).get('next');return n&&/^\/(?![\/\\])/.test(n)?n:'/dashboard'})();
-    })();
-    const form = document.getElementById('login-form');
-    const message = document.getElementById('login-message');
-    form.addEventListener('submit', async (event) => {
-      event.preventDefault();
-      const email = document.getElementById('email').value.trim();
-      const password = document.getElementById('password').value;
-      message.textContent = 'Bezig met inloggen...';
-      message.className = 'auth-message';
-      try {
-        const { data, error } = await hnSignIn(email, password);
-        if (error) {
-          message.textContent = error.message || 'E-mailadres of wachtwoord is niet correct.';
-          message.className = 'auth-message error';
-          return;
-        }
-        if (data && data.session) window.location.href = (function(){var n=new URLSearchParams(location.search).get('next');return n&&/^\/(?![\/\\])/.test(n)?n:'/dashboard'})();
-        else {
-          message.textContent = 'Inloggen is gelukt, maar er kon geen sessie worden aangemaakt.';
-          message.className = 'auth-message error';
-        }
-      } catch (err) {
-        console.error(err);
-        message.textContent = 'Er ging iets mis. Probeer het opnieuw.';
-        message.className = 'auth-message error';
+    (function () {
+      'use strict';
+      var form = document.getElementById('login-form');
+      var message = document.getElementById('login-message');
+      var submit = document.getElementById('login-submit');
+
+      function setMessage(text, kind) {
+        message.textContent = text;
+        message.className = 'msg' + (kind ? ' ' + kind : '');
       }
-    });
+
+      function safeNextPath() {
+        var value = new URLSearchParams(window.location.search).get('next') || '/dashboard';
+        if (!value.startsWith('/') || value.startsWith('//') || value.startsWith('/\\\\')) return '/dashboard';
+        if (value === '/login' || value.startsWith('/login?') || value === '/register') return '/dashboard';
+        return value;
+      }
+
+      function goNext() {
+        window.location.replace(safeNextPath());
+      }
+
+      if (!window.hijrahSupabase || typeof window.hnSignIn === 'undefined') {
+        submit.disabled = true;
+        setMessage('De inlogdienst kon niet worden geladen. Vernieuw de pagina. Blijft dit probleem bestaan, meld het dan aan de beheerder.', 'error');
+        return;
+      }
+
+      hnGetSession().then(function (result) {
+        if (result && result.session) goNext();
+      }).catch(function () {
+        setMessage('Je sessie kon niet worden gecontroleerd. Je kunt hieronder opnieuw proberen in te loggen.', 'error');
+      });
+
+      form.addEventListener('submit', async function (event) {
+        event.preventDefault();
+        setMessage('Bezig met inloggen…', '');
+        submit.disabled = true;
+
+        try {
+          var email = document.getElementById('email').value.trim();
+          var password = document.getElementById('password').value;
+          var result = await hnSignIn(email, password);
+          if (result.error) {
+            setMessage(typeof hnFriendlyError === 'function' ? hnFriendlyError(result.error) : (result.error.message || 'E-mailadres of wachtwoord is niet correct.'), 'error');
+            return;
+          }
+          if (result.data && result.data.session) {
+            setMessage('Inloggen gelukt. Je wordt doorgestuurd…', 'success');
+            goNext();
+            return;
+          }
+          setMessage('Inloggen is niet voltooid. Controleer je account en probeer opnieuw.', 'error');
+        } catch (error) {
+          console.error('[HN login] Inloggen mislukt', error);
+          setMessage('De inlogdienst gaf een fout. Vernieuw de pagina en probeer opnieuw.', 'error');
+        } finally {
+          submit.disabled = false;
+        }
+      });
+    })();
   </script>
 </body>
 </html>
