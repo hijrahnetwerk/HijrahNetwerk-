@@ -126,3 +126,24 @@ body:has(#hnPublicNav) :where(.btn-secondary,.nav-action.secondary,.hn-action.se
 }
 body:has(#hnPublicNav) :where(.hn-divider,.gold-divider){background:linear-gradient(90deg,transparent,#C6A15B,#DD842A,#C6A15B,transparent);opacity:.85}
 @media(prefers-reduced-motion:reduce){body:has(#hnPublicNav) :where(.card,.country-card,.step,.note,.story,.city,.topic-card,.result-card,.search-result,.fiche-card,.article-card,.panel,.hn-card,.feature-card,.highlight-card,.quote-card,.btn-primary,.nav-action.primary,.hn-action.primary,.hn-mobile-primary,.go){transition:none!important;transform:none!important}}
+
+
+/* HN app-like overlays: opt-in drawers/modals, never hijack ordinary navigation. */
+.hn-overlay{position:fixed;inset:0;z-index:20000;display:flex;justify-content:flex-end;background:rgba(103,76,46,.38);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);opacity:0;transition:opacity .22s ease}
+.hn-overlay.is-open{opacity:1}
+.hn-overlay[hidden]{display:none}
+.hn-overlay[data-mode="modal"]{align-items:center;justify-content:center;padding:clamp(12px,3vw,28px)}
+.hn-overlay-panel{position:relative;display:flex;flex-direction:column;min-width:0;max-height:100%;overflow:auto;background:#FFFFFF;color:#674C2E;border:1px solid #C6A15B;border-radius:20px;box-shadow:0 24px 70px rgba(103,76,46,.24);outline:none}
+.hn-overlay[data-mode="drawer"] .hn-overlay-panel{width:min(560px,94vw);height:100%;max-height:100%;border-radius:20px 0 0 20px;transform:translateX(32px);transition:transform .26s cubic-bezier(.22,.61,.36,1)}
+.hn-overlay[data-mode="modal"] .hn-overlay-panel{width:min(640px,100%);max-height:min(84dvh,900px);transform:translateY(14px) scale(.985);transition:transform .22s cubic-bezier(.22,.61,.36,1)}
+.hn-overlay.is-open .hn-overlay-panel{transform:translate(0,0) scale(1)}
+.hn-overlay-head{position:sticky;top:0;z-index:1;display:flex;align-items:center;justify-content:flex-end;padding:12px 14px;background:rgba(255,255,255,.96);border-bottom:1px solid rgba(198,161,91,.48)}
+.hn-overlay-close{display:inline-grid;place-items:center;width:42px;height:42px;border:1px solid #C6A15B;border-radius:12px;background:#FFFFFF;color:#674C2E;font-size:24px;line-height:1;cursor:pointer}
+.hn-overlay-close:hover{background:#674C2E;color:#FFFFFF;box-shadow:0 4px 12px rgba(103,76,46,.18)}
+.hn-overlay-content{padding:clamp(18px,4vw,30px);overflow:auto}
+body.hn-overlay-open{overflow:hidden}
+body:has(#hnPublicNav) :where(.card,.country-card,.step,.note,.city,.topic-card,.result-card,.search-result,.fiche-card,.article-card,.panel,.hn-card,.feature-card,.highlight-card,.quote-card){border-color:rgba(198,161,91,.48);box-shadow:0 10px 28px rgba(103,76,46,.08),0 2px 6px rgba(103,76,46,.035)}
+body:has(#hnPublicNav) :where(.story,.quote-band,.hn-feature-band,.cta-band){background:linear-gradient(120deg,#674C2E,#674C2E);color:#FFFFFF;border:1px solid #C6A15B;box-shadow:0 10px 28px rgba(103,76,46,.12)}
+body:has(#hnPublicNav) :where(.story,.quote-band,.hn-feature-band,.cta-band) :where(h1,h2,h3,h4,p,li,a,small){color:#FFFFFF}
+body:has(#hnPublicNav) :where(a,button,[role="button"],[data-hn-open]){touch-action:manipulation}
+@media(prefers-reduced-motion:reduce){.hn-overlay,.hn-overlay-panel{transition:none!important;transform:none!important;scroll-behavior:auto!important}}
