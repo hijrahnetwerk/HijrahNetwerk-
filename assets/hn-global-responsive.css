@@ -38,7 +38,7 @@ h2{font-size:clamp(1.55rem,4vw,2.75rem)}
 h3{font-size:clamp(1.15rem,2.5vw,1.55rem)}
 
 /* Forms */
-input,select,textarea{width:100%;min-width:0}
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="hidden"]):not([type="image"]),select,textarea{width:100%;min-width:0}
 .form-row,.form-grid,.fields,.field-grid{
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));
