@@ -114,7 +114,7 @@ if (!adminCmsPage.includes('id="pageTableBody"') ||
     adminCmsPage.includes('<iframe')) {
   failures.push('HN Beheercentrum must use a responsive page list with search/status filters and no large iframe previews.');
 }
-if (!adminCmsScript.includes("function escapeHtml") ||
+if (!adminCmsScript.includes("function esc(") ||
     !adminCmsScript.includes("encodeURIComponent(slug)") ||
     !adminCmsScript.includes("function render") ||
     !adminCmsScript.includes("ctrlKey||e.metaKey") ||
