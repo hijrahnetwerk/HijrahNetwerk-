@@ -24,7 +24,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--hn-rust)!important;bo
 #items{display:grid;gap:10px;margin-top:18px}.hn-builder #items>*{border:1px solid var(--hn-line);border-radius:14px;background:#fff;padding:14px;transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease}.hn-builder #items>*:hover{transform:translateX(3px);box-shadow:0 8px 22px rgba(103,76,46,.09);border-color:rgba(198,161,91,.7)}
 .sidebar{box-shadow:8px 0 28px rgba(103,76,46,.1)}.nav-button{border-radius:12px!important}.nav-button:hover,.nav-button.active{background:rgba(255,255,255,.14)!important;transform:translateX(3px)}.topbar{box-shadow:0 4px 18px rgba(103,76,46,.05);position:sticky;top:0;z-index:30}.content{max-width:1500px;margin:0 auto}
 @media(max-width:700px){.hn-builder{padding:12px}.hn-builder .builder-top{padding:17px;border-radius:17px;align-items:flex-start}.hn-builder .builder-top .button{width:100%}.hn-builder .panel{border-radius:17px}.hn-builder #items>*{padding:12px}.content{padding:14px!important}}
-@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.hn-reveal,.hn-stagger>*{opacity:1!important;transition:none!important;transform:none!important}.card,.panel,.button,button{transition:none!important}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.hn-reveal,.hn-stagger>*{opacity:1!important;transition:none!important;transform:none!important}.card,.panel,.button,button{transition:none!important;transform:none!important}.card:hover,.panel:hover,.button:hover,button:hover,a.button:hover{transform:none!important;box-shadow:none!important}}
 
 /* HN Unified UI — consistent surfaces, controls and spacing across public pages and dashboards. */
 :root{
