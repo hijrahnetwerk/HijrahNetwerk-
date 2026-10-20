@@ -201,10 +201,16 @@
   function initOverlays() {
     if (window.__hnOverlayInit) return;
     window.__hnOverlayInit = true;
-    let active = null, returnFocus = null, previousOverflow = '';
+    let active = null, returnFocus = null, previousOverflow = '', activeSource = null, sourceParent = null, sourceNext = null, sourceWasHidden = false;
     function closeOverlay() {
       if (!active) return;
       const overlay = active;
+      if (activeSource && sourceParent) {
+        if (sourceWasHidden) activeSource.hidden = true;
+        if (sourceNext && sourceNext.parentNode === sourceParent) sourceParent.insertBefore(activeSource, sourceNext);
+        else sourceParent.appendChild(activeSource);
+      }
+      activeSource = sourceParent = sourceNext = null;
       overlay.classList.remove('is-open');
       overlay.setAttribute('aria-hidden', 'true');
       document.body.classList.remove('hn-overlay-open');
@@ -235,12 +241,7 @@
       panel.setAttribute('aria-modal', 'true');
       panel.setAttribute('tabindex', '-1');
       const title = source.querySelector('[data-hn-panel-title],h1,h2,h3');
-      if (title) {
-        if (!title.id) title.id = 'hn-overlay-title-' + Math.random().toString(36).slice(2, 9);
-        panel.setAttribute('aria-labelledby', title.id);
-      } else {
-        panel.setAttribute('aria-label', mode === 'drawer' ? 'Zijpaneel' : 'Dialoogvenster');
-      }
+      panel.setAttribute('aria-label', title ? title.textContent.trim() : (mode === 'drawer' ? 'Zijpaneel' : 'Dialoogvenster'));
       const head = document.createElement('div');
       head.className = 'hn-overlay-head';
       const close = document.createElement('button');
@@ -252,15 +253,13 @@
       head.appendChild(close);
       const content = document.createElement('div');
       content.className = 'hn-overlay-content';
-      // Clone the marked content so opening a panel never detaches forms or app state.
-      const clone = source.cloneNode(true);
-      clone.removeAttribute('id');
-      clone.removeAttribute('hidden');
-      clone.querySelectorAll('[id]').forEach(el => el.removeAttribute('id'));
-      clone.querySelectorAll('[data-hn-open]').forEach(el => {
-        el.addEventListener('click', function () { openOverlay(el); });
-      });
-      content.appendChild(clone);
+      // Move the real component into the overlay so existing event listeners, form state and app state survive.
+      activeSource = source;
+      sourceParent = source.parentNode;
+      sourceNext = source.nextSibling;
+      sourceWasHidden = source.hidden;
+      source.hidden = false;
+      content.appendChild(source);
       panel.append(head, content);
       overlay.appendChild(panel);
       overlay.addEventListener('click', event => { if (event.target === overlay) closeOverlay(); });
