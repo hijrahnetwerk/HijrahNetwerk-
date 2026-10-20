@@ -5,7 +5,7 @@ body{background:linear-gradient(180deg,#fff 0%,#fff 72%,#faf8f5 100%);color:#4d3
 button,.btn,.button,a.button{border-radius:12px;transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease}
 button:hover,.btn:hover,.button:hover,a.button:hover{transform:translateY(-2px);box-shadow:0 7px 18px rgba(103,76,46,.12)}
 input,select,textarea{border:1px solid var(--hn-line)!important;border-radius:12px!important;transition:border-color .2s ease,box-shadow .2s ease}
-input:focus,select:focus,textarea:focus{border-color:var(--hn-rust)!important;box-shadow:0 0 0 4px rgba(221,132,42,.12)!important;outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--hn-rust)!important;box-shadow:0 0 0 4px rgba(221,132,42,.12)!important}input:focus:not(:focus-visible),select:focus:not(:focus-visible),textarea:focus:not(:focus-visible){outline:none}
 .card,.panel,.country-card,.topic-card,.result-card,.fiche-card,.article-card,.plan-box,.monitor-box,.overview-card{border:1px solid var(--hn-line)!important;border-radius:var(--hn-radius)!important;box-shadow:var(--hn-shadow);transition:transform .28s ease,box-shadow .28s ease,border-color .28s ease}
 .card:hover,.panel:hover,.country-card:hover,.topic-card:hover,.result-card:hover,.fiche-card:hover,.article-card:hover,.plan-box:hover,.monitor-box:hover{transform:translateY(-3px);box-shadow:var(--hn-shadow-hover);border-color:rgba(198,161,91,.6)!important}
 .status,.notification-badge{border-radius:999px}
