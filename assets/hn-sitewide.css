@@ -70,3 +70,21 @@ body:has(#hnPublicNav) :where(.filter-bar,.hn-filterbar){background:rgba(255,255
   body:has(#hnPublicNav) *{scroll-behavior:auto!important}
 }
 
+
+
+/* HN visual rhythm correction: alternate surfaces instead of flattening every page to white. */
+body:has(#hnPublicNav){background:#F7F3EC;color:#49301B}
+body:has(#hnPublicNav) :where(.hn-hero,.hero,.page-hero,.hero-section){
+  background-color:#F7F3EC;
+  background-image:radial-gradient(ellipse at 88% 8%,rgba(198,161,91,.22),transparent 34%),radial-gradient(ellipse at 5% 94%,rgba(221,132,42,.12),transparent 32%),linear-gradient(135deg,#FBF8F2 0%,#F2E9DA 100%);
+  border-bottom:1px solid rgba(103,76,46,.16);
+}
+body:has(#hnPublicNav) main > section:nth-of-type(odd),
+body:has(#hnPublicNav) main > .section:nth-of-type(odd){background:#FFFFFF}
+body:has(#hnPublicNav) main > section:nth-of-type(even),
+body:has(#hnPublicNav) main > .section:nth-of-type(even){background:#F7F3EC}
+body:has(#hnPublicNav) :where(.story,.quote-band,.hn-feature-band,.cta-band){background:linear-gradient(135deg,#674C2E,#49301B);color:#fff}
+body:has(#hnPublicNav) :where(.story,.quote-band,.hn-feature-band,.cta-band) :where(h1,h2,h3,h4,p,li,a){color:#fff}
+body:has(#hnPublicNav) :where(.feature-card,.highlight-card,.quote-card){background:#F7F0E4;border-color:rgba(198,161,91,.45)}
+body:has(#hnPublicNav) footer{background:#F1E8D9;color:#49301B;border-top:1px solid rgba(198,161,91,.45)}
+body:has(#hnPublicNav) footer :where(h2,h3,p,a,small){color:#49301B}
