@@ -141,3 +141,55 @@ footer{background:linear-gradient(115deg,rgba(198,161,91,.16),#FFFFFF 65%,rgba(2
 footer :where(h2,p,a,.small){color:#674C2E}
 .ph span{background:rgba(255,255,255,.88)}
 .card{background:#FFFFFF}
+
+
+/* HN brand correction (2026-10): brown page headers with white type, rust CTAs, gold accents. */
+body:has(#hnPublicNav) :where(.hn-hero,.hero,.page-hero,.hero-section){
+  background:#674C2E!important;
+  background-image:linear-gradient(135deg,#674C2E 0%,#674C2E 78%,#674C2E 100%)!important;
+  color:#FFFFFF!important;
+  border-bottom:2px solid #C6A15B!important;
+}
+body:has(#hnPublicNav) :where(.hn-hero,.hero,.page-hero,.hero-section) :where(h1,h2,h3,h4,p,li,label,.eyebrow,.lead,.subtitle,.intro){
+  color:#FFFFFF!important;
+}
+body:has(#hnPublicNav) :where(.hn-hero,.hero,.page-hero,.hero-section) :where(h1 span,h2 span,.hn-gold,.eyebrow,.hn-label){
+  color:#FFFFFF!important;
+  text-decoration-color:#C6A15B!important;
+}
+body:has(#hnPublicNav) :where(.hn-hero,.hero,.page-hero,.hero-section) :where(h1,h2):after{
+  content:"";
+  display:block;
+  width:3.5rem;
+  height:3px;
+  margin-top:.8rem;
+  background:#C6A15B;
+  border-radius:3px;
+}
+body:has(#hnPublicNav) :where(.btn-primary,.nav-action.primary,.hn-action.primary,.hn-mobile-primary,.go,.cta-button){
+  background:#DD842A!important;
+  background-image:none!important;
+  color:#FFFFFF!important;
+  border:1px solid #C6A15B!important;
+  box-shadow:0 5px 14px rgba(103,76,46,.18)!important;
+}
+body:has(#hnPublicNav) :where(.btn-primary,.nav-action.primary,.hn-action.primary,.hn-mobile-primary,.go,.cta-button):hover{
+  background:#674C2E!important;
+  background-image:none!important;
+  color:#FFFFFF!important;
+  border-color:#C6A15B!important;
+}
+body:has(#hnPublicNav) :where(h1,h2,h3,h4){text-decoration-color:#C6A15B}
+body:has(#hnPublicNav) main>section :where(h2,h3):not(.hn-hero h2):not(.hero h2){
+  text-decoration-color:#C6A15B;
+  text-decoration-thickness:2px;
+  text-underline-offset:.35em;
+}
+body:has(#hnPublicNav) :where(.hn-divider,.gold-divider,hr){border-color:#C6A15B!important}
+body:has(#hnPublicNav) :where(.card,.country-card,.step,.note,.story,.city,.topic-card,.result-card,.search-result,.fiche-card,.article-card,.panel,.hn-card,.feature-card,.highlight-card,.quote-card){
+  border-color:rgba(198,161,91,.65)!important;
+}
+body:has(#hnPublicNav) :where(input,select,textarea,button,a,summary):focus-visible{
+  outline:3px solid #C6A15B!important;
+  outline-offset:3px;
+}
