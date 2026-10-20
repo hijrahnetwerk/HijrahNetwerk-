@@ -1,144 +1,24 @@
-(function () {
-  'use strict';
-
-  const root = document.getElementById('settings');
-  const db = window.hijrahSupabase;
-  const status = document.getElementById('privacySettingsStatus');
-  const nameInput = document.getElementById('privacyResponsibleName');
-  const emailInput = document.getElementById('privacyEmail');
-  const addressInput = document.getElementById('privacyPostalAddress');
-  const savePrivacyButton = document.getElementById('savePrivacySettings');
-  let generalSettings = [];
-
-  function escapeHtml(value) {
-    return String(value == null ? '' : value).replace(/[&<>"']/g, function (ch) {
-      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch];
-    });
-  }
-
-  function setPrivacyStatus(message, isError) {
-    if (!status) return;
-    status.textContent = message;
-    status.style.color = isError ? '#a12622' : '#276749';
-  }
-
-  async function requireAdmin() {
-    if (!db) {
-      location = '/login?next=/admin-cms';
-      return false;
-    }
-    const sessionResult = await db.auth.getSession();
-    const session = sessionResult.data && sessionResult.data.session;
-    if (!session) {
-      location = '/login?next=/admin-cms';
-      return false;
-    }
-    const profileResult = await db.from('profiles').select('role').eq('id', session.user.id).maybeSingle();
-    if (profileResult.error || !profileResult.data || profileResult.data.role !== 'admin') {
-      document.body.innerHTML = '<main><h1>Geen toegang</h1><p>Alleen beheerders kunnen deze instellingen aanpassen.</p></main>';
-      return false;
-    }
-    return true;
-  }
-
-  async function loadGeneralSettings() {
-    const result = await db.from('hn_site_settings').select('*').order('key');
-    if (result.error) {
-      root.textContent = 'Site-instellingen konden niet worden geladen: ' + result.error.message;
-      return;
-    }
-    generalSettings = (result.data || []).filter(function (row) { return row.key !== 'privacy_contact'; });
-    root.innerHTML = generalSettings.map(function (row, index) {
-      return '<p><b>' + escapeHtml(row.key) + '</b><textarea data-index="' + index + '" style="width:100%;min-height:90px;box-sizing:border-box">' +
-        escapeHtml(JSON.stringify(row.value, null, 2)) + '</textarea></p>';
-    }).join('') || '<p>Geen algemene instellingen gevonden.</p>';
-
-    const saveButton = document.getElementById('save');
-    if (saveButton) saveButton.onclick = async function () {
-      saveButton.disabled = true;
-      try {
-        for (const field of root.querySelectorAll('textarea[data-index]')) {
-          const row = generalSettings[Number(field.dataset.index)];
-          let value;
-          try {
-            value = JSON.parse(field.value);
-          } catch (_) {
-            alert('Ongeldige JSON bij ' + row.key + '. De wijzigingen zijn niet opgeslagen.');
-            return;
-          }
-          const saved = await db.from('hn_site_settings').update({ value: value }).eq('key', row.key);
-          if (saved.error) {
-            alert('Opslaan mislukt bij ' + row.key + ': ' + saved.error.message);
-            return;
-          }
-        }
-        alert('Algemene site-instellingen opgeslagen.');
-      } finally {
-        saveButton.disabled = false;
-      }
-    };
-  }
-
-  async function loadPrivacySettings() {
-    const result = await db.from('hn_site_settings').select('value').eq('key', 'privacy_contact').maybeSingle();
-    if (result.error) {
-      setPrivacyStatus('Privacygegevens konden niet worden geladen. Vernieuw de pagina of meld dit aan de beheerder.', true);
-      return;
-    }
-    const value = result.data && result.data.value ? result.data.value : {};
-    nameInput.value = typeof value.responsible_name === 'string' ? value.responsible_name : '';
-    emailInput.value = typeof value.privacy_email === 'string' ? value.privacy_email : '';
-    addressInput.value = typeof value.postal_address === 'string' ? value.postal_address : '';
-    setPrivacyStatus('Gegevens geladen. Nog niet opgeslagen wijzigingen gaan verloren als je de pagina verlaat.', false);
-  }
-
-  async function savePrivacySettings() {
-    const responsibleName = nameInput.value.trim();
-    const privacyEmail = emailInput.value.trim();
-    const postalAddress = addressInput.value.trim();
-
-    if (responsibleName.length > 200 || privacyEmail.length > 254 || postalAddress.length > 500) {
-      setPrivacyStatus('Controleer de maximale lengte van de ingevulde velden.', true);
-      return;
-    }
-    if (privacyEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(privacyEmail)) {
-      setPrivacyStatus('Vul een geldig e-mailadres in of laat het veld leeg.', true);
-      emailInput.focus();
-      return;
-    }
-
-    savePrivacyButton.disabled = true;
-    setPrivacyStatus('Opslaan…', false);
-    try {
-      const value = {
-        responsible_name: responsibleName,
-        privacy_email: privacyEmail,
-        postal_address: postalAddress,
-        country: 'Marokko'
-      };
-      const result = await db.from('hn_site_settings')
-        .upsert({ key: 'privacy_contact', value: value }, { onConflict: 'key' })
-        .select('key')
-        .single();
-      if (result.error) {
-        setPrivacyStatus('Opslaan mislukt: ' + result.error.message, true);
-        return;
-      }
-      setPrivacyStatus('Privacygegevens opgeslagen. Open de privacyverklaring om de weergave te controleren.', false);
-    } catch (_) {
-      setPrivacyStatus('Opslaan mislukt door een onverwachte fout. Probeer het opnieuw.', true);
-    } finally {
-      savePrivacyButton.disabled = false;
-    }
-  }
-
-  async function run() {
-    if (!(await requireAdmin())) return;
-    await Promise.all([loadGeneralSettings(), loadPrivacySettings()]);
-    if (savePrivacyButton) savePrivacyButton.addEventListener('click', savePrivacySettings);
-  }
-
-  run().catch(function () {
-    setPrivacyStatus('Het beheercentrum kon niet volledig worden geladen. Vernieuw de pagina en probeer opnieuw.', true);
-  });
+(function(){'use strict';
+var db=window.hijrahSupabase,rows=[],filter='all',query='',sort='title-asc',page=1,perPage=15,settings=[];
+var $=function(id){return document.getElementById(id);};
+var routes={'':'/',home:'/', 'home-oud':'/home-oud','home-huidig':'/home-huidig',landen:'/landen',kennisbank:'/kennisbank',navigatie:'/navigatie','smart-search':'/smart-search',community:'/community',stappenplan:'/stappenplan',orientatie:'/orientatie',orientatietest:'/orientatietest',voorbereiding:'/voorbereiding',vertrek:'/vertrek',integratie:'/integratie',realiteitscheck:'/realiteitscheck',verhalen:'/verhalen',stedengids:'/stedengids',vergelijken:'/vergelijken',hulp:'/hulp','over-hn':'/over-hn',funnel:'/pagina/funnel'};
+function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+function url(slug){var s=String(slug==null?'':slug);return Object.prototype.hasOwnProperty.call(routes,s)?routes[s]:'/pagina/'+encodeURIComponent(s);}
+function key(v){v=String(v||'').toLowerCase();return ['published','published_live','live'].includes(v)?'published':['draft','concept'].includes(v)?'draft':'other';}
+function label(v){var k=key(v);if(k==='published')return'Gepubliceerd';if(k==='draft')return'Concept';return({archived:'Gearchiveerd',pending:'In controle',review:'In controle',private:'Privé'})[String(v||'').toLowerCase()]||String(v||'Onbekend');}
+function msg(id,text,bad){var e=$(id);if(e){e.textContent=text;e.style.color=bad?'#a12622':'';}}
+async function admin(){if(!db||!db.auth){location.replace('/login?next=%2Fadmin-cms');return false;}var s=await db.auth.getSession(),session=s&&s.data&&s.data.session;if(!session){location.replace('/login?next=%2Fadmin-cms');return false;}var r=await db.from('profiles').select('role').eq('id',session.user.id).maybeSingle();if(r.error||!r.data||r.data.role!=='admin'){document.querySelector('.admin-shell').innerHTML='<main style="max-width:600px;margin:12vh auto;padding:32px;background:#fff;border:1px solid #e9e3da;border-radius:18px"><h1>Geen toegang</h1><p>Alleen beheerders kunnen het HN Beheercentrum openen.</p><a href="/" style="color:#925a27">Terug naar de website</a></main>';return false;}return true;}
+function filtered(){var q=query.trim().toLocaleLowerCase('nl'),a=rows.filter(function(r){var k=key(r.status);if(filter!=='all'&&filter!==k)return false;if(q&&[r.title,r.slug,r.description,url(r.slug),label(r.status)].join(' ').toLocaleLowerCase('nl').indexOf(q)<0)return false;return true;});a.sort(function(x,y){var xt=String(x.title||x.slug||'').toLocaleLowerCase('nl'),yt=String(y.title||y.slug||'').toLocaleLowerCase('nl');if(sort==='title-desc')return yt.localeCompare(xt,'nl');if(sort==='slug')return String(x.slug||'').localeCompare(String(y.slug||''),'nl');if(sort==='status'){var rank={published:0,draft:1,other:2},d=rank[key(x.status)]-rank[key(y.status)];if(d)return d;}return xt.localeCompare(yt,'nl');});return a;}
+function counts(){var c={all:rows.length,published:0,draft:0,other:0};rows.forEach(function(r){c[key(r.status)]++;});var ids={statAll:c.all,statPublished:c.published,statDraft:c.draft,statOther:c.other,countAll:c.all,countPublished:c.published,countDraft:c.draft,countOther:c.other,sidebarPageCount:c.all};Object.keys(ids).forEach(function(id){if($(id))$(id).textContent=ids[id];});}
+function render(){var a=filtered(),max=Math.max(1,Math.ceil(a.length/perPage));page=Math.min(page,max);var start=(page-1)*perPage,vis=a.slice(start,start+perPage),body=$('pageTableBody'),wrap=$('pageTableWrap'),empty=$('pageEmpty'),foot=document.querySelector('.list-footer');if(wrap)wrap.hidden=!a.length;if(empty)empty.hidden=!!a.length;if(foot)foot.hidden=!a.length;
+if(body)body.innerHTML=vis.map(function(r){var slug=String(r.slug==null?'':r.slug),u=url(slug),t=String(r.title||(slug?'Zonder titel':'Startpagina')),k=key(r.status),edit='/admin-builder?slug='+encodeURIComponent(slug),desc=String(r.description||'').trim();return '<tr><td><a class="page-title-link" href="'+esc(edit)+'">'+esc(t)+'</a><span class="page-slug">'+esc(desc||(slug?'Pagina · '+slug:'Startpagina van de website'))+'</span></td><td><span class="status-pill '+k+'">'+esc(label(r.status))+'</span></td><td><a class="page-url" href="'+esc(u)+'" target="_blank" rel="noopener">'+esc(u)+' ↗</a></td><td><div class="row-actions"><a class="row-action edit" href="'+esc(edit)+'">Bewerken</a><a class="row-action" href="'+esc(u)+'" target="_blank" rel="noopener">Bekijken ↗</a></div></td></tr>';}).join('');
+if($('pageRange'))$('pageRange').textContent=a.length?'Toont '+(start+1)+'–'+Math.min(start+vis.length,a.length)+' van '+a.length+' pagina’s':'Geen resultaten';if($('pageNumber'))$('pageNumber').textContent=page+' / '+max;if($('prevPage'))$('prevPage').disabled=page<=1||!a.length;if($('nextPage'))$('nextPage').disabled=page>=max||!a.length;msg('pageListStatus',rows.length?(query||filter!=='all'?a.length+' resultaat/resultaten gevonden.':rows.length+' pagina’s beschikbaar.'):'',false);}
+async function loadPages(){msg('pageListStatus','Pagina’s laden…',false);var r=await db.from('hn_site_pages').select('slug,title,status,description').order('title');if(r.error){msg('pageListStatus','De paginalijst kon niet geladen worden. Controleer je verbinding en probeer opnieuw.',true);$('pageTableWrap').hidden=true;$('pageEmpty').hidden=false;$('pageEmpty').innerHTML='<span class="empty-icon">↻</span><strong>Pagina’s niet beschikbaar</strong><p>Probeer de lijst opnieuw te laden.</p><button id="retryPages" class="text-button" type="button">Opnieuw proberen</button>';$('retryPages').onclick=function(){loadPages().catch(function(){msg('pageListStatus','Laden mislukt. Probeer opnieuw.',true);});};return;}rows=r.data||[];counts();render();}
+async function loadSettings(){var root=$('settings');root.textContent='Instellingen laden…';var r=await db.from('hn_site_settings').select('*').order('key');if(r.error){root.textContent='De geavanceerde instellingen konden niet geladen worden.';msg('generalSettingsStatus','Laden mislukt. Probeer later opnieuw.',true);return;}settings=(r.data||[]).filter(function(x){return x.key!=='privacy_contact';});root.innerHTML=settings.map(function(x,i){return '<p><b class="setting-key">'+esc(x.key)+'</b><textarea aria-label="Instelling '+esc(x.key)+' in JSON" data-index="'+i+'">'+esc(JSON.stringify(x.value,null,2))+'</textarea></p>';}).join('')||'<p>Geen geavanceerde instellingen gevonden.</p>';}
+async function saveSettings(){var b=$('save'),fields=Array.from($('settings').querySelectorAll('textarea[data-index]')),values=[];for(var i=0;i<fields.length;i++){var row=settings[Number(fields[i].dataset.index)];try{values.push({row:row,value:JSON.parse(fields[i].value)});}catch(e){msg('generalSettingsStatus','Ongeldige JSON bij instelling “'+row.key+'”. Niets is opgeslagen.',true);fields[i].focus();return;}}b.disabled=true;msg('generalSettingsStatus','Instellingen opslaan…',false);try{for(var j=0;j<values.length;j++){var r=await db.from('hn_site_settings').update({value:values[j].value}).eq('key',values[j].row.key);if(r.error){msg('generalSettingsStatus','Opslaan gestopt bij “'+values[j].row.key+'”. Controleer je rechten.',true);return;}}msg('generalSettingsStatus','Alle algemene instellingen zijn opgeslagen.',false);}catch(e){msg('generalSettingsStatus','Opslaan mislukt door een onverwachte fout.',true);}finally{b.disabled=false;}}
+async function loadPrivacy(){var r=await db.from('hn_site_settings').select('value').eq('key','privacy_contact').maybeSingle();if(r.error){msg('privacySettingsStatus','Privacygegevens konden niet geladen worden. Probeer later opnieuw.',true);return;}var v=r.data&&r.data.value||{};$('privacyResponsibleName').value=typeof v.responsible_name==='string'?v.responsible_name:'';$('privacyEmail').value=typeof v.privacy_email==='string'?v.privacy_email:'';$('privacyPostalAddress').value=typeof v.postal_address==='string'?v.postal_address:'';msg('privacySettingsStatus','Gegevens geladen. Vergeet niet op te slaan na een wijziging.',false);}
+async function savePrivacy(){var n=$('privacyResponsibleName'),e=$('privacyEmail'),a=$('privacyPostalAddress'),b=$('savePrivacySettings'),name=n.value.trim(),email=e.value.trim(),address=a.value.trim();if(name.length>200||email.length>254||address.length>500){msg('privacySettingsStatus','Controleer de maximale lengte van de ingevulde velden.',true);return;}if(email&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){msg('privacySettingsStatus','Vul een geldig e-mailadres in of laat het veld leeg.',true);e.focus();return;}b.disabled=true;msg('privacySettingsStatus','Opslaan…',false);try{var r=await db.from('hn_site_settings').upsert({key:'privacy_contact',value:{responsible_name:name,privacy_email:email,postal_address:address,country:'Marokko'}},{onConflict:'key'}).select('key').single();if(r.error){msg('privacySettingsStatus','Opslaan mislukt. Controleer je beheerdersrechten en probeer opnieuw.',true);return;}msg('privacySettingsStatus','Opgeslagen. Open de privacyverklaring om de weergave te controleren.',false);}catch(e){msg('privacySettingsStatus','Opslaan mislukt door een onverwachte fout.',true);}finally{b.disabled=false;}}
+function init(){document.querySelectorAll('.page-tab').forEach(function(b){b.onclick=function(){filter=b.dataset.status||'all';page=1;document.querySelectorAll('.page-tab').forEach(function(t){t.classList.toggle('active',t===b);});render();};});$('pageSearch').oninput=function(){query=this.value;page=1;render();};$('pageSort').onchange=function(){sort=this.value;page=1;render();};$('prevPage').onclick=function(){if(page>1){page--;render();};};$('nextPage').onclick=function(){page++;render();};$('clearFilters').onclick=function(){query='';filter='all';sort='title-asc';page=1;$('pageSearch').value='';$('pageSort').value=sort;document.querySelectorAll('.page-tab').forEach(function(t){t.classList.toggle('active',t.dataset.status==='all');});render();$('pageSearch').focus();};$('savePrivacySettings').onclick=savePrivacy;$('save').onclick=saveSettings;$('mobileMenu').onclick=function(){var open=$('adminSidebar').classList.toggle('is-open');this.setAttribute('aria-expanded',open?'true':'false');this.setAttribute('aria-label',open?'Menu sluiten':'Menu openen');};document.querySelectorAll('.sidebar-nav a').forEach(function(a){a.onclick=function(){$('adminSidebar').classList.remove('is-open');$('mobileMenu').setAttribute('aria-expanded','false');if(a.getAttribute('href').charAt(0)==='#')document.querySelectorAll('.sidebar-nav a').forEach(function(x){x.classList.toggle('active',x===a);});};});document.addEventListener('keydown',function(e){if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){e.preventDefault();$('pageSearch').focus();}if(e.key==='Escape'){$('adminSidebar').classList.remove('is-open');$('mobileMenu').setAttribute('aria-expanded','false');}});}
+async function run(){if(!(await admin()))return;init();await Promise.all([loadPages(),loadSettings(),loadPrivacy()]);}
+run().catch(function(e){console.error('[HN Beheercentrum] Laden mislukt',e);msg('pageListStatus','Het beheercentrum kon niet volledig laden. Vernieuw de pagina en probeer opnieuw.',true);msg('privacySettingsStatus','Laden mislukt. Vernieuw de pagina en probeer opnieuw.',true);msg('generalSettingsStatus','Laden mislukt. Vernieuw de pagina en probeer opnieuw.',true);});
 })();
