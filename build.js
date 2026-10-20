@@ -217,7 +217,8 @@ for (const file of htmlFiles) {
   const isAdminSurface = file.startsWith('admin') || file.startsWith('werkruimte');
   const isMemberSurface = memberSurfacePages.has(file);
 
-  if (isMemberSurface && !html.includes('public-nav.css')) {
+  // Member pages use the persistent member sidebar, not the public site navbar.
+  if (isMemberSurface && !html.includes('public-nav.css') && !html.includes('/assets/hn-member-nav.js')) {
     html = html.replace('</head>', publicNavStyleTag + '\n</head>');
   }
 
@@ -231,9 +232,9 @@ for (const file of htmlFiles) {
   }
 
   const additionList = [
-    isMemberSurface && !html.includes('/assets/public-nav.js') ? publicNavScriptTag : '',
+    isMemberSurface && !html.includes('/assets/hn-member-nav.js') && !html.includes('/assets/public-nav.js') ? publicNavScriptTag : '',
     isMemberSurface && !html.includes('/assets/hn-member-nav.js') ? memberNavScriptTag : '',
-    isAdminSurface && !html.includes('/assets/hn-admin-nav.js') ? adminNavScriptTag : '',
+    isAdminSurface && file !== 'admin-cms.html' && !html.includes('/assets/hn-admin-nav.js') ? adminNavScriptTag : '',
     !html.includes(pageEngineTag) && file !== 'cms-page.html' && !file.startsWith('admin') && !file.startsWith('login') && !file.startsWith('register') && !file.startsWith('reset-password') && !file.startsWith('update-password') && !file.startsWith('dashboard') && !file.startsWith('werkruimte') ? pageEngineTag : '',
     !html.includes(visualEditorTag) && !file.startsWith('admin') && !file.startsWith('login') && !file.startsWith('register') && !file.startsWith('reset-password') && !file.startsWith('update-password') && !file.startsWith('dashboard') && !file.startsWith('werkruimte') ? visualEditorTag : '',
     !html.includes(translateTag) ? translateTag : '',
