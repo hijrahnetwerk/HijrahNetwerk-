@@ -46,7 +46,7 @@ body:has(#hnPublicNav) :where(.filter-bar,.hn-filterbar){background:rgba(255,255
 @media(max-width:900px){
   body:has(#hnPublicNav) :where(.grid.two,.grid.three,.city-grid){grid-template-columns:minmax(0,1fr)}
   body:has(#hnPublicNav) :where(.cities,.city-cats){grid-template-columns:repeat(2,minmax(0,1fr))}
-  body:has(#hnPublicNav) :where(.container,.wrap){width:min(100% - 32px,74rem);max-width:74rem}
+  body:has(#hnPublicNav) :where(.container,.wrap){width:calc(100% - 32px);max-width:74rem}
   body:has(#hnPublicNav) :where(.hero,.hn-hero,.page-hero,.hero-section){padding-block:clamp(2.5rem,7vw,4.5rem)}
   body:has(#hnPublicNav) :where(.section){padding-block:clamp(2.5rem,6vw,4rem)}
   body:has(#hnPublicNav) :where(.hero-actions,.city-actions){gap:10px;flex-wrap:wrap}
