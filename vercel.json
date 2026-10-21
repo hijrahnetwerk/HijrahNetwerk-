@@ -690,8 +690,14 @@
     {
       "source": "/bedankt.html",
       "headers": [
-        { "key": "Cache-Control", "value": "no-store" },
-        { "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive" }
+        {
+          "key": "Cache-Control",
+          "value": "no-store"
+        },
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow, noarchive"
+        }
       ]
     },
     {
@@ -719,7 +725,8 @@
       "fix/restore-public-launch-funnel-20261013": false,
       "fix/pagespeed-security-a11y-20261013": false,
       "fix/site-audit-20261019": false,
-      "fix/supabase-migration-history-20261019": false
+      "fix/supabase-migration-history-20261019": false,
+      "feature/wachtlijst-bevestiging-en-meewerkinteresse": false
     }
   }
 }
