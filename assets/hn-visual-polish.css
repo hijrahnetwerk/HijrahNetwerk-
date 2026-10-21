@@ -145,3 +145,21 @@ body{background:#FFFFFF;color:var(--hn-brown)}
   *,*::before,*::after{scroll-behavior:auto!important;animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
   :where(.card,.panel,.country-card,.topic-card,.result-card,.fiche-card,.article-card,.plan-box,.monitor-box,.overview-card):hover{transform:none}
 }
+
+/* Final contrast and palette guardrails for the visual builder and tables. */
+.hn-builder{background:#FFFFFF!important;color:#674C2E}
+.hn-builder .builder-top,.hn-builder .panel,.hn-builder #items>*{background:#FFFFFF;color:#674C2E}
+.hn-builder .builder-top p,.hn-builder .muted{color:#674C2E;opacity:.82}
+:where(th){background:linear-gradient(135deg,rgba(198,161,91,.24),rgba(245,226,122,.3));color:#674C2E}
+:where(.hn-local-draft-status){color:#674C2E}
+:where(.hn-overlay-panel,.hn-command-palette){background:#FFFFFF;color:#674C2E}
+:where(.hn-overlay-head){background:rgba(255,255,255,.98)}
+:where(input,select,textarea)::placeholder{color:rgba(103,76,46,.68)}
+:where(.hn-overlay-close,.hn-command-palette-list a,.hn-command-palette-list button){border-color:#C6A15B;color:#674C2E}
+:where(.hn-overlay-close):hover{background:#674C2E;color:#FFFFFF}
+:where(body){scrollbar-color:#C6A15B #FFFFFF;scrollbar-width:thin}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-track{background:#FFFFFF}
+::-webkit-scrollbar-thumb{background:#C6A15B;border:2px solid #FFFFFF;border-radius:999px}
+::-webkit-scrollbar-thumb:hover{background:#674C2E}
+@media(prefers-reduced-motion:reduce){.hn-command-palette,.hn-overlay-panel{animation:none!important}}
