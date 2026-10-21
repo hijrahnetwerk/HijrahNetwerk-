@@ -189,6 +189,21 @@ $("#funnelForm").addEventListener("submit",async e=>{
     s.className="status err";
     return;
   }
+  const wantsHelp = Boolean(form.elements.namedItem("help_interest")?.checked);
+  if (wantsHelp) {
+    // Apart opt-in-register vangt ook bestaande wachtlijstinschrijvingen op.
+    const intent = await db.from("hn_contributor_intents").insert({ email });
+    if (intent.error && intent.error.code !== "23505") {
+      console.error("[HN contributor intent]", intent.error);
+      s.textContent = "Je aanmelding is opgeslagen, maar de meewerkkeuze kon niet worden vastgelegd. Probeer het nog eens of meld je later opnieuw aan.";
+      s.className = "status err";
+      return;
+    }
+    sessionStorage.setItem("hn_meewerk_preview", "1");
+    sessionStorage.setItem("hn_meewerk_email", email);
+    window.location.assign("/meewerk-preview.html");
+    return;
+  }
   // Een bestaand e-mailadres telt ook als aangemeld; geen tweede record aanmaken.
   window.location.assign("/bedankt.html");
 });
