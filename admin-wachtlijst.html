@@ -16,7 +16,7 @@ body{margin:0;background:#FFFFFF;color:#674C2E;font-family:-apple-system,BlinkMa
 <body>
 <div class="wrap">
 <div class="top"><div><div class="brand">Hijrah Netwerk · Lanceringlijst</div><h1>Voorinschrijvingen</h1></div><div class="actions"><button class="btn" onclick="location.href='/admin'">← Admin</button><button class="btn primary" id="csv">CSV downloaden</button></div></div>
-<div class="card"><div class="meta"><strong id="count">0</strong> e-mailadressen</div><div id="status" class="status">Laden...</div><div class="table-wrap"><table><thead><tr><th>E-mail</th><th>Interesse</th><th>Aangemeld</th><th></th></tr></thead><tbody id="rows"></tbody></table></div><div id="empty" class="empty" hidden>Nog geen aanmeldingen.</div></div>
+<div class="card"><div class="meta"><strong id="count">0</strong> e-mailadressen</div><div id="status" class="status">Laden...</div><div class="table-wrap"><table><thead><tr><th>E-mail</th><th>Fase</th><th>Wil misschien helpen</th><th>Aangemeld</th><th></th></tr></thead><tbody id="rows"></tbody></table></div><div id="empty" class="empty" hidden>Nog geen aanmeldingen.</div></div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="/assets/config.js"></script>
@@ -48,15 +48,15 @@ body{margin:0;background:#FFFFFF;color:#674C2E;font-family:-apple-system,BlinkMa
 
   async function load(){
     if(!db){status.textContent='Supabase kon niet laden.';return}
-    var r=await db.from('launch_waitlist').select('id,email,interest,created_at').order('created_at',{ascending:false});
+    var r=await db.from('launch_waitlist').select('id,email,interest,help_interest,created_at').order('created_at',{ascending:false});
     if(r.error){status.textContent='Kon de lanceringlijst niet laden.';console.error(r.error);return}
     data=r.data||[];count.textContent=data.length;status.textContent=data.length?'':'';
-    rows.innerHTML=data.map(function(x){return '<tr><td>'+esc(x.email)+'</td><td>'+esc(x.interest||'—')+'</td><td>'+new Date(x.created_at).toLocaleString('nl-BE')+'</td><td><button class="btn delete" data-id="'+esc(x.id)+'">Verwijderen</button></td></tr>'}).join('');
+    rows.innerHTML=data.map(function(x){return '<tr><td>'+esc(x.email)+'</td><td>'+esc(x.interest||'—')+'</td><td>'+(x.help_interest?'Ja':'Nee')+'</td><td>'+new Date(x.created_at).toLocaleString('nl-BE')+'</td><td><button class="btn delete" data-id="'+esc(x.id)+'">Verwijderen</button></td></tr>'}).join('');
     empty.hidden=data.length>0;
     rows.querySelectorAll('[data-id]').forEach(function(b){b.addEventListener('click',async function(){if(!confirm('Dit e-mailadres verwijderen?'))return;var r=await db.from('launch_waitlist').delete().eq('id',this.dataset.id);if(r.error){alert('Verwijderen mislukt.');return}load()})});
   }
   document.getElementById('csv').addEventListener('click',function(){
-    var lines=['email,interest,created_at'].concat(data.map(function(x){return [x.email,x.interest||'',x.created_at].map(function(v){return '"'+String(v).replace(/"/g,'""')+'"'}).join(',')}));
+    var lines=['email,phase,help_interest,created_at'].concat(data.map(function(x){return [x.email,x.interest||'',x.help_interest?'yes':'no',x.created_at].map(function(v){return '"'+String(v).replace(/"/g,'""')+'"'}).join(',')}));
     var blob=new Blob([lines.join('\n')],{type:'text/csv;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='hn-lanceringlijst.csv';a.click();URL.revokeObjectURL(url);
   });
   requireAdmin().then(function(ok){if(ok)load();});
