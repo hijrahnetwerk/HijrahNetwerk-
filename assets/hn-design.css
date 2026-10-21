@@ -8,16 +8,16 @@
 :root {
   --br: #674C2E;
   --rs: #DD842A;
-  --gd: #D4AF37;
-  --gd2: #D4AF37;
-  --gd3: #D4AF37;
-  --bg: #FDFAF6;
+  --gd: #D49622;
+  --gd2: #D49622;
+  --gd3: #D49622;
+  --bg: #FFFFFF;
   --wh: #fff;
   --muted: #8a7060;
   --border: rgba(103,76,46,.18);
-  --border-gd: rgba(212,175,55,.35);
+  --border-gd: rgba(212,150,34,.35);
   --shadow: 0 18px 50px rgba(103,76,46,.10);
-  --shadow-gd: 0 14px 38px rgba(212,175,55,.22);
+  --shadow-gd: 0 14px 38px rgba(212,150,34,.22);
   --r: 20px;
   --max: 1180px;
   --ease: cubic-bezier(.22,.61,.36,1);
@@ -93,7 +93,7 @@ img { max-width: 100%; }
   position: absolute;
   inset: 0;
   background-image:
-    radial-gradient(circle, rgba(212,175,55,.14) 1px, transparent 1px),
+    radial-gradient(circle, rgba(212,150,34,.14) 1px, transparent 1px),
     radial-gradient(circle, rgba(255,255,255,.06) 1px, transparent 1px);
   background-size: 28px 28px, 56px 56px;
   background-position: 0 0, 14px 14px;
@@ -107,7 +107,7 @@ img { max-width: 100%; }
   overflow: hidden;
   padding: 100px 0 80px;
   background:
-    radial-gradient(ellipse at 90% 5%,  rgba(212,175,55,.38), transparent 48%),
+    radial-gradient(ellipse at 90% 5%,  rgba(212,150,34,.38), transparent 48%),
     radial-gradient(ellipse at 8%  92%, rgba(221,132,42,.28), transparent 42%),
     linear-gradient(148deg, #3d2a14 0%, var(--br) 38%, #7a4e28 65%, #4e3018 100%);
   color: #fff;
@@ -135,7 +135,7 @@ img { max-width: 100%; }
   border-radius: 999px;
   background: rgba(255,255,255,.12);
   color: var(--gd);
-  border: 1px solid rgba(212,175,55,.55);
+  border: 1px solid rgba(212,150,34,.55);
   font-size: 11px; font-weight: 800;
   letter-spacing: .1em; text-transform: uppercase;
   margin-bottom: 20px;
@@ -196,9 +196,9 @@ img { max-width: 100%; }
 }
 .hn-btn-secondary:hover { border-color: var(--gd); color: var(--rs); }
 .hn-btn-gold {
-  background: linear-gradient(135deg, rgba(212,175,55,.15), rgba(212,175,55,.08));
+  background: linear-gradient(135deg, rgba(212,150,34,.15), rgba(212,150,34,.08));
   color: var(--gd2);
-  border-color: rgba(212,175,55,.4);
+  border-color: rgba(212,150,34,.4);
 }
 .hn-btn-gold:hover {
   background: linear-gradient(135deg, var(--gd2), var(--gd));
@@ -270,7 +270,7 @@ img { max-width: 100%; }
 .hn-select select:focus {
   outline: none;
   border-color: var(--gd);
-  box-shadow: 0 0 0 3px rgba(212,175,55,.12);
+  box-shadow: 0 0 0 3px rgba(212,150,34,.12);
 }
 .hn-select::after {
   content: '▾';
@@ -295,7 +295,7 @@ img { max-width: 100%; }
 }
 .hn-searchbox:focus-within {
   border-color: var(--gd);
-  box-shadow: 0 0 0 3px rgba(212,175,55,.12);
+  box-shadow: 0 0 0 3px rgba(212,150,34,.12);
 }
 .hn-searchbox input {
   border: 0; outline: 0; flex: 1;
@@ -341,7 +341,7 @@ img { max-width: 100%; }
 /* ── SECTIE ── */
 .hn-section { padding: 72px 0; }
 .hn-section.soft {
-  background: linear-gradient(135deg, #fff 0%, #fff 55%, rgba(212,175,55,.10) 100%);
+  background: linear-gradient(135deg, #fff 0%, #fff 55%, rgba(212,150,34,.10) 100%);
 }
 .hn-section.dark {
   background: linear-gradient(135deg, var(--br), #5a3820, var(--br));
@@ -373,9 +373,9 @@ img { max-width: 100%; }
   letter-spacing: .05em; text-transform: uppercase;
 }
 .hn-badge-gd {
-  background: linear-gradient(135deg, rgba(212,175,55,.18), rgba(103,76,46,.08));
+  background: linear-gradient(135deg, rgba(212,150,34,.18), rgba(103,76,46,.08));
   color: var(--gd2);
-  border: 1px solid rgba(212,175,55,.35);
+  border: 1px solid rgba(212,150,34,.35);
 }
 .hn-badge-br {
   background: rgba(103,76,46,.09);
@@ -499,7 +499,7 @@ img { max-width: 100%; }
   position: absolute;
   inset: 0;
   background-image:
-    radial-gradient(circle, rgba(212,175,55,.08) 1px, transparent 1px);
+    radial-gradient(circle, rgba(212,150,34,.08) 1px, transparent 1px);
   background-size: 32px 32px;
   pointer-events: none;
 }
@@ -596,7 +596,7 @@ img { max-width: 100%; }
   padding: 5px 12px;
   border-radius: 999px;
   font-size: 11px; font-weight: 700;
-  border: 1px solid rgba(212,175,55,.22);
+  border: 1px solid rgba(212,150,34,.22);
   color: rgba(255,255,255,.55);
   transition: .18s;
 }
@@ -682,9 +682,9 @@ img { max-width: 100%; }
   color: #fff;
 }
 .hn-admin-nav-btn.active {
-  background: linear-gradient(135deg, rgba(221,132,42,.25), rgba(212,175,55,.15));
+  background: linear-gradient(135deg, rgba(221,132,42,.25), rgba(212,150,34,.15));
   color: var(--gd);
-  border: 1px solid rgba(212,175,55,.2);
+  border: 1px solid rgba(212,150,34,.2);
 }
 .hn-admin-nav-btn .icon { font-size: 16px; width: 22px; text-align: center; }
 .hn-admin-divider {
