@@ -1,59 +1,22 @@
 <!DOCTYPE html>
-<html lang="nl">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="robots" content="noindex,nofollow,noarchive">
-<meta name="theme-color" content="#674C2E">
-<title>Meewerk-preview · Hijrah Netwerk</title>
-<link rel="stylesheet" href="/assets/hn-design.css">
-<link rel="stylesheet" href="/assets/hn-sitewide.css?v=1">
+<html lang="nl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow,noarchive"><meta name="theme-color" content="#674C2E">
+<title>Hijrah Navigatie · Meewerk-preview</title>
+<link rel="stylesheet" href="/assets/hn-design.css"><link rel="stylesheet" href="/assets/hn-sitewide.css?v=1">
 <style>
-*{box-sizing:border-box}body{margin:0;background:#FFFFFF;color:#674C2E;font-family:Manrope,Inter,Arial,sans-serif;line-height:1.6}
-.topline{height:7px;background:linear-gradient(90deg,#674C2E,#DD842A 55%,#C6A15B)}
-.wrap{max-width:1080px;margin:auto;padding:28px 20px 70px}.brand{font-weight:850;letter-spacing:.01em}.account{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;margin:20px 0 36px;padding:13px 16px;border:1px solid #C6A15B;border-radius:14px}
-.pill{display:inline-flex;border-radius:999px;padding:5px 10px;background:#674C2E;color:#FFFFFF;font-size:.78rem;font-weight:800}
-.eyebrow{color:#9B7735;text-transform:uppercase;font-weight:800;font-size:.78rem;letter-spacing:.12em}
-h1{font-size:clamp(2.1rem,5vw,3.6rem);line-height:1.08;max-width:800px;margin:12px 0 16px}
-.lead{font-size:1.08rem;max-width:760px}
-.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:28px 0}
-.card{border:1px solid #C6A15B;border-radius:18px;padding:20px;background:#FFFFFF}
-.card:nth-child(2){background:#674C2E;color:#FFFFFF}.card:nth-child(2) h2{color:#FFFFFF}.card:nth-child(3){background:linear-gradient(140deg,#FFFFFF,#FFFFFF);border-color:#DD842A}
-.card h2{font-size:1.05rem;margin:0 0 8px;color:#674C2E}.card p{margin:0;font-size:.94rem}
-.callout{border-left:4px solid #DD842A;padding:16px 18px;margin:24px 0}
-.actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:26px}
-.btn{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:12px 20px;border-radius:999px;text-decoration:none;font-weight:800;border:1px solid #674C2E}
-.primary{background:#DD842A;color:#FFFFFF;border-color:#DD842A}.secondary{background:#FFFFFF;color:#674C2E}
-.small{font-size:.85rem;opacity:.9}
-@media(max-width:760px){.cards{grid-template-columns:1fr}.account{align-items:flex-start}}
-</style>
-</head>
-<body>
-<div class="topline"></div>
-<main class="wrap">
-<div class="brand">Hijrah Netwerk</div>
-<div class="account"><div><span class="pill">Meewerk-preview</span><div class="small" style="margin-top:6px">Aangemeld met <strong id="email"></strong></div></div><span class="small">Alle aanvullingen worden eerst door HN gecontroleerd.</span></div>
-<div class="eyebrow">Van zuster tot zuster</div>
-<h1>Help mee om informatie overzichtelijker en bruikbaarder te maken.</h1>
-<p class="lead">Dit is een preview van de soorten informatie die je kunt aanvullen. Je hoeft niet alles te weten en je hoeft ook niet alles in te vullen. Deel wat je uit eigen ervaring weet of voeg een betrouwbare bron toe.</p>
-<section class="cards" aria-label="Mogelijke bijdragen">
-<article class="card"><h2>Land, stad en wijk</h2><p>Praktische informatie per locatie, buurten, bereikbaarheid, aandachtspunten en ervaringen van bewoners.</p></article>
-<article class="card"><h2>Scholen en onderwijs</h2><p>Leeftijden, onderwijstalen, schoolgeld, toelating, vervoer en informatie die ouders vooraf helpt vergelijken.</p></article>
-<article class="card"><h2>Zorg en voorzieningen</h2><p>Artsen, klinieken, apotheken, winkels, moskeeën, diensten, openingstijden en contactgegevens.</p></article>
-<article class="card"><h2>Wonen en dagelijks leven</h2><p>Huurprijzen, wijken, voorzieningen in de buurt, praktische kosten en zaken die je graag vooraf had geweten.</p></article>
-<article class="card"><h2>Bronnen en actualiteit</h2><p>Officiële websites, betrouwbare links, datums waarop informatie is gecontroleerd en meldingen van verouderde gegevens.</p></article>
-<article class="card"><h2>Ervaringen en aandachtspunten</h2><p>Wat in de praktijk goed werkt, wat anders liep dan verwacht en voor welke situaties informatie relevant is.</p></article>
-</section>
-<div class="callout"><strong>Wat gebeurt er met je bijdrage?</strong><p>Je e-mailadres wordt aan je inzending gekoppeld zodat HN zo nodig contact kan opnemen. Je bijdrage wordt niet automatisch gepubliceerd. Jij krijgt met deze preview geen toegang tot de kennisbank, ledenomgeving of beheerfuncties. Alleen HN kan die toegang later afzonderlijk verlenen.</p></div>
-<div class="actions"><a class="btn primary" href="/bijdragen?meewerk=1">Een aanvulling insturen</a><a class="btn secondary" href="/bedankt.html">Nu stoppen</a></div>
-<p class="small" style="margin-top:22px">Vrijwillig meewerken is vrijblijvend. Je kunt eerst bekijken wat er gevraagd wordt en zelf beslissen of je iets wilt insturen.</p>
-</main>
-<script>
-(function(){
- const email=sessionStorage.getItem('hn_meewerk_email');
- if(sessionStorage.getItem('hn_meewerk_preview')!=='1'||!email){location.replace('/bedankt.html');return}
- document.getElementById('email').textContent=email;
-})();
-</script>
-</body>
-</html>
+*{box-sizing:border-box}body{margin:0;background:#fff;color:#674C2E;font-family:Manrope,Inter,Arial,sans-serif;line-height:1.65}.line{height:7px;background:linear-gradient(90deg,#674C2E,#DD842A 55%,#C6A15B)}main{max-width:1060px;margin:auto;padding:28px 20px 70px}.brand{font-weight:850}.account{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding:13px 16px;border:1px solid #C6A15B;border-radius:14px;margin:20px 0 38px}.pill{background:#674C2E;color:#fff;border-radius:999px;padding:5px 11px;font-size:.8rem;font-weight:800}.eyebrow{font-size:.78rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#9B7735}h1{font-size:clamp(2.1rem,5vw,3.5rem);line-height:1.1;margin:12px 0;max-width:800px}p{max-width:790px}.lead{font-size:1.08rem}.actions{display:flex;flex-wrap:wrap;gap:12px;margin:24px 0}.btn{display:inline-flex;align-items:center;justify-content:center;min-height:46px;padding:11px 18px;border-radius:999px;text-decoration:none;font-weight:800;border:1px solid #674C2E}.primary{background:#DD842A;color:#fff;border-color:#DD842A}.secondary{color:#674C2E;background:#fff}.section{margin-top:32px}.section h2{font-size:1.45rem}.fiche{border:1px solid #C6A15B;border-radius:18px;overflow:hidden;margin-top:16px}.fichehead{padding:22px;background:#674C2E;color:#fff}.fichehead small{color:#fff;opacity:.9}.fichehead h2{font-size:1.55rem;margin:8px 0}.fichebody{padding:22px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.field{border:1px solid #C6A15B;border-radius:12px;padding:13px}.field b{display:block;font-size:.76rem;text-transform:uppercase;letter-spacing:.06em;color:#9B7735;margin-bottom:5px}.demo{font-size:.78rem;color:#674C2E;background:#fff;border:1px solid #DD842A;border-radius:999px;padding:5px 9px;display:inline-block}.callout{border-left:4px solid #DD842A;padding:14px 18px;margin-top:20px}.small{font-size:.86rem}@media(max-width:620px){.fichebody{grid-template-columns:1fr}}
+</style></head><body><div class="line"></div><main>
+<div class="brand">Hijrah Netwerk</div><div class="account"><div><span class="pill">Meewerk-preview</span><div class="small" style="margin-top:5px">Aangemeld met <strong id="email"></strong></div></div><span class="small">Voorbeeldomgeving · geen toegang tot het volledige platform</span></div>
+<div class="eyebrow">Hijrah Navigatie</div><h1>Een Google voor emigranten, opgebouwd met ervaringen uit de praktijk.</h1>
+<p class="lead">Hijrah Navigatie moet emigranten helpen om praktische informatie per land, stad en wijk terug te vinden. Denk aan scholen, zorg, wonen, winkels, moskeeën, diensten en andere zaken waar je tijdens het emigreren en het dagelijks leven mee te maken krijgt.</p>
+<p>Je ziet hier een beperkte preview van een informatiefiche en het formulier waarmee je informatie kunt insturen. De uitleg over het doel en de manier waarop we informatie willen verzamelen staat op een aparte pagina.</p>
+<div class="actions"><a class="btn primary" href="/hijrah-navigatie-uitleg">Lees hoe Hijrah Navigatie bedoeld is</a><a class="btn secondary" href="/bijdragen?meewerk=1">Informatie of ervaring insturen</a></div>
+<section class="section"><h2>Voorbeeld van een fiche</h2><p class="small">Dit is een demonstratie van de opbouw, geen bestaande of gecontroleerde locatie. De voorbeeldgegevens zijn bewust niet ingevuld.</p>
+<article class="fiche"><div class="fichehead"><span class="demo">Voorbeeldfiche</span><h2>[Naam van locatie of voorziening]</h2><small>Land · Stad · Wijk · Categorie</small></div><div class="fichebody">
+<div class="field"><b>Wat is dit?</b>Beschrijving van de plek, dienst of organisatie.</div><div class="field"><b>Adres en bereikbaarheid</b>Adres, kaartlink en praktische route-informatie.</div>
+<div class="field"><b>Contact en openingstijden</b>Telefoon, website, contactgegevens en tijden.</div><div class="field"><b>Kosten en voorwaarden</b>Prijzen, afspraken, toelating of andere voorwaarden.</div>
+<div class="field"><b>Ervaringen van emigranten</b>Praktische ervaringen, met datum en context waar mogelijk.</div><div class="field"><b>Bronnen en controle</b>Officiële bronnen, aanvullende bronnen en datum van laatste controle.</div>
+</div></article></section>
+<div class="callout"><strong>Jij houdt de controle over je bijdrage.</strong><p>Je inzending wordt aan je e-mailadres gekoppeld en eerst door Hijrah Netwerk beoordeeld. Ze wordt niet automatisch gepubliceerd. Deze preview geeft geen toegang tot andere onderdelen of beheermogelijkheden.</p></div>
+<p class="small">Meehelpen is vrijwillig. Je kunt de preview bekijken zonder iets in te sturen.</p>
+</main><script>(function(){const email=sessionStorage.getItem('hn_meewerk_email');if(sessionStorage.getItem('hn_meewerk_preview')!=='1'||!email){location.replace('/bedankt.html');return}document.getElementById('email').textContent=email;})();</script></body></html>
