@@ -10,7 +10,7 @@ function closeLayer(layer){
   if(layer.matches('dialog[open]')){layer.close();return}
   layer.classList.remove('is-open','open','show');
   layer.setAttribute('aria-hidden','true');
-  if(layer.hasAttribute('hidden'))layer.hidden=true;
+  layer.hidden=true;
   document.body.classList.remove('hn-overlay-open');
   const prior=layer.__hnReturnFocus;if(prior&&prior.isConnected)prior.focus();
 }
@@ -113,19 +113,22 @@ function initAdminDrafts(){
       try{const data={};fields.forEach((el,i)=>{data[String(i)]=(el.type==='checkbox'||el.type==='radio')?el.checked:el.value});localStorage.setItem(key,JSON.stringify(data));status.textContent='Concept lokaal opgeslagen. Serverwijzigingen zijn nog niet opgeslagen.'}
       catch(e){status.textContent='Concept kon niet lokaal worden opgeslagen.'}
     },500)}
-    form.addEventListener('submit',()=>{clearTimeout(timer);try{localStorage.removeItem(key)}catch(e){}status.textContent='Formulier verzonden. Controleer de bevestiging van de server.'});
+    form.addEventListener('submit',()=>{clearTimeout(timer);status.textContent='Verzending gestart. Het lokale concept blijft bewaard totdat de serveropslag bevestigd is.'});
+    form.addEventListener('hn:save-success',()=>{try{localStorage.removeItem(key);status.textContent='Serveropslag bevestigd. Lokaal concept gewist.'}catch(e){status.textContent='Serveropslag bevestigd.'}});
   });
 }
 function initDirtyTracking(){
-  let dirty=false;
+  const dirtyForms=new Set();
   document.querySelectorAll('form[data-hn-track-dirty]').forEach(form=>{
-    form.addEventListener('input',()=>{dirty=true;form.dataset.hnDirty='true'});
-    form.addEventListener('change',()=>{dirty=true;form.dataset.hnDirty='true'});
-    form.addEventListener('submit',()=>{dirty=false;delete form.dataset.hnDirty});
+    const mark=()=>{dirtyForms.add(form);form.dataset.hnDirty='true'};
+    form.addEventListener('input',mark);form.addEventListener('change',mark);
+    form.addEventListener('submit',()=>{dirtyForms.delete(form);delete form.dataset.hnDirty});
+    form.addEventListener('hn:save-success',()=>{dirtyForms.delete(form);delete form.dataset.hnDirty});
   });
-  window.addEventListener('beforeunload',e=>{if(dirty){e.preventDefault();e.returnValue=''}});
+  window.addEventListener('beforeunload',e=>{if(dirtyForms.size){e.preventDefault();e.returnValue=''}});
 }
 function init(){
+  if(isAdmin()){document.body.classList.add('hn-admin-page');document.body.setAttribute('data-hn-admin','true')}
   initMotion();initDialogs();initCommandPalette();initAdminDrafts();initDirtyTracking();
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
