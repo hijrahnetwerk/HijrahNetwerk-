@@ -293,3 +293,44 @@ body:not(.hn-admin-page):not(.hn-home):not(.home-page) :where(input,select,texta
 @media(prefers-reduced-motion:reduce){
   body:not(.hn-admin-page):not(.hn-home):not(.home-page) *{scroll-behavior:auto}
 }
+
+
+/* HOTFIX: alternate the real HN section classes used by live pages.
+   Earlier rules targeted only .section, while many pages use .hn-section/.hn-section.dark. */
+body:not(.hn-admin-page):not(.hn-home):not(.home-page) :is(main,body) > .hn-section:nth-of-type(odd),
+body:not(.hn-admin-page):not(.hn-home):not(.home-page) main > section.hn-section:nth-of-type(odd),
+body:not(.hn-admin-page):not(.hn-home):not(.home-page) > section.hn-section:nth-of-type(odd) {
+  background: #FFFFFF !important;
+  background-image: none !important;
+  color: #674C2E !important;
+}
+body:not(.hn-admin-page):not(.hn-home):not(.home-page) :is(main,body) > .hn-section:nth-of-type(even),
+body:not(.hn-admin-page):not(.hn-home):not(.home-page) main > section.hn-section:nth-of-type(even),
+body:not(.hn-admin-page):not(.hn-home):not(.home-page) > section.hn-section:nth-of-type(even) {
+  background: #674C2E !important;
+  background-image: none !important;
+  color: #FFFFFF !important;
+  border-block: 1px solid #D4AF37 !important;
+}
+body:not(.hn-admin-page):not(.hn-home):not(.home-page) :is(main,body) > .hn-section:nth-of-type(odd) :is(h1,h2,h3,h4,h5,h6,p,li,strong,label,.section-head p),
+body:not(.hn-admin-page):not(.hn-home):not(.home-page) main > section.hn-section:nth-of-type(odd) :is(h1,h2,h3,h4,h5,h6,p,li,strong,label,.section-head p) {
+  color: #674C2E !important;
+}
+body:not(.hn-admin-page):not(.hn-home):not(.home-page) :is(main,body) > .hn-section:nth-of-type(even) :is(h1,h2,h3,h4,h5,h6,p,li,strong,label,.section-head p),
+body:not(.hn-admin-page):not(.hn-home):not(.home-page) main > section.hn-section:nth-of-type(even) :is(h1,h2,h3,h4,h5,h6,p,li,strong,label,.section-head p) {
+  color: #FFFFFF !important;
+}
+body:not(.hn-admin-page):not(.hn-home):not(.home-page) .hn-section:nth-of-type(even) :is(.card,.country-card,.step,.note,.city,.topic-card,.result-card,.search-result,.fiche-card,.article-card,.panel,.hn-card,.feature-card,.highlight-card,.quote-card,.tool-card,.content-card) {
+  background: #FFFFFF !important;
+  background-image: none !important;
+  color: #674C2E !important;
+  border-color: #D4AF37 !important;
+}
+body:not(.hn-admin-page):not(.hn-home):not(.home-page) .hn-section:nth-of-type(even) :is(.card,.country-card,.step,.note,.city,.topic-card,.result-card,.search-result,.fiche-card,.article-card,.panel,.hn-card,.feature-card,.highlight-card,.quote-card,.tool-card,.content-card) :is(h1,h2,h3,h4,h5,h6,p,li,strong,label,small,span) {
+  color: #674C2E !important;
+}
+body:not(.hn-admin-page):not(.hn-home):not(.home-page) .hn-section :is(.btn,.button,.nav-action,.hn-action,.btn-primary,.btn-secondary,.btn-soft) {
+  background: #DD842A !important;
+  color: #FFFFFF !important;
+  border-color: #DD842A !important;
+}
