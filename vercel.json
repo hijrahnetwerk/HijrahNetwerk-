@@ -209,6 +209,10 @@
   ],
   "rewrites": [
     {
+      "source": "/hijrah-navigatie-uitleg",
+      "destination": "/hijrah-navigatie-uitleg.html"
+    },
+    {
       "source": "/meewerk-preview",
       "destination": "/meewerk-preview.html"
     },
@@ -446,6 +450,19 @@
     }
   ],
   "headers": [
+    {
+      "source": "/hijrah-navigatie-uitleg.html",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store"
+        },
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow, noarchive"
+        }
+      ]
+    },
     {
       "source": "/meewerk-preview.html",
       "headers": [
