@@ -48,9 +48,15 @@ body{margin:0;background:#FFFFFF;color:#674C2E;font-family:-apple-system,BlinkMa
 
   async function load(){
     if(!db){status.textContent='Supabase kon niet laden.';return}
-    var r=await db.from('launch_waitlist').select('id,email,interest,help_interest,created_at').order('created_at',{ascending:false});
+    var results=await Promise.all([
+      db.from('launch_waitlist').select('id,email,interest,help_interest,created_at').order('created_at',{ascending:false}),
+      db.from('hn_contributor_intents').select('email')
+    ]);
+    var r=results[0], intents=results[1];
+    if(intents.error){console.error(intents.error);status.textContent='De aanmeldingen zijn geladen, maar de meewerkkeuzes konden niet volledig worden opgehaald.';}
+    var helpEmails=new Set((intents.data||[]).map(function(x){return String(x.email||'').toLowerCase()}));
     if(r.error){status.textContent='Kon de lanceringlijst niet laden.';console.error(r.error);return}
-    data=r.data||[];count.textContent=data.length;status.textContent=data.length?'':'';
+    data=(r.data||[]).map(function(x){return Object.assign({},x,{help_interest:Boolean(x.help_interest)||helpEmails.has(String(x.email||'').toLowerCase())})});count.textContent=data.length;if(!intents.error)status.textContent='';
     rows.innerHTML=data.map(function(x){return '<tr><td>'+esc(x.email)+'</td><td>'+esc(x.interest||'—')+'</td><td>'+(x.help_interest?'Ja':'Nee')+'</td><td>'+new Date(x.created_at).toLocaleString('nl-BE')+'</td><td><button class="btn delete" data-id="'+esc(x.id)+'">Verwijderen</button></td></tr>'}).join('');
     empty.hidden=data.length>0;
     rows.querySelectorAll('[data-id]').forEach(function(b){b.addEventListener('click',async function(){if(!confirm('Dit e-mailadres verwijderen?'))return;var r=await db.from('launch_waitlist').delete().eq('id',this.dataset.id);if(r.error){alert('Verwijderen mislukt.');return}load()})});
