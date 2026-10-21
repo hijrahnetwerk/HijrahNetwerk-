@@ -96,6 +96,19 @@
 <script>
 const db=()=>window.hijrahSupabase,form=document.getElementById('form'),msg=document.getElementById('message');
 const q=new URLSearchParams(location.search);
+const meewerkMode=q.get('meewerk')==='1';
+const meewerkEmail=sessionStorage.getItem('hn_meewerk_email')||'';
+if(meewerkMode&&(sessionStorage.getItem('hn_meewerk_preview')!=='1'||!meewerkEmail)){location.replace('/bedankt.html')}
+if(meewerkMode){
+ const emailField=document.getElementById('email');
+ emailField.value=meewerkEmail;
+ emailField.readOnly=true;
+ emailField.required=true;
+ emailField.setAttribute('aria-label','E-mailadres gekoppeld aan je aanmelding');
+ const h=document.createElement('div');h.className='hint';h.textContent='Gekoppeld aan je aanmelding voor Hijrah Netwerk; alleen zichtbaar voor HN.';
+ emailField.insertAdjacentElement('afterend',h);
+ document.querySelector('.top').innerHTML='<div class="top"><a href="/meewerk-preview.html">← Terug naar meewerk-preview</a><span>Hijrah Netwerk · Meewerk-preview</span></div>';
+}
 const taxonomy={countries:[],cities:[],categories:[],subcategories:[]};
 if(q.get('type'))document.getElementById('type').value=q.get('type');
 if(q.get('title'))document.getElementById('title').value=q.get('title');
@@ -128,10 +141,10 @@ form.addEventListener('submit',async e=>{
  const city=(countryName&&!country?[]:country?taxonomy.cities.filter(x=>x.country_id===country.id):taxonomy.cities).find(x=>norm(x.name)===norm(cityName));
  const category=matchName(taxonomy.categories,categoryName);
  const subcategory=(categoryName&&!category?[]:category?taxonomy.subcategories.filter(x=>x.category_id===category.id):taxonomy.subcategories).find(x=>norm(x.name)===norm(subcategoryName));
- const detailIds=['detailAddress','detailNeighborhood','detailPostalCode','detailMapsUrl','detailPhone','detailWhatsapp','detailEmail','detailWebsite','detailOpeningHours','detailAppointment','detailWalkIn','detailEmergency','detailLanguages','detailAudience','detailWomenOnly','detailFamilyFriendly','detailChildren','detailAccessibility','detailHomeVisits','detailOnline','detailDelivery','detailPrice','detailInsurance','detailPayment','detailExperienceDate','schoolAges','schoolGender','schoolCurriculum','schoolTeachingLanguages','schoolFees','schoolAdmission','schoolTransport','healthSpecialty','healthChildren','healthEquipment','healthInsurance','healthEmergency','mosqueWomen','mosqueFriday','mosqueLessons','mosqueChildren','mosqueLanguages','mosqueParking','housingType','housingRent','housingFurnished','housingContract','housingDeposit','housingUtilities','housingArea','shopProducts','shopHalal','shopDelivery','shopPayment','shopNotes','expSituation','expArea','expPros','expCons','expRecommend','expRating'];const details={};detailIds.forEach(id=>{const el=document.getElementById(id);if(el&&String(el.value||'').trim())details[id]=String(el.value).trim()}); const payload={submitted_by:u?.id||null,submitter_name:val('name')||null,submitter_email:val('email')||u?.email||null,submitter_whatsapp:val('whatsapp')||null,submitter_social:val('social')||null,submission_type:document.getElementById('type').value,title:val('title'),country_id:country?.id||null,city_id:city?.id||null,category_id:category?.id||null,subcategory_id:subcategory?.id||null,country_name:countryName||null,city_name:cityName||null,category_name:categoryName||null,subcategory_name:subcategoryName||null,target_topic_id:q.get('topic')||null,content:val('content'),source_name:val('sourceName')||null,source_url:val('sourceUrl')||null,details,requested_visibility:'public',status:'pending'};
+ const detailIds=['detailAddress','detailNeighborhood','detailPostalCode','detailMapsUrl','detailPhone','detailWhatsapp','detailEmail','detailWebsite','detailOpeningHours','detailAppointment','detailWalkIn','detailEmergency','detailLanguages','detailAudience','detailWomenOnly','detailFamilyFriendly','detailChildren','detailAccessibility','detailHomeVisits','detailOnline','detailDelivery','detailPrice','detailInsurance','detailPayment','detailExperienceDate','schoolAges','schoolGender','schoolCurriculum','schoolTeachingLanguages','schoolFees','schoolAdmission','schoolTransport','healthSpecialty','healthChildren','healthEquipment','healthInsurance','healthEmergency','mosqueWomen','mosqueFriday','mosqueLessons','mosqueChildren','mosqueLanguages','mosqueParking','housingType','housingRent','housingFurnished','housingContract','housingDeposit','housingUtilities','housingArea','shopProducts','shopHalal','shopDelivery','shopPayment','shopNotes','expSituation','expArea','expPros','expCons','expRecommend','expRating'];const details={};detailIds.forEach(id=>{const el=document.getElementById(id);if(el&&String(el.value||'').trim())details[id]=String(el.value).trim()}); const payload={submitted_by:u?.id||null,submitter_name:val('name')||null,submitter_email:meewerkMode?meewerkEmail:(val('email')||u?.email||null),submitter_whatsapp:val('whatsapp')||null,submitter_social:val('social')||null,submission_type:document.getElementById('type').value,title:val('title'),country_id:country?.id||null,city_id:city?.id||null,category_id:category?.id||null,subcategory_id:subcategory?.id||null,country_name:countryName||null,city_name:cityName||null,category_name:categoryName||null,subcategory_name:subcategoryName||null,target_topic_id:q.get('topic')||null,content:val('content'),source_name:val('sourceName')||null,source_url:val('sourceUrl')||null,details,requested_visibility:'public',status:'pending'};
  const {error}=await db().from('submissions').insert(payload);
  if(error){console.error(error);msg.className='message show error';msg.textContent='De inzending kon niet worden opgeslagen. Controleer je verbinding en probeer het opnieuw.';return}
- form.reset();msg.className='message show success';msg.textContent='Bedankt. Je inzending is ontvangen en wordt eerst door HN gecontroleerd.';refreshCities();refreshSubcategories();
+ form.reset();if(meewerkMode){document.getElementById('email').value=meewerkEmail}msg.className='message show success';msg.textContent='Bedankt. Je inzending is ontvangen en wordt eerst door HN gecontroleerd.';refreshCities();refreshSubcategories();
 });
 init().catch(error=>{console.error(error);msg.className='message show error';msg.textContent='De keuzelijsten konden niet worden geladen. Je kunt de waarden nog steeds zelf typen.'});
 </script>
