@@ -209,6 +209,10 @@
   ],
   "rewrites": [
     {
+      "source": "/meewerk-preview",
+      "destination": "/meewerk-preview.html"
+    },
+    {
       "source": "/privacy",
       "destination": "/privacy.html"
     },
@@ -442,6 +446,19 @@
     }
   ],
   "headers": [
+    {
+      "source": "/meewerk-preview.html",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store"
+        },
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow, noarchive"
+        }
+      ]
+    },
     {
       "source": "/(.*)",
       "headers": [
