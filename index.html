@@ -115,7 +115,7 @@ footer a:hover{color:#DD842A;text-decoration-color:#C6A15B}
 <section class="fin" id="inschrijven"><div class="wrap"><h2>Hoor het als eerste.</h2><form id="funnelForm">
 <!-- FIX #11: honeypot-veld tegen spam -->
 <input class="hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
-<div class="pass"><div class="m"><h3>Jouw reisplan</h3><div class="rt" id="rt"></div><label for="mail1">Je e-mailadres</label><div class="row"><input id="mail1" name="email" type="email" placeholder="naam@voorbeeld.be" required autocomplete="email"><button class="go" type="submit">Hou me op de hoogte</button></div><label class="consent"><input type="checkbox" name="consent" required><span>Ik geef toestemming aan Hijrah Netwerk om mijn e-mailadres te gebruiken om me op de hoogte te brengen van de lancering. Ik kan me altijd uitschrijven.</span></label><div class="status" id="status"></div></div><div class="s"><span>Instapkaart</span><b>Wachtlijst</b><span>Als eerste op de hoogte</span></div></div>
+<div class="pass"><div class="m"><h3>Jouw reisplan</h3><div class="rt" id="rt"></div><label for="mail1">Je e-mailadres</label><div class="row"><input id="mail1" name="email" type="email" placeholder="naam@voorbeeld.be" required autocomplete="email"><button class="go" type="submit">Hou me op de hoogte</button></div><label class="consent"><input type="checkbox" name="consent" required><span>Ik geef toestemming aan Hijrah Netwerk om mijn e-mailadres te gebruiken om me op de hoogte te brengen van de lancering. Ik kan me altijd uitschrijven.</span></label><label class="consent" style="margin-top:12px"><input type="checkbox" name="help_interest"><span>Ik wil later misschien meehelpen aan Hijrah Netwerk, bijvoorbeeld door informatie over landen, steden, scholen of voorzieningen aan te vullen. Ik ontvang hierover alleen later een uitnodiging of bericht; dit geeft me geen automatische toegang.</span></label><div class="status" id="status"></div></div><div class="s"><span>Instapkaart</span><b>Wachtlijst</b><span>Als eerste op de hoogte</span></div></div>
 </form></div></section>
 
 </main>
@@ -178,6 +178,7 @@ $("#funnelForm").addEventListener("submit",async e=>{
     email,
     interest: A.fase,
     fase: A.fase,
+    help_interest: Boolean(form.help_interest && form.help_interest.checked),
     consent_at: new Date().toISOString(),
     consent_version: "launch-waitlist-v1"
   });
@@ -188,9 +189,8 @@ $("#funnelForm").addEventListener("submit",async e=>{
     s.className="status err";
     return;
   }
-  s.textContent="Gelukt. Je staat op de lijst.";
-  s.className="status";
-  form.reset();
+  // Een bestaand e-mailadres telt ook als aangemeld; geen tweede record aanmaken.
+  window.location.assign("/bedankt.html");
 });
 })();
 </script>
