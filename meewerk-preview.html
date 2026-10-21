@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<meta name="theme-color" content="#674C2E">
+<title>Meewerk-preview · Hijrah Netwerk</title>
+<link rel="stylesheet" href="/assets/hn-design.css">
+<link rel="stylesheet" href="/assets/hn-sitewide.css?v=1">
+<style>
+*{box-sizing:border-box}body{margin:0;background:#FFFFFF;color:#674C2E;font-family:Manrope,Inter,Arial,sans-serif;line-height:1.6}
+.topline{height:7px;background:linear-gradient(90deg,#674C2E,#DD842A 55%,#C6A15B)}
+.wrap{max-width:1080px;margin:auto;padding:28px 20px 70px}.brand{font-weight:850;letter-spacing:.01em}.account{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;margin:20px 0 36px;padding:13px 16px;border:1px solid #C6A15B;border-radius:14px}
+.pill{display:inline-flex;border-radius:999px;padding:5px 10px;background:#674C2E;color:#FFFFFF;font-size:.78rem;font-weight:800}
+.eyebrow{color:#9B7735;text-transform:uppercase;font-weight:800;font-size:.78rem;letter-spacing:.12em}
+h1{font-size:clamp(2.1rem,5vw,3.6rem);line-height:1.08;max-width:800px;margin:12px 0 16px}
+.lead{font-size:1.08rem;max-width:760px}
+.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:28px 0}
+.card{border:1px solid #C6A15B;border-radius:18px;padding:20px;background:#FFFFFF}
+.card:nth-child(2){background:#674C2E;color:#FFFFFF}.card:nth-child(2) h2{color:#FFFFFF}.card:nth-child(3){background:linear-gradient(140deg,#FFFFFF,#FFFFFF);border-color:#DD842A}
+.card h2{font-size:1.05rem;margin:0 0 8px;color:#674C2E}.card p{margin:0;font-size:.94rem}
+.callout{border-left:4px solid #DD842A;padding:16px 18px;margin:24px 0}
+.actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:26px}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:12px 20px;border-radius:999px;text-decoration:none;font-weight:800;border:1px solid #674C2E}
+.primary{background:#DD842A;color:#FFFFFF;border-color:#DD842A}.secondary{background:#FFFFFF;color:#674C2E}
+.small{font-size:.85rem;opacity:.9}
+@media(max-width:760px){.cards{grid-template-columns:1fr}.account{align-items:flex-start}}
+</style>
+</head>
+<body>
+<div class="topline"></div>
+<main class="wrap">
+<div class="brand">Hijrah Netwerk</div>
+<div class="account"><div><span class="pill">Meewerk-preview</span><div class="small" style="margin-top:6px">Aangemeld met <strong id="email"></strong></div></div><span class="small">Alle aanvullingen worden eerst door HN gecontroleerd.</span></div>
+<div class="eyebrow">Van zuster tot zuster</div>
+<h1>Help mee om informatie overzichtelijker en bruikbaarder te maken.</h1>
+<p class="lead">Dit is een preview van de soorten informatie die je kunt aanvullen. Je hoeft niet alles te weten en je hoeft ook niet alles in te vullen. Deel wat je uit eigen ervaring weet of voeg een betrouwbare bron toe.</p>
+<section class="cards" aria-label="Mogelijke bijdragen">
+<article class="card"><h2>Land, stad en wijk</h2><p>Praktische informatie per locatie, buurten, bereikbaarheid, aandachtspunten en ervaringen van bewoners.</p></article>
+<article class="card"><h2>Scholen en onderwijs</h2><p>Leeftijden, onderwijstalen, schoolgeld, toelating, vervoer en informatie die ouders vooraf helpt vergelijken.</p></article>
+<article class="card"><h2>Zorg en voorzieningen</h2><p>Artsen, klinieken, apotheken, winkels, moskeeën, diensten, openingstijden en contactgegevens.</p></article>
+<article class="card"><h2>Wonen en dagelijks leven</h2><p>Huurprijzen, wijken, voorzieningen in de buurt, praktische kosten en zaken die je graag vooraf had geweten.</p></article>
+<article class="card"><h2>Bronnen en actualiteit</h2><p>Officiële websites, betrouwbare links, datums waarop informatie is gecontroleerd en meldingen van verouderde gegevens.</p></article>
+<article class="card"><h2>Ervaringen en aandachtspunten</h2><p>Wat in de praktijk goed werkt, wat anders liep dan verwacht en voor welke situaties informatie relevant is.</p></article>
+</section>
+<div class="callout"><strong>Wat gebeurt er met je bijdrage?</strong><p>Je e-mailadres wordt aan je inzending gekoppeld zodat HN zo nodig contact kan opnemen. Je bijdrage wordt niet automatisch gepubliceerd. Jij krijgt met deze preview geen toegang tot de kennisbank, ledenomgeving of beheerfuncties. Alleen HN kan die toegang later afzonderlijk verlenen.</p></div>
+<div class="actions"><a class="btn primary" href="/bijdragen?meewerk=1">Een aanvulling insturen</a><a class="btn secondary" href="/bedankt.html">Nu stoppen</a></div>
+<p class="small" style="margin-top:22px">Vrijwillig meewerken is vrijblijvend. Je kunt eerst bekijken wat er gevraagd wordt en zelf beslissen of je iets wilt insturen.</p>
+</main>
+<script>
+(function(){
+ const email=sessionStorage.getItem('hn_meewerk_email');
+ if(sessionStorage.getItem('hn_meewerk_preview')!=='1'||!email){location.replace('/bedankt.html');return}
+ document.getElementById('email').textContent=email;
+})();
+</script>
+</body>
+</html>
