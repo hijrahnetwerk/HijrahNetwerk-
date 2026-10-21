@@ -56,3 +56,92 @@ input:focus,select:focus,textarea:focus{border-color:var(--hn-rust)!important;bo
 :where(p,li){text-wrap:pretty}
 @media(max-width:760px){:where(th,td){padding:9px 10px}:where(button,.btn,.button){max-width:100%}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+
+
+/* HN UX upgrades — strict brand palette, richer section rhythm, responsive controls. */
+:root{
+  --hn-brown:#674C2E;
+  --hn-rust:#DD842A;
+  --hn-gold:#C6A15B;
+  --hn-gold-gradient:linear-gradient(135deg,#8B6914 0%,#D4AF37 35%,#F5E27A 50%,#D4AF37 65%,#8B6914 100%);
+  --hn-white:#FFFFFF;
+  --hn-motion-fast:160ms;
+  --hn-motion:240ms;
+  --hn-ease:cubic-bezier(.22,.61,.36,1);
+}
+html{scroll-padding-top:calc(var(--hn-sticky-offset,76px) + 12px)}
+body{background:#FFFFFF;color:var(--hn-brown)}
+.hn-stripe,.gold-divider,.hn-divider{background:var(--hn-gold-gradient);background-image:var(--hn-gold-gradient)}
+:where(button,.btn,.button,a.button,[role="button"],[data-hn-open]){
+  touch-action:manipulation;
+  -webkit-tap-highlight-color:transparent;
+}
+:where(button,.btn,.button,a.button,[role="button"]):focus-visible,
+:where(input,select,textarea):focus-visible{
+  outline:3px solid var(--hn-gold)!important;outline-offset:3px;
+}
+:where(input,select,textarea){scroll-margin-top:100px}
+:where(.card,.panel,.country-card,.topic-card,.result-card,.fiche-card,.article-card,.plan-box,.monitor-box,.overview-card){
+  background:#FFFFFF;border-color:rgba(198,161,91,.48);
+}
+@media(hover:hover){
+  :where(.card,.panel,.country-card,.topic-card,.result-card,.fiche-card,.article-card,.plan-box,.monitor-box,.overview-card):hover{
+    transform:translateY(-3px);border-color:var(--hn-gold);
+    box-shadow:0 14px 32px rgba(103,76,46,.12),0 0 0 1px rgba(198,161,91,.16);
+  }
+}
+:where(main>section,.section):nth-of-type(odd){background-color:#FFFFFF}
+:where(main>section,.section):nth-of-type(even){
+  background-color:#FFFFFF;
+  background-image:linear-gradient(135deg,rgba(139,105,20,.07) 0%,rgba(245,226,122,.18) 48%,rgba(221,132,42,.045) 100%);
+}
+:where(main>section,.section):is(.story,.quote-band,.hn-feature-band,.cta-band,.cta,.cta-section,.newsletter,.signup-section){
+  background-color:var(--hn-brown);background-image:linear-gradient(125deg,#674C2E 0%,#674C2E 68%,#8B6914 100%);
+  color:#FFFFFF;border-top:2px solid var(--hn-gold);border-bottom:2px solid var(--hn-gold);
+}
+:where(main>section,.section):is(.story,.quote-band,.hn-feature-band,.cta-band,.cta,.cta-section,.newsletter,.signup-section) :where(h1,h2,h3,h4,p,li,a,small,label){color:#FFFFFF}
+:where(main>section,.section) :where(.card,.panel,.country-card,.topic-card,.result-card,.fiche-card,.article-card,.plan-box,.monitor-box,.overview-card){background:#FFFFFF;color:var(--hn-brown)}
+:where(h1,h2,h3,h4){letter-spacing:-.025em;line-height:1.16}
+:where(p,li){line-height:1.65}
+:where(details){border:1px solid rgba(198,161,91,.45);border-radius:14px;background:#FFFFFF}
+:where(details>summary){padding:14px 16px;font-weight:700;color:var(--hn-brown)}
+:where(details[open]>summary){border-bottom:1px solid rgba(198,161,91,.4)}
+:where(details> :not(summary)){padding-inline:16px}
+:where(table){background:#FFFFFF}
+:where(th){background:linear-gradient(135deg,rgba(198,161,91,.24),rgba(245,226,122,.3));color:var(--hn-brown)}
+@media(min-width:760px){
+  body:is(.hn-admin-page,[data-hn-admin="true"]) :where(thead th){position:sticky;top:0;z-index:3}
+  body:is(.hn-admin-page,[data-hn-admin="true"]) :where(table){border-collapse:separate}
+}
+:where(.hn-toast,[role="status"],[aria-live="polite"]){overflow-wrap:anywhere}
+:where(.hn-overlay,.hn-command-palette-backdrop){z-index:20000}
+.hn-overlay-panel,.hn-command-palette{
+  color:var(--hn-brown);background:#FFFFFF;border:1px solid var(--hn-gold);
+  box-shadow:0 24px 70px rgba(103,76,46,.24);
+}
+.hn-command-palette-backdrop{
+  position:fixed;inset:0;display:grid;place-items:start center;padding:12vh 16px 24px;
+  background:rgba(103,76,46,.42);backdrop-filter:blur(4px);z-index:30000;
+}
+.hn-command-palette-backdrop[hidden]{display:none}
+.hn-command-palette{width:min(620px,100%);max-height:76vh;overflow:hidden;border-radius:18px;display:flex;flex-direction:column}
+.hn-command-palette input{width:100%;min-height:54px;padding:14px 18px;border:0!important;border-bottom:1px solid rgba(198,161,91,.5)!important;border-radius:0!important;font-size:16px}
+.hn-command-palette-list{overflow:auto;padding:8px;overscroll-behavior:contain}
+.hn-command-palette-list a,.hn-command-palette-list button{display:flex;align-items:center;gap:12px;width:100%;min-height:44px;padding:11px 13px;border:0;border-radius:10px;background:#FFFFFF;color:var(--hn-brown);text-align:left;text-decoration:none}
+.hn-command-palette-list a:hover,.hn-command-palette-list button:hover,.hn-command-palette-list [aria-selected="true"]{background:linear-gradient(110deg,rgba(198,161,91,.2),rgba(245,226,122,.28));outline:1px solid rgba(198,161,91,.55)}
+.hn-command-palette-empty{padding:18px;color:var(--hn-brown);opacity:.75}
+.hn-local-draft-status{font-size:.8rem;color:var(--hn-brown);padding:4px 0}
+:where(.hn-overlay,.hn-command-palette-backdrop){overscroll-behavior:contain}
+:where(.hn-overlay-panel,.hn-command-palette){animation:hnUxEnter .18s var(--hn-ease) both}
+@keyframes hnUxEnter{from{opacity:.65;transform:translateY(8px) scale(.99)}to{opacity:1;transform:translateY(0) scale(1)}}
+@media(max-width:640px){
+  :where(button,.btn,.button,[role="button"]){min-height:44px}
+  .hn-command-palette-backdrop{padding:7vh 10px 12px}
+  .hn-command-palette{max-height:84dvh;border-radius:14px}
+  :where(.table-wrap,table){max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  :where(main>section,.section){scroll-margin-top:80px}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{scroll-behavior:auto!important;animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
+  :where(.card,.panel,.country-card,.topic-card,.result-card,.fiche-card,.article-card,.plan-box,.monitor-box,.overview-card):hover{transform:none}
+}
