@@ -182,3 +182,25 @@ body:has(#hnPublicNav) main>section :where(.card,.country-card,.step,.note,.city
 .hn-overlay{background:rgba(103,76,46,.35);backdrop-filter:none;-webkit-backdrop-filter:none}
 .hn-overlay-panel{border-radius:12px;box-shadow:0 12px 36px rgba(103,76,46,.16)}
 @media(hover:hover){body:has(#hnPublicNav) :where(.card,.country-card,.step,.note,.story,.city,.topic-card,.result-card,.search-result,.fiche-card,.article-card,.panel,.hn-card,.feature-card,.highlight-card,.quote-card):hover{transform:none;box-shadow:0 6px 18px rgba(103,76,46,.10);border-color:#D49622}}
+
+
+/* Accessibility hotfix: public page heroes are forced to white by the brand correction above,
+   so their headings and intro text must be brown, not white-on-white. Keep dark CTA/story bands white-on-brown. */
+body:has(#hnPublicNav) :where(.hn-hero,.hero,.page-hero,.hero-section) :is(h1,h2,h3,h4,h5,h6,.lead,.subtitle,.intro,p,li) {
+  color: #674C2E !important;
+}
+body:has(#hnPublicNav) :where(.hn-hero,.hero,.page-hero,.hero-section) :is(h1 span,h2 span,.hn-gold) {
+  color: #674C2E !important;
+}
+body:has(#hnPublicNav) :where(.hn-hero,.hero,.page-hero,.hero-section) :is(.eyebrow,.hn-label,.hn-eyebrow) {
+  color: #674C2E !important;
+  background: #FFFFFF !important;
+  border-color: #D49622 !important;
+}
+/* Detail headers on white content areas remain dark and readable. */
+body:has(#hnPublicNav) main :is(h1,h2,h3,h4,h5,h6) {
+  color: #674C2E;
+}
+body:has(#hnPublicNav) main > section:where(.story,.quote-band,.hn-feature-band,.cta-band,.cta,.cta-section,.newsletter,.signup-section) :is(h1,h2,h3,h4,h5,h6,p,li,a,small) {
+  color: #FFFFFF !important;
+}
