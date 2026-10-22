@@ -204,3 +204,59 @@ body:has(#hnPublicNav) main :is(h1,h2,h3,h4,h5,h6) {
 body:has(#hnPublicNav) main > section:where(.story,.quote-band,.hn-feature-band,.cta-band,.cta,.cta-section,.newsletter,.signup-section) :is(h1,h2,h3,h4,h5,h6,p,li,a,small) {
   color: #FFFFFF !important;
 }
+
+
+/* HN header + button system: brown title bands, rounded brown cloud accents, dark-rust actions. */
+:root { --hn-dark-rust: #A84F12; }
+/* Page and section headings use a brown surface with white type. */
+body:has(#hnPublicNav) main :is(.section-head,h1.page-title,.page-heading,.hn-page-heading,.steps-heading) {
+  color: #FFFFFF !important;
+}
+body:has(#hnPublicNav) main :is(.section-head,.page-heading,.hn-page-heading,.steps-heading) {
+  background: #674C2E !important;
+  color: #FFFFFF !important;
+  border-radius: 18px 18px 18px 4px;
+  padding: clamp(14px, 2.5vw, 24px);
+}
+body:has(#hnPublicNav) main :is(.section-head,.page-heading,.hn-page-heading,.steps-heading) :is(h1,h2,h3,h4,p,span,small) {
+  color: #FFFFFF !important;
+}
+/* Hero/title area is also brown with white headings and supporting copy. */
+body:has(#hnPublicNav) :is(.hn-hero,.hero,.page-hero,.hero-section,.steps-hero) {
+  background: #674C2E !important;
+  background-image: none !important;
+  color: #FFFFFF !important;
+  border-radius: 0 0 28px 28px;
+}
+body:has(#hnPublicNav) :is(.hn-hero,.hero,.page-hero,.hero-section,.steps-hero) :is(h1,h2,h3,h4,h5,h6,p,li,.lead,.subtitle,.intro,.eyebrow,.hn-eyebrow) {
+  color: #FFFFFF !important;
+}
+body:has(#hnPublicNav) :is(.hn-hero,.hero,.page-hero,.hero-section,.steps-hero) :is(.eyebrow,.hn-label,.hn-eyebrow) {
+  border-color: #D49622 !important;
+}
+/* Rounded brown cloud-like accents alternate with clean white areas. */
+body:has(#hnPublicNav) main :is(.section-head,.steps-overview,.steps-content-title,.cloud-heading) {
+  border-radius: 22px 22px 22px 6px;
+}
+body:has(#hnPublicNav) main :is(.hn-cloud,.cloud,.cloud-panel,.steps-overview) {
+  border-radius: 26px 26px 26px 8px;
+}
+body:has(#hnPublicNav) main > section:nth-of-type(even) :is(.section-head,.steps-overview,.steps-content-title,.cloud-heading) {
+  background: #674C2E !important;
+  color: #FFFFFF !important;
+}
+body:has(#hnPublicNav) main > section:nth-of-type(even) :is(.section-head,.steps-overview,.steps-content-title,.cloud-heading) :is(h1,h2,h3,h4,p,span,small) {
+  color: #FFFFFF !important;
+}
+/* All primary action buttons use dark rust for consistent contrast. */
+body:has(#hnPublicNav) :is(button,a.btn,a.button,a.btn-primary,a.btn-secondary,a.btn-soft,.btn,.button,.btn-primary,.btn-secondary,.btn-soft,.nav-action,.hn-action,.hn-mobile-primary,.go,[role="button"]) {
+  background: #A84F12 !important;
+  background-image: none !important;
+  color: #FFFFFF !important;
+  border-color: #A84F12 !important;
+}
+body:has(#hnPublicNav) :is(button,a.btn,a.button,a.btn-primary,a.btn-secondary,a.btn-soft,.btn,.button,.btn-primary,.btn-secondary,.btn-soft,.nav-action,.hn-action,.hn-mobile-primary,.go,[role="button"]):hover {
+  background: #674C2E !important;
+  color: #FFFFFF !important;
+  border-color: #D49622 !important;
+}
