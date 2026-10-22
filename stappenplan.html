@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Hijrah Stappenplan — Hijrah Netwerk</title>
 <meta name="description" content="Het Hijrah Stappenplan van Hijrah Netwerk: modules van oriëntatie tot integratie.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/platform-pages.css?v=2">
 <link rel="stylesheet" href="assets/public-nav.css">
 <script src="assets/hijrah-stappenplan.js"></script>
@@ -70,13 +73,14 @@
 
 @media(max-width:700px){.module-grid{grid-template-columns:1fr}}
 /* Stappenplan page design: dedicated to this page; does not affect homepage or footer. */
+/* HN vaste stijlafspraken voor Stappenplan: effen bruin, klassiek goud, wit en roest. */
 body:has(.steps-hero){background:#FFFFFF}
 .steps-hero{
-  background:linear-gradient(118deg,#674C2E 0%,#674C2E 52%,#8f5528 78%,#DD842A 100%)!important;
-  color:#FFFFFF!important;padding:76px 0 54px!important;border-bottom:5px solid #D49622;
+  background:#674C2E!important;
+  color:#FFFFFF!important;padding:76px 0 54px!important;border-bottom:3px solid #C6A15B;
 }
 .steps-hero:after{border-color:rgba(212,150,34,.6)!important;box-shadow:0 0 0 32px rgba(212,150,34,.08),0 0 0 64px rgba(212,150,34,.04)!important}
-.steps-hero .eyebrow{background:rgba(255,255,255,.1)!important;color:#D49622!important;border-color:#D49622!important}
+.steps-hero .eyebrow{background:rgba(255,255,255,.1)!important;color:#FFFFFF!important;border-color:#C6A15B!important}
 .steps-hero h1,.steps-hero h2,.steps-hero h3,.steps-hero p{color:#FFFFFF!important}
 .steps-hero h1{max-width:820px}
 .steps-hero .hero-inner>p{max-width:760px}
@@ -122,6 +126,19 @@ body:has(.steps-hero){background:#FFFFFF}
  .module-card{min-height:unset}
  .steps-section-heading{margin-bottom:24px}
 }
+
+/* Typografie en kleurcorrectie voor deze pagina */
+body:has(.steps-hero){font-family:Inter,system-ui,sans-serif;color:#674C2E;background:#FFFFFF}
+.steps-hero h1,.steps-section-heading h2,.phase-title,.module-card h3,.detail h1,.detail h2,.detail h3{font-family:Manrope,Inter,sans-serif;letter-spacing:-.025em}
+.steps-hero{background:#674C2E!important;color:#FFFFFF!important}
+.steps-hero:after{border-color:rgba(198,161,91,.45)!important;box-shadow:0 0 0 32px rgba(198,161,91,.07),0 0 0 64px rgba(198,161,91,.035)!important}
+.steps-hero .eyebrow{color:#FFFFFF!important;border-color:#C6A15B!important}
+.steps-hero .btn-primary{background:#DD842A!important;border-color:#DD842A!important;color:#FFFFFF!important}
+.steps-hero .btn-primary:hover{background:#674C2E!important;border-color:#C6A15B!important}
+.module-card{border-color:rgba(103,76,46,.2);box-shadow:0 5px 18px rgba(103,76,46,.05)}
+.module-card:hover{border-color:#C6A15B;box-shadow:0 10px 26px rgba(103,76,46,.12)}
+.module-number{color:#9B7735!important}
+.question-box{background:#FFFFFF!important;border-color:#C6A15B!important}
 </style>
 
 <script>
