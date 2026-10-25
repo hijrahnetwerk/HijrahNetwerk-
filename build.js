@@ -147,6 +147,7 @@ const pageEngineTag = '<script src="/assets/hn-page-engine.js"></script>';
 const visualEditorTag = '<script src="/assets/hn-visual-editor-runtime.js?v=20261018-dragdrop"></script>';
 const visualPolishStyleTag = '<link rel="stylesheet" href="/assets/hn-visual-polish.css?v=20261020-unified-ui1">';
 const brandThemeTag = '<link rel="stylesheet" href="/assets/hn-cms-theme.css">';
+const consistencyStyleTag = '<link rel="stylesheet" href="/assets/hn-consistency.css?v=20261025-v1">';
 const motionTag = '<script src="/assets/hn-motion.js"></script>';
 const copyProtectionTag = '<script src="/copy-protection.js?v=20261012-admin-only-copy2"></script>';
 const supabaseUmdUrl = '/assets/vendor/supabase-js-2.117.3.umd.js'; // zelf gehost: geen extern domein, wel jaar-lang cachebaar
@@ -248,6 +249,7 @@ for (const file of htmlFiles) {
     !html.includes('/assets/hn-admin-bar.js?v=20261013') ? adminBarTag : '',
     !html.includes('/assets/hn-admin-bar.css?v=20261013') ? adminBarStyleTag : '',
     !html.includes(visualPolishStyleTag) ? visualPolishStyleTag : '',
+    !html.includes('/assets/hn-consistency.css') ? consistencyStyleTag : '',
     file !== 'index.html' && !html.includes('/assets/hn-cms-theme.css') ? brandThemeTag : '',
     !html.includes(motionTag) ? motionTag : '',
 
