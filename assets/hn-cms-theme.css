@@ -148,3 +148,21 @@ body:where(.hn-admin-page) :where(.success,.published,.draft,.warning,.error,.da
 :where(.success,.published,.status-success,.badge-success){border-left:4px solid #DD842A!important}
 :where(.warning,.draft,.status-warning,.badge-warning){border-left:4px solid #C6A15B!important}
 :where(.error,.danger,.status-error,.badge-danger){border-left:4px solid #674C2E!important}
+
+
+/* HN metallic-gold refinement — brand-only palette; presentation changes only */
+:root{--hn-gold:#D4AF37;--hn-gold-dark:#8B6914;--hn-gold-light:#F5E27A;--hn-gold-gh:linear-gradient(90deg,#674C2E 0%,#8B6914 8%,#C49A21 22%,#D4AF37 34%,#FFF3A5 47%,#D4AF37 56%,#E8C94C 72%,#8B6914 91%,#674C2E 100%);--hn-gold-g:linear-gradient(135deg,#8B6914 0%,#D4AF37 35%,#F5E27A 50%,#D4AF37 65%,#8B6914 100%);--hn-gold-border:rgba(212,175,55,.42)}
+:where(hr,.hn-divider,.gold-divider,.hn-gold-divider,.section-divider){border:0!important;height:2px;background:var(--hn-gold-gh)!important;opacity:1}
+:where(.progress-fill,.progress-bar__fill,.progress-indicator){background:var(--hn-gold-gh)!important}
+:where(.card,.panel,.hn-card,.feature-card,.topic-card,.result-card,.search-result,.fiche-card,.article-card,.country-card,.city-card,.step-card){border-color:rgba(103,76,46,.16)}
+:where(.card,.panel,.hn-card,.feature-card,.topic-card,.result-card,.search-result,.fiche-card,.article-card,.country-card,.city-card,.step-card):focus-within{border-color:rgba(212,175,55,.6);box-shadow:0 0 0 2px rgba(212,175,55,.10)}
+/* Buttons stay brown or rust: no gold fills or gold-gradient buttons. */
+:where(button,.btn,.button,a.button,.hn-action,.primary-button,.go,.admin-primary,.admin-save){background-image:none}
+:where(.gold-text,.text-gold,.hn-gold-text){color:#8B6914!important;background:none!important;-webkit-text-fill-color:#8B6914!important}
+:focus-visible{outline-color:#8B6914}
+@media(prefers-reduced-motion:reduce){.hn-stripe{animation:none!important}}
+
+/* Keep shared navigation and footer on the established brown/white brand base. */
+:where(header,.site-header,.hn-header,#hnPublicNav,.admin-topbar,.admin-header,.sidebar,.admin-sidebar){background-color:#674C2E}
+:where(footer,.site-footer,.hn-footer){background:#674C2E;color:#FFFFFF}
+:where(footer,.site-footer,.hn-footer) :where(a,p,small,li,h2,h3){color:#FFFFFF}
