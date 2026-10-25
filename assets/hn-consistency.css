@@ -17,3 +17,38 @@ body{color:var(--hn-brown)}
 :where(.hn-footer,footer.site-footer,.site-footer){background:#674C2E;color:#fff}
 :where(.hn-footer,footer.site-footer,.site-footer) :where(a,p,small,li,h2,h3){color:#fff}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+
+
+/* HN full-width brand shell and refined interactive surfaces */
+:where(#hnPublicNav,.hn-nav,.site-header,.admin-topbar,.admin-header,.admin-nav,.topbar,.navbar){
+  width:100%;max-width:none;box-sizing:border-box;background:#674C2E!important;color:#FFFFFF!important;
+  border-bottom:1px solid rgba(212,175,55,.55);box-shadow:0 4px 16px rgba(58,42,24,.12)
+}
+:where(#hnPublicNav,.hn-nav,.site-header,.admin-topbar,.admin-header,.admin-nav,.topbar,.navbar) :where(a,button,span,.hn-brand,.hn-links,.hn-links>a,.hn-more-trigger,.hn-account-trigger,.menu-toggle,.hn-menu){color:#FFFFFF}
+:where(.hn-footer,footer,.site-footer,.admin-footer){
+  display:block;width:100%;max-width:none;box-sizing:border-box;
+  background:#674C2E!important;background-image:none!important;color:#FFFFFF!important;
+  border-top:2px solid #D4AF37;box-shadow:0 -6px 22px rgba(58,42,24,.08)
+}
+:where(.hn-footer,footer,.site-footer,.admin-footer) :where(a,p,small,li,h1,h2,h3,h4,label,span){color:#FFFFFF}
+:where(.hn-footer,footer,.site-footer,.admin-footer) a:hover{color:#F5E27A}
+:where(.card,.panel,.hn-card,.feature-card,.topic-card,.result-card,.search-result,.fiche-card,.article-card,.country-card,.city-card,.step-card,.overview-card,.plan-box,.modal,.popup,[role="dialog"],dialog){
+  border-radius:16px;box-shadow:0 7px 22px rgba(58,42,24,.09);
+  transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease
+}
+@media(hover:hover){
+  :where(.card,.panel,.hn-card,.feature-card,.topic-card,.result-card,.search-result,.fiche-card,.article-card,.country-card,.city-card,.step-card,.overview-card,.plan-box,[role="dialog"],dialog):hover{
+    transform:translateY(-2px);box-shadow:0 12px 28px rgba(58,42,24,.13);border-color:rgba(212,175,55,.62)
+  }
+}
+:where(.modal,.popup,[role="dialog"],dialog,.dropdown-menu,.popover,.tooltip,.hn-overlay-panel){
+  border-color:rgba(103,76,46,.22);box-shadow:0 18px 48px rgba(58,42,24,.20)
+}
+:where(button,.btn,.button,.hn-action,a.button){transition:background-color .15s ease,color .15s ease,box-shadow .15s ease,transform .15s ease}
+@media(hover:hover){:where(button,.btn,.button,.hn-action,a.button):hover{box-shadow:0 5px 14px rgba(58,42,24,.14)}}
+/* Fast, subtle reveal: content enters as it approaches the viewport; no long stagger delays. */
+.hn-reveal{transition:opacity .28s ease-out,transform .28s ease-out!important;transform:translateY(8px)}
+.hn-stagger>*{transition-delay:0ms!important}
+@media(prefers-reduced-motion:reduce){
+  .hn-reveal,.hn-stagger>*,:where(.card,.panel,.hn-card,.feature-card,.topic-card,.result-card,.search-result,.fiche-card,.article-card,.country-card,.city-card,.step-card,.overview-card,.plan-box,.modal,.popup,[role="dialog"],dialog,button,.btn,.button,.hn-action,a.button){transition:none!important;transform:none!important}
+}
