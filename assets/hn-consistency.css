@@ -1,0 +1,19 @@
+/* HN CONSISTENCY LAYER — public, member, tools and admin pages */
+:root{--hn-brown:#674C2E;--hn-rust:#DD842A;--hn-white:#FFFFFF;--hn-gold:#D4AF37;--hn-gold-dark:#8B6914;--hn-gold-light:#F5E27A;--hn-gold-gh:linear-gradient(90deg,#674C2E 0%,#8B6914 9%,#C49A21 23%,#D4AF37 36%,#FFF3A5 49%,#D4AF37 58%,#E8C94C 73%,#8B6914 91%,#674C2E 100%);--hn-border:rgba(103,76,46,.16);--hn-shadow:0 8px 24px rgba(58,42,24,.07)}
+html{scroll-padding-top:5.5rem}
+body{color:var(--hn-brown)}
+:where(h1,h2,h3,h4,h5,h6){color:var(--hn-brown)}
+:where(hr,.hn-divider,.gold-divider,.hn-gold-divider,.section-divider){height:2px;border:0;background:var(--hn-gold-gh);opacity:1}
+:where(.hn-nav,#hnPublicNav,.site-header,.admin-topbar,.admin-header,.admin-nav,.topbar,.navbar){background-color:var(--hn-brown);color:#fff;border-bottom-color:rgba(212,175,55,.6)}
+:where(.hn-nav,#hnPublicNav,.site-header,.admin-topbar,.admin-header,.admin-nav,.topbar,.navbar) :where(a,.hn-brand,.hn-links,.hn-links>a,.hn-more-trigger,.hn-account-trigger,.menu-toggle,.hn-menu){color:#fff}
+:where(.hn-nav,#hnPublicNav,.site-header,.admin-topbar,.admin-header,.admin-nav,.topbar,.navbar) :where(.hn-action.primary,.hn-nav-special,.hn-mobile-primary,.nav-action.primary,.primary-button){background:#DD842A;background-image:none;color:#fff;border-color:transparent}
+:where(main,.page-content,.content-area,.hn-main){color:var(--hn-brown)}
+:where(.card,.panel,.hn-card,.feature-card,.topic-card,.result-card,.search-result,.fiche-card,.article-card,.country-card,.city-card,.step-card,.overview-card,.plan-box){border-color:var(--hn-border)}
+@media(hover:hover){:where(.card,.panel,.hn-card,.feature-card,.topic-card,.result-card,.search-result,.fiche-card,.article-card,.country-card,.city-card,.step-card,.overview-card,.plan-box):hover{border-color:rgba(212,175,55,.48)}}
+:where(button,.btn,.button,a.button,.hn-action,.primary-button,.go,.admin-primary,.admin-save){background-image:none}
+:where(.gold-text,.text-gold,.hn-gold-text){color:#8B6914!important;background:none!important;-webkit-text-fill-color:#8B6914!important}
+:where(input,select,textarea){border-color:var(--hn-border)}
+:where(a,button,input,select,textarea,summary,[tabindex]):focus-visible{outline:3px solid #8B6914;outline-offset:3px}
+:where(.hn-footer,footer.site-footer,.site-footer){background:#674C2E;color:#fff}
+:where(.hn-footer,footer.site-footer,.site-footer) :where(a,p,small,li,h2,h3){color:#fff}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
