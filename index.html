@@ -78,6 +78,37 @@ footer a:hover{color:#DD842A;text-decoration-color:#C6A15B}
 </style>
 <script src="/assets/hn-footer.js?v=1" defer></script>
 <script src="/assets/hn-motion.js?v=1" defer></script>
+<style id="hn-metallic-gold-final">
+:root{--hn-gold:#D4AF37;--hn-gold-dark:#8B6914;--hn-gold-light:#F5E27A;--hn-gold-gh:linear-gradient(90deg,#674C2E 0%,#8B6914 8%,#C49A21 22%,#D4AF37 34%,#FFF3A5 47%,#D4AF37 56%,#E8C94C 72%,#8B6914 91%,#674C2E 100%)}
+body{background:#FFFFFF!important;color:#674C2E!important}
+.pbar{background:#674C2E!important;color:#FFFFFF!important;border-bottom:2px solid transparent!important;border-image:var(--hn-gold-gh) 1}
+.pbar .cnt,.pbar .lbs span.on{color:#F5E27A!important}
+.hero{background:#674C2E!important;color:#FFFFFF!important;border-bottom:0!important;position:relative}
+.hero:after{content:"";display:block;position:absolute;bottom:0;left:0;right:0;height:3px;background:var(--hn-gold-gh)}
+.hero :where(h1,h2,h3,p,legend,.lead,.cue,.react,.soon){color:#FFFFFF}
+.soon{color:#F5E27A!important;border-color:#D4AF37!important}
+main>section:not(.story):not(.fin):not(.goldwash){background:#FFFFFF!important;color:#674C2E!important}
+main>section.goldwash,#over-ons{background:#FFFFFF!important;color:#674C2E!important;border-block:1px solid rgba(103,76,46,.12)}
+main>section.story{background:#674C2E!important;color:#FFFFFF!important;border-block:0!important;position:relative}
+main>section.story:before,main>section.story:after{content:"";display:block;height:2px;background:var(--hn-gold-gh)}
+main>section.story :where(h1,h2,h3,p,li,a){color:#FFFFFF!important}
+.mom{background:#FFFFFF!important;color:#674C2E!important}
+.card{background:#FFFFFF!important;color:#674C2E!important;border:1px solid rgba(103,76,46,.18)!important;box-shadow:0 8px 24px rgba(58,42,24,.07)!important}
+.fin{background:#674C2E!important;color:#FFFFFF!important;border-top:0!important;position:relative}
+.fin:before{content:"";display:block;height:3px;background:var(--hn-gold-gh);position:absolute;top:0;left:0;right:0}
+.fin :where(h1,h2,h3,p,li,label){color:#FFFFFF}
+.pass{background:#FFFFFF!important;color:#674C2E!important}
+.pass :where(h2,h3,p,span,label){color:#674C2E}
+.pass .s{border-color:#D4AF37!important}
+.list li{border-top:1px solid rgba(103,76,46,.14)}
+.list li:before{background:linear-gradient(135deg,#8B6914,#D4AF37,#FFF3A5,#8B6914)!important}
+details{border-color:rgba(103,76,46,.16)}
+.go{background:#DD842A!important;color:#FFFFFF!important;border:0!important}
+.go:hover{background:#674C2E!important;color:#FFFFFF!important}
+:where(hr,.hn-divider,.gold-divider){height:2px!important;border:0!important;background:var(--hn-gold-gh)!important;opacity:1}
+:where(button,.go,.chip,.ph span){box-shadow:none}
+:focus-visible{outline:3px solid #8B6914!important;outline-offset:3px}
+</style>
 </head>
 <body>
 
