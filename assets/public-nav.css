@@ -42,3 +42,44 @@
 @media(min-width:1200px) and (max-width:1390px){.hn-nav-inner{gap:8px;padding-inline:12px}.hn-links>a,.hn-more-trigger{padding-inline:8px;font-size:12px}}
 @media(max-width:600px){.hn-nav-inner{padding:0 13px}.hn-brand{font-size:15px}.hn-mark{width:38px;height:38px}}
 @media(prefers-reduced-motion:reduce){.hn-mobile,.hn-mobile-panel{transition:none!important}}
+
+
+/* Production navigation contrast: keep the actual nav stylesheet self-contained. */
+#hnPublicNav,.hn-nav{
+  background:#674C2E!important;
+  color:#FFFFFF!important;
+}
+.hn-nav .hn-brand,
+.hn-nav .hn-links>a,
+.hn-nav .hn-more-trigger,
+.hn-nav .hn-links>a:hover,
+.hn-nav .hn-more-trigger:hover,
+.hn-nav .hn-links>a.hn-active{
+  color:#FFFFFF!important;
+  -webkit-text-fill-color:#FFFFFF!important;
+}
+.hn-nav .hn-links>a:hover,
+.hn-nav .hn-more-trigger:hover,
+.hn-nav .hn-links>a.hn-active{
+  background:rgba(255,255,255,.12);
+}
+.hn-nav .hn-action.primary,
+.hn-nav .hn-nav-special,
+.hn-nav .hn-mobile-primary{
+  background:#DD842A!important;
+  background-image:none!important;
+  color:#FFFFFF!important;
+  -webkit-text-fill-color:#FFFFFF!important;
+}
+.hn-nav .hn-action.secondary,
+.hn-nav .hn-account-trigger,
+.hn-nav .hn-menu{
+  background:#FFFFFF!important;
+  color:#674C2E!important;
+  -webkit-text-fill-color:#674C2E!important;
+}
+.hn-nav .hn-account-trigger *,
+.hn-nav .hn-menu span{
+  color:#674C2E!important;
+  -webkit-text-fill-color:#674C2E!important;
+}
