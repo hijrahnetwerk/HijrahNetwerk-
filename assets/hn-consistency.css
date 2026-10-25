@@ -69,3 +69,30 @@ body{color:var(--hn-brown)}
 .hn-reveal.hn-visible,.hn-reveal.hn-in{opacity:1;transform:none}
 .hn-reveal-left,.hn-reveal-scale{opacity:0;transition:opacity .28s ease-out,transform .28s ease-out}
 .hn-reveal-left.hn-in,.hn-reveal-scale.hn-in{opacity:1;transform:none}
+
+
+/* Header contrast repair: force readable text on brown shells, preserve contrast inside light controls. */
+:where(header,.top,.pbar,.page-header,.site-header,.admin-header,.admin-topbar,.admin-nav,.topbar,.navbar,#hnPublicNav,.hn-nav){
+  background-color:#674C2E!important;
+  color:#FFFFFF!important;
+}
+:where(header,.top,.pbar,.page-header,.site-header,.admin-header,.admin-topbar,.admin-nav,.topbar,.navbar,#hnPublicNav,.hn-nav) :where(h1,h2,h3,h4,h5,h6,p,span,strong,small,label,li,a:not(.button):not(.btn),.brand,.logo,.navlinks,.navlinks a,.hn-brand,.hn-links>a,.hn-more-trigger){
+  color:#FFFFFF!important;
+  -webkit-text-fill-color:#FFFFFF;
+}
+:where(header,.top,.pbar,.page-header,.site-header,.admin-header,.admin-topbar,.admin-nav,.topbar,.navbar,#hnPublicNav,.hn-nav) :where(button,input,select,.button,.btn,.hn-action.secondary,.hn-account-trigger,.hn-menu,.mobile-menu-toggle){
+  -webkit-text-fill-color:initial;
+}
+:where(header,.top,.pbar,.page-header,.site-header,.admin-header,.admin-topbar,.admin-nav,.topbar,.navbar,#hnPublicNav,.hn-nav) :where(button,.button,.btn,.hn-action.secondary,.hn-account-trigger,.hn-menu,.mobile-menu-toggle){
+  background-color:#FFFFFF;
+  color:#674C2E!important;
+}
+:where(header,.top,.pbar,.page-header,.site-header,.admin-header,.admin-topbar,.admin-nav,.topbar,.navbar,#hnPublicNav,.hn-nav) :where(button,.button,.btn,.hn-action.secondary,.hn-account-trigger,.hn-menu,.mobile-menu-toggle) :where(span,strong,i){
+  color:#674C2E!important;
+  -webkit-text-fill-color:#674C2E;
+}
+:where(header,.top,.pbar,.page-header,.site-header,.admin-header,.admin-topbar,.admin-nav,.topbar,.navbar,#hnPublicNav,.hn-nav) :where(.primary,.primary-button,.hn-action.primary,.hn-nav-special,.hn-mobile-primary,.go){
+  background:#DD842A!important;
+  color:#FFFFFF!important;
+  -webkit-text-fill-color:#FFFFFF;
+}
