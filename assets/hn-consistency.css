@@ -52,3 +52,20 @@ body{color:var(--hn-brown)}
 @media(prefers-reduced-motion:reduce){
   .hn-reveal,.hn-stagger>*,:where(.card,.panel,.hn-card,.feature-card,.topic-card,.result-card,.search-result,.fiche-card,.article-card,.country-card,.city-card,.step-card,.overview-card,.plan-box,.modal,.popup,[role="dialog"],dialog,button,.btn,.button,.hn-action,a.button){transition:none!important;transform:none!important}
 }
+
+
+/* Corrective pass: cover legacy page headers and make the reveal state match hn-motion.js. */
+:where(.top,.pbar,header.site-header,body>header,.page-header,.admin-header,.admin-topbar,.admin-nav,#hnPublicNav,.hn-nav,.topbar,.navbar){
+  box-sizing:border-box;
+  background-color:#674C2E!important;
+  background-image:none;
+  color:#FFFFFF!important;
+  border-bottom:1px solid rgba(212,175,55,.6);
+}
+:where(.top,.pbar,header.site-header,body>header,.page-header,.admin-header,.admin-topbar,.admin-nav,#hnPublicNav,.hn-nav,.topbar,.navbar) :where(a,button,span,strong,p,.brand,.logo,.navlinks,.navlinks a){
+  color:#FFFFFF;
+}
+.hn-reveal{opacity:0;transform:translateY(8px)}
+.hn-reveal.hn-visible,.hn-reveal.hn-in{opacity:1;transform:none}
+.hn-reveal-left,.hn-reveal-scale{opacity:0;transition:opacity .28s ease-out,transform .28s ease-out}
+.hn-reveal-left.hn-in,.hn-reveal-scale.hn-in{opacity:1;transform:none}
