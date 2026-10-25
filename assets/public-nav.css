@@ -1,7 +1,7 @@
 
-:root{--hn-brown:#674C2E;--hn-rust:#DD842A;--hn-gold:#C6A15B;--hn-gold-d:#9B7735;--hn-white:#fff}
+:root{--hn-brown:#674C2E;--hn-rust:#DD842A;--hn-gold:#D4AF37;--hn-gold-d:#8B6914;--hn-white:#fff}
 #hnPublicNav{position:relative;z-index:1000}
-.hn-nav{position:sticky;top:0;z-index:1000;background:rgba(255,255,255,.96);backdrop-filter:blur(16px);border-bottom:1px solid rgba(103,76,46,.16);box-shadow:0 5px 20px rgba(103,76,46,.04)}
+.hn-nav{position:sticky;top:0;z-index:1000;width:100%;max-width:none;background:#674C2E;color:#fff;backdrop-filter:blur(12px);border-bottom:1px solid rgba(212,175,55,.6);box-shadow:0 5px 20px rgba(58,42,24,.12)}
 .hn-nav-inner{max-width:1280px;min-height:72px;padding:0 20px;margin:auto;display:flex;align-items:center;gap:16px}
 .hn-brand{display:flex;align-items:center;gap:10px;flex:0 0 auto;color:var(--hn-brown);font-weight:800;font-size:17px;text-decoration:none}
 .hn-mark{width:42px;height:42px;border-radius:13px;background:#fff;display:grid;place-items:center;overflow:hidden;box-shadow:0 5px 15px #674c2e18}
