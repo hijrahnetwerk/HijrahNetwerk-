@@ -83,3 +83,42 @@
   color:#674C2E!important;
   -webkit-text-fill-color:#674C2E!important;
 }
+
+/* Definitieve headerkleuren: bruin vlak, witte tekst en subtiele gouden details. */
+#hnPublicNav .hn-nav{
+  background:#674C2E!important;
+  color:#FFFFFF!important;
+  border-bottom:2px solid #D4AF37!important;
+}
+#hnPublicNav .hn-brand,
+#hnPublicNav .hn-links>a,
+#hnPublicNav .hn-more-trigger{
+  color:#FFFFFF!important;
+  -webkit-text-fill-color:#FFFFFF!important;
+}
+#hnPublicNav .hn-mark{
+  border:1px solid #D4AF37;
+  box-shadow:0 0 0 2px rgba(212,175,55,.12);
+}
+#hnPublicNav .hn-links>a:hover,
+#hnPublicNav .hn-more-trigger:hover{
+  color:#F5E27A!important;
+  -webkit-text-fill-color:#F5E27A!important;
+  background:rgba(255,255,255,.08)!important;
+}
+#hnPublicNav .hn-links>a.hn-active{
+  color:#FFFFFF!important;
+  -webkit-text-fill-color:#FFFFFF!important;
+  box-shadow:inset 0 -2px #D4AF37!important;
+}
+#hnPublicNav .hn-nav-special{
+  border:1px solid #D4AF37!important;
+  background:#674C2E!important;
+  color:#FFFFFF!important;
+  -webkit-text-fill-color:#FFFFFF!important;
+}
+#hnPublicNav .hn-nav-special:hover{
+  background:#674C2E!important;
+  color:#F5E27A!important;
+  -webkit-text-fill-color:#F5E27A!important;
+}
