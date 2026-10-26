@@ -121,6 +121,54 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--orange);
 
 
 /* HN Navigatie: explicit page-level styling, loaded after this page's legacy rules. */
+/* Hero/titelheader van Hijrah Navigatie: bruin vlak, witte tekst, gouden details. */
+#main-content>.hero{
+  width:100%!important;
+  max-width:none!important;
+  margin:0 auto 28px!important;
+  padding:58px max(22px,calc((100% - 1120px)/2)) 42px!important;
+  background:#674C2E!important;
+  background-image:none!important;
+  color:#FFFFFF!important;
+  border:0!important;
+  border-bottom:3px solid #D4AF37!important;
+  box-shadow:0 8px 24px rgba(58,42,24,.14)!important;
+}
+#main-content>.hero .eyebrow{
+  background:transparent!important;
+  color:#F5E27A!important;
+  border:1px solid #D4AF37!important;
+}
+#main-content>.hero h1,
+#main-content>.hero p{
+  color:#FFFFFF!important;
+  -webkit-text-fill-color:#FFFFFF!important;
+}
+#main-content>.hero .hero-search input{
+  background:#FFFFFF!important;
+  color:#674C2E!important;
+  border:2px solid #D4AF37!important;
+}
+#main-content>.hero .hero-search-icon{color:#674C2E!important}
+#main-content>.hero .quick-link{
+  background:transparent!important;
+  color:#FFFFFF!important;
+  border:1px solid #D4AF37!important;
+}
+#main-content>.hero .quick-link:hover{
+  background:#D4AF37!important;
+  color:#674C2E!important;
+  border-color:#F5E27A!important;
+}
+#main-content>.hero .trust-badge{
+  background:rgba(255,255,255,.08)!important;
+  color:#FFFFFF!important;
+  border:1px solid rgba(212,175,55,.55)!important;
+}
+@media(max-width:600px){
+  #main-content>.hero{padding:40px 20px 30px!important}
+}
+
 body{background:#FFFFFF!important;color:#674C2E!important}
 body>.top,.top{
   width:100%!important;max-width:none!important;
