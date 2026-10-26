@@ -119,32 +119,43 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--orange);
 @media(max-width:700px){.lang-chips{flex-wrap:nowrap;overflow-x:auto;padding:0 4px 4px;margin:0 -4px;scrollbar-width:none}.lang-chips::-webkit-scrollbar{display:none}.lang-chip{flex:none}}
 @media(prefers-reduced-motion:reduce){.lang-chip{transition:none}}
 
-/* Navigatiepagina: zichtbare, pagina-eigen HN-styling */
-.top{
-  width:100%;
-  background:#674C2E!important;
-  color:#FFFFFF!important;
-  border-bottom:2px solid #D4AF37;
-  box-shadow:0 5px 18px rgba(58,42,24,.14);
+
+/* HN Navigatie: explicit page-level styling, loaded after this page's legacy rules. */
+body{background:#FFFFFF!important;color:#674C2E!important}
+body>.top,.top{
+  width:100%!important;max-width:none!important;
+  background:#674C2E!important;background-image:none!important;
+  color:#FFFFFF!important;border-bottom:2px solid #D4AF37!important;
+  box-shadow:0 5px 18px rgba(58,42,24,.14)!important;
 }
-.top .brand,.top .navlinks a,.top .mobile-menu-toggle{color:#FFFFFF!important}
-.top .navlinks a:hover{background:rgba(255,255,255,.14);color:#FFFFFF!important}
-.hero{padding-top:54px}
-.hero .eyebrow{background:#674C2E;color:#FFFFFF;border:1px solid #D4AF37}
-.hero h1{color:#674C2E}
-.hero-search input{border:2px solid #674C2E;box-shadow:0 5px 18px rgba(58,42,24,.10)}
-.hero-search input:focus{border-color:#DD842A;box-shadow:0 0 0 3px rgba(221,132,42,.18)}
-.quick-link{border-color:#674C2E;color:#674C2E}
-.quick-link:hover{background:#674C2E;color:#FFFFFF;border-color:#D4AF37}
-.filters,.side,.card,.empty{border-color:rgba(103,76,46,.28);box-shadow:0 6px 20px rgba(58,42,24,.08)}
-.side h3,.card h2,.results-head strong{color:#674C2E}
-.side button.active,.side button:hover{background:#674C2E;color:#FFFFFF}
-.button.primary,.actions .primary{background:#DD842A!important;color:#FFFFFF!important}
-.button.secondary,.actions .secondary{background:#FFFFFF;color:#674C2E;border:1px solid #674C2E}
-.card:hover{transform:translateY(-2px);border-color:#D4AF37;box-shadow:0 12px 26px rgba(58,42,24,.13)}
+.top .nav{width:100%;max-width:1200px;margin:0 auto}
+.top .brand,.top .navlinks a,.top .mobile-menu-toggle{
+  color:#FFFFFF!important;-webkit-text-fill-color:#FFFFFF!important;
+}
+.top .navlinks a:hover{background:rgba(255,255,255,.14)!important;color:#FFFFFF!important}
+.top .mobile-menu-toggle{background:#FFFFFF!important;border-color:#D4AF37!important}
+.top .mobile-menu-toggle span{background:#674C2E!important}
+.hero{background:#FFFFFF!important;background-image:none!important;border:0!important;box-shadow:none!important}
+.hero h1{color:#674C2E!important}
+.hero p{color:#674C2E!important}
+.hero .eyebrow{background:#674C2E!important;color:#FFFFFF!important;border:1px solid #D4AF37!important}
+.hero-search input{background:#FFFFFF!important;color:#674C2E!important;border:2px solid #674C2E!important}
+.quick-link{background:#FFFFFF!important;color:#674C2E!important;border:1px solid #674C2E!important}
+.quick-link:hover{background:#674C2E!important;color:#FFFFFF!important;border-color:#D4AF37!important}
+.trust-badge{background:#FFFFFF!important;color:#674C2E!important;border:1px solid rgba(103,76,46,.24)!important}
+.filters,.side,.card,.empty{
+  background:#FFFFFF!important;color:#674C2E!important;
+  border:1px solid rgba(103,76,46,.28)!important;
+  box-shadow:0 6px 20px rgba(58,42,24,.08)!important;
+}
+.side h3,.card h2,.results-head strong{color:#674C2E!important}
+.side button.active,.side button:hover{background:#674C2E!important;color:#FFFFFF!important}
+.button.primary,.actions .primary{background:#DD842A!important;color:#FFFFFF!important;border:1px solid #DD842A!important}
+.button.secondary,.actions .secondary{background:#FFFFFF!important;color:#674C2E!important;border:1px solid #674C2E!important}
+.card:hover{transform:translateY(-2px);border-color:#D4AF37!important;box-shadow:0 12px 26px rgba(58,42,24,.13)!important}
 @media(max-width:600px){
- .top .nav{padding:14px 18px}
- .hero{padding-top:38px}
+  .top .nav{padding:14px 18px}
+  .hero{padding-top:38px}
 }
 
 </style>
