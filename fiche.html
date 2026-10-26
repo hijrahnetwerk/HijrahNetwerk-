@@ -242,6 +242,16 @@ h1{font-size:clamp(30px,4vw,42px);line-height:1.1;color:var(--brown-dark);margin
 <script>
 const db=()=>window.hijrahSupabase;
 const esc=v=>v==null?'':String(v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+function safeHref(value){
+  const raw=String(value||'').trim();
+  if(!raw)return '#';
+  try{
+    const url=new URL(/^[a-z][a-z0-9+.-]*:/i.test(raw)?raw:'https://'+raw);
+    return ['http:','https:'].includes(url.protocol)?url.href:'#';
+  }catch(_){
+    return '#';
+  }
+}
 const data=x=>x&&x.card_data&&typeof x.card_data==='object'?x.card_data:{};
 const params=new URLSearchParams(location.search);
 const legacyId=params.get('id')||'';
