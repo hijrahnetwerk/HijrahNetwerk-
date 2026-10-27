@@ -341,16 +341,19 @@ async function buildSitemap() {
   const urls = new Map();
   const add = (pathname, priority, changefreq) => { if (!pathname || pathname.includes('?')) return; const clean = pathname === '/' ? '/' : pathname.replace(/\/$/, ''); urls.set(clean, {priority, changefreq}); };
   staticRoutes.forEach(route => add(route, route === '/' ? '1.0' : '0.7', route === '/' ? 'weekly' : 'monthly'));
-  try {
-    let cities = [], topics = [], categories = [];
-    try { cities = await fetchJson('cities','select=id,slug,name,country_id,is_active&is_active=eq.true&order=name'); } catch (error) { console.warn('[HN build] Steden konden niet in sitemap worden geladen:', error.message); }
-    try { topics = await fetchJson('topic','select=slug,city_id,category_id,neighborhood,published,visibility,updated_at&published=eq.true&order=updated_at.desc'); } catch (error) { console.warn('[HN build] Artikels/fiches konden niet in sitemap worden geladen:', error.message); }
-    try { categories = await fetchJson('categories','select=id,slug,name,is_active&is_active=eq.true&order=name'); } catch (error) { console.warn('[HN build] Categorieën konden niet in sitemap worden geladen:', error.message); }
-    const cityById = new Map(cities.map(x => [x.id, x]));
-    cities.forEach(city => add('/stad/' + (city.slug || slugify(city.name)), '0.8', 'weekly'));
-    const categoryById = new Map(categories.map(x => [x.id, x]));
-    topics.forEach(topic => { const slug = publicSlug(topic.slug || ''); if (!slug) return; const city = cityById.get(topic.city_id); const category = categoryById.get(topic.category_id); const categorySlug = category?.slug || slugify(category?.name || topic.visibility || 'informatie'); if (city) { const citySlug = city.slug || slugify(city.name); const area = topic.neighborhood ? slugify(topic.neighborhood) : ''; const parts = ['/locaties', citySlug]; if (area) parts.push(area); parts.push(categorySlug, slug); add(parts.join('/'), '0.8', 'weekly'); } else add('/artikels/' + slug, '0.7', 'monthly'); });
-  } catch (error) { console.warn('[HN build] Sitemap-data kon niet volledig worden geladen:', error.message); }
+  // Dynamische steden en fiches worden pas aan de sitemap toegevoegd na de publieke lancering.
+  if (process.env.HN_PUBLIC_LAUNCH === 'true') {
+    try {
+      let cities = [], topics = [], categories = [];
+      try { cities = await fetchJson('cities','select=id,slug,name,country_id,is_active&is_active=eq.true&order=name'); } catch (error) { console.warn('[HN build] Steden konden niet in sitemap worden geladen:', error.message); }
+      try { topics = await fetchJson('topic','select=slug,city_id,category_id,neighborhood,published,visibility,updated_at&published=eq.true&order=updated_at.desc'); } catch (error) { console.warn('[HN build] Artikels/fiches konden niet in sitemap worden geladen:', error.message); }
+      try { categories = await fetchJson('categories','select=id,slug,name,is_active&is_active=eq.true&order=name'); } catch (error) { console.warn('[HN build] Categorieën konden niet in sitemap worden geladen:', error.message); }
+      const cityById = new Map(cities.map(x => [x.id, x]));
+      cities.forEach(city => add('/stad/' + (city.slug || slugify(city.name)), '0.8', 'weekly'));
+      const categoryById = new Map(categories.map(x => [x.id, x]));
+      topics.forEach(topic => { const slug = publicSlug(topic.slug || ''); if (!slug) return; const city = cityById.get(topic.city_id); const category = categoryById.get(topic.category_id); const categorySlug = category?.slug || slugify(category?.name || topic.visibility || 'informatie'); if (city) { const citySlug = city.slug || slugify(city.name); const area = topic.neighborhood ? slugify(topic.neighborhood) : ''; const parts = ['/locaties', citySlug]; if (area) parts.push(area); parts.push(categorySlug, slug); add(parts.join('/'), '0.8', 'weekly'); } else add('/artikels/' + slug, '0.7', 'monthly'); });
+    } catch (error) { console.warn('[HN build] Sitemap-data kon niet volledig worden geladen:', error.message); }
+  }
   const body = Array.from(urls.entries()).map(([loc, meta]) => ['  <url>','    <loc>' + escXml(SITE_URL + loc) + '</loc>','    <changefreq>' + meta.changefreq + '</changefreq>','    <priority>' + meta.priority + '</priority>','  </url>'].join('\n')).join('\n');
   fs.writeFileSync(path.join(__dirname, 'sitemap.xml'), '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + body + '\n</urlset>\n', 'utf8');
   fs.writeFileSync(path.join(__dirname, 'robots.txt'), [
