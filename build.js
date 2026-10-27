@@ -259,7 +259,7 @@ for (const file of htmlFiles) {
     file !== 'index.html' && !html.includes('/assets/hn-cms-theme.css') ? brandThemeTag : '',
     !html.includes(motionTag) ? motionTag : '',
 
-    !html.includes('/assets/hn-footer.js') && !isAdminSurface && !['login.html','register.html','reset-password.html','update-password.html','dashboard.html','paspoort.html','mijn-kaart.html'].includes(file) ? footerTag : '',
+    file !== 'index.html' && !html.includes('/assets/hn-footer.js') && !isAdminSurface && !['login.html','register.html','reset-password.html','update-password.html','dashboard.html','paspoort.html','mijn-kaart.html'].includes(file) ? footerTag : '',
     !isAdminSurface && !['login.html','register.html','reset-password.html','update-password.html','mijn-kaart.html'].includes(file) && !html.includes('/assets/hn-back-to-top.js?v=20261014') ? backToTopTag : ''
   ].filter(Boolean);
   if (!html.includes('/assets/hn-loader.css')) additionList.push('<link rel="stylesheet" href="/assets/hn-loader.css">');
