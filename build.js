@@ -206,7 +206,7 @@ for (const file of htmlFiles) {
   // Alleen de funnelhomepage blijft publiek. Alle platformpagina's vereisen een ingelogde admin.
   // Login- en herstelpagina's blijven bereikbaar zodat de beheerder kan inloggen.
   if (file !== 'index.html' && !['login.html','reset-password.html','update-password.html'].includes(file) && !html.includes('data-hn-private-preview')) {
-    html = html.replace('</head>', privatePreviewTag + '\\n</head>');
+    html = html.replace('</head>', privatePreviewTag + '\n</head>');
   }
 
   // Kopieerbescherming wordt in de head gestart, vóórdat de pagina-inhoud interactief wordt.
