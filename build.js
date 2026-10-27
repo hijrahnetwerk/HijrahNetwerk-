@@ -141,6 +141,7 @@ const globalRuntimeTag = '<script src="/assets/hn-global-runtime.js"></script>';
 const adminBarTag = '<script src="/assets/hn-admin-bar.js?v=20261013"></script>';
 const adminBarStyleTag = '<link rel="stylesheet" href="/assets/hn-admin-bar.css?v=20261013">';
 const footerTag = '<script src="/assets/hn-footer.js?v=20261013" defer></script>';
+const privatePreviewTag = '<script src="/assets/private-preview.js" data-hn-private-preview></script>';
 const backToTopStyleTag = '<link rel="stylesheet" href="/assets/hn-back-to-top.css?v=20261014">';
 const backToTopTag = '<script src="/assets/hn-back-to-top.js?v=20261014" defer></script>';
 const pageEngineTag = '<script src="/assets/hn-page-engine.js"></script>';
@@ -189,7 +190,6 @@ for (const file of htmlFiles) {
   html = html.replace(/\/assets\/hn-passport\.js(?:\?[^"']*)?/g, '/assets/hn-passport.js?v=20261014');
   html = html.replace(/\/assets\/hn-admin-bar\.js(?:\?[^"']*)?/g, '/assets/hn-admin-bar.js?v=20261013');
   html = html.replace(/\/assets\/hn-admin-bar\.css(?:\?[^"']*)?/g, '/assets/hn-admin-bar.css?v=20261013');
-  html = html.replace(/<script src="\/assets\/private-preview\.js"><\/script>\s*/g, '');
   html = html.replace(/<script src=["']\/copy-protection\.js(?:\?[^"']*)?["']><\/script>/g, '');
 
   // Verwijder oude favicon-verwijzingen voordat de juiste HN-favicon opnieuw
@@ -201,6 +201,12 @@ for (const file of htmlFiles) {
   if (!html.includes('</body>')) {
     console.warn('[HN build] Geen </body> gevonden in ' + file + '; pagina overgeslagen.');
     continue;
+  }
+
+  // Alleen de funnelhomepage blijft publiek. Alle platformpagina's vereisen een ingelogde admin.
+  // Login- en herstelpagina's blijven bereikbaar zodat de beheerder kan inloggen.
+  if (file !== 'index.html' && !['login.html','reset-password.html','update-password.html'].includes(file) && !html.includes('data-hn-private-preview')) {
+    html = html.replace('</head>', privatePreviewTag + '\\n</head>');
   }
 
   // Kopieerbescherming wordt in de head gestart, vóórdat de pagina-inhoud interactief wordt.
@@ -301,7 +307,7 @@ for (const file of htmlFiles) {
     html = html.replace('</head>', social + '\n</head>');
   }
 
-  if (noindexFiles.has(file)) {
+  if (file !== 'index.html') {
     const existingRobots = html.match(/<meta[^>]+name=["']robots["'][^>]*>/i);
     const tag = '<meta name="robots" content="noindex,nofollow">';
     if (existingRobots) html = html.replace(existingRobots[0], tag);
@@ -330,7 +336,8 @@ async function fetchJson(table, query) {
 }
 
 async function buildSitemap() {
-  const staticRoutes = ['/','/landen','/navigatie','/kennisbank','/smart-search','/community','/bijdragen','/orientatie','/hijrahtools','/orientatietest','/stappenplan','/voorbereiding','/vertrek','/integratie','/realiteitscheck','/verhalen','/stedengids','/vergelijken','/hulp','/auteursrecht'];
+  // Tijdens de pre-launch is uitsluitend de openbare funnelhomepage vindbaar.
+  const staticRoutes = ['/'];
   const urls = new Map();
   const add = (pathname, priority, changefreq) => { if (!pathname || pathname.includes('?')) return; const clean = pathname === '/' ? '/' : pathname.replace(/\/$/, ''); urls.set(clean, {priority, changefreq}); };
   staticRoutes.forEach(route => add(route, route === '/' ? '1.0' : '0.7', route === '/' ? 'weekly' : 'monthly'));
