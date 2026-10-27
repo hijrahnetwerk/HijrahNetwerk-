@@ -141,6 +141,7 @@ const globalRuntimeTag = '<script src="/assets/hn-global-runtime.js"></script>';
 const adminBarTag = '<script src="/assets/hn-admin-bar.js?v=20261013"></script>';
 const adminBarStyleTag = '<link rel="stylesheet" href="/assets/hn-admin-bar.css?v=20261013">';
 const footerTag = '<script src="/assets/hn-footer.js?v=20261013" defer></script>';
+const privatePreviewTag = '<script src="/assets/private-preview.js" data-hn-private-preview></script>';
 const backToTopStyleTag = '<link rel="stylesheet" href="/assets/hn-back-to-top.css?v=20261014">';
 const backToTopTag = '<script src="/assets/hn-back-to-top.js?v=20261014" defer></script>';
 const pageEngineTag = '<script src="/assets/hn-page-engine.js"></script>';
@@ -189,7 +190,6 @@ for (const file of htmlFiles) {
   html = html.replace(/\/assets\/hn-passport\.js(?:\?[^"']*)?/g, '/assets/hn-passport.js?v=20261014');
   html = html.replace(/\/assets\/hn-admin-bar\.js(?:\?[^"']*)?/g, '/assets/hn-admin-bar.js?v=20261013');
   html = html.replace(/\/assets\/hn-admin-bar\.css(?:\?[^"']*)?/g, '/assets/hn-admin-bar.css?v=20261013');
-  html = html.replace(/<script src="\/assets\/private-preview\.js"><\/script>\s*/g, '');
   html = html.replace(/<script src=["']\/copy-protection\.js(?:\?[^"']*)?["']><\/script>/g, '');
 
   // Verwijder oude favicon-verwijzingen voordat de juiste HN-favicon opnieuw
@@ -201,6 +201,12 @@ for (const file of htmlFiles) {
   if (!html.includes('</body>')) {
     console.warn('[HN build] Geen </body> gevonden in ' + file + '; pagina overgeslagen.');
     continue;
+  }
+
+  // Alleen de funnelhomepage blijft publiek. Alle platformpagina's vereisen een ingelogde admin.
+  // Login- en herstelpagina's blijven bereikbaar zodat de beheerder kan inloggen.
+  if (file !== 'index.html' && !['login.html','reset-password.html','update-password.html'].includes(file) && !html.includes('data-hn-private-preview')) {
+    html = html.replace('</head>', privatePreviewTag + '\n</head>');
   }
 
   // Kopieerbescherming wordt in de head gestart, vóórdat de pagina-inhoud interactief wordt.
@@ -253,7 +259,7 @@ for (const file of htmlFiles) {
     file !== 'index.html' && !html.includes('/assets/hn-cms-theme.css') ? brandThemeTag : '',
     !html.includes(motionTag) ? motionTag : '',
 
-    !html.includes('/assets/hn-footer.js') && !isAdminSurface && !['login.html','register.html','reset-password.html','update-password.html','dashboard.html','paspoort.html','mijn-kaart.html'].includes(file) ? footerTag : '',
+    file !== 'index.html' && !html.includes('/assets/hn-footer.js') && !isAdminSurface && !['login.html','register.html','reset-password.html','update-password.html','dashboard.html','paspoort.html','mijn-kaart.html'].includes(file) ? footerTag : '',
     !isAdminSurface && !['login.html','register.html','reset-password.html','update-password.html','mijn-kaart.html'].includes(file) && !html.includes('/assets/hn-back-to-top.js?v=20261014') ? backToTopTag : ''
   ].filter(Boolean);
   if (!html.includes('/assets/hn-loader.css')) additionList.push('<link rel="stylesheet" href="/assets/hn-loader.css">');
@@ -301,7 +307,7 @@ for (const file of htmlFiles) {
     html = html.replace('</head>', social + '\n</head>');
   }
 
-  if (noindexFiles.has(file)) {
+  if (file !== 'index.html') {
     const existingRobots = html.match(/<meta[^>]+name=["']robots["'][^>]*>/i);
     const tag = '<meta name="robots" content="noindex,nofollow">';
     if (existingRobots) html = html.replace(existingRobots[0], tag);
@@ -330,20 +336,24 @@ async function fetchJson(table, query) {
 }
 
 async function buildSitemap() {
-  const staticRoutes = ['/','/landen','/navigatie','/kennisbank','/smart-search','/community','/bijdragen','/orientatie','/hijrahtools','/orientatietest','/stappenplan','/voorbereiding','/vertrek','/integratie','/realiteitscheck','/verhalen','/stedengids','/vergelijken','/hulp','/auteursrecht'];
+  // Tijdens de pre-launch is uitsluitend de openbare funnelhomepage vindbaar.
+  const staticRoutes = ['/'];
   const urls = new Map();
   const add = (pathname, priority, changefreq) => { if (!pathname || pathname.includes('?')) return; const clean = pathname === '/' ? '/' : pathname.replace(/\/$/, ''); urls.set(clean, {priority, changefreq}); };
   staticRoutes.forEach(route => add(route, route === '/' ? '1.0' : '0.7', route === '/' ? 'weekly' : 'monthly'));
-  try {
-    let cities = [], topics = [], categories = [];
-    try { cities = await fetchJson('cities','select=id,slug,name,country_id,is_active&is_active=eq.true&order=name'); } catch (error) { console.warn('[HN build] Steden konden niet in sitemap worden geladen:', error.message); }
-    try { topics = await fetchJson('topic','select=slug,city_id,category_id,neighborhood,published,visibility,updated_at&published=eq.true&order=updated_at.desc'); } catch (error) { console.warn('[HN build] Artikels/fiches konden niet in sitemap worden geladen:', error.message); }
-    try { categories = await fetchJson('categories','select=id,slug,name,is_active&is_active=eq.true&order=name'); } catch (error) { console.warn('[HN build] Categorieën konden niet in sitemap worden geladen:', error.message); }
-    const cityById = new Map(cities.map(x => [x.id, x]));
-    cities.forEach(city => add('/stad/' + (city.slug || slugify(city.name)), '0.8', 'weekly'));
-    const categoryById = new Map(categories.map(x => [x.id, x]));
-    topics.forEach(topic => { const slug = publicSlug(topic.slug || ''); if (!slug) return; const city = cityById.get(topic.city_id); const category = categoryById.get(topic.category_id); const categorySlug = category?.slug || slugify(category?.name || topic.visibility || 'informatie'); if (city) { const citySlug = city.slug || slugify(city.name); const area = topic.neighborhood ? slugify(topic.neighborhood) : ''; const parts = ['/locaties', citySlug]; if (area) parts.push(area); parts.push(categorySlug, slug); add(parts.join('/'), '0.8', 'weekly'); } else add('/artikels/' + slug, '0.7', 'monthly'); });
-  } catch (error) { console.warn('[HN build] Sitemap-data kon niet volledig worden geladen:', error.message); }
+  // Dynamische steden en fiches worden pas aan de sitemap toegevoegd na de publieke lancering.
+  if (process.env.HN_PUBLIC_LAUNCH === 'true') {
+    try {
+      let cities = [], topics = [], categories = [];
+      try { cities = await fetchJson('cities','select=id,slug,name,country_id,is_active&is_active=eq.true&order=name'); } catch (error) { console.warn('[HN build] Steden konden niet in sitemap worden geladen:', error.message); }
+      try { topics = await fetchJson('topic','select=slug,city_id,category_id,neighborhood,published,visibility,updated_at&published=eq.true&order=updated_at.desc'); } catch (error) { console.warn('[HN build] Artikels/fiches konden niet in sitemap worden geladen:', error.message); }
+      try { categories = await fetchJson('categories','select=id,slug,name,is_active&is_active=eq.true&order=name'); } catch (error) { console.warn('[HN build] Categorieën konden niet in sitemap worden geladen:', error.message); }
+      const cityById = new Map(cities.map(x => [x.id, x]));
+      cities.forEach(city => add('/stad/' + (city.slug || slugify(city.name)), '0.8', 'weekly'));
+      const categoryById = new Map(categories.map(x => [x.id, x]));
+      topics.forEach(topic => { const slug = publicSlug(topic.slug || ''); if (!slug) return; const city = cityById.get(topic.city_id); const category = categoryById.get(topic.category_id); const categorySlug = category?.slug || slugify(category?.name || topic.visibility || 'informatie'); if (city) { const citySlug = city.slug || slugify(city.name); const area = topic.neighborhood ? slugify(topic.neighborhood) : ''; const parts = ['/locaties', citySlug]; if (area) parts.push(area); parts.push(categorySlug, slug); add(parts.join('/'), '0.8', 'weekly'); } else add('/artikels/' + slug, '0.7', 'monthly'); });
+    } catch (error) { console.warn('[HN build] Sitemap-data kon niet volledig worden geladen:', error.message); }
+  }
   const body = Array.from(urls.entries()).map(([loc, meta]) => ['  <url>','    <loc>' + escXml(SITE_URL + loc) + '</loc>','    <changefreq>' + meta.changefreq + '</changefreq>','    <priority>' + meta.priority + '</priority>','  </url>'].join('\n')).join('\n');
   fs.writeFileSync(path.join(__dirname, 'sitemap.xml'), '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + body + '\n</urlset>\n', 'utf8');
   fs.writeFileSync(path.join(__dirname, 'robots.txt'), [
