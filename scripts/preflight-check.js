@@ -218,8 +218,8 @@ if (!unifiedUiCss.includes('HN SITEWIDE CSS') || !unifiedUiCss.includes('--hn-br
   failures.push('Canonical HN sitewide design layer must retain the definitive tokens, keyboard focus states and reduced-motion support.');
 }
 if (!buildScript.includes('hn-sitewide.css') || !buildScript.includes('hn-mobile-polish.css') ||
-    !buildScript.includes('hn-visual-polish.css') || !buildScript.includes('hn-consistency.css') ||
-    !buildScript.includes('hn-cms-theme.css') || !buildScript.includes('hn-design-system.css') ||
+    !buildScript.includes('hn-visual-polish\\.css') || !buildScript.includes('hn-consistency\\.css') ||
+    !buildScript.includes('hn-cms-theme\\.css') || !buildScript.includes('hn-design-system\\.css') ||
     buildScript.includes('visualPolishStyleTag') || buildScript.includes('consistencyStyleTag') ||
     buildScript.includes('brandThemeTag') || buildScript.includes('designSystemStyleTag')) {
   failures.push('Build must load the canonical sitewide CSS and strip competing legacy global stylesheets.');
