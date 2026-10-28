@@ -95,8 +95,7 @@ function inlineCssImports(relPath) {
   after = after.replace(/@import\s+url\((['"]?)\/assets\/(hn-design|hn-ux)\.css\1\)\s*;?/g, (m, q, name) => read(name));
   if (after !== before) fs.writeFileSync(p, after, 'utf8');
 }
-inlineCssImports('assets/hn-ux.css');          // eerst: platform-pages.css leest de al ingevoegde versie
-inlineCssImports('assets/platform-pages.css');
+// Global styling is consolidated in hn-sitewide.css. Page-specific CSS is no longer rewritten or expanded at build time.
 
 // Bibliotheken die eerst van een CDN kwamen staan nu op onze eigen server (vast versienummer, jaar-lang cachebaar).
 const VENDOR_REWRITES = [
@@ -134,9 +133,8 @@ const PERF_HINTS = [
 const translateTag = '<script src="/assets/hn-translate.js"></script>';
 const translateStyleTag = '<link rel="stylesheet" href="/assets/hn-translate.css">';
 const editProposalTag = '<script src="/assets/hn-edit-proposals.js"></script>';
-const fontsTag = '<link rel="stylesheet" href="/assets/fonts.css">';
 const designFontsTag = '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Raleway:wght@400;500;600;700&display=swap">';
-const globalResponsiveTag = '<link rel="stylesheet" href="/assets/hn-global-responsive.css">';
+const sitewideStyleTag = '<link rel="stylesheet" href="/assets/hn-sitewide.css">';
 const mobilePolishTag = '<link rel="stylesheet" href="/assets/hn-mobile-polish.css">';
 const globalRuntimeTag = '<script src="/assets/hn-global-runtime.js"></script>';
 const adminBarTag = '<script src="/assets/hn-admin-bar.js?v=20261013"></script>';
@@ -147,10 +145,6 @@ const backToTopStyleTag = '<link rel="stylesheet" href="/assets/hn-back-to-top.c
 const backToTopTag = '<script src="/assets/hn-back-to-top.js?v=20261014" defer></script>';
 const pageEngineTag = '<script src="/assets/hn-page-engine.js"></script>';
 const visualEditorTag = '<script src="/assets/hn-visual-editor-runtime.js?v=20261018-dragdrop"></script>';
-const visualPolishStyleTag = '<link rel="stylesheet" href="/assets/hn-visual-polish.css?v=20261020-unified-ui1">';
-const brandThemeTag = '<link rel="stylesheet" href="/assets/hn-cms-theme.css">';
-const consistencyStyleTag = '<link rel="stylesheet" href="/assets/hn-consistency.css?v=20261025-v1">';
-const designSystemStyleTag = '<link rel="stylesheet" href="/assets/hn-design-system.css">';
 const motionTag = '<script src="/assets/hn-motion.js"></script>';
 const copyProtectionTag = '<script src="/copy-protection.js?v=20261012-admin-only-copy2"></script>';
 const supabaseUmdUrl = '/assets/vendor/supabase-js-2.117.3.umd.js'; // zelf gehost: geen extern domein, wel jaar-lang cachebaar
@@ -187,6 +181,11 @@ for (const file of htmlFiles) {
       html = html.replace(tag, '<script src="/' + scriptName + '.js"></script>');
     }
   }
+  // Remove competing legacy global stylesheets from rendered pages.
+  // hn-sitewide.css is canonical; mobile-polish remains for legacy admin/mobile layout fixes.
+  html = html.replace(/<link\\b(?=[^>]*\\bhref=[\"'][^\"']*(?:fonts\\.css|hn-design\\.css|hn-ux\\.css|hn-global-responsive\\.css|hn-visual-polish\\.css|hn-consistency\\.css|hn-cms-theme\\.css|hn-design-system\\.css)(?:\\?[^\"']*)?[\"'])[^>]*>\\s*/gi, '');
+  html = html.replace(/<link\\b(?=[^>]*\\bhref=[\"'][^\"']*hn-sitewide\\.css(?:\\?[^\"']*)?[\"'])[^>]*>\\s*/gi, '');
+  html = html.replace(/@import\\s+url\\([\"']?\\/assets\\/(?:hn-design|hn-ux)\\.css[\"']?\\)\\s*;?/gi, '');
   html = html.replace(/assets\/public-nav\.(css|js)(?:\?[^"\']*)?/g, 'assets/public-nav.$1?v=20261011-1');
   html = html.replace(/\/assets\/hn-footer\.js(?:\?[^"']*)?/g, '/assets/hn-footer.js?v=20261013');
   html = html.replace(/\/assets\/hn-passport\.js(?:\?[^"']*)?/g, '/assets/hn-passport.js?v=20261014');
@@ -250,17 +249,12 @@ for (const file of htmlFiles) {
     !html.includes(translateTag) ? translateTag : '',
     !html.includes(translateStyleTag) ? translateStyleTag : '',
     !html.includes(editProposalTag) ? editProposalTag : '',
-    !html.includes(fontsTag) ? fontsTag : '',
     !html.includes('fonts.googleapis.com/css2?family=Amiri') ? designFontsTag : '',
-    !html.includes(globalResponsiveTag) ? globalResponsiveTag : '',
+    !html.includes('/assets/hn-sitewide.css') ? sitewideStyleTag : '',
     !html.includes('/assets/hn-mobile-polish.css') ? mobilePolishTag : '',
     !html.includes(globalRuntimeTag) ? globalRuntimeTag : '',
     !html.includes('/assets/hn-admin-bar.js?v=20261013') ? adminBarTag : '',
     !html.includes('/assets/hn-admin-bar.css?v=20261013') ? adminBarStyleTag : '',
-    !html.includes(visualPolishStyleTag) ? visualPolishStyleTag : '',
-    !html.includes('/assets/hn-consistency.css') ? consistencyStyleTag : '',
-    !html.includes('/assets/hn-design-system.css') ? designSystemStyleTag : '',
-    file !== 'index.html' && !html.includes('/assets/hn-cms-theme.css') ? brandThemeTag : '',
     !html.includes(motionTag) ? motionTag : '',
 
     file !== 'index.html' && !html.includes('/assets/hn-footer.js') && !isAdminSurface && !['login.html','register.html','reset-password.html','update-password.html','dashboard.html','paspoort.html','mijn-kaart.html'].includes(file) ? footerTag : '',
