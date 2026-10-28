@@ -79,22 +79,6 @@ const crypto = require('crypto');
 let SUPABASE_ORIGIN = '';
 try { SUPABASE_ORIGIN = new URL(SUPABASE_URL).origin; } catch (e) { SUPABASE_ORIGIN = ''; }
 
-// hn-ux.css en platform-pages.css gebruiken @import. Een @import is een extra, seriële netwerkronde en
-// werkt alleen bovenaan een bestand. Hier worden ze op build-tijd ingevoegd (in de juiste volgorde en
-// zonder dubbele inhoud), zodat de bestanden zelfstandig zijn.
-function inlineCssImports(relPath) {
-  const p = path.join(__dirname, relPath);
-  if (!fs.existsSync(p)) return;
-  const read = (name) => fs.readFileSync(path.join(assetsDir, name + '.css'), 'utf8');
-  const before = fs.readFileSync(p, 'utf8');
-  let after = before;
-  // hn-ux.css bevat zelf al hn-design.css: dan geen tweede kopie.
-  if (/@import\s+url\((['"]?)\/assets\/hn-ux\.css\1\)/.test(after)) {
-    after = after.replace(/@import\s+url\((['"]?)\/assets\/hn-design\.css\1\)\s*;?/g, '');
-  }
-  after = after.replace(/@import\s+url\((['"]?)\/assets\/(hn-design|hn-ux)\.css\1\)\s*;?/g, (m, q, name) => read(name));
-  if (after !== before) fs.writeFileSync(p, after, 'utf8');
-}
 // Global styling is consolidated in hn-sitewide.css. Page-specific CSS is no longer rewritten or expanded at build time.
 
 // Bibliotheken die eerst van een CDN kwamen staan nu op onze eigen server (vast versienummer, jaar-lang cachebaar).
