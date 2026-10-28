@@ -210,15 +210,17 @@ if (!(adminDashboard.indexOf('id="hn-admin-layout-final-overrides"') > adminDash
 for (const relative of ['blog-artikel.html', 'kennisbank.html']) {
   if (/Kopieer link|Link kopiëren/i.test(source(relative))) failures.push('Public copy-link control must be absent from ' + relative);
 }
-const unifiedUiCss = fs.readFileSync(path.join(root, 'assets/hn-visual-polish.css'), 'utf8');
+const unifiedUiCss = fs.readFileSync(path.join(root, 'assets/hn-sitewide.css'), 'utf8');
 const builderUiCss = fs.readFileSync(path.join(root, 'assets/admin-builder.css'), 'utf8');
 const builderHtml = fs.readFileSync(path.join(root, 'admin-builder.html'), 'utf8');
 const buildScript = fs.readFileSync(path.join(root, 'build.js'), 'utf8');
-if (!unifiedUiCss.includes('HN Unified UI') || !unifiedUiCss.includes('--hn-focus') || !unifiedUiCss.includes('prefers-reduced-motion')) {
-  failures.push('Global HN design layer must retain branded design tokens, keyboard focus states and reduced-motion support.');
+if (!unifiedUiCss.includes('HN SITEWIDE CSS') || !unifiedUiCss.includes('--hn-br-donker') || !unifiedUiCss.includes('prefers-reduced-motion') || !unifiedUiCss.includes(':focus-visible')) {
+  failures.push('Canonical HN sitewide design layer must retain the definitive tokens, keyboard focus states and reduced-motion support.');
 }
-if (!buildScript.includes('hn-visual-polish.css?v=20261020-unified-ui1')) {
-  failures.push('Production build must cache-bust the unified sitewide design layer.');
+if (!buildScript.includes('hn-sitewide.css') || !buildScript.includes('hn-mobile-polish.css') ||
+    !buildScript.includes('hn-visual-polish\\\\.css') || !buildScript.includes('hn-consistency\\\\.css') ||
+    !buildScript.includes('hn-cms-theme\\\\.css') || !buildScript.includes('hn-design-system\\\\.css')) {
+  failures.push('Build must load the canonical sitewide CSS and strip competing legacy global stylesheets.');
 }
 console.log('HN preflight: ' + jsFiles.length + ' JavaScript files, ' + htmlFiles.length + ' HTML pages checked.');
 if (failures.length) { console.error(failures.join('\n\n')); process.exitCode = 1; }
