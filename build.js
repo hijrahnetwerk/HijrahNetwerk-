@@ -183,9 +183,9 @@ for (const file of htmlFiles) {
   }
   // Remove competing legacy global stylesheets from rendered pages.
   // hn-sitewide.css is canonical; mobile-polish remains for legacy admin/mobile layout fixes.
-  html = html.replace(/<link\\b(?=[^>]*\\bhref=[\"'][^\"']*(?:fonts\\.css|hn-design\\.css|hn-ux\\.css|hn-global-responsive\\.css|hn-visual-polish\\.css|hn-consistency\\.css|hn-cms-theme\\.css|hn-design-system\\.css)(?:\\?[^\"']*)?[\"'])[^>]*>\\s*/gi, '');
-  html = html.replace(/<link\\b(?=[^>]*\\bhref=[\"'][^\"']*hn-sitewide\\.css(?:\\?[^\"']*)?[\"'])[^>]*>\\s*/gi, '');
-  html = html.replace(/@import\\s+url\\([\"']?\\/assets\\/(?:hn-design|hn-ux)\\.css[\"']?\\)\\s*;?/gi, '');
+  html = html.replace(/<link\b(?=[^>]*\bhref=["'][^"']*(?:fonts\.css|hn-design\.css|hn-ux\.css|hn-global-responsive\.css|hn-visual-polish\.css|hn-consistency\.css|hn-cms-theme\.css|hn-design-system\.css)(?:\?[^"']*)?["'])[^>]*>\s*/gi, '');
+  html = html.replace(/<link\b(?=[^>]*\bhref=["'][^"']*hn-sitewide\.css(?:\?[^"']*)?["'])[^>]*>\s*/gi, '');
+  html = html.replace(/@import\s+url\(["']?\/assets\/(?:hn-design|hn-ux)\.css["']?\)\s*;?/gi, '');
   html = html.replace(/assets\/public-nav\.(css|js)(?:\?[^"\']*)?/g, 'assets/public-nav.$1?v=20261011-1');
   html = html.replace(/\/assets\/hn-footer\.js(?:\?[^"']*)?/g, '/assets/hn-footer.js?v=20261013');
   html = html.replace(/\/assets\/hn-passport\.js(?:\?[^"']*)?/g, '/assets/hn-passport.js?v=20261014');
