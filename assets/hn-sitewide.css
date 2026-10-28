@@ -761,3 +761,32 @@ button,.btn { touch-action:manipulation; }
   *,*::before,*::after { animation-duration:.01ms!important; animation-iteration-count:1!important; transition-duration:.01ms!important; scroll-behavior:auto!important; }
   .hn-reveal,.hn-reveal-left,.hn-reveal-scale { opacity:1!important; transform:none!important; }
 }
+
+/* ── Alternating HN content sections (excluding home and admin) ── */
+body:not(.hn-admin-page):not(.hn-home):not(.home-page) main > .hn-section:nth-of-type(odd),
+body:not(.hn-admin-page):not(.hn-home):not(.home-page) > .hn-section:nth-of-type(odd) {
+  background: var(--hn-white);
+  color: var(--hn-br);
+}
+body:not(.hn-admin-page):not(.hn-home):not(.home-page) main > .hn-section:nth-of-type(even),
+body:not(.hn-admin-page):not(.hn-home):not(.home-page) > .hn-section:nth-of-type(even) {
+  background: var(--hn-br-donker);
+  color: var(--hn-white);
+  border-block: 1px solid var(--hn-gd-border);
+}
+body:not(.hn-admin-page):not(.hn-home):not(.home-page) .hn-section:nth-of-type(even) :where(h1,h2,h3,h4,h5,h6,p,li,strong,label,.section-head p) {
+  color: var(--hn-white);
+}
+body:not(.hn-admin-page):not(.hn-home):not(.home-page) .hn-section:nth-of-type(even) :where(.card,.country-card,.step,.note,.city,.topic-card,.result-card,.search-result,.fiche-card,.article-card,.panel,.hn-card,.feature-card,.highlight-card,.quote-card,.tool-card,.content-card) {
+  background: var(--hn-white);
+  color: var(--hn-br);
+  border-color: var(--hn-gd-border);
+}
+body:not(.hn-admin-page):not(.hn-home):not(.home-page) .hn-section:nth-of-type(even) :where(.card,.country-card,.step,.note,.city,.topic-card,.result-card,.search-result,.fiche-card,.article-card,.panel,.hn-card,.feature-card,.highlight-card,.quote-card,.tool-card,.content-card) :where(h1,h2,h3,h4,h5,h6,p,li,strong,label,small,span) {
+  color: var(--hn-br);
+}
+body:not(.hn-admin-page):not(.hn-home):not(.home-page) .hn-section :where(.btn,.button,.nav-action,.hn-action,.btn-primary,.btn-secondary,.btn-soft) {
+  background: var(--hn-rs);
+  color: var(--hn-br-donker);
+  border-color: transparent;
+}
