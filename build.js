@@ -135,6 +135,7 @@ const translateTag = '<script src="/assets/hn-translate.js"></script>';
 const translateStyleTag = '<link rel="stylesheet" href="/assets/hn-translate.css">';
 const editProposalTag = '<script src="/assets/hn-edit-proposals.js"></script>';
 const fontsTag = '<link rel="stylesheet" href="/assets/fonts.css">';
+const designFontsTag = '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Raleway:wght@400;500;600;700&display=swap">';
 const globalResponsiveTag = '<link rel="stylesheet" href="/assets/hn-global-responsive.css">';
 const mobilePolishTag = '<link rel="stylesheet" href="/assets/hn-mobile-polish.css">';
 const globalRuntimeTag = '<script src="/assets/hn-global-runtime.js"></script>';
@@ -149,6 +150,7 @@ const visualEditorTag = '<script src="/assets/hn-visual-editor-runtime.js?v=2026
 const visualPolishStyleTag = '<link rel="stylesheet" href="/assets/hn-visual-polish.css?v=20261020-unified-ui1">';
 const brandThemeTag = '<link rel="stylesheet" href="/assets/hn-cms-theme.css">';
 const consistencyStyleTag = '<link rel="stylesheet" href="/assets/hn-consistency.css?v=20261025-v1">';
+const designSystemStyleTag = '<link rel="stylesheet" href="/assets/hn-design-system.css">';
 const motionTag = '<script src="/assets/hn-motion.js"></script>';
 const copyProtectionTag = '<script src="/copy-protection.js?v=20261012-admin-only-copy2"></script>';
 const supabaseUmdUrl = '/assets/vendor/supabase-js-2.117.3.umd.js'; // zelf gehost: geen extern domein, wel jaar-lang cachebaar
@@ -249,6 +251,7 @@ for (const file of htmlFiles) {
     !html.includes(translateStyleTag) ? translateStyleTag : '',
     !html.includes(editProposalTag) ? editProposalTag : '',
     !html.includes(fontsTag) ? fontsTag : '',
+    !html.includes('fonts.googleapis.com/css2?family=Amiri') ? designFontsTag : '',
     !html.includes(globalResponsiveTag) ? globalResponsiveTag : '',
     !html.includes('/assets/hn-mobile-polish.css') ? mobilePolishTag : '',
     !html.includes(globalRuntimeTag) ? globalRuntimeTag : '',
@@ -256,6 +259,7 @@ for (const file of htmlFiles) {
     !html.includes('/assets/hn-admin-bar.css?v=20261013') ? adminBarStyleTag : '',
     !html.includes(visualPolishStyleTag) ? visualPolishStyleTag : '',
     !html.includes('/assets/hn-consistency.css') ? consistencyStyleTag : '',
+    !html.includes('/assets/hn-design-system.css') ? designSystemStyleTag : '',
     file !== 'index.html' && !html.includes('/assets/hn-cms-theme.css') ? brandThemeTag : '',
     !html.includes(motionTag) ? motionTag : '',
 
