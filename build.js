@@ -306,6 +306,25 @@ for (const file of htmlFiles) {
   processed++;
 }
 
+
+/* Retire unused legacy global stylesheets from the production output.
+   Preflight runs before this build step; rendered HTML has already had their links removed.
+   Keep hn-mobile-polish.css for the remaining legacy admin/mobile compatibility rules. */
+const retiredGlobalStylesheets = [
+  'assets/fonts.css',
+  'assets/hn-design.css',
+  'assets/hn-ux.css',
+  'assets/hn-global-responsive.css',
+  'assets/hn-visual-polish.css',
+  'assets/hn-consistency.css',
+  'assets/hn-cms-theme.css'
+];
+for (const relativePath of retiredGlobalStylesheets) {
+  try { fs.rmSync(path.join(__dirname, relativePath), { force: true }); }
+  catch (error) { console.warn('[HN build] Legacy stylesheet kon niet worden verwijderd:', relativePath); }
+}
+console.log('[HN build] Eén centrale huisstijl geladen; oude globale CSS-bestanden uit productie-output verwijderd.');
+
 function escXml(value) { return String(value || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;'); }
 function slugify(value) { return String(value || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, ''); }
 function publicSlug(value) { return String(value || '').replace(/-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i, ''); }
