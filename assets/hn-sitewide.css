@@ -790,3 +790,62 @@ body:not(.hn-admin-page):not(.hn-home):not(.home-page) .hn-section :where(.btn,.
   color: var(--hn-br-donker);
   border-color: transparent;
 }
+
+/* ── Shared components retained from the retired design layer ── */
+.hn-route-deco,.hn-compass-deco { position:absolute; pointer-events:none; }
+.hn-route-deco { opacity:.12; overflow:visible; }
+.hn-compass-deco { opacity:.08; }
+.hn-footer {
+  position:relative; overflow:hidden; margin-top:auto; padding:64px 0 0;
+  background:var(--hn-br-donker); color:rgba(255,255,255,.78);
+  border-top:1px solid var(--hn-gd-border);
+}
+.hn-footer::before {
+  content:""; position:absolute; inset:0; pointer-events:none;
+  background-image:radial-gradient(circle,rgba(201,162,39,.07) 1px,transparent 1px);
+  background-size:32px 32px;
+}
+.hn-footer-deco { position:absolute; right:0; top:0; width:45%; height:100%; opacity:.055; pointer-events:none; }
+.hn-footer-inner { position:relative; z-index:1; }
+.hn-footer-grid { display:grid; grid-template-columns:1.6fr 1fr 1fr 1fr; gap:40px; padding-bottom:48px; }
+.hn-footer-brand { display:flex; align-items:center; gap:10px; margin-bottom:16px; }
+.hn-footer-logo { display:block; width:42px; height:42px; object-fit:contain; border-radius:10px; }
+.hn-footer-name { color:#fff; font-family:var(--hn-font-display); font-weight:700; font-size:18px; }
+.hn-footer-tagline { max-width:280px; margin-bottom:22px; color:rgba(255,255,255,.68); font-size:14px; line-height:1.65; }
+.hn-footer-social { display:flex; gap:10px; flex-wrap:wrap; }
+.hn-footer-social a { display:grid; place-items:center; width:36px; height:36px; border:1px solid rgba(255,255,255,.18); border-radius:10px; background:rgba(255,255,255,.05); color:rgba(255,255,255,.8); }
+.hn-footer-social a:hover { background:var(--hn-rs); border-color:transparent; color:var(--hn-br-donker); }
+.hn-footer-col h4 { margin-bottom:14px; color:var(--hn-gd-licht); font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.1em; }
+.hn-footer-col ul { display:flex; flex-direction:column; gap:9px; list-style:none; padding:0; }
+.hn-footer-col ul li a { color:rgba(255,255,255,.76); font-size:14px; }
+.hn-footer-col ul li a:hover,.hn-footer-bottom a:hover { color:var(--hn-gd-licht); }
+.hn-footer-phases { display:flex; flex-wrap:wrap; gap:8px; margin-top:16px; }
+.hn-footer-phase { padding:5px 12px; border:1px solid rgba(201,162,39,.25); border-radius:999px; color:rgba(255,255,255,.7); font-size:11px; font-weight:700; }
+.hn-footer-phase:hover { border-color:var(--hn-gd); color:var(--hn-gd-licht); }
+.hn-footer-bottom { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; padding:20px 0; border-top:1px solid rgba(255,255,255,.12); color:rgba(255,255,255,.65); font-size:12px; }
+.hn-footer-bottom a { color:rgba(255,255,255,.72); }
+.hn-footer-bottom-links { display:flex; flex-wrap:wrap; gap:20px; }
+
+/* Legacy admin sidebar component, now using the same canonical tokens. */
+.hn-admin-sidebar { width:256px; flex-shrink:0; position:sticky; top:0; height:100vh; overflow-y:auto; display:flex; flex-direction:column; gap:4px; padding:24px 16px; background:var(--hn-br-donker); color:#fff; }
+.hn-admin-logo { display:flex; align-items:center; gap:10px; margin-bottom:6px; }
+.hn-admin-logo-mark { display:grid; place-items:center; width:38px; height:38px; border-radius:12px; background:linear-gradient(135deg,var(--hn-rs),var(--hn-gd)); color:var(--hn-br-donker); font-size:11px; font-weight:900; }
+.hn-admin-logo-name { color:#fff; font-size:17px; font-weight:800; }
+.hn-admin-label { display:block; margin-bottom:20px; padding-left:4px; color:rgba(255,255,255,.62); font-size:11px; letter-spacing:.1em; text-transform:uppercase; }
+.hn-admin-section-label { padding:12px 14px 4px; color:rgba(255,255,255,.55); font-size:10px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; }
+.hn-admin-nav-btn { display:flex; align-items:center; gap:9px; width:100%; padding:10px 14px; border:1px solid transparent; border-radius:10px; background:transparent; color:rgba(255,255,255,.82); text-align:left; text-decoration:none; font-size:13.5px; font-weight:600; cursor:pointer; }
+.hn-admin-nav-btn:hover { background:rgba(255,255,255,.08); color:#fff; }
+.hn-admin-nav-btn.active { background:rgba(201,162,39,.13); color:var(--hn-gd-licht); border-color:var(--hn-gd-border); }
+.hn-admin-divider { height:1px; margin:8px 0; background:rgba(255,255,255,.12); }
+.hn-admin-topbar { position:sticky; top:0; z-index:40; display:flex; align-items:center; justify-content:space-between; min-height:64px; padding:0 28px; background:#fff; border-bottom:1px solid var(--hn-gd-border); }
+.hn-admin-topbar h1 { font-size:19px; font-weight:700; }
+.hn-admin-stat { padding:20px; background:#fff; border:1px solid var(--hn-gd-border); border-top:3px solid var(--hn-gd); border-radius:var(--hn-r-lg); }
+.hn-admin-stat .n { color:var(--hn-gd-donker); font-size:30px; font-weight:800; line-height:1; }
+.hn-admin-stat .l { margin-top:5px; color:rgba(79,58,35,.72); font-size:12px; font-weight:600; }
+.hn-toast { position:fixed; right:22px; bottom:22px; z-index:2000; display:flex; align-items:center; gap:10px; max-width:min(360px,calc(100vw - 44px)); padding:13px 20px; border-radius:14px; box-shadow:0 10px 32px rgba(0,0,0,.2); font-size:13px; font-weight:700; opacity:0; transform:translateY(80px); pointer-events:none; transition:transform .28s ease,opacity .28s ease; }
+.hn-toast.show { opacity:1; transform:translateY(0); }
+.hn-toast-ok { background:var(--hn-ok); color:#fff; }
+.hn-toast-err { background:var(--hn-fout); color:#fff; }
+.hn-toast-info { background:var(--hn-br-donker); color:#fff; border:1px solid var(--hn-gd-border); }
+@media(max-width:900px){ .hn-footer-grid { grid-template-columns:1fr 1fr; gap:28px; } }
+@media(max-width:640px){ .hn-footer { padding-top:44px; } .hn-footer-grid { grid-template-columns:1fr; gap:24px; } .hn-admin-sidebar { width:100%; height:auto; position:relative; } .hn-admin-topbar { padding:0 16px; } .hn-toast { right:12px; bottom:12px; left:12px; max-width:none; } }
