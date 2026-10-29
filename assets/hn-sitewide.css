@@ -850,6 +850,22 @@ body:not(.hn-admin-page):not(.hn-home):not(.home-page) .hn-section :where(.btn,.
 @media(max-width:900px){ .hn-footer-grid { grid-template-columns:1fr 1fr; gap:28px; } }
 @media(max-width:640px){ .hn-footer { padding-top:44px; } .hn-footer-grid { grid-template-columns:1fr; gap:24px; } .hn-admin-sidebar { width:100%; height:auto; position:relative; } .hn-admin-topbar { padding:0 16px; } .hn-toast { right:12px; bottom:12px; left:12px; max-width:none; } }
 
+/* Remove circular/compass decorations from page-title and hero areas sitewide. */
+.hero .hn-compass-deco,
+.hero .hn-route-deco,
+.page-hero .hn-compass-deco,
+.page-hero .hn-route-deco,
+.page-header .hn-compass-deco,
+.page-header .hn-route-deco,
+.hn-hero .hn-compass-deco,
+.hn-hero .hn-route-deco,
+.hn-page-hero .hn-compass-deco,
+.hn-page-hero .hn-route-deco,
+.hn-tools-hero .hn-compass-deco,
+.hn-tools-hero .hn-route-deco {
+  display: none !important;
+}
+
 /* HN BRAND OVERRIDE — white canvas + exact logo brown + dark hero headers */
 :root {
   --hn-brown: #684a25;
