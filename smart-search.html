@@ -28,8 +28,8 @@
 
     body {
       margin: 0;
-      background: var(--dark);
-      color: white;
+      background: #FFFFFF;
+      color: #684A25;
       font-family:
         -apple-system,
         BlinkMacSystemFont,
@@ -71,15 +71,19 @@
     }
 
     .hero {
-      padding: 64px 0 28px;
+      width: 100vw;
+      margin-left: calc(50% - 50vw);
+      padding: 64px max(20px, calc((100vw - 920px) / 2)) 28px;
+      background: linear-gradient(120deg, #684A25 0%, #684A25 58%, #DD842A 100%);
+      color: #FFFFFF;
     }
 
     .eyebrow {
       display: inline-block;
-      padding: 6px 12px;
-      border-radius: 999px;
-      background: rgba(255,255,255,.08);
-      color: var(--gold);
+      padding: 0;
+      border-radius: 0;
+      background: transparent;
+      color: #C6A15B;
       font-weight: 800;
       font-size: 12px;
       text-transform: uppercase;
@@ -91,9 +95,13 @@
       margin: 16px 0 12px;
     }
 
+    .hero h1, .hero p {
+      color: #FFFFFF;
+    }
+
     .hero p {
       max-width: 720px;
-      color: #d8ccba;
+      color: rgba(255,255,255,.86);
       font-size: 17px;
     }
 
@@ -204,7 +212,7 @@
     }
 
     .explanation {
-      color: #d8ccba;
+      color: #684A25;
       font-size: 13px;
       line-height: 1.7;
       padding-bottom: 50px;
@@ -227,8 +235,8 @@
 </head>
 
 <body>
-<link rel="stylesheet" href="assets/public-nav.css">
-<script src="assets/public-nav.js"></script>
+<link rel="stylesheet" href="/assets/public-nav.css">
+<script src="/assets/public-nav.js"></script>
 
 <main class="wrap">
 
