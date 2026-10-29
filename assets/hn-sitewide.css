@@ -849,3 +849,65 @@ body:not(.hn-admin-page):not(.hn-home):not(.home-page) .hn-section :where(.btn,.
 .hn-toast-info { background:var(--hn-br-donker); color:#fff; border:1px solid var(--hn-gd-border); }
 @media(max-width:900px){ .hn-footer-grid { grid-template-columns:1fr 1fr; gap:28px; } }
 @media(max-width:640px){ .hn-footer { padding-top:44px; } .hn-footer-grid { grid-template-columns:1fr; gap:24px; } .hn-admin-sidebar { width:100%; height:auto; position:relative; } .hn-admin-topbar { padding:0 16px; } .hn-toast { right:12px; bottom:12px; left:12px; max-width:none; } }
+
+/* HN BRAND OVERRIDE — white canvas + exact logo brown + dark hero headers */
+:root {
+  --hn-brown: #684a25;
+  --hn-bruin: #684a25;
+  --hn-white: #ffffff;
+  --hn-paper: #ffffff;
+}
+html, body {
+  background: #ffffff !important;
+}
+body {
+  color: #684a25;
+}
+/* Shared site header: HN brown with white navigation text, matching HijrahTools. */
+.site-header, header.site-header, #hnPublicNav .hn-nav, #hnPublicNav,
+.hn-nav, nav.hn-nav, .top-nav, nav.main-nav {
+  background: #684a25 !important;
+  color: #ffffff !important;
+  border-bottom: 1px solid rgba(198,161,91,.65) !important;
+}
+.hn-brand, .hn-brand:visited, .brand, .brand:visited,
+.hn-links > a, .hn-more-trigger, #hnPublicNav a, .hn-nav a,
+nav.main-nav a, .nav-links a {
+  color: #ffffff;
+}
+.hn-links > a:hover, .hn-more-trigger:hover, #hnPublicNav a:hover,
+.hn-nav a:hover, nav.main-nav a:hover, .nav-links a:hover,
+.hn-links > a.hn-active, #hnPublicNav a.active, .hn-nav a.active,
+nav.main-nav a.active {
+  color: #ffffff !important;
+  background: rgba(255,255,255,.12) !important;
+}
+.hn-nav-special, .hn-nav-special:hover {
+  background: #dd842a !important;
+  color: #ffffff !important;
+}
+.hn-menu { background: #ffffff; border-color: #ffffff; }
+.hn-menu span { background: #684a25; }
+/* Main page-title/hero banners follow the HijrahTools header treatment. */
+.hero, .page-hero, .page-header, .hn-hero, .hn-page-hero,
+.hn-tools-hero, .hero-banner, .title-banner, .page-title-banner {
+  background: linear-gradient(120deg, #684a25 0%, #684a25 58%, #dd842a 100%) !important;
+  color: #ffffff !important;
+}
+.hero h1, .hero h2, .hero h3, .page-hero h1, .page-hero h2,
+.page-header h1, .page-header h2, .hn-hero h1, .hn-hero h2,
+.hn-page-hero h1, .hn-page-hero h2, .hn-tools-hero h1,
+.hn-tools-hero h2, .hero-banner h1, .hero-banner h2,
+.title-banner h1, .title-banner h2, .page-title-banner h1,
+.page-title-banner h2 {
+  color: #ffffff !important;
+}
+.hero p, .page-hero p, .page-header p, .hn-hero p,
+.hn-page-hero p, .hn-tools-hero p, .hero-banner p {
+  color: #ffffff !important;
+}
+/* White page canvas; retain HN brown, rust and gold for brand accents. */
+main, .page-content, .content-wrap, .hn-main {
+  background-color: #ffffff;
+}
+
