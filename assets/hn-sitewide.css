@@ -849,3 +849,177 @@ body:not(.hn-admin-page):not(.hn-home):not(.home-page) .hn-section :where(.btn,.
 .hn-toast-info { background:var(--hn-br-donker); color:#fff; border:1px solid var(--hn-gd-border); }
 @media(max-width:900px){ .hn-footer-grid { grid-template-columns:1fr 1fr; gap:28px; } }
 @media(max-width:640px){ .hn-footer { padding-top:44px; } .hn-footer-grid { grid-template-columns:1fr; gap:24px; } .hn-admin-sidebar { width:100%; height:auto; position:relative; } .hn-admin-topbar { padding:0 16px; } .hn-toast { right:12px; bottom:12px; left:12px; max-width:none; } }
+
+
+/* ── HN ADMIN-CMS VISUAL LANGUAGE: site-wide consistency layer ─────────────
+   Warm paper canvas, white surfaces, restrained brown typography and orange
+   interaction states, matching the admin-cms reference page.
+*/
+:root {
+  --hn-cms-ink: #2d2924;
+  --hn-cms-muted: #82796f;
+  --hn-cms-line: #e9e3da;
+  --hn-cms-paper: #ffffff;
+  --hn-cms-bg: #f7f5f1;
+  --hn-cms-brown: #674c2e;
+  --hn-cms-orange: #dd842a;
+  --hn-cms-gold: #c6a15b;
+}
+html { scroll-padding-top: 82px; }
+body {
+  background: var(--hn-cms-bg);
+  color: var(--hn-cms-ink);
+  font-family: Inter, "Segoe UI", system-ui, -apple-system, sans-serif;
+  font-size: 14px;
+  line-height: 1.55;
+}
+h1, h2, h3, h4, h5, h6 {
+  color: #332d26;
+  font-family: Inter, "Segoe UI", system-ui, -apple-system, sans-serif;
+  font-weight: 700;
+  letter-spacing: -.025em;
+}
+p, li, td, th, label, input, select, textarea { color: inherit; }
+a { color: #9a612d; }
+a:hover { color: #674c2e; }
+:where(.card, .panel, .hn-card, .feature-card, .highlight-card, .quote-card,
+  .step-card, .country-card, .city-card, .topic-card, .result-card,
+  .search-result, .fiche-card, .article-card, .list-panel, .tools-section,
+  .settings-disclosure, .form-card, .content-card, .info-card, .tool-card) {
+  background: #fff;
+  border: 1px solid var(--hn-cms-line);
+  border-radius: 15px;
+  box-shadow: 0 10px 28px rgba(57,42,25,.045);
+}
+:where(input, select, textarea) {
+  border-color: #e3dbd0;
+  border-radius: 9px;
+  background-color: #fff;
+  color: #352e26;
+}
+:where(input, select, textarea):focus {
+  border-color: #d7a66f;
+  outline-color: rgba(221,132,42,.35);
+}
+:where(button, .btn, .button, .hn-action, .go, .btn-primary, .primary-button) {
+  border-radius: 10px;
+  font-family: Inter, "Segoe UI", system-ui, -apple-system, sans-serif;
+  font-weight: 700;
+}
+:where(.btn-primary, .nav-action.primary, .hn-action.primary, .hn-mobile-primary,
+  .go, button[type="submit"]:not(.btn-goud):not(.btn-secondary):not(.btn-outline),
+  .primary-button) {
+  background: #674c2e;
+  color: #fff;
+  border-color: transparent;
+  box-shadow: 0 4px 10px rgba(103,76,46,.12);
+}
+:where(.btn-primary, .nav-action.primary, .hn-action.primary, .hn-mobile-primary,
+  .go, button[type="submit"]:not(.btn-goud):not(.btn-secondary):not(.btn-outline),
+  .primary-button):hover {
+  background: #785832;
+  color: #fff;
+}
+:where(.btn-secondary, .nav-action.secondary, .hn-action.secondary, .btn-soft,
+  .btn-outline, .secondary-button) {
+  background: #fff;
+  color: #625548;
+  border: 1px solid #e4ddd3;
+}
+:where(.btn-secondary, .nav-action.secondary, .hn-action.secondary, .btn-soft,
+  .btn-outline, .secondary-button):hover {
+  background: #fffdf9;
+  border-color: #cbb79f;
+  color: #674c2e;
+}
+/* Public top navigation follows the white, understated admin topbar. */
+#hnPublicNav, .hn-nav, .top-nav, nav.main-nav {
+  background: rgba(255,255,255,.96);
+  color: #2d2924;
+  border-bottom: 1px solid #e9e3da;
+  box-shadow: 0 4px 16px rgba(57,42,25,.035);
+  backdrop-filter: blur(16px);
+}
+.hn-nav-inner { min-height: 68px; }
+.hn-brand, .hn-brand:visited {
+  color: #674c2e;
+}
+.hn-links > a, .hn-more-trigger, #hnPublicNav a, .hn-nav a,
+nav.main-nav a {
+  color: #625a50;
+  background: transparent;
+  border-radius: 9px;
+  font-weight: 600;
+}
+.hn-links > a:hover, .hn-more-trigger:hover, #hnPublicNav a:hover,
+.hn-nav a:hover, nav.main-nav a:hover,
+.hn-links > a.hn-active, #hnPublicNav a.active, .hn-nav a.active,
+nav.main-nav a.active {
+  color: #8d5524;
+  background: #f8efe3;
+}
+.hn-links > a.hn-active { box-shadow: inset 0 -2px #dd842a; }
+.hn-nav-special, .hn-nav-special:hover {
+  background: #674c2e !important;
+  color: #fff !important;
+  border-radius: 10px !important;
+}
+.hn-action.primary {
+  background: #674c2e;
+  color: #fff;
+  border-radius: 10px;
+}
+.hn-action.primary:hover { background: #785832; color: #fff; }
+.hn-action.secondary {
+  color: #625548;
+  border-color: #e4ddd3;
+  border-radius: 10px;
+}
+.hn-menu {
+  border-color: #e8e0d6;
+  border-radius: 9px;
+  background: #fff;
+  color: #674c2e;
+}
+.hn-more-menu, .hn-account-menu {
+  border-color: #e9e3da;
+  border-radius: 12px;
+  box-shadow: 0 16px 45px rgba(57,42,25,.10);
+}
+.hn-more-menu a, .hn-account-menu a, .hn-account-menu button {
+  color: #625548;
+}
+.hn-more-menu a:hover, .hn-account-menu a:hover, .hn-account-menu button:hover {
+  background: #f8f5ef;
+  color: #674c2e;
+}
+/* Member navigation: same restrained white surfaces and orange active state. */
+.hnm {
+  background: #fff !important;
+  color: #2d2924 !important;
+  border-right-color: #e9e3da !important;
+  box-shadow: 8px 0 25px rgba(57,42,25,.035) !important;
+}
+.hnm a, .hnm button { color: #625a50; }
+.hnm a:hover, .hnm button:hover { background: #f8f5ef !important; color: #674c2e !important; }
+.hnm a[aria-current="page"], .hnm a.active, .hnm .active {
+  background: #f8efe3 !important;
+  color: #8d5524 !important;
+}
+/* Preserve HN's dark footer while matching the reference's fine, restrained details. */
+footer, .site-footer, .hn-footer {
+  border-top: 1px solid rgba(198,161,91,.35);
+}
+footer a, .site-footer a, .hn-footer a { text-decoration: none; }
+:where(.eyebrow, .section-kicker, .section-label) {
+  color: #b17b42;
+  font-weight: 800;
+  letter-spacing: .12em;
+}
+:where(hr, .divider, .section-divider) {
+  border-color: #e9e3da;
+}
+@media (max-width: 760px) {
+  .hn-nav-inner { min-height: 62px; }
+  .hn-links > a, .hn-more-trigger { color: #625a50; }
+}
