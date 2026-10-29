@@ -79,49 +79,35 @@ footer a:hover{color:#DD842A;text-decoration-color:#C6A15B}
 </style>
 <script src="/assets/hn-motion.js?v=1" defer></script>
 <style id="hn-metallic-gold-final">
-/* Homepage in dezelfde rustige, lichte stijl als /admin-cms. */
-:root{--hn-gold:#C6A15B;--hn-gold-dark:#8B6914;--hn-gold-light:#F5E27A}
-body{background:#f7f5f1!important;color:#2d2924!important;font-family:Inter,"Segoe UI",system-ui,sans-serif}
-.pbar{background:#fff!important;color:#674c2e!important;border-bottom:1px solid #e9e3da!important}
-.pbar .cnt,.pbar .lbs{color:#82796f!important}
-.pbar .lbs span.on{color:#8d5524!important;text-decoration-color:#dd842a!important}
-.pbar .tr .ln{border-color:#e9e3da!important}
-.pbar .tr .dn{background:#dd842a!important}
-.pbar .tr svg polygon{fill:#c6a15b!important}
-.hero{background:#fff!important;color:#2d2924!important;border-bottom:1px solid #e9e3da!important}
-.hero:after{content:none!important}
-.hero :where(h1,h2,h3,p,legend,.lead,.cue,.react){color:#332d26!important}
-.hero .lead{color:#82796f!important}
-.hero .logo{color:#674c2e!important}
-.soon{background:#f8efe3!important;color:#8d5524!important;border:1px solid #efdfca!important}
-main>section:not(.story):not(.fin):not(.goldwash),main>section.goldwash,#over-ons,.mom{background:#f7f5f1!important;color:#2d2924!important;border-color:#e9e3da!important}
-main>section :where(h1,h2,h3,p,li,label,legend){color:#332d26}
-main>section.story{background:#fff!important;color:#2d2924!important;border-block:1px solid #e9e3da!important}
-main>section.story:before,main>section.story:after{content:none!important}
-main>section.story :where(h1,h2,h3,p,li,a){color:#332d26!important}
-.card,.pass{background:#fff!important;color:#2d2924!important;border:1px solid #e9e3da!important;border-radius:15px!important;box-shadow:0 10px 28px rgba(57,42,25,.045)!important}
-.card :where(h2,p,.hint,.react,.skip),.pass :where(h2,h3,p,span,label){color:#2d2924!important}
-.pass .s{background:#f8f5ef!important;border-color:#e9e3da!important}
-.fin{background:#fff!important;color:#2d2924!important;border-top:1px solid #e9e3da!important}
-.fin:before{content:none!important}
-.fin :where(h1,h2,h3,p,li,label){color:#332d26!important}
-.go{background:#674c2e!important;color:#fff!important;border:1px solid #674c2e!important;border-radius:10px!important}
-.go:hover{background:#785832!important;color:#fff!important;border-color:#785832!important}
-footer{background:#674c2e!important;color:#fff!important;border-top:1px solid rgba(198,161,91,.35)!important}
-footer :where(h2,h3,p,a,small,.small){color:#fff!important}
-footer a:hover{color:#f5e27a!important;text-decoration-color:#c6a15b!important}
-.card:hover{border-color:#d8c7b2!important;box-shadow:0 10px 28px rgba(57,42,25,.08)!important;transform:translateY(-2px)}
-.ph span{background:#fff!important;border:1px solid #e9e3da!important;color:#674c2e!important;border-radius:10px!important}
-.ph b,.ph i{color:#674c2e!important}
-.ph:hover span,.chip:hover{border-color:#d8c7b2!important;box-shadow:0 4px 14px rgba(57,42,25,.06)!important}
-.ph input:checked+span,.chip[aria-pressed=true]{background:#f8efe3!important;border-color:#dd842a!important;color:#8d5524!important}
-.ph input:checked+span :where(b,i){color:#8d5524!important}
-.chip{background:#fff!important;color:#674c2e!important;border-radius:10px!important;border-color:#e9e3da!important}
-#base{stroke:#c6a15b;stroke-opacity:.8}#trail{stroke:#dd842a}#plane{fill:#dd842a}
-:where(input,button,a,summary):focus-visible{outline:3px solid rgba(221,132,42,.42)!important;outline-offset:2px}
-:where(hr,.hn-divider,.gold-divider){height:1px!important;border:0!important;background:#e9e3da!important;opacity:1}
-@media(hover:none){.card:hover,.ph span:hover,.chip:hover{transform:none;box-shadow:none}}
-@media(prefers-reduced-motion:reduce){.hero,.card,.ph span,.chip,.go{transition:none!important}}
+:root{--hn-gold:#D4AF37;--hn-gold-dark:#8B6914;--hn-gold-light:#F5E27A;--hn-gold-gh:linear-gradient(90deg,#674C2E 0%,#8B6914 8%,#C49A21 22%,#D4AF37 34%,#FFF3A5 47%,#D4AF37 56%,#E8C94C 72%,#8B6914 91%,#674C2E 100%)}
+body{background:#FFFFFF!important;color:#674C2E!important}
+.pbar{background:#674C2E!important;color:#FFFFFF!important;border-bottom:2px solid transparent!important;border-image:var(--hn-gold-gh) 1}
+.pbar .cnt,.pbar .lbs span.on{color:#F5E27A!important}
+.hero{background:#674C2E!important;color:#FFFFFF!important;border-bottom:0!important;position:relative}
+.hero:after{content:"";display:block;position:absolute;bottom:0;left:0;right:0;height:3px;background:var(--hn-gold-gh)}
+.hero :where(h1,h2,h3,p,legend,.lead,.cue,.react,.soon){color:#FFFFFF}
+.soon{color:#F5E27A!important;border-color:#D4AF37!important}
+main>section:not(.story):not(.fin):not(.goldwash){background:#FFFFFF!important;color:#674C2E!important}
+main>section.goldwash,#over-ons{background:#FFFFFF!important;color:#674C2E!important;border-block:1px solid rgba(103,76,46,.12)}
+main>section.story{background:#674C2E!important;color:#FFFFFF!important;border-block:0!important;position:relative}
+main>section.story:before,main>section.story:after{content:"";display:block;height:2px;background:var(--hn-gold-gh)}
+main>section.story :where(h1,h2,h3,p,li,a){color:#FFFFFF!important}
+.mom{background:#FFFFFF!important;color:#674C2E!important}
+.card{background:#FFFFFF!important;color:#674C2E!important;border:1px solid rgba(103,76,46,.18)!important;box-shadow:0 8px 24px rgba(58,42,24,.07)!important}
+.fin{background:#674C2E!important;color:#FFFFFF!important;border-top:0!important;position:relative}
+.fin:before{content:"";display:block;height:3px;background:var(--hn-gold-gh);position:absolute;top:0;left:0;right:0}
+.fin :where(h1,h2,h3,p,li,label){color:#FFFFFF}
+.pass{background:#FFFFFF!important;color:#674C2E!important}
+.pass :where(h2,h3,p,span,label){color:#674C2E}
+.pass .s{border-color:#D4AF37!important}
+.list li{border-top:1px solid rgba(103,76,46,.14)}
+.list li:before{background:linear-gradient(135deg,#8B6914,#D4AF37,#FFF3A5,#8B6914)!important}
+details{border-color:rgba(103,76,46,.16)}
+.go{background:#DD842A!important;color:#FFFFFF!important;border:0!important}
+.go:hover{background:#674C2E!important;color:#FFFFFF!important}
+:where(hr,.hn-divider,.gold-divider){height:2px!important;border:0!important;background:var(--hn-gold-gh)!important;opacity:1}
+:where(button,.go,.chip,.ph span){box-shadow:none}
+:focus-visible{outline:3px solid #8B6914!important;outline-offset:3px}
 </style>
 </head>
 <body>
