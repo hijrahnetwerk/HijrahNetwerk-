@@ -963,6 +963,9 @@ select,textarea) {
 .hn-footer::before { background-image: none; }
 .hn-admin-logo-mark { background: var(--hn-rs); }
 
+/* The live funnel homepage keeps its existing dark canvas and white base text. */
+body.hn-home { background: #684a25; color: #ffffff; }
+
 /* Consistent keyboard focus and accessible reduced motion. */
 :focus-visible { outline: 2px solid var(--hn-rs); outline-offset: 3px; }
 @media (prefers-reduced-motion: reduce) {
