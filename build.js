@@ -170,6 +170,7 @@ const translateTag = '<script src="/assets/hn-translate.js"></script>';
 const translateStyleTag = '<link rel="stylesheet" href="/assets/hn-translate.css">';
 const editProposalTag = '<script src="/assets/hn-edit-proposals.js"></script>';
 const designFontsTag = '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Raleway:wght@400;500;600;700&display=swap">';
+const designTokensTag = '<link rel="stylesheet" href="/assets/hn-tokens.css">';
 const sitewideStyleTag = '<link rel="stylesheet" href="/assets/hn-sitewide.css">';
 const mobilePolishTag = '<link rel="stylesheet" href="/assets/hn-mobile-polish.css">';
 const globalRuntimeTag = '<script src="/assets/hn-global-runtime.js"></script>';
@@ -292,6 +293,7 @@ for (const file of htmlFiles) {
     !html.includes(translateStyleTag) ? translateStyleTag : '',
     !html.includes(editProposalTag) ? editProposalTag : '',
     !html.includes('fonts.googleapis.com/css2?family=Amiri') ? designFontsTag : '',
+    !html.includes('/assets/hn-tokens.css') ? designTokensTag : '',
     !html.includes('/assets/hn-sitewide.css') ? sitewideStyleTag : '',
     !html.includes('/assets/hn-mobile-polish.css') ? mobilePolishTag : '',
     !html.includes(globalRuntimeTag) ? globalRuntimeTag : '',
@@ -357,15 +359,12 @@ for (const file of htmlFiles) {
   const perfHead = (html.includes('id="hn-loader-critical"') ? '' : '<style id="hn-loader-critical">' + LOADER_CRITICAL_CSS + '</style><script id="hn-loader-critical-js">' + LOADER_CRITICAL_JS + '</script>\n') + PERF_HINTS;
   html = html.replace(/<head(\s[^>]*)?>/i, (m) => m + '\n' + perfHead);
   if (headLinks.length) {
+    // Load shared styles at the end of <head>, after page-specific styles.
+    // This gives the central design system one predictable cascade position on every page.
     const sharedLinks = headLinks.join('\n') + '\n';
-    const tokenStart = html.indexOf('hn-tokens.css');
-    const tokenEnd = tokenStart >= 0 ? html.indexOf('>', tokenStart) : -1;
-    if (tokenEnd >= 0) {
-      html = html.slice(0, tokenEnd + 1) + '\n' + sharedLinks + html.slice(tokenEnd + 1);
-    } else {
-      html = html.replace('</head>', sharedLinks + '</head>');
-    }
+    html = html.replace('</head>', sharedLinks + '</head>');
   }
+
   if (!html.includes('/assets/hn-loader.js')) html = html.replace('</head>', () => '<script src="/assets/hn-loader.js" defer></script>\n</head>');
   html = html.replace('</body>', () => additions + '</body>');
   html = versionAssets(html);
