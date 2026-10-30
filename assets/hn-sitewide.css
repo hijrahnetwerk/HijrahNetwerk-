@@ -930,6 +930,15 @@ select,textarea) {
   color: var(--hn-br-donker);
 }
 
+/* Restrained accents: orange for functional emphasis, gold only for premium details. */
+.hn-stripe {
+  background: var(--hn-rs);
+  background-size: auto;
+  animation: none;
+}
+.hn-footer::before { background-image: none; }
+.hn-admin-logo-mark { background: var(--hn-rs); }
+
 /* Consistent keyboard focus and accessible reduced motion. */
 :focus-visible { outline: 2px solid var(--hn-rs); outline-offset: 3px; }
 @media (prefers-reduced-motion: reduce) {
