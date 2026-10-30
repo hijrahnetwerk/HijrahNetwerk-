@@ -1,8 +1,6 @@
 name: HN preflight and build
 
 on:
-  push:
-    branches: [refactor/central-design-system-20261030]
   pull_request:
     branches: [main]
   workflow_dispatch:
