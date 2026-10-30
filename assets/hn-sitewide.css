@@ -805,6 +805,24 @@ h3, h4, h5, h6 { font-family: var(--hn-font-body); }
 a { color: var(--hn-rs); }
 a:hover { color: var(--hn-br-donker); }
 
+/* Legacy page headers share the same navigation treatment. */
+body:not(.hn-admin-page) > .top:has(.nav),
+body:not(.hn-admin-page) > .top:has(.top-inner),
+body:not(.hn-admin-page) header.site-header,
+body:not(.hn-admin-page) .site-header,
+body:not(.hn-admin-page) .top-nav,
+body:not(.hn-admin-page) nav.main-nav {
+  background: var(--hn-br-donker);
+  color: var(--hn-white);
+  border-bottom: 2px solid var(--hn-rs);
+}
+body:not(.hn-admin-page) > .top:has(.nav) :where(a,.brand,.navlinks a),
+body:not(.hn-admin-page) > .top:has(.top-inner) :where(a,.brand,.back),
+body:not(.hn-admin-page) header.site-header :where(a,.brand),
+body:not(.hn-admin-page) .site-header :where(a,.brand) {
+  color: var(--hn-white);
+}
+
 /* Public navigation: dark brown, white links, restrained orange accent. */
 #hnPublicNav, #hnPublicNav .hn-nav, .hn-nav, nav.main-nav, .top-nav,
 .site-header, header.site-header {
