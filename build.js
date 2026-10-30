@@ -109,9 +109,7 @@ const LOADER_CRITICAL_CSS = fs.readFileSync(path.join(assetsDir, 'hn-loader-crit
 const LOADER_CRITICAL_JS = fs.readFileSync(path.join(assetsDir, 'hn-loader-critical.js'), 'utf8')
   .replace('__ORBIT_SVG__', () => _orbit.replace(/\\/g, '\\\\').replace(/'/g, "\\'")).replace(/\n\s*/g, ' ');
 const PERF_HINTS = [
-  SUPABASE_ORIGIN ? '<link rel="preconnect" href="' + SUPABASE_ORIGIN + '" crossorigin>' : '',
-  '<link rel="preload" href="/assets/fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>',
-  '<link rel="preload" href="/assets/fonts/fraunces-latin-600-normal.woff2" as="font" type="font/woff2" crossorigin>'
+  SUPABASE_ORIGIN ? '<link rel="preconnect" href="' + SUPABASE_ORIGIN + '" crossorigin>' : ''
 ].filter(Boolean).join('\n') + '\n';
 
 const translateTag = '<script src="/assets/hn-translate.js"></script>';
@@ -209,6 +207,11 @@ for (const file of htmlFiles) {
 
   const isAdminSurface = file.startsWith('admin') || file.startsWith('werkruimte');
   const isMemberSurface = memberSurfacePages.has(file);
+
+  // Houd één canonieke Google Fonts-request per pagina; de build voegt hieronder
+  // de volledige HN-fontset toe en voorkomt zo dubbele stylesheets/preconnects.
+  html = html.replace(/<link\b[^>]*fonts\.googleapis\.com[^>]*>\s*/gi, '');
+  html = html.replace(/<link\b[^>]*fonts\.gstatic\.com[^>]*>\s*/gi, '');
 
   // Member pages use the persistent member sidebar, not the public site navbar.
   if (isMemberSurface && !html.includes('public-nav.css') && !html.includes('/assets/hn-member-nav.js')) {
