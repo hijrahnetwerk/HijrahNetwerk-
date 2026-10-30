@@ -117,7 +117,7 @@ const PERF_HINTS = [
 const translateTag = '<script src="/assets/hn-translate.js"></script>';
 const translateStyleTag = '<link rel="stylesheet" href="/assets/hn-translate.css">';
 const editProposalTag = '<script src="/assets/hn-edit-proposals.js"></script>';
-const designFontsTag = '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Raleway:wght@300;400;500;600;700&family=Amiri:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">';
+const designFontsTag = '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Raleway:wght@400;500;600;700&display=swap">';
 const sitewideStyleTag = '<link rel="stylesheet" href="/assets/hn-sitewide.css">';
 const mobilePolishTag = '<link rel="stylesheet" href="/assets/hn-mobile-polish.css">';
 const globalRuntimeTag = '<script src="/assets/hn-global-runtime.js"></script>';
@@ -233,13 +233,13 @@ for (const file of htmlFiles) {
     !html.includes(translateTag) ? translateTag : '',
     !html.includes(translateStyleTag) ? translateStyleTag : '',
     !html.includes(editProposalTag) ? editProposalTag : '',
-    !html.includes('fonts.googleapis.com/css2?') ? designFontsTag : '',
+    !html.includes('fonts.googleapis.com/css2?family=Amiri') ? designFontsTag : '',
     !html.includes('/assets/hn-sitewide.css') ? sitewideStyleTag : '',
     !html.includes('/assets/hn-mobile-polish.css') ? mobilePolishTag : '',
     !html.includes(globalRuntimeTag) ? globalRuntimeTag : '',
     !html.includes('/assets/hn-admin-bar.js?v=20261013') ? adminBarTag : '',
     !html.includes('/assets/hn-admin-bar.css?v=20261013') ? adminBarStyleTag : '',
-    !html.includes(motionTag) ? motionTag : '',
+    !html.includes('/assets/hn-motion.js') ? motionTag : '',
 
     file !== 'index.html' && !html.includes('/assets/hn-footer.js') && !isAdminSurface && !['login.html','register.html','reset-password.html','update-password.html','dashboard.html','paspoort.html','mijn-kaart.html'].includes(file) ? footerTag : '',
     !isAdminSurface && !['login.html','register.html','reset-password.html','update-password.html','mijn-kaart.html'].includes(file) && !html.includes('/assets/hn-back-to-top.js?v=20261014') ? backToTopTag : ''

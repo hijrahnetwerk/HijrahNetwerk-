@@ -9,6 +9,7 @@ function scan(root){
  var scope=root&&root.querySelectorAll?root:document;
  var selectors=['.hn-reveal','main>section','.section','.hero','.panel','.card','.country-card','.topic-card','.result-card','.fiche-card','.article-card','.overview-grid>*','.form-grid>*'];
  selectors.forEach(function(sel){if(scope.matches&&scope.matches(sel))reveal(scope);scope.querySelectorAll(sel).forEach(reveal);});
+ scope.querySelectorAll('.cards,.grid,.card-grid,.results-grid,.directory-grid,.overview-list').forEach(function(el){el.classList.add('hn-stagger');});
  scope.querySelectorAll('.hn-stagger').forEach(function(el){el.classList.add('hn-visible');});
 }
 if('IntersectionObserver'in window&&!reduced){
@@ -71,7 +72,7 @@ document.addEventListener('click',function(e){
 document.addEventListener('keydown',function(e){if(e.key==='Escape')document.querySelectorAll('.hn-overlay.open').forEach(closeOverlay);});
 var nav=document.querySelector('#hnPublicNav .hn-nav');if(nav){var updateNav=function(){nav.classList.toggle('scrolled',window.scrollY>2);};updateNav();window.addEventListener('scroll',updateNav,{passive:true});}
 if(reduced){document.documentElement.style.setProperty('--hn-t-fast','0ms');document.documentElement.style.setProperty('--hn-t-mid','0ms');document.documentElement.style.setProperty('--hn-t-slow','0ms');}
-function init(){refresh();if('MutationObserver'in window){var observer=new MutationObserver(function(records){records.forEach(function(record){record.addedNodes.forEach(function(node){if(node.nodeType===1){reveal(node);scan(node);}});});});observer.observe(document.body,{childList:true,subtree:true});}}
+function init(){refresh();if('MutationObserver'in window){var observer=new MutationObserver(function(records){records.forEach(function(record){record.addedNodes.forEach(function(node){if(node.nodeType===1){scan(node);}});});});observer.observe(document.body,{childList:true,subtree:true});}}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
 window.HNMotion={refresh:refresh,openOverlay:openOverlay,closeOverlay:closeOverlay,trapFocus:trapFocus};
 })();
