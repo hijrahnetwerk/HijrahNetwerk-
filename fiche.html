@@ -19,14 +19,14 @@
 <script src="supabase-client.js"></script>
 <style>
 :root{
-  --brown:#684a25;--brown-dark:#684a25;--orange:#df842c;--gold:#c9a227;
-  --cream:#FFFFFF;--text:#684a25;--muted:#684a25;--border:#684a25;
-  --soft:#f5efe8;--white:#fff;--green:#2f7650;--green-bg:#edf6f0;
-  --shadow:0 4px 18px rgba(104,74,37,.06);
+  --brown:var(--hn-br);--brown-dark:var(--hn-br-donker);--orange:var(--hn-rs);--gold:var(--hn-gd);
+  --cream:#ffffff;--text:var(--hn-br);--muted:var(--hn-br);--border:rgba(104,74,37,.16);
+  --soft:rgba(201,162,39,.05);--white:#fff;--green:var(--hn-ok);--green-bg:var(--hn-ok-bg);
+  --shadow:var(--hn-sh-md);
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{margin:0;background:var(--cream);color:var(--text);font-family:Arial,sans-serif;line-height:1.55}
+body{margin:0;background:var(--cream);color:var(--text);font-family:var(--hn-font-b);line-height:1.55}
 a{text-decoration:none;color:inherit}
 .top{background:#fff;border-bottom:1px solid var(--border)}
 .nav{max-width:1160px;margin:auto;padding:14px 22px;display:flex;justify-content:space-between;align-items:center;gap:18px}
