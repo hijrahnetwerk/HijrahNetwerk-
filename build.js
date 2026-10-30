@@ -265,10 +265,10 @@ for (const file of htmlFiles) {
   const isMemberSurface = memberSurfacePages.has(file);
   // Give shared CSS reliable page-type hooks without changing page markup.
   const addBodyClass = (className) => {
-    html = html.replace(/<body\\b([^>]*)>/i, (match, attrs) => {
-      const classMatch = attrs.match(/\\bclass=(["'])(.*?)\\1/i);
+    html = html.replace(/<body\b([^>]*)>/i, (match, attrs) => {
+      const classMatch = attrs.match(/\bclass=(["'])(.*?)\1/i);
       if (classMatch) {
-        const classes = classMatch[2].split(/\\s+/).filter(Boolean);
+        const classes = classMatch[2].split(/\s+/).filter(Boolean);
         if (!classes.includes(className)) classes.push(className);
         return '<body' + attrs.replace(classMatch[0], 'class="' + classes.join(' ') + '"') + '>';
       }
