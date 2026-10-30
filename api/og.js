@@ -98,19 +98,6 @@ export default async function handler(request) {
     ? html.replace(canonicalPattern, canonicalTag)
     : html.replace('</head>', canonicalTag + '\n</head>');
 
-  if (topic) {
-    const structured = {
-      '@context': 'https://schema.org',
-      '@type': 'Article',
-      headline: String(topic.title || ''),
-      description,
-      url: canonicalUrl,
-      publisher: { '@type': 'Organization', name: 'Hijrah Netwerk' }
-    };
-    const jsonLd = JSON.stringify(structured).replace(/</g, '\\u003c');
-    html = html.replace(/(<script[^>]*id=["']structured-data["'][^>]*>)[\s\S]*?(<\/script>)/i, '$1' + jsonLd + '$2');
-  }
-
   return new Response(html, {
     headers: {
       'Content-Type': 'text/html; charset=utf-8',
