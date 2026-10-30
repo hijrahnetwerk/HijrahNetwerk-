@@ -193,6 +193,9 @@ if (vercel.git?.deploymentEnabled?.['fix/pagespeed-security-a11y-20261013'] !== 
 if (vercel.git?.deploymentEnabled?.['fix/supabase-migration-history-20261019'] !== false) {
   failures.push('Vercel preview deployments must remain disabled for the Supabase migration-history/privacy fix branch.');
 }
+if (vercel.git?.deploymentEnabled?.['feat/hn-design-system-v3-20261030'] !== false) {
+  failures.push('Vercel preview deployments must remain disabled for the HN Design System v3 audit branch.');
+}
 if (vercel.git?.deploymentEnabled?.['fix/site-audit-20261019'] !== false) {
   failures.push('Vercel preview deployments must remain disabled for the site audit fix branch.');
 }

@@ -95,6 +95,7 @@ function normalizeDirectory(dir) {
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
     const filePath = path.join(dir, entry.name);
     if (entry.isDirectory()) {
+      if (entry.name === 'vendor' || entry.name === 'fonts') continue;
       changed += normalizeDirectory(filePath);
       continue;
     }

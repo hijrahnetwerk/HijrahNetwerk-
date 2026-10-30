@@ -722,7 +722,8 @@
       "fix/pagespeed-security-a11y-20261013": false,
       "fix/site-audit-20261019": false,
       "fix/supabase-migration-history-20261019": false,
-      "fix/prelaunch-homepage-only-20261027": false
+      "fix/prelaunch-homepage-only-20261027": false,
+      "feat/hn-design-system-v3-20261030": false
     }
   }
 }
