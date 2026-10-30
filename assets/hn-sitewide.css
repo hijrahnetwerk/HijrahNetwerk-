@@ -923,6 +923,9 @@ body:not(.hn-admin-page):not(.hn-home):not(.home-page)
   display: none !important;
 }
 
+/* Remove the legacy decorative orbit from the HijrahTools title area. */
+.hn-tools-hero::after { content: none !important; display: none !important; }
+
 /* Keep cards, forms and content surfaces predictable across pages. */
 :where(.card,.country-card,.step,.note,.city,.topic-card,.result-card,.search-result,
 .fiche-card,.article-card,.panel,.hn-card,.feature-card,.highlight-card,.quote-card,
