@@ -263,6 +263,21 @@ for (const file of htmlFiles) {
 
   const isAdminSurface = file.startsWith('admin') || file.startsWith('werkruimte');
   const isMemberSurface = memberSurfacePages.has(file);
+  // Give shared CSS reliable page-type hooks without changing page markup.
+  const addBodyClass = (className) => {
+    html = html.replace(/<body\\b([^>]*)>/i, (match, attrs) => {
+      const classMatch = attrs.match(/\\bclass=(["'])(.*?)\\1/i);
+      if (classMatch) {
+        const classes = classMatch[2].split(/\\s+/).filter(Boolean);
+        if (!classes.includes(className)) classes.push(className);
+        return '<body' + attrs.replace(classMatch[0], 'class="' + classes.join(' ') + '"') + '>';
+      }
+      return '<body' + attrs + ' class="' + className + '">';
+    });
+  };
+  if (file === 'index.html') addBodyClass('hn-home');
+  if (isAdminSurface) addBodyClass('hn-admin-page');
+  if (isMemberSurface) addBodyClass('hn-member-page');
 
   // Houd één canonieke Google Fonts-request per pagina; de build voegt hieronder
   // de volledige HN-fontset toe en voorkomt zo dubbele stylesheets/preconnects.
