@@ -374,10 +374,19 @@ for (const file of htmlFiles) {
   const perfHead = (html.includes('id="hn-loader-critical"') ? '' : '<style id="hn-loader-critical">' + LOADER_CRITICAL_CSS + '</style><script id="hn-loader-critical-js">' + LOADER_CRITICAL_JS + '</script>\n') + PERF_HINTS;
   html = html.replace(/<head(\s[^>]*)?>/i, (m) => m + '\n' + perfHead);
   if (headLinks.length) {
-    // Load shared styles at the end of <head>, after page-specific styles.
-    // This gives the central design system one predictable cascade position on every page.
     const sharedLinks = headLinks.join('\n') + '\n';
-    html = html.replace('</head>', sharedLinks + '</head>');
+    if (isAdminSurface) {
+      // Admin screens keep their explicit layout overrides after the shared design layer.
+      const firstInlineStyle = html.search(/<style\b/i);
+      if (firstInlineStyle >= 0) {
+        html = html.slice(0, firstInlineStyle) + sharedLinks + html.slice(firstInlineStyle);
+      } else {
+        html = html.replace('</head>', sharedLinks + '</head>');
+      }
+    } else {
+      // Public/member pages load the central layer after page CSS for consistent sitewide updates.
+      html = html.replace('</head>', sharedLinks + '</head>');
+    }
   }
 
   if (!html.includes('/assets/hn-loader.js')) html = html.replace('</head>', () => '<script src="/assets/hn-loader.js" defer></script>\n</head>');
