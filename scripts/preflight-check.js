@@ -201,7 +201,8 @@ const headerValue = (key) => globalHeaders.find((entry) => entry.key.toLowerCase
 if (!headerValue('Content-Security-Policy-Report-Only').includes("require-trusted-types-for 'script'")) failures.push('CSP report-only must include Trusted Types monitoring before enforcement is considered.');
 if (headerValue('Cross-Origin-Opener-Policy') !== 'same-origin-allow-popups') failures.push('COOP must preserve same-origin popup flows used by authentication.');
 if (!headerValue('Strict-Transport-Security').includes('includeSubDomains')) failures.push('HSTS must retain the current includeSubDomains directive.');
-if (!(adminDashboard.indexOf('id="hn-admin-layout-final-overrides"') > adminDashboard.indexOf('/assets/hn-sitewide.css?v=1')) ||
+const adminSitewideIndex = adminDashboard.indexOf('/assets/hn-sitewide.css');
+if (!(adminSitewideIndex >= 0 && adminDashboard.indexOf('id="hn-admin-layout-final-overrides"') > adminSitewideIndex) ||
     !adminDashboard.includes('min-height:calc(100dvh - 3px)') ||
     !adminDashboard.includes('.layout > .hn-admin-sidebar') ||
     !adminDashboard.includes('overflow-x:auto;-webkit-overflow-scrolling:touch')) {

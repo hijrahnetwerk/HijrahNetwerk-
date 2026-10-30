@@ -301,7 +301,16 @@ for (const file of htmlFiles) {
 
   const perfHead = (html.includes('id="hn-loader-critical"') ? '' : '<style id="hn-loader-critical">' + LOADER_CRITICAL_CSS + '</style><script id="hn-loader-critical-js">' + LOADER_CRITICAL_JS + '</script>\n') + PERF_HINTS;
   html = html.replace(/<head(\s[^>]*)?>/i, (m) => m + '\n' + perfHead);
-  if (headLinks.length) html = html.replace('</head>', () => headLinks.join('\n') + '\n</head>');
+  if (headLinks.length) {
+    const sharedLinks = headLinks.join('\n') + '\n';
+    const tokenStart = html.indexOf('hn-tokens.css');
+    const tokenEnd = tokenStart >= 0 ? html.indexOf('>', tokenStart) : -1;
+    if (tokenEnd >= 0) {
+      html = html.slice(0, tokenEnd + 1) + '\n' + sharedLinks + html.slice(tokenEnd + 1);
+    } else {
+      html = html.replace('</head>', sharedLinks + '</head>');
+    }
+  }
   if (!html.includes('/assets/hn-loader.js')) html = html.replace('</head>', () => '<script src="/assets/hn-loader.js" defer></script>\n</head>');
   html = html.replace('</body>', () => additions + '</body>');
   html = versionAssets(html);
