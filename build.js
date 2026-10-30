@@ -68,6 +68,59 @@ const configContent = `// AUTOMATISCH GEGENEREERD DOOR build.js.\n// NIET HANDMA
 const assetsDir = path.join(__dirname, 'assets');
 fs.mkdirSync(assetsDir, { recursive: true });
 fs.writeFileSync(path.join(assetsDir, 'config.js'), configContent, 'utf8');
+
+function normalizeLegacyBrandColors(content) {
+  return content
+    .replace(/#674c2e/gi, '#684a25')
+    .replace(/#dd842a/gi, '#df842c')
+    .replace(/#d4af37/gi, '#c9a227')
+    .replace(/#c6a15b/gi, '#c9a227')
+    .replace(/#9b7735/gi, '#8a6a0a')
+    .replace(/#e4ca84/gi, '#e6c766')
+    .replace(/#d8b665/gi, '#e6c766')
+    .replace(/#b58d3e|#b88c3e/gi, '#c9a227')
+    .replace(/#ffe7b0/gi, '#e6c766')
+    .replace(/#392a18|#382817/gi, '#4f3a23')
+    .replace(/#27ae60/gi, '#4e7d4a')
+    .replace(/#c0392b/gi, '#b23a2e')
+    .replace(/#a55e16|#a85e1b|#8a4b15|#9a6a38/gi, '#a06020')
+    .replace(/#f0d060|#f5e27a|#f5d991|#fff3a5/gi, '#e6c766')
+    .replace(/rgba\(103,\s*76,\s*46,/gi, 'rgba(104,74,37,')
+    .replace(/rgba\(198,\s*161,\s*91,/gi, 'rgba(201,162,39,')
+    .replace(/rgba\(221,\s*132,\s*42,/gi, 'rgba(223,132,44,');
+}
+
+function normalizeDirectory(dir) {
+  let changed = 0;
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    const filePath = path.join(dir, entry.name);
+    if (entry.isDirectory()) {
+      changed += normalizeDirectory(filePath);
+      continue;
+    }
+    if (!/\.(?:css|js|svg\.txt)$/i.test(entry.name)) continue;
+    const original = fs.readFileSync(filePath, 'utf8');
+    const normalized = normalizeLegacyBrandColors(original);
+    if (normalized !== original) {
+      fs.writeFileSync(filePath, normalized, 'utf8');
+      changed++;
+    }
+  }
+  return changed;
+}
+
+let normalizedBrandFiles = normalizeDirectory(assetsDir);
+for (const name of fs.readdirSync(__dirname)) {
+  if (!/\.(?:css|js)$/i.test(name) || name === 'build.js') continue;
+  const filePath = path.join(__dirname, name);
+  const original = fs.readFileSync(filePath, 'utf8');
+  const normalized = normalizeLegacyBrandColors(original);
+  if (normalized !== original) {
+    fs.writeFileSync(filePath, normalized, 'utf8');
+    normalizedBrandFiles++;
+  }
+}
+console.log('[HN build] Legacy merkkleuren genormaliseerd in ' + normalizedBrandFiles + ' assetbestand(en).');
 // Compatibiliteit: bestaande pagina's laden nog /config.js. Genereer dit bestand
 // met exact dezelfde productieconfiguratie zodat de placeholder nooit live wordt gebruikt.
 fs.writeFileSync(path.join(__dirname, 'config.js'), configContent, 'utf8');
@@ -151,6 +204,7 @@ let processed = 0;
 for (const file of htmlFiles) {
   const filePath = path.join(__dirname, file);
   let html = fs.readFileSync(filePath, 'utf8');
+  html = normalizeLegacyBrandColors(html);
 
   html = html.replace(/(href|src)=(['"])assets\//g, '$1=$2/assets/');
   for (const scriptName of ['supabase-client', 'auth', 'site-app']) {
