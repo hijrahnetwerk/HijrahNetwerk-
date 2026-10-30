@@ -434,7 +434,11 @@ footer a:hover, .site-footer a:hover, .hn-footer a:hover {
 .melding-info, .alert-info    { background: var(--hn-info-bg); border-color: rgba(26,74,122,0.25); color: var(--hn-info); }
 
 /* ── FORMULIEREN ────────────────────────────────────────── */
-input, select, textarea {
+/* Tekstvelden krijgen de gedeelde vormgeving; keuze- en actievelden
+   behouden hun eigen native gedrag en worden niet als tekstveld uitgerekt. */
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="file"]):not([type="color"]):not([type="image"]),
+select,
+textarea {
   background: #ffffff;
   color: var(--hn-br);
   border: 1.5px solid rgba(104,74,37,0.28);
@@ -445,13 +449,28 @@ input, select, textarea {
   transition: border-color .2s, box-shadow .2s;
   width: 100%;
 }
-input:focus, select:focus, textarea:focus {
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="file"]):not([type="color"]):not([type="image"]):focus,
+select:focus,
+textarea:focus {
   outline: none;
   border-color: var(--hn-gd);
   box-shadow: 0 0 0 3px rgba(201,162,39,0.15);
 }
-input::placeholder, textarea::placeholder {
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="file"]):not([type="color"]):not([type="image"])::placeholder,
+textarea::placeholder {
   color: rgba(104,74,37,0.45);
+}
+input[type="checkbox"],
+input[type="radio"] {
+  width: auto;
+  padding: 0;
+  accent-color: var(--hn-br);
+}
+input[type="range"] {
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
 }
 label {
   font-size: 12px;
