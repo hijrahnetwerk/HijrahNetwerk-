@@ -884,7 +884,7 @@ body {
 .hn-nav, nav.hn-nav, .top-nav, nav.main-nav {
   background: #684a25 !important;
   color: #ffffff !important;
-  border-bottom: 1px solid rgba(198,161,91,.65) !important;
+  border-bottom: 1px solid rgba(201,162,39,.65) !important;
 }
 .hn-brand, .hn-brand:visited, .brand, .brand:visited,
 .hn-links > a, .hn-more-trigger, #hnPublicNav a, .hn-nav a,
@@ -899,7 +899,7 @@ nav.main-nav a.active {
   background: rgba(255,255,255,.12) !important;
 }
 .hn-nav-special, .hn-nav-special:hover {
-  background: #dd842a !important;
+  background: #df842c !important;
   color: #ffffff !important;
 }
 .hn-menu { background: #ffffff; border-color: #ffffff; }
@@ -907,7 +907,7 @@ nav.main-nav a.active {
 /* Main page-title/hero banners follow the HijrahTools header treatment. */
 .hero, .page-hero, .page-header, .hn-hero, .hn-page-hero,
 .hn-tools-hero, .hero-banner, .title-banner, .page-title-banner {
-  background: linear-gradient(120deg, #684a25 0%, #684a25 58%, #dd842a 100%) !important;
+  background: linear-gradient(120deg, #684a25 0%, #684a25 58%, #df842c 100%) !important;
   color: #ffffff !important;
 }
 .hero h1, .hero h2, .hero h3, .page-hero h1, .page-hero h2,
