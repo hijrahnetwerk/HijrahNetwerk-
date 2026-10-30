@@ -851,9 +851,7 @@ body:not(.hn-admin-page) .site-header :where(a,.brand) {
 
 /* One consistent page-title treatment. No compass, circle or decorative orbit. */
 body:not(.hn-admin-page):not(.hn-home):not(.home-page)
-:where(.page-hero,.page-header,.hn-page-hero,.hn-tools-hero,.hero-banner,.title-banner,.page-title-banner,
-main > .hero:first-child, main > section.hero:first-child,
-#main-content > .hero:first-child, #main-content > section.hero:first-child) {
+:where(.page-hero,.page-header,.hn-page-hero,.hn-tools-hero,.hero-banner,.title-banner,.page-title-banner,.hero) {
   position: relative;
   isolation: isolate;
   overflow: hidden;
@@ -866,16 +864,12 @@ main > .hero:first-child, main > section.hero:first-child,
   box-shadow: none;
 }
 body:not(.hn-admin-page):not(.hn-home):not(.home-page)
-:where(.page-hero,.page-header,.hn-page-hero,.hn-tools-hero,.hero-banner,.title-banner,.page-title-banner,
-main > .hero:first-child, main > section.hero:first-child,
-#main-content > .hero:first-child, #main-content > section.hero:first-child)
+:where(.page-hero,.page-header,.hn-page-hero,.hn-tools-hero,.hero-banner,.title-banner,.page-title-banner,.hero)
 :where(h1,h2,h3,p,li,.subtitle,.lead,.eyebrow) {
   color: var(--hn-white);
 }
 body:not(.hn-admin-page):not(.hn-home):not(.home-page)
-:where(.page-hero,.page-header,.hn-page-hero,.hn-tools-hero,.hero-banner,.title-banner,.page-title-banner,
-main > .hero:first-child, main > section.hero:first-child,
-#main-content > .hero:first-child, #main-content > section.hero:first-child) .eyebrow {
+:where(.page-hero,.page-header,.hn-page-hero,.hn-tools-hero,.hero-banner,.title-banner,.page-title-banner,.hero) .eyebrow {
   background: transparent;
   color: var(--hn-gd-licht);
   border: 0;
@@ -884,9 +878,7 @@ main > .hero:first-child, main > section.hero:first-child,
   text-transform: uppercase;
 }
 body:not(.hn-admin-page):not(.hn-home):not(.home-page)
-:where(.page-hero,.page-header,.hn-page-hero,.hn-tools-hero,.hero-banner,.title-banner,.page-title-banner,
-main > .hero:first-child, main > section.hero:first-child,
-#main-content > .hero:first-child, #main-content > section.hero:first-child) h1 {
+:where(.page-hero,.page-header,.hn-page-hero,.hn-tools-hero,.hero-banner,.title-banner,.page-title-banner,.hero) h1 {
   max-width: 18ch;
   margin-block: 0 .75rem;
   color: var(--hn-white);
@@ -894,9 +886,7 @@ main > .hero:first-child, main > section.hero:first-child,
   line-height: 1.08;
 }
 body:not(.hn-admin-page):not(.hn-home):not(.home-page)
-:where(.page-hero,.page-header,.hn-page-hero,.hn-tools-hero,.hero-banner,.title-banner,.page-title-banner,
-main > .hero:first-child, main > section.hero:first-child,
-#main-content > .hero:first-child, #main-content > section.hero:first-child) p {
+:where(.page-hero,.page-header,.hn-page-hero,.hn-tools-hero,.hero-banner,.title-banner,.page-title-banner,.hero) p {
   max-width: 68ch;
   color: rgba(255,255,255,.86);
 }
