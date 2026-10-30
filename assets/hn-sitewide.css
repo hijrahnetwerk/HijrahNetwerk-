@@ -9,82 +9,7 @@
    5. FUNCTIONEEL #4e7d4a · #b23a2e — alleen systeemmeldingen
    ════════════════════════════════════════════════════════════ */
 
-/* ── TOKENS ─────────────────────────────────────────────── */
-:root {
-  /* Bruin */
-  --hn-br:          #684a25;
-  --hn-br-donker:   #4f3a23;
-  /* Oranje */
-  --hn-rs:          #df842c;
-  /* Goud */
-  --hn-gd:          #c9a227;
-  --hn-gd-licht:    #e6c766;
-  --hn-gd-donker:   #8a6a0a;
-  --hn-gd-border:   rgba(201,162,39,0.38);
-  --hn-gd-bg:       rgba(201,162,39,0.08);
-  --hn-gd-shine: linear-gradient(90deg,
-    #8a6a0a 0%, #c9a227 25%, #e6c766 48%,
-    #f0d878 54%, #e6c766 60%, #c9a227 78%, #8a6a0a 100%);
-  --hn-gd-shine-d: linear-gradient(105deg,
-    #8a6a0a 0%, #c9a227 28%, #e6c766 46%,
-    #f0d878 52%, #c9a227 72%, #8a6a0a 100%);
-  --hn-gd-gloed:
-    0 0 0 1px rgba(201,162,39,0.35),
-    0 4px 20px rgba(201,162,39,0.20),
-    0 8px 36px rgba(201,162,39,0.10);
-  --hn-gd-gloed-hover:
-    0 0 0 1px rgba(201,162,39,0.55),
-    0 6px 28px rgba(201,162,39,0.32),
-    0 12px 48px rgba(201,162,39,0.16);
-  /* Functioneel */
-  --hn-ok:          #4e7d4a;
-  --hn-ok-bg:       #eaf3e9;
-  --hn-fout:        #b23a2e;
-  --hn-fout-bg:     #faecea;
-  --hn-waarsch:     #a06020;
-  --hn-waarsch-bg:  #fef3e6;
-  --hn-info:        #1a4a7a;
-  --hn-info-bg:     #e8f0fa;
-  /* Typografie */
-  --hn-font-display: 'Cinzel', 'Georgia', serif;
-  --hn-font-serif:   'Cormorant Garamond', 'Georgia', serif;
-  --hn-font-body:    'Raleway', system-ui, sans-serif;
-  --hn-font-ar:      'Amiri', 'Georgia', serif;
-  /* Schaduwen */
-  --hn-sh-sm: 0 2px 8px rgba(104,74,37,0.08);
-  --hn-sh-md: 0 4px 18px rgba(104,74,37,0.11);
-  --hn-sh-lg: 0 8px 36px rgba(104,74,37,0.15);
-  /* Radius */
-  --hn-r-sm: 6px;
-  --hn-r-md: 12px;
-  --hn-r-lg: 18px;
-  --hn-r-xl: 26px;
-  /* Canonical aliases for shared components; legacy tokens above remain compatible. */
-  --hn-white: #ffffff;
-  --hn-brown: var(--hn-br);
-  --hn-brown-dark: var(--hn-br-donker);
-  --hn-orange: var(--hn-rs);
-  --hn-gold: var(--hn-gd);
-  --hn-gold-light: var(--hn-gd-licht);
-  --hn-gold-dark: var(--hn-gd-donker);
-  --hn-gold-border: var(--hn-gd-border);
-  --hn-gold-bg: var(--hn-gd-bg);
-  --hn-gold-shine: var(--hn-gd-shine);
-  --hn-gold-glow: var(--hn-gd-gloed);
-  --hn-gold-glow-hover: var(--hn-gd-gloed-hover);
-  --hn-error: var(--hn-fout);
-  --hn-error-bg: var(--hn-fout-bg);
-  --hn-warning: var(--hn-waarsch);
-  --hn-warning-bg: var(--hn-waarsch-bg);
-  --hn-shadow-sm: var(--hn-sh-sm);
-  --hn-shadow-md: var(--hn-sh-md);
-  --hn-shadow-lg: var(--hn-sh-lg);
-  --hn-radius-sm: var(--hn-r-sm);
-  --hn-radius-md: var(--hn-r-md);
-  --hn-radius-lg: var(--hn-r-lg);
-  --hn-radius-xl: var(--hn-r-xl);
-}
-
+/* Design tokens are loaded once from hn-tokens.css before this stylesheet. */
 
 /* ── BASIS ──────────────────────────────────────────────── */
 body {
@@ -866,67 +791,143 @@ body:not(.hn-admin-page):not(.hn-home):not(.home-page) .hn-section :where(.btn,.
   display: none !important;
 }
 
-/* HN BRAND OVERRIDE — white canvas + exact logo brown + dark hero headers */
-:root {
-  --hn-brown: #684a25;
-  --hn-bruin: #684a25;
-  --hn-white: #ffffff;
-  --hn-paper: #ffffff;
-}
+/* ── CENTRALE PAGINA- EN MERKREGELS ─────────────────────── */
+/* The shared design system owns the visual language; page CSS owns layout and function. */
 html, body {
-  background: #ffffff !important;
+  background: var(--hn-white);
+  color: var(--hn-br);
+  font-family: var(--hn-font-body);
 }
-body {
-  color: #684a25;
+body { -webkit-font-smoothing: antialiased; }
+h1, h2, h3, h4, h5, h6 { color: var(--hn-br-donker); }
+h1, h2 { font-family: var(--hn-font-display); }
+h3, h4, h5, h6 { font-family: var(--hn-font-body); }
+a { color: var(--hn-rs); }
+a:hover { color: var(--hn-br-donker); }
+
+/* Public navigation: dark brown, white links, restrained orange accent. */
+#hnPublicNav, #hnPublicNav .hn-nav, .hn-nav, nav.main-nav, .top-nav,
+.site-header, header.site-header {
+  background: var(--hn-br-donker);
+  color: var(--hn-white);
+  border-bottom: 2px solid var(--hn-rs);
 }
-/* Shared site header: HN brown with white navigation text, matching HijrahTools. */
-.site-header, header.site-header, #hnPublicNav .hn-nav, #hnPublicNav,
-.hn-nav, nav.hn-nav, .top-nav, nav.main-nav {
-  background: #684a25 !important;
-  color: #ffffff !important;
-  border-bottom: 1px solid rgba(201,162,39,.65) !important;
+#hnPublicNav .hn-nav::before { height: 0; background: none; animation: none; }
+#hnPublicNav .hn-mark {
+  border-color: var(--hn-rs);
+  box-shadow: none;
 }
-.hn-brand, .hn-brand:visited, .brand, .brand:visited,
-.hn-links > a, .hn-more-trigger, #hnPublicNav a, .hn-nav a,
-nav.main-nav a, .nav-links a {
-  color: #ffffff;
+#hnPublicNav .hn-links > a:hover,
+#hnPublicNav .hn-more-trigger:hover,
+#hnPublicNav .hn-links > a.hn-active,
+#hnPublicNav .hn-links > a[aria-current="page"] {
+  color: var(--hn-white);
+  background: rgba(255,255,255,.10);
 }
-.hn-links > a:hover, .hn-more-trigger:hover, #hnPublicNav a:hover,
-.hn-nav a:hover, nav.main-nav a:hover, .nav-links a:hover,
-.hn-links > a.hn-active, #hnPublicNav a.active, .hn-nav a.active,
-nav.main-nav a.active {
-  color: #ffffff !important;
-  background: rgba(255,255,255,.12) !important;
-}
-.hn-nav-special, .hn-nav-special:hover {
-  background: #df842c !important;
-  color: #ffffff !important;
-}
-.hn-menu { background: #ffffff; border-color: #ffffff; }
-.hn-menu span { background: #684a25; }
-/* Main page-title/hero banners follow the HijrahTools header treatment. */
-.hero, .page-hero, .page-header, .hn-hero, .hn-page-hero,
-.hn-tools-hero, .hero-banner, .title-banner, .page-title-banner {
-  background: linear-gradient(120deg, #684a25 0%, #684a25 58%, #df842c 100%) !important;
-  color: #ffffff !important;
-}
-.hero h1, .hero h2, .hero h3, .page-hero h1, .page-hero h2,
-.page-header h1, .page-header h2, .hn-hero h1, .hn-hero h2,
-.hn-page-hero h1, .hn-page-hero h2, .hn-tools-hero h1,
-.hn-tools-hero h2, .hero-banner h1, .hero-banner h2,
-.title-banner h1, .title-banner h2, .page-title-banner h1,
-.page-title-banner h2 {
-  color: #ffffff !important;
-}
-.hero p, .page-hero p, .page-header p, .hn-hero p,
-.hn-page-hero p, .hn-tools-hero p, .hero-banner p {
-  color: #ffffff !important;
-}
-/* White page canvas; retain HN brown, rust and gold for brand accents. */
-main, .page-content, .content-wrap, .hn-main {
-  background-color: #ffffff;
+#hnPublicNav .hn-nav-special,
+#hnPublicNav .hn-nav-special:hover {
+  color: var(--hn-br-donker);
+  background: var(--hn-rs);
+  border-color: transparent;
 }
 
+/* One consistent page-title treatment. No compass, circle or decorative orbit. */
+body:not(.hn-admin-page):not(.hn-home):not(.home-page)
+:where(.page-hero,.page-header,.hn-page-hero,.hn-tools-hero,.hero-banner,.title-banner,.page-title-banner,
+main > .hero:first-child, main > section.hero:first-child,
+#main-content > .hero:first-child, #main-content > section.hero:first-child) {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding-block: clamp(2.6rem, 6vw, 4.8rem);
+  background: var(--hn-br-donker);
+  color: var(--hn-white);
+  border: 0;
+  border-bottom: 4px solid var(--hn-rs);
+  border-radius: 0;
+  box-shadow: none;
+}
+body:not(.hn-admin-page):not(.hn-home):not(.home-page)
+:where(.page-hero,.page-header,.hn-page-hero,.hn-tools-hero,.hero-banner,.title-banner,.page-title-banner,
+main > .hero:first-child, main > section.hero:first-child,
+#main-content > .hero:first-child, #main-content > section.hero:first-child)
+:where(h1,h2,h3,p,li,.subtitle,.lead,.eyebrow) {
+  color: var(--hn-white);
+}
+body:not(.hn-admin-page):not(.hn-home):not(.home-page)
+:where(.page-hero,.page-header,.hn-page-hero,.hn-tools-hero,.hero-banner,.title-banner,.page-title-banner,
+main > .hero:first-child, main > section.hero:first-child,
+#main-content > .hero:first-child, #main-content > section.hero:first-child) .eyebrow {
+  background: transparent;
+  color: var(--hn-gd-licht);
+  border: 0;
+  border-radius: 0;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+body:not(.hn-admin-page):not(.hn-home):not(.home-page)
+:where(.page-hero,.page-header,.hn-page-hero,.hn-tools-hero,.hero-banner,.title-banner,.page-title-banner,
+main > .hero:first-child, main > section.hero:first-child,
+#main-content > .hero:first-child, #main-content > section.hero:first-child) h1 {
+  max-width: 18ch;
+  margin-block: 0 .75rem;
+  color: var(--hn-white);
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  line-height: 1.08;
+}
+body:not(.hn-admin-page):not(.hn-home):not(.home-page)
+:where(.page-hero,.page-header,.hn-page-hero,.hn-tools-hero,.hero-banner,.title-banner,.page-title-banner,
+main > .hero:first-child, main > section.hero:first-child,
+#main-content > .hero:first-child, #main-content > section.hero:first-child) p {
+  max-width: 68ch;
+  color: rgba(255,255,255,.86);
+}
+
+/* Decorative compass/orbit circles are intentionally not part of page titles. */
+.hero .hn-compass-deco, .hero .hn-route-deco,
+.page-hero .hn-compass-deco, .page-hero .hn-route-deco,
+.page-header .hn-compass-deco, .page-header .hn-route-deco,
+.hn-hero .hn-compass-deco, .hn-hero .hn-route-deco,
+.hn-page-hero .hn-compass-deco, .hn-page-hero .hn-route-deco,
+.hn-tools-hero .hn-compass-deco, .hn-tools-hero .hn-route-deco,
+.page-title-banner .hn-compass-deco, .page-title-banner .hn-route-deco {
+  display: none !important;
+}
+
+/* Keep cards, forms and content surfaces predictable across pages. */
+:where(.card,.country-card,.step,.note,.city,.topic-card,.result-card,.search-result,
+.fiche-card,.article-card,.panel,.hn-card,.feature-card,.highlight-card,.quote-card,
+.step-card,.city-card,.tool-card,.content-card) {
+  border-color: rgba(104,74,37,.18);
+  border-radius: var(--hn-r-lg);
+  box-shadow: var(--hn-sh-sm);
+}
+:where(input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="submit"]):not([type="button"]),
+select,textarea) {
+  border-color: rgba(104,74,37,.28);
+  border-radius: var(--hn-r-sm);
+}
+:where(button,.btn,.button,.hn-btn,.hn-action,input[type="submit"]) {
+  font-family: var(--hn-font-body);
+}
+
+/* Gold remains a premium detail; standard primary actions stay orange. */
+:where(.btn-primary,.hn-btn-primary,.button-primary,button[type="submit"]:not(.btn-secondary):not(.btn-outline):not(.btn-goud)) {
+  background: var(--hn-rs);
+  color: var(--hn-br-donker);
+  border-color: transparent;
+}
+:where(.btn-primary,.hn-btn-primary,.button-primary,button[type="submit"]:not(.btn-secondary):not(.btn-outline):not(.btn-goud)):hover {
+  background: var(--hn-rs-hover);
+  color: var(--hn-br-donker);
+}
+
+/* Consistent keyboard focus and accessible reduced motion. */
+:focus-visible { outline: 2px solid var(--hn-rs); outline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) {
+  *,*::before,*::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+  .hn-reveal,.hn-reveal-left,.hn-reveal-scale { opacity: 1 !important; transform: none !important; }
+}
 
 /* v3 interaction support */
 @keyframes hn-ripple { to { transform: scale(1); opacity: 0; } }
