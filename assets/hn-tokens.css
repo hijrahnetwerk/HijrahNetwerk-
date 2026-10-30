@@ -1,17 +1,31 @@
+/* Hijrah Netwerk — single source of truth for design tokens */
 :root {
+  /* Brand palette: white, brown, orange, gold */
+  --hn-white: #ffffff;
+  --hn-paper: #ffffff;
   --hn-br: #684a25;
   --hn-br-donker: #4f3a23;
+  --hn-brown: #684a25;
+  --hn-brown-dark: #4f3a23;
+  --hn-bruin: #684a25;
   --hn-rs: #df842c;
+  --hn-orange: #df842c;
   --hn-rs-hover: #c87020;
   --hn-gd: #c9a227;
+  --hn-gold: #c9a227;
   --hn-gd-licht: #e6c766;
+  --hn-gold-light: #e6c766;
   --hn-gd-donker: #8a6a0a;
+  --hn-gold-dark: #8a6a0a;
   --hn-gd-border: rgba(201,162,39,.35);
+  --hn-gold-border: var(--hn-gd-border);
   --hn-gd-bg: rgba(201,162,39,.08);
+  --hn-gold-bg: var(--hn-gd-bg);
   --hn-gd-shine: linear-gradient(90deg,#8a6a0a 0%,#c9a227 25%,#e6c766 48%,#f0d878 54%,#e6c766 60%,#c9a227 78%,#8a6a0a 100%);
   --hn-gd-shine-d: linear-gradient(105deg,#8a6a0a 0%,#c9a227 28%,#e6c766 46%,#f0d878 52%,#c9a227 72%,#8a6a0a 100%);
-  --hn-gd-gloed: 0 0 0 1px rgba(201,162,39,.35),0 4px 20px rgba(201,162,39,.20),0 8px 36px rgba(201,162,39,.10);
-  --hn-gd-gloed-hover: 0 0 0 1px rgba(201,162,39,.55),0 6px 28px rgba(201,162,39,.32),0 12px 48px rgba(201,162,39,.16);
+  --hn-gold-shine: var(--hn-gd-shine);
+
+  /* Functional colours: system feedback only */
   --hn-ok: #4e7d4a;
   --hn-ok-bg: #eaf3e9;
   --hn-fout: #b23a2e;
@@ -20,6 +34,12 @@
   --hn-waarsch-bg: #fef3e6;
   --hn-info: #1a4a7a;
   --hn-info-bg: #e8f0fa;
+  --hn-error: var(--hn-fout);
+  --hn-error-bg: var(--hn-fout-bg);
+  --hn-warning: var(--hn-waarsch);
+  --hn-warning-bg: var(--hn-waarsch-bg);
+
+  /* Typography */
   --hn-font-d: 'Cinzel','Georgia',serif;
   --hn-font-s: 'Cormorant Garamond','Georgia',serif;
   --hn-font-b: 'Raleway',system-ui,sans-serif;
@@ -27,22 +47,35 @@
   --hn-font-display: var(--hn-font-d);
   --hn-font-serif: var(--hn-font-s);
   --hn-font-body: var(--hn-font-b);
+
+  /* Elevation, borders and motion */
   --hn-sh-xs: 0 1px 4px rgba(79,58,35,.06);
   --hn-sh-sm: 0 2px 10px rgba(79,58,35,.08);
   --hn-sh-md: 0 4px 20px rgba(79,58,35,.11);
   --hn-sh-lg: 0 8px 40px rgba(79,58,35,.15);
   --hn-sh-xl: 0 16px 60px rgba(79,58,35,.18);
+  --hn-shadow-sm: var(--hn-sh-sm);
+  --hn-shadow-md: var(--hn-sh-md);
+  --hn-shadow-lg: var(--hn-sh-lg);
   --hn-r-xs: 4px;
   --hn-r-sm: 6px;
   --hn-r-md: 12px;
   --hn-r-lg: 18px;
   --hn-r-xl: 26px;
   --hn-r-full: 999px;
+  --hn-radius-sm: var(--hn-r-sm);
+  --hn-radius-md: var(--hn-r-md);
+  --hn-radius-lg: var(--hn-r-lg);
+  --hn-radius-xl: var(--hn-r-xl);
   --hn-ease: cubic-bezier(.22,.61,.36,1);
   --hn-ease-in: cubic-bezier(.4,0,1,1);
   --hn-t-fast: .15s;
   --hn-t-mid: .25s;
   --hn-t-slow: .45s;
+  --hn-gd-gloed: 0 0 0 1px rgba(201,162,39,.35),0 4px 20px rgba(201,162,39,.20),0 8px 36px rgba(201,162,39,.10);
+  --hn-gd-gloed-hover: 0 0 0 1px rgba(201,162,39,.55),0 6px 28px rgba(201,162,39,.32),0 12px 48px rgba(201,162,39,.16);
+  --hn-gold-glow: var(--hn-gd-gloed);
+  --hn-gold-glow-hover: var(--hn-gd-gloed-hover);
   --z-base: 1;
   --z-sticky: 50;
   --z-nav: 100;
@@ -50,13 +83,4 @@
   --z-modal: 300;
   --z-toast: 400;
   --z-tooltip: 500;
-  --hn-white: #fff;
-  --hn-brown: var(--hn-br);
-  --hn-brown-dark: var(--hn-br-donker);
-  --hn-orange: var(--hn-rs);
-  --hn-gold: var(--hn-gd);
-  --hn-gold-light: var(--hn-gd-licht);
-  --hn-gold-dark: var(--hn-gd-donker);
-  --hn-gold-border: var(--hn-gd-border);
-  --hn-gold-bg: var(--hn-gd-bg);
 }
