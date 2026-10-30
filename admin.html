@@ -15,15 +15,15 @@
 
 <style>
 :root{
-  --brown:#674C2E;
-  --orange:#DD842A;
-  --gold:#C6A15B;
+  --brown:#684a25;
+  --orange:#df842c;
+  --gold:#c9a227;
   --cream:#FFFFFF;
-  --text:#674C2E;
+  --text:#684a25;
   --muted:#756d63;
-  --border:#674C2E;
-  --danger:#DD842A;
-  --success:#674C2E
+  --border:#684a25;
+  --danger:#df842c;
+  --success:#684a25
 }
 
 *{box-sizing:border-box}
@@ -669,7 +669,7 @@ th{
 /* ── HN ADMIN SIDEBAR UPGRADE ── */
 .hn-admin-sidebar{
   width:256px;
-  background:linear-gradient(170deg,#2f1e0a,#674C2E);
+  background:linear-gradient(170deg,#2f1e0a,#684a25);
   color:#fff;
   padding:22px 14px 20px;
   flex-shrink:0;
@@ -684,7 +684,7 @@ th{
 .hn-admin-logo{display:flex;align-items:center;gap:10px;margin-bottom:4px}
 .hn-admin-logo-mark{
   width:36px;height:36px;border-radius:11px;
-  background:linear-gradient(135deg,#DD842A,#C6A15B);
+  background:linear-gradient(135deg,#df842c,#c9a227);
   display:grid;place-items:center;font-size:10px;font-weight:900;color:#fff;
   box-shadow:0 6px 18px rgba(212,175,55,.3);
   flex-shrink:0;
@@ -720,7 +720,7 @@ th{
 .hn-admin-nav-btn.active,
 .hn-admin-nav-btn[data-page].active{
   background:linear-gradient(135deg,rgba(221,132,42,.28),rgba(212,175,55,.18));
-  color:#D4AF37;
+  color:#c9a227;
   border:1px solid rgba(212,175,55,.2);
 }
 .hn-admin-nav-btn .icon{font-size:15px;width:20px;text-align:center;flex-shrink:0}
@@ -729,7 +729,7 @@ th{
 .topbar{
   background:rgba(253,250,246,.97)!important;
   backdrop-filter:blur(12px)!important;
-  border-bottom:1px solid rgba(103,76,46,.15)!important;
+  border-bottom:1px solid rgba(104,74,37,.15)!important;
 }
 .topbar h1{
   font-size:19px!important;
@@ -737,12 +737,12 @@ th{
   letter-spacing:-.03em!important;
 }
 /* Stats cards upgrade */
-.card.hn-admin-stat{border-top:3px solid #D4AF37!important}
-.card-number{color:#D4AF37!important}
+.card.hn-admin-stat{border-top:3px solid #c9a227!important}
+.card-number{color:#c9a227!important}
 /* Goud stripe bovenaan admin */
 .hn-admin-stripe{
   height:3px;
-  background:linear-gradient(90deg,#674C2E,#DD842A,#D4AF37,#F0D060,#D4AF37,#DD842A,#674C2E);
+  background:linear-gradient(90deg,#684a25,#df842c,#c9a227,#F0D060,#c9a227,#df842c,#684a25);
   background-size:300% 100%;
   animation:hn-stripe 5s linear infinite;
 }
@@ -773,9 +773,13 @@ th{
   }
 }
 </style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Raleway:wght@300;400;500;600;700&family=Amiri:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/hn-tokens.css?v=3">
 <link rel="stylesheet" href="/assets/hn-design.css">
 
-<link rel="stylesheet" href="/assets/hn-sitewide.css?v=1">
+<link rel="stylesheet" href="/assets/hn-sitewide.css?v=3">
 <style id="hn-admin-layout-final-overrides">
 /* Deze regels staan na de gedeelde stylesheets, zodat de admin-layout niet
    opnieuw wordt teruggezet naar een vast 100vh-scrollpaneel. */
@@ -825,7 +829,7 @@ html,body{width:100%;min-width:0}
 }
 </style>
 <script src="/assets/hn-footer.js?v=1" defer></script>
-<script src="/assets/hn-motion.js?v=1" defer></script>
+<script src="/assets/hn-motion.js?v=3" defer></script>
 </head>
 
 <body>
@@ -1497,7 +1501,7 @@ html,body{width:100%;min-width:0}
         </div>
 
         <div class="field full" id="ficheFields" style="display:none;">
-  <div style="padding:16px;background:#FFFFFF;border:1px solid #674C2E;border-radius:10px;">
+  <div style="padding:16px;background:#FFFFFF;border:1px solid #684a25;border-radius:10px;">
     <h4 style="margin:0 0 6px;">Fiche-inhoud</h4>
     <p class="hint" style="margin:0 0 8px;">Vul zoveel mogelijk concrete gegevens afzonderlijk in. Lege velden worden niet getoond.</p>
     <p class="hint" id="ficheContextHint" style="margin:0 0 16px;">Kies een categorie of subcategorie om extra, onderwerp-specifieke velden te tonen.</p>
@@ -1875,7 +1879,7 @@ html,body{width:100%;min-width:0}
 <div id="submissionReviewModal" hidden style="position:fixed;inset:0;z-index:2000;background:rgba(43,36,28,.48);padding:24px;overflow:auto;">
   <div style="max-width:920px;margin:5vh auto;background:#fff;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.2);overflow:hidden;">
     <div style="padding:20px 24px;border-bottom:1px solid #e8e1d8;display:flex;align-items:center;justify-content:space-between;gap:15px;">
-      <div><div style="font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#DD842A;">HN REVIEW</div><h3 id="submissionReviewTitle" style="margin:4px 0 0;">Inzending beoordelen</h3></div>
+      <div><div style="font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#df842c;">HN REVIEW</div><h3 id="submissionReviewTitle" style="margin:4px 0 0;">Inzending beoordelen</h3></div>
       <button type="button" class="button button-secondary" id="closeSubmissionReview">Sluiten</button>
     </div>
     <div style="padding:24px;display:grid;gap:18px;">
@@ -1887,7 +1891,7 @@ html,body{width:100%;min-width:0}
       <div>
         <label for="submissionPublicText" style="display:block;font-weight:700;margin-bottom:7px;">Openbare versie</label>
         <div class="hint" style="margin-bottom:7px;">Deze tekst wordt zichtbaar in HN. Verwijder namen, telefoonnummers en andere herkenbare persoonsgegevens wanneer dat nodig is.</div>
-        <textarea id="submissionPublicText" rows="10" style="width:100%;box-sizing:border-box;padding:12px;border:1px solid #674C2E;border-radius:10px;line-height:1.55;"></textarea>
+        <textarea id="submissionPublicText" rows="10" style="width:100%;box-sizing:border-box;padding:12px;border:1px solid #684a25;border-radius:10px;line-height:1.55;"></textarea>
       </div>
       <div>
         <label for="submissionAdminNotes" style="display:block;font-weight:700;margin-bottom:7px;">HN-notitie</label>
@@ -1993,7 +1997,7 @@ html,body{width:100%;min-width:0}
 <script src="assets/admin-hijrahtools.js?v=20261009-2"></script>
 
 <div id="taxonomyQuickAdd" hidden style="position:fixed;inset:0;background:rgba(40,30,20,.45);z-index:1000;display:none;align-items:center;justify-content:center;padding:20px;">
-  <div style="background:#fff;border:1px solid #674C2E;border-radius:12px;width:min(520px,100%);padding:22px;">
+  <div style="background:#fff;border:1px solid #684a25;border-radius:12px;width:min(520px,100%);padding:22px;">
     <h3 id="taxonomyQuickTitle" style="margin:0 0 8px;">Nieuwe optie</h3>
     <p id="taxonomyQuickHint" class="hint"></p>
     <div class="field" style="margin-top:15px;"><label>Naam</label><input id="taxonomyQuickName" maxlength="150"></div>

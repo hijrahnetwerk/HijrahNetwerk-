@@ -1,34 +1,38 @@
-<!doctype html><html lang="nl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>HN Navigatiebeheer</title><link rel="stylesheet" href="/assets/fonts.css"><link rel="stylesheet" href="/assets/admin-builder.css"><script src="/assets/config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/config.js"></script>
+<!doctype html><html lang="nl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>HN Navigatiebeheer</title><link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Raleway:wght@300;400;500;600;700&family=Amiri:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/hn-tokens.css?v=3">
+<link rel="stylesheet" href="/assets/fonts.css"><link rel="stylesheet" href="/assets/admin-builder.css"><script src="/assets/config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/config.js"></script>
   <script src="/supabase-client.js"></script><script src="/assets/admin-navigation.js?v=20261018-dragdrop" defer></script><link rel="stylesheet" href="/assets/hn-design.css">
 
-<link rel="stylesheet" href="/assets/hn-sitewide.css?v=1">
+<link rel="stylesheet" href="/assets/hn-sitewide.css?v=3">
 <script src="/assets/hn-footer.js?v=1" defer></script>
-<script src="/assets/hn-motion.js?v=1" defer></script>
-<style>.nav-item{margin:12px 0;padding:14px;border:1px solid #d8c5aa;border-radius:12px;background:#fff;transition:border-color .15s,background .15s}.nav-item .section-head{display:flex;align-items:center;gap:10px;justify-content:space-between;margin-bottom:12px}.nav-item .handle{font-size:20px;color:#9B7735;cursor:grab}.nav-item .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}.nav-item .row label{display:block;font-size:12px;font-weight:700}.nav-item input:not([type=checkbox]){display:block;width:100%;box-sizing:border-box;padding:10px;border:1px solid #d8c5aa;border-radius:7px;margin-top:5px}.nav-item .nav-visible{display:flex;gap:8px;align-items:center;margin-top:12px;font-size:12px}.nav-item .nav-actions{display:flex;gap:5px}.nav-item .nav-actions button{padding:6px 9px}.nav-item button:disabled{opacity:.35;cursor:not-allowed}.nav-item.is-dragging{opacity:.45}.nav-item.drop-target{border:2px dashed #DD842A;background:#fff8ee}.nav-item .section-head b{margin-right:auto}@media(max-width:650px){.nav-item .row{grid-template-columns:1fr}.nav-item .section-head{align-items:flex-start;flex-wrap:wrap}}
+<script src="/assets/hn-motion.js?v=3" defer></script>
+<style>.nav-item{margin:12px 0;padding:14px;border:1px solid #d8c5aa;border-radius:12px;background:#fff;transition:border-color .15s,background .15s}.nav-item .section-head{display:flex;align-items:center;gap:10px;justify-content:space-between;margin-bottom:12px}.nav-item .handle{font-size:20px;color:#9B7735;cursor:grab}.nav-item .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}.nav-item .row label{display:block;font-size:12px;font-weight:700}.nav-item input:not([type=checkbox]){display:block;width:100%;box-sizing:border-box;padding:10px;border:1px solid #d8c5aa;border-radius:7px;margin-top:5px}.nav-item .nav-visible{display:flex;gap:8px;align-items:center;margin-top:12px;font-size:12px}.nav-item .nav-actions{display:flex;gap:5px}.nav-item .nav-actions button{padding:6px 9px}.nav-item button:disabled{opacity:.35;cursor:not-allowed}.nav-item.is-dragging{opacity:.45}.nav-item.drop-target{border:2px dashed #df842c;background:#fff8ee}.nav-item .section-head b{margin-right:auto}@media(max-width:650px){.nav-item .row{grid-template-columns:1fr}.nav-item .section-head{align-items:flex-start;flex-wrap:wrap}}
 /* Navigatiebeheer: direct target the page's real header and controls. */
-body{background:#FFFFFF!important;color:#674C2E}
+body{background:#FFFFFF!important;color:#684a25}
 .hn-builder{background:#FFFFFF!important}
 .builder-top{
   width:100%!important;max-width:none!important;box-sizing:border-box;
-  background:#674C2E!important;background-image:none!important;color:#FFFFFF!important;
-  border-bottom:2px solid #D4AF37!important;
+  background:#684a25!important;background-image:none!important;color:#FFFFFF!important;
+  border-bottom:2px solid #c9a227!important;
   box-shadow:0 5px 18px rgba(58,42,24,.14)!important;
 }
 .builder-top h1,.builder-top p,.builder-top a,.builder-top label,.builder-top span{
   color:#FFFFFF!important;-webkit-text-fill-color:#FFFFFF!important;
 }
 .builder-top .button.primary,.builder-top button#save{
-  background:#DD842A!important;background-image:none!important;
+  background:#df842c!important;background-image:none!important;
   color:#FFFFFF!important;-webkit-text-fill-color:#FFFFFF!important;
-  border:1px solid #DD842A!important;
+  border:1px solid #df842c!important;
 }
 .hn-builder .panel{
-  background:#FFFFFF!important;border:1px solid rgba(103,76,46,.28)!important;
+  background:#FFFFFF!important;border:1px solid rgba(104,74,37,.28)!important;
   border-radius:16px!important;box-shadow:0 7px 22px rgba(58,42,24,.09)!important;
 }
-.hn-builder .editorbar h2{color:#674C2E!important}
-.nav-item{border-color:rgba(103,76,46,.28)!important}
+.hn-builder .editorbar h2{color:#684a25!important}
+.nav-item{border-color:rgba(104,74,37,.28)!important}
 .nav-item .handle{color:#8B6914!important}
-.nav-item.drop-target{border-color:#DD842A!important;background:#FFFFFF!important}
+.nav-item.drop-target{border-color:#df842c!important;background:#FFFFFF!important}
 
 </style></head><body><main class="hn-builder"><header class="builder-top"><div><a href="/admin">← Admin</a><h1>Navigatiebeheer</h1><p>Beheer menu-items en hun volgorde zonder code.</p></div><button id="save" class="button primary">Opslaan</button></header><div id="msg" class="msg" hidden></div><section class="panel"><div class="editorbar"><h2>Hoofdmenu</h2><button id="add" class="button secondary">+ Menu-item</button></div><p class="muted">Sleep items om de volgorde te wijzigen. Verbergen haalt een item uit het menu zonder het te verwijderen.</p><div id="items"></div></section></main></body></html>

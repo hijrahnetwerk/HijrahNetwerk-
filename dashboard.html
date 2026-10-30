@@ -16,15 +16,15 @@
 
 <style>
 :root{
-  --brown:#674C2E;
-  --orange:#DD842A;
-  --gold:#C6A15B;
+  --brown:#684a25;
+  --orange:#df842c;
+  --gold:#c9a227;
   --cream:#FFFFFF;
-  --text:#674C2E;
+  --text:#684a25;
   --muted:#756d63;
-  --border:#674C2E;
+  --border:#684a25;
   --white:#fff;
-  --success:#674C2E;
+  --success:#684a25;
   --danger:#a63b3b
 }
 
@@ -36,7 +36,7 @@ body{
     var(--cream);
 }
 .top{
-  background:#674C2E;
+  background:#684a25;
   box-shadow:0 3px 18px rgba(60,38,18,.16);
 }
 .nav{max-width:1240px;padding:16px 22px}
@@ -49,7 +49,7 @@ body{
   padding:30px;
   border-radius:24px;
   color:#fff;
-  background:#674C2E;
+  background:#684a25;
   box-shadow:0 14px 35px rgba(86,55,25,.16);
 }
 .hero:after{
@@ -93,10 +93,10 @@ body{
   transition:background .18s ease,color .18s ease,transform .18s ease;
 }
 .tab:hover{background:#fff;transform:translateY(-1px)}
-.tab.active{background:#674C2E;box-shadow:0 3px 10px rgba(103,76,46,.18)}
+.tab.active{background:#684a25;box-shadow:0 3px 10px rgba(104,74,37,.18)}
 .summary-box{gap:12px}
 .summary-item{
-  background:#674C2E;
+  background:#684a25;
   border-radius:14px;
   transition:transform .18s ease,border-color .18s ease;
 }
@@ -108,7 +108,7 @@ body{
   padding-top:26px;
 }
 .next-step{
-  background:#674C2E;
+  background:#684a25;
   border-color:#e6d5c2;
 }
 .task,.item,.checklist-row{
@@ -433,7 +433,7 @@ textarea{
 
 .progressbar{
   height:12px;
-  background:#674C2E;
+  background:#684a25;
   border-radius:99px;
   overflow:hidden;
   margin:12px 0
@@ -692,14 +692,14 @@ textarea{
 
 /* ── HN DESIGN SYSTEM UPGRADE ── */
 :root{
-  --gd2:#D4AF37;--gd3:#F0D060;
+  --gd2:#c9a227;--gd3:#F0D060;
   --bg:#FDFAF6;--border-gd:rgba(212,175,55,.35);
   --shadow-gd:0 14px 38px rgba(212,175,55,.22);
 }
 /* Goud stripe */
 .hn-stripe{
   height:3px;
-  background:linear-gradient(90deg,#674C2E,#DD842A,#D4AF37,#F0D060,#D4AF37,#DD842A,#674C2E);
+  background:linear-gradient(90deg,#684a25,#df842c,#c9a227,#F0D060,#c9a227,#df842c,#684a25);
   background-size:300% 100%;
   animation:hn-stripe 5s linear infinite;
 }
@@ -707,7 +707,7 @@ textarea{
 /* Gold divider */
 .hn-divider{
   height:2px;border:none;
-  background:linear-gradient(90deg,transparent,#C6A15B,#D4AF37,#C6A15B,transparent);
+  background:linear-gradient(90deg,transparent,#c9a227,#c9a227,#c9a227,transparent);
   opacity:.55;margin:0;
 }
 /* Hero gradient upgrade */
@@ -715,31 +715,31 @@ textarea{
   background:
     radial-gradient(ellipse at 88% 8%,rgba(212,175,55,.35),transparent 46%),
     radial-gradient(ellipse at 8% 90%,rgba(221,132,42,.22),transparent 40%),
-    linear-gradient(148deg,#3d2a14 0%,#674C2E 38%,#7a4e28 65%,#4e3018 100%)!important;
+    linear-gradient(148deg,#3d2a14 0%,#684a25 38%,#7a4e28 65%,#4e3018 100%)!important;
 }
 /* Kaarten gold-top accent */
 .card.hn-card-gold,
-.panel.hn-card-gold{border-top:3px solid #D4AF37}
+.panel.hn-card-gold{border-top:3px solid #c9a227}
 /* Animaties */
 .hn-reveal{opacity:0;transform:translateY(24px);transition:opacity .6s cubic-bezier(.22,.61,.36,1),transform .6s cubic-bezier(.22,.61,.36,1)}
 .hn-reveal.hn-in{opacity:1;transform:none}
 .hn-d1{transition-delay:.08s}.hn-d2{transition-delay:.16s}.hn-d3{transition-delay:.24s}.hn-d4{transition-delay:.32s}
 /* Btn upgrade */
 .btn-primary,.button-primary,.hnbtn.primary{
-  background:linear-gradient(135deg,#DD842A,#C6A15B)!important;
+  background:linear-gradient(135deg,#df842c,#c9a227)!important;
   box-shadow:0 8px 24px rgba(212,175,55,.25)!important;
 }
 /* Tab active upgrade */
 .tab.active{
-  background:linear-gradient(135deg,#674C2E,#DD842A)!important;
+  background:linear-gradient(135deg,#684a25,#df842c)!important;
   color:#fff!important;
   border-color:transparent!important;
-  box-shadow:0 5px 16px rgba(103,76,46,.22)!important;
+  box-shadow:0 5px 16px rgba(104,74,37,.22)!important;
 }
 /* Filter input focus */
 .filter input:focus,.filter select:focus,
 input:focus,select:focus,textarea:focus{
-  border-color:#C6A15B!important;
+  border-color:#c9a227!important;
   box-shadow:0 0 0 3px rgba(212,175,55,.15)!important;
 }
 /* Gold badge */
@@ -747,8 +747,8 @@ input:focus,select:focus,textarea:focus{
   display:inline-flex;align-items:center;gap:5px;
   padding:4px 11px;border-radius:999px;
   font-size:11px;font-weight:800;
-  background:linear-gradient(135deg,rgba(212,175,55,.18),rgba(103,76,46,.08));
-  color:#D4AF37;border:1px solid rgba(212,175,55,.35);
+  background:linear-gradient(135deg,rgba(212,175,55,.18),rgba(104,74,37,.08));
+  color:#c9a227;border:1px solid rgba(212,175,55,.35);
 }
 /* Dashboard hero upgrade */
 .hero{position:relative;overflow:hidden}
@@ -764,7 +764,7 @@ input:focus,select:focus,textarea:focus{
 body::before{
   content:"";
   position:fixed;inset:0;
-  background-image:radial-gradient(circle,rgba(103,76,46,.03) 1px,transparent 1px);
+  background-image:radial-gradient(circle,rgba(104,74,37,.03) 1px,transparent 1px);
   background-size:32px 32px;
   pointer-events:none;
   z-index:-1;
@@ -776,13 +776,17 @@ body::before{
 @media(max-width:900px){.hnm-mobile-button{bottom:16px;left:16px}.hnm{max-width:88vw}}
 </style>
 
-<link rel="stylesheet" href="/assets/hn-sitewide.css?v=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Raleway:wght@300;400;500;600;700&family=Amiri:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/hn-tokens.css?v=3">
+<link rel="stylesheet" href="/assets/hn-sitewide.css?v=3">
 <script src="/assets/hn-footer.js?v=1" defer></script>
-<script src="/assets/hn-motion.js?v=1" defer></script>
+<script src="/assets/hn-motion.js?v=3" defer></script>
 </head>
 
 <body>
-<div class="hn-stripe" style="height:3px;background:linear-gradient(90deg,#674C2E,#DD842A,#D4AF37,#F0D060,#D4AF37,#DD842A,#674C2E);background-size:300% 100%;animation:hn-stripe 5s linear infinite"></div>
+<div class="hn-stripe" style="height:3px;background:linear-gradient(90deg,#684a25,#df842c,#c9a227,#F0D060,#c9a227,#df842c,#684a25);background-size:300% 100%;animation:hn-stripe 5s linear infinite"></div>
 
 <header class="top">
   <div class="nav">

@@ -7,12 +7,16 @@
 <meta name="description" content="Persoonlijke verhalen, interviews en ervaringen van mensen die de stap naar emigratie hebben gezet.">
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="canonical" href="https://hijrah-netwerk.vercel.app/verhalen">
-<link rel="stylesheet" href="/assets/public-nav.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Raleway:wght@300;400;500;600;700&family=Amiri:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/hn-tokens.css?v=3">
+<link rel="stylesheet" href="/assets/public-nav.css?v=3">
 <style>
 :root{
-  --br:#674C2E;--rs:#DD842A;--gd:#C6A15B;--gd2:#D4AF37;--gd3:#F0D060;
-  --wh:#fff;--bg:#FDFAF6;--muted:#8a7060;--border:rgba(103,76,46,.18);
-  --shadow:0 18px 50px rgba(103,76,46,.10);--shadow-gd:0 14px 38px rgba(212,175,55,.20);
+  --br:#684a25;--rs:#df842c;--gd:#c9a227;--gd2:#c9a227;--gd3:#F0D060;
+  --wh:#fff;--bg:#FDFAF6;--muted:#8a7060;--border:rgba(104,74,37,.18);
+  --shadow:0 18px 50px rgba(104,74,37,.10);--shadow-gd:0 14px 38px rgba(212,175,55,.20);
   --r:20px;--max:1180px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
@@ -92,7 +96,7 @@ button,input,select{font:inherit;cursor:pointer}
 .tab.active{
   background:linear-gradient(135deg,var(--br),var(--rs));
   color:#fff;border-color:transparent;
-  box-shadow:0 6px 18px rgba(103,76,46,.25);
+  box-shadow:0 6px 18px rgba(104,74,37,.25);
 }
 .filter-sep{width:1px;height:28px;background:var(--border);flex-shrink:0}
 .select-wrap{position:relative}
@@ -120,7 +124,7 @@ button,input,select{font:inherit;cursor:pointer}
 .grid-head h2{font-size:clamp(22px,3.5vw,32px);letter-spacing:-.03em}
 .count-badge{
   font-size:12px;font-weight:700;padding:4px 10px;border-radius:999px;
-  background:linear-gradient(135deg,rgba(212,175,55,.15),rgba(103,76,46,.08));
+  background:linear-gradient(135deg,rgba(212,175,55,.15),rgba(104,74,37,.08));
   color:var(--br);border:1px solid rgba(212,175,55,.35);
 }
 
@@ -158,7 +162,7 @@ button,input,select{font:inherit;cursor:pointer}
 .blog-featured .cover img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
 .cover-overlay{
   position:absolute;inset:0;
-  background:linear-gradient(135deg,rgba(103,76,46,.5),rgba(212,175,55,.25));
+  background:linear-gradient(135deg,rgba(104,74,37,.5),rgba(212,175,55,.25));
 }
 .cover-type{
   position:absolute;top:18px;left:18px;z-index:1;
@@ -214,7 +218,7 @@ button,input,select{font:inherit;cursor:pointer}
 .blog-card{
   background:#fff;border:1px solid var(--border);border-radius:var(--r);
   overflow:hidden;display:flex;flex-direction:column;
-  box-shadow:0 2px 0 rgba(103,76,46,.03);
+  box-shadow:0 2px 0 rgba(104,74,37,.03);
   transition:.22s ease;cursor:pointer;
 }
 .blog-card:hover{
@@ -239,7 +243,7 @@ button,input,select{font:inherit;cursor:pointer}
 .card-meta{display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap}
 .fase-tag{
   font-size:10px;font-weight:700;padding:3px 8px;border-radius:999px;
-  background:rgba(103,76,46,.08);color:var(--br);letter-spacing:.04em;text-transform:uppercase;
+  background:rgba(104,74,37,.08);color:var(--br);letter-spacing:.04em;text-transform:uppercase;
 }
 .country-tag{font-size:11px;color:var(--muted);font-weight:600}
 .card-body h3{
@@ -278,7 +282,7 @@ button,input,select{font:inherit;cursor:pointer}
 .state-box p{color:var(--muted);max-width:360px}
 .spinner{
   width:36px;height:36px;border-radius:50%;
-  border:3px solid rgba(103,76,46,.15);
+  border:3px solid rgba(104,74,37,.15);
   border-top-color:var(--gd);
   animation:spin .7s linear infinite;
 }
@@ -339,16 +343,16 @@ button,input,select{font:inherit;cursor:pointer}
 @keyframes stripe{to{background-position:200% 0}}
 </style>
 
-<link rel="stylesheet" href="/assets/hn-sitewide.css?v=1">
+<link rel="stylesheet" href="/assets/hn-sitewide.css?v=3">
 <script src="/assets/hn-footer.js?v=1" defer></script>
-<script src="/assets/hn-motion.js?v=1" defer></script>
+<script src="/assets/hn-motion.js?v=3" defer></script>
 </head>
 <body>
 <style>@keyframes hn-stripe{to{background-position:300% 0}}</style>
-<div style="height:3px;background:linear-gradient(90deg,#674C2E,#DD842A,#D4AF37,#F0D060,#D4AF37,#DD842A,#674C2E);background-size:300% 100%;animation:hn-stripe 5s linear infinite"></div>
+<div style="height:3px;background:linear-gradient(90deg,#684a25,#df842c,#c9a227,#F0D060,#c9a227,#df842c,#684a25);background-size:300% 100%;animation:hn-stripe 5s linear infinite"></div>
 
 <div class="gold-stripe"></div>
-<link rel="stylesheet" href="/assets/public-nav.css">
+<link rel="stylesheet" href="/assets/public-nav.css?v=3">
 <script src="/config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="/supabase-client.js"></script>
@@ -533,10 +537,10 @@ function blogCard(b,delay){
   const rt=b.read_time_min||readTime(b.content);
   const land=b.countries?.name||'';
   const gradients=[
-    'linear-gradient(135deg,#3d2a14,#7a4e28,#C6A15B)',
-    'linear-gradient(135deg,#4a2e10,#8B5E2A,#D4AF37)',
-    'linear-gradient(135deg,#2d1f0a,#6B4226,#C6A15B)',
-    'linear-gradient(135deg,#3a2518,#7B5035,#D4AF37)',
+    'linear-gradient(135deg,#3d2a14,#7a4e28,#c9a227)',
+    'linear-gradient(135deg,#4a2e10,#8B5E2A,#c9a227)',
+    'linear-gradient(135deg,#2d1f0a,#6B4226,#c9a227)',
+    'linear-gradient(135deg,#3a2518,#7B5035,#c9a227)',
   ];
   const grd=gradients[Math.abs(b.title.charCodeAt(0))%gradients.length];
   return `

@@ -5,21 +5,25 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex,nofollow">
   <title>Inloggen — Hijrah Netwerk</title>
-  <link rel="stylesheet" href="/auth-style.css">
-  <link rel="stylesheet" href="/assets/hn-sitewide.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Raleway:wght@300;400;500;600;700&family=Amiri:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/hn-tokens.css?v=3">
+<link rel="stylesheet" href="/auth-style.css">
+  <link rel="stylesheet" href="/assets/hn-sitewide.css?v=3">
   <style>
     .auth-page{width:100%;max-width:460px;margin:0 auto}
-    .back-link{display:inline-block;margin:0 0 20px;color:#674C2E;font-size:14px}
-    .auth-card{display:block;width:100%;max-width:460px;margin:0 auto;background:#fff;border:1px solid #ece5da;border-radius:22px;padding:clamp(22px,5vw,36px);box-shadow:0 8px 24px rgba(103,76,46,.08)}
-    .brand{display:flex;align-items:center;gap:10px;margin-bottom:24px;font-weight:800;color:#674C2E}
-    .brand-mark{display:grid;place-items:center;width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,#674C2E,#DD842A);color:#fff;font-weight:800}
-    h1{margin:0 0 8px;font-size:clamp(23px,5vw,28px);color:#674C2E}
+    .back-link{display:inline-block;margin:0 0 20px;color:#684a25;font-size:14px}
+    .auth-card{display:block;width:100%;max-width:460px;margin:0 auto;background:#fff;border:1px solid #ece5da;border-radius:22px;padding:clamp(22px,5vw,36px);box-shadow:0 8px 24px rgba(104,74,37,.08)}
+    .brand{display:flex;align-items:center;gap:10px;margin-bottom:24px;font-weight:800;color:#684a25}
+    .brand-mark{display:grid;place-items:center;width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,#684a25,#df842c);color:#fff;font-weight:800}
+    h1{margin:0 0 8px;font-size:clamp(23px,5vw,28px);color:#684a25}
     .lead{margin:0 0 24px;color:#5c5346;font-size:14.5px;line-height:1.55}
     .field{margin-bottom:16px}
-    .field label{display:block;margin-bottom:7px;font-size:13px;font-weight:700;color:#674C2E}
+    .field label{display:block;margin-bottom:7px;font-size:13px;font-weight:700;color:#684a25}
     .field input{display:block;width:100%;min-height:46px;padding:12px 14px;border:1px solid #d8cec0;border-radius:10px;background:#fff;color:#2f2419;font:inherit}
-    .field input:focus{outline:2px solid rgba(221,132,42,.3);border-color:#DD842A}
-    .btn{display:flex;justify-content:center;align-items:center;width:100%;min-height:46px;border:0;border-radius:999px;background:#DD842A;color:#fff;font:700 15px inherit;cursor:pointer}
+    .field input:focus{outline:2px solid rgba(221,132,42,.3);border-color:#df842c}
+    .btn{display:flex;justify-content:center;align-items:center;width:100%;min-height:46px;border:0;border-radius:999px;background:#df842c;color:#fff;font:700 15px inherit;cursor:pointer}
     .btn:disabled{opacity:.65;cursor:wait}
     .msg{display:none;margin:14px 0 0;padding:11px 13px;border-radius:10px;font-size:13px;line-height:1.5;overflow-wrap:anywhere}
     .msg.error,.msg.success{display:block}
@@ -35,7 +39,7 @@
   <main class="auth-page">
     <a href="/" class="back-link">← Terug naar de website</a>
     <section class="auth-card" aria-labelledby="login-title">
-      <div class="hn-stripe" aria-hidden="true" style="background:linear-gradient(90deg,#674C2E,#DD842A,#D4AF37,#F0D060,#D4AF37,#DD842A,#674C2E)"></div>
+      <div class="hn-stripe" aria-hidden="true" style="background:linear-gradient(90deg,#684a25,#df842c,#c9a227,#F0D060,#c9a227,#df842c,#684a25)"></div>
       <div class="brand"><span class="brand-mark" aria-hidden="true">HN</span><span>Hijrah Netwerk</span></div>
       <h1 id="login-title">Welkom terug</h1>
       <p class="lead">Log in op jouw Hijrah Netwerk-account om verder te gaan naar HN Beheercentrum.</p>
@@ -126,5 +130,6 @@
       });
     })();
   </script>
+<script src="/assets/hn-motion.js?v=3" defer></script>
 </body>
 </html>

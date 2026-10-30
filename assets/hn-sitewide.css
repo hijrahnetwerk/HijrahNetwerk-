@@ -927,3 +927,10 @@ main, .page-content, .content-wrap, .hn-main {
   background-color: #ffffff;
 }
 
+
+/* v3 interaction support */
+@keyframes hn-ripple { to { transform: scale(1); opacity: 0; } }
+.hn-ripple-wave { display:block; }
+@media (prefers-reduced-motion: reduce) {
+  .hn-ripple-wave { display:none; }
+}

@@ -12,12 +12,12 @@
 
   <style>
     :root {
-      --brown: #674C2E;
-      --dark: #674C2E;
-      --orange: #DD842A;
-      --gold: #C6A15B;
+      --brown: #684a25;
+      --dark: #684a25;
+      --orange: #df842c;
+      --gold: #c9a227;
       --cream: #FFFFFF;
-      --ink: #674C2E;
+      --ink: #684a25;
       --muted: #766d61;
       --line: #ece5da;
     }
@@ -74,7 +74,7 @@
       width: 100vw;
       margin-left: calc(50% - 50vw);
       padding: 64px max(20px, calc((100vw - 920px) / 2)) 28px;
-      background: linear-gradient(120deg, #684A25 0%, #684A25 58%, #DD842A 100%);
+      background: linear-gradient(120deg, #684A25 0%, #684A25 58%, #df842c 100%);
       color: #FFFFFF;
     }
 
@@ -83,7 +83,7 @@
       padding: 0;
       border-radius: 0;
       background: transparent;
-      color: #C6A15B;
+      color: #c9a227;
       font-weight: 800;
       font-size: 12px;
       text-transform: uppercase;
@@ -229,13 +229,17 @@
     }
   </style>
 
-<link rel="stylesheet" href="/assets/hn-sitewide.css?v=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Raleway:wght@300;400;500;600;700&family=Amiri:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/hn-tokens.css?v=3">
+<link rel="stylesheet" href="/assets/hn-sitewide.css?v=3">
 <script src="/assets/hn-footer.js?v=1" defer></script>
-<script src="/assets/hn-motion.js?v=1" defer></script>
+<script src="/assets/hn-motion.js?v=3" defer></script>
 </head>
 
 <body>
-<link rel="stylesheet" href="/assets/public-nav.css">
+<link rel="stylesheet" href="/assets/public-nav.css?v=3">
 <script src="/assets/public-nav.js"></script>
 
 <main class="wrap">
@@ -489,7 +493,7 @@
 
             <a
               class="btn"
-              style="background:#efe7dc;color:#674C2E;"
+              style="background:#efe7dc;color:#684a25;"
               href="/artikels/${encodeURIComponent(topic.slug||topic.id)}"
             >
               Bekijk informatie →
