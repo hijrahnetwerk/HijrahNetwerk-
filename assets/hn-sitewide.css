@@ -667,14 +667,26 @@ body.hn-admin-page .hn-stripe {
 }
 
 
-/* ── Definitieve typografie ─────────────────────────────── */
+/* ── Definitieve HN-typografie ──────────────────────────────
+   Cinzel: woordmerk en hoofdtitels (H1/H2).
+   DM Sans: alle overige interface- en leesteksten.
+   Reem Kufi: korte Arabische accenten.
+   Amiri: langere Arabische teksten.
+   ─────────────────────────────────────────────────────────── */
 body { font-family: var(--hn-font-body); background: var(--hn-white); color: var(--hn-br); }
-h1,h2 { font-family: var(--hn-font-display); }
+h1, h2 { font-family: var(--hn-font-display); }
 h1 { font-weight: 700; }
 h2 { font-weight: 600; }
-h3,h4,h5,h6 { font-family: var(--hn-font-body); font-weight: 700; }
-.hn-subtitle,.subtitle,.lead-italic,.serif-subtitle { font-family: var(--hn-font-serif); font-style: italic; }
-[lang="ar"],[dir="rtl"],.font-ar,.hn-arabic { font-family: var(--hn-font-ar); }
+h3, h4, h5, h6 { font-family: var(--hn-font-body); font-weight: 700; }
+#hnPublicNav .brand, #hnPublicNav .nav-brand,
+.hn-nav .brand, .hn-nav .nav-brand,
+.logo, .hn-wordmark { font-family: var(--hn-font-display); }
+.hn-subtitle, .subtitle, .lead-italic, .serif-subtitle {
+  font-family: var(--hn-font-body);
+  font-style: normal;
+}
+[lang="ar"], [dir="rtl"], .font-ar, .hn-arabic { font-family: var(--hn-font-ar); }
+.hn-arabic-accent, .font-ar-accent { font-family: var(--hn-font-accent); }
 
 /* ── Responsive foundation (consolidated from the former global layer) ── */
 html { width:100%; max-width:100%; overflow-x:clip; scroll-padding-top:88px; -webkit-text-size-adjust:100%; }
