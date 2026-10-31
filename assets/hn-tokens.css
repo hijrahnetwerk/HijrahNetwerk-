@@ -41,7 +41,8 @@
 
   /* Typography */
   --hn-font-d: 'Cinzel','Georgia',serif;
-  --hn-font-s: 'Cormorant Garamond','Georgia',serif;
+  --hn-font-s: var(--hn-font-b); /* compatibiliteit: geen apart serif-accent */
+  --hn-font-accent: 'Reem Kufi',system-ui,sans-serif;
   --hn-font-b: 'DM Sans',system-ui,sans-serif;
   --hn-font-ar: 'Amiri','Georgia',serif;
   --hn-font-display: var(--hn-font-d);
