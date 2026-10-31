@@ -169,7 +169,7 @@ const PERF_HINTS = [
 const translateTag = '<script src="/assets/hn-translate.js"></script>';
 const translateStyleTag = '<link rel="stylesheet" href="/assets/hn-translate.css">';
 const editProposalTag = '<script src="/assets/hn-edit-proposals.js"></script>';
-const designFontsTag = '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Raleway:wght@400;500;600;700&display=swap">';
+const designFontsTag = '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@400;500;600;700&display=swap">';
 const designTokensTag = '<link rel="stylesheet" href="/assets/hn-tokens.css">';
 const sitewideStyleTag = '<link rel="stylesheet" href="/assets/hn-sitewide.css">';
 const mobilePolishTag = '<link rel="stylesheet" href="/assets/hn-mobile-polish.css">';
