@@ -4,14 +4,17 @@
   --hn-white: #ffffff;
   --hn-paper: #ffffff;
   --hn-br: #684a25;
+  --hn-br-rgb: 104,74,37;
   --hn-br-donker: #4f3a23;
   --hn-brown: #684a25;
   --hn-brown-dark: #4f3a23;
   --hn-bruin: #684a25;
   --hn-rs: #df842c;
+  --hn-rs-rgb: 223,132,44;
   --hn-orange: var(--hn-rs); /* legacy compatibility alias; the brand name is rust */
   --hn-rs-hover: #c96f20;
   --hn-gd: #c9a227;
+  --hn-gd-rgb: 201,162,39;
   --hn-gold: #c9a227;
   --hn-gd-licht: #e6c766;
   --hn-gold-light: #e6c766;
