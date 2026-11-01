@@ -1,5 +1,5 @@
 /* HN CONSISTENCY LAYER — public, member, tools and admin pages */
-:root{--hn-brown:var(--hn-br);--hn-rust:var(--hn-rs);--hn-white:var(--hn-white);--hn-gold:var(--hn-gd);--hn-gold-dark:var(--hn-gd-donker);--hn-gold-light:var(--hn-gd-licht);--hn-gold-gh:linear-gradient(90deg,var(--hn-br) 0%,var(--hn-gd-donker) 9%,#C49A21 23%,var(--hn-gd) 36%,#FFF3A5 49%,var(--hn-gd) 58%,#E8C94C 73%,var(--hn-gd-donker) 91%,var(--hn-br) 100%);--hn-border:rgba(103,76,46,.16);--hn-shadow:0 8px 24px rgba(58,42,24,.07)}
+:root{--hn-brown:var(--hn-br);--hn-rust:var(--hn-rs);--hn-white:#ffffff;--hn-gold:var(--hn-gd);--hn-gold-dark:var(--hn-gd-donker);--hn-gold-light:var(--hn-gd-licht);--hn-gold-gh:var(--hn-gd-shine);--hn-border:rgba(var(--hn-br-rgb),.16);--hn-shadow:0 8px 24px rgba(58,42,24,.07)}
 html{scroll-padding-top:5.5rem}
 body{color:var(--hn-brown)}
 :where(h1,h2,h3,h4,h5,h6){color:var(--hn-brown)}
@@ -42,7 +42,7 @@ body{color:var(--hn-brown)}
   }
 }
 :where(.modal,.popup,[role="dialog"],dialog,.dropdown-menu,.popover,.tooltip,.hn-overlay-panel){
-  border-color:rgba(103,76,46,.22);box-shadow:0 18px 48px rgba(58,42,24,.20)
+  border-color:rgba(var(--hn-br-rgb),.22);box-shadow:0 18px 48px rgba(58,42,24,.20)
 }
 :where(button,.btn,.button,.hn-action,a.button){transition:background-color .15s ease,color .15s ease,box-shadow .15s ease,transform .15s ease}
 @media(hover:hover){:where(button,.btn,.button,.hn-action,a.button):hover{box-shadow:0 5px 14px rgba(58,42,24,.14)}}
