@@ -5,7 +5,7 @@
   --white:#fff; --cream:#FFFFFF;
   --ink:var(--hn-br); --ink-soft:#5c5346;
   --line:#ece5da;
-  --shadow-md:0 8px 24px rgba(103,76,46,.08);
+  --shadow-md:0 8px 24px rgba(var(--hn-br-rgb),.08);
   --radius-lg:24px; --radius-md:14px; --radius-full:999px;
   --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
 }
@@ -28,7 +28,7 @@ p.lead{ margin:0 0 28px; color:var(--ink-soft); font-size:14.5px; }
 .field{ margin-bottom:16px; }
 .field label{ display:block; font-size:12.5px; font-weight:700; color:var(--brown-dark); margin-bottom:6px; }
 .field input{ width:100%; padding:12px 14px; border:1px solid var(--line); border-radius:10px; font-size:14.5px; font-family:inherit; background:#fff; }
-.field input:focus{ outline:none; border-color:var(--orange); box-shadow:0 0 0 3px rgba(223,132,44,.12); }
+.field input:focus{ outline:none; border-color:var(--orange); box-shadow:0 0 0 3px rgba(var(--hn-rs-rgb),.12); }
 
 .btn{ display:inline-flex; align-items:center; justify-content:center; gap:8px; width:100%; padding:13px 20px; border-radius:var(--radius-full); font-size:15px; font-weight:700; border:none; cursor:pointer; transition:.15s; }
 .btn-primary{ background:var(--orange); color:#fff; }
