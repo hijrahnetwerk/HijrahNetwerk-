@@ -1,9 +1,9 @@
 :root{
-  --brown:#674C2E; --brown-dark:#674C2E;
-  --orange:#DD842A; --orange-dark:#DD842A;
-  --gold:#C6A15B; --gold-light:#FFFFFF;
+  --brown:var(--hn-br); --brown-dark:var(--hn-br);
+  --orange:var(--hn-rs); --orange-dark:var(--hn-rs);
+  --gold:var(--hn-gd); --gold-light:#FFFFFF;
   --white:#fff; --cream:#FFFFFF;
-  --ink:#674C2E; --ink-soft:#5c5346;
+  --ink:var(--hn-br); --ink-soft:#5c5346;
   --line:#ece5da;
   --shadow-md:0 8px 24px rgba(103,76,46,.08);
   --radius-lg:24px; --radius-md:14px; --radius-full:999px;
