@@ -1052,3 +1052,55 @@ button[type="submit"]:not(.btn-secondary):not(.btn-outline):not(.btn-goud)) {
   background: var(--hn-rs);
   color: var(--hn-br-donker);
 }
+
+
+/* Legacy pages may contain highly specific inline hero rules.
+   This final shared override keeps their title headers identical too. */
+body:not(.hn-admin-page):not(.hn-home):not(.home-page) #main-content > .hero,
+body:not(.hn-admin-page):not(.hn-home):not(.home-page) main > .hero,
+body:not(.hn-admin-page):not(.hn-home):not(.home-page) main > .wrap > .hero,
+body:not(.hn-admin-page):not(.hn-home):not(.home-page) :where(.page-hero,.page-header,.hn-page-hero,.hn-tools-hero,.hero-banner,.title-banner,.page-title-banner) {
+  background: var(--hn-br-donker) !important;
+  background-image: none !important;
+  color: #fff !important;
+  border: 0 !important;
+  border-bottom: 4px solid var(--hn-rs) !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+body:not(.hn-admin-page):not(.hn-home):not(.home-page) #main-content > .hero :where(h1,h2),
+body:not(.hn-admin-page):not(.hn-home):not(.home-page) main > .hero :where(h1,h2),
+body:not(.hn-admin-page):not(.hn-home):not(.home-page) main > .wrap > .hero :where(h1,h2),
+body:not(.hn-admin-page):not(.hn-home):not(.home-page) :where(.page-hero,.page-header,.hn-page-hero,.hn-tools-hero,.hero-banner,.title-banner,.page-title-banner) :where(h1,h2) {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  font-family: var(--hn-font-display) !important;
+}
+body:not(.hn-admin-page):not(.hn-home):not(.home-page) #main-content > .hero :where(p,.subtitle,.lead,.hn-subtitle,h3,h4,h5,h6),
+body:not(.hn-admin-page):not(.hn-home):not(.home-page) main > .hero :where(p,.subtitle,.lead,.hn-subtitle,h3,h4,h5,h6),
+body:not(.hn-admin-page):not(.hn-home):not(.home-page) main > .wrap > .hero :where(p,.subtitle,.lead,.hn-subtitle,h3,h4,h5,h6),
+body:not(.hn-admin-page):not(.hn-home):not(.home-page) :where(.page-hero,.page-header,.hn-page-hero,.hn-tools-hero,.hero-banner,.title-banner,.page-title-banner) :where(p,.subtitle,.lead,.hn-subtitle,h3,h4,h5,h6) {
+  color: rgba(255,255,255,.88) !important;
+  -webkit-text-fill-color: rgba(255,255,255,.88) !important;
+  font-family: var(--hn-font-body) !important;
+}
+body:not(.hn-admin-page):not(.hn-home):not(.home-page) #main-content > .hero .eyebrow,
+body:not(.hn-admin-page):not(.hn-home):not(.home-page) main > .hero .eyebrow,
+body:not(.hn-admin-page):not(.hn-home):not(.home-page) main > .wrap > .hero .eyebrow {
+  background: transparent !important;
+  color: var(--hn-rs) !important;
+  -webkit-text-fill-color: var(--hn-rs) !important;
+  border: 1px solid var(--hn-rs) !important;
+}
+:where(.button.primary,.actions .primary,.btn-primary,.hn-btn-primary,.button-primary,
+.nav-action.primary,.hn-action.primary,.hn-mobile-primary,.go) {
+  background: var(--hn-rs) !important;
+  color: var(--hn-br-donker) !important;
+  border-color: var(--hn-rs) !important;
+}
+:where(.button.primary,.actions .primary,.btn-primary,.hn-btn-primary,.button-primary,
+.nav-action.primary,.hn-action.primary,.hn-mobile-primary,.go):hover {
+  background: var(--hn-rs-hover) !important;
+  color: var(--hn-br-donker) !important;
+  border-color: var(--hn-rs-hover) !important;
+}
