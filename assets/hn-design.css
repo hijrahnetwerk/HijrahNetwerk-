@@ -6,11 +6,11 @@
 
 /* ── TOKENS ── */
 :root {
-  --br: #674C2E;
-  --rs: #DD842A;
-  --gd: #D4AF37;
-  --gd2: #D4AF37;
-  --gd3: #D4AF37;
+  --br: var(--hn-br);
+  --rs: var(--hn-rs);
+  --gd: var(--hn-gd);
+  --gd2: var(--hn-gd);
+  --gd3: var(--hn-gd);
   --bg: #FDFAF6;
   --wh: #fff;
   --muted: #8a7060;
