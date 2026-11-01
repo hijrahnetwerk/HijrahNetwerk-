@@ -991,3 +991,64 @@ body.hn-home { background: #684a25; color: #ffffff; }
 @media (prefers-reduced-motion: reduce) {
   .hn-ripple-wave { display:none; }
 }
+
+
+/* ── HN BRAND CORRECTION: CONSISTENT PAGE HEADERS + LOGO RUST ──
+   All platform page headers share one treatment. Page-specific CSS may
+   control layout, but not the shared header palette or typography. */
+:root {
+  --hn-rs: #e48628;
+  --hn-orange: var(--hn-rs); /* compatibility alias only */
+  --hn-rs-hover: #cf741d;
+}
+body:not(.hn-admin-page):not(.hn-home):not(.home-page)
+:where(.page-hero,.page-header,.hn-page-hero,.hn-tools-hero,.hero-banner,
+.title-banner,.page-title-banner,main > .hero,main > .wrap > .hero) {
+  background: var(--hn-br-donker);
+  color: #fff;
+  border: 0;
+  border-bottom: 4px solid var(--hn-rs);
+  border-radius: 0;
+  box-shadow: none;
+}
+body:not(.hn-admin-page):not(.hn-home):not(.home-page)
+:where(.page-hero,.page-header,.hn-page-hero,.hn-tools-hero,.hero-banner,
+.title-banner,.page-title-banner,main > .hero,main > .wrap > .hero)
+:where(h1,h2) {
+  color: #fff;
+  font-family: var(--hn-font-display);
+}
+body:not(.hn-admin-page):not(.hn-home):not(.home-page)
+:where(.page-hero,.page-header,.hn-page-hero,.hn-tools-hero,.hero-banner,
+.title-banner,.page-title-banner,main > .hero,main > .wrap > .hero)
+:where(h3,h4,h5,h6,p,li,.subtitle,.lead,.hn-subtitle) {
+  color: rgba(255,255,255,.88);
+  font-family: var(--hn-font-body);
+}
+body:not(.hn-admin-page):not(.hn-home):not(.home-page)
+:where(.page-hero,.page-header,.hn-page-hero,.hn-tools-hero,.hero-banner,
+.title-banner,.page-title-banner,main > .hero,main > .wrap > .hero) .eyebrow {
+  color: var(--hn-rs);
+}
+
+/* Logo rust replaces the former orange treatment in standard actions and accents. */
+:where(.btn-primary,.hn-btn-primary,.button-primary,.nav-action.primary,
+.hn-action.primary,.hn-mobile-primary,.go,
+button[type="submit"]:not(.btn-secondary):not(.btn-outline):not(.btn-goud)) {
+  background: var(--hn-rs);
+  color: var(--hn-br-donker);
+  border-color: transparent;
+}
+:where(.btn-primary,.hn-btn-primary,.button-primary,.nav-action.primary,
+.hn-action.primary,.hn-mobile-primary,.go):hover {
+  background: var(--hn-rs-hover);
+  color: var(--hn-br-donker);
+}
+.hn-stripe { background: var(--hn-rs); animation: none; }
+#hnPublicNav, .hn-nav, nav.main-nav, .top-nav, .site-header, header.site-header {
+  border-bottom-color: var(--hn-rs);
+}
+#hnPublicNav .hn-nav-special, #hnPublicNav .hn-nav-special:hover {
+  background: var(--hn-rs);
+  color: var(--hn-br-donker);
+}
