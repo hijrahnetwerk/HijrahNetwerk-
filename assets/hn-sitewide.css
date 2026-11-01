@@ -1130,3 +1130,7 @@ body:not(.hn-admin-page):not(.hn-home):not(.home-page) main > .wrap > .hero .eye
 .section.soft h1, .section.soft h2, .section.soft h3, .section.soft h4, .section.soft h5, .section.soft h6,
 .section.soft p, .section.soft li, .section.soft strong { color: #ffffff; }
 .section:not(.soft) { background: #ffffff; }
+
+/* Secundaire acties blijven bruin; de roestkleur is voor primaire acties. */
+.btn-secondary, .nav-action.secondary, .hn-action.secondary, .btn-soft, .btn-outline { background:var(--hn-br); color:#ffffff; border-color:var(--hn-br); }
+.btn-secondary:hover, .nav-action.secondary:hover, .btn-soft:hover, .btn-outline:hover { background:var(--hn-br-donker); color:#ffffff; border-color:var(--hn-br-donker); }
