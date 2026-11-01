@@ -1,37 +1,37 @@
 /* HN CONSISTENCY LAYER — public, member, tools and admin pages */
-:root{--hn-brown:#674C2E;--hn-rust:#DD842A;--hn-white:#FFFFFF;--hn-gold:#D4AF37;--hn-gold-dark:#8B6914;--hn-gold-light:#F5E27A;--hn-gold-gh:linear-gradient(90deg,#674C2E 0%,#8B6914 9%,#C49A21 23%,#D4AF37 36%,#FFF3A5 49%,#D4AF37 58%,#E8C94C 73%,#8B6914 91%,#674C2E 100%);--hn-border:rgba(103,76,46,.16);--hn-shadow:0 8px 24px rgba(58,42,24,.07)}
+:root{--hn-brown:var(--hn-br);--hn-rust:var(--hn-rs);--hn-white:var(--hn-white);--hn-gold:var(--hn-gd);--hn-gold-dark:var(--hn-gd-donker);--hn-gold-light:var(--hn-gd-licht);--hn-gold-gh:linear-gradient(90deg,var(--hn-br) 0%,var(--hn-gd-donker) 9%,#C49A21 23%,var(--hn-gd) 36%,#FFF3A5 49%,var(--hn-gd) 58%,#E8C94C 73%,var(--hn-gd-donker) 91%,var(--hn-br) 100%);--hn-border:rgba(103,76,46,.16);--hn-shadow:0 8px 24px rgba(58,42,24,.07)}
 html{scroll-padding-top:5.5rem}
 body{color:var(--hn-brown)}
 :where(h1,h2,h3,h4,h5,h6){color:var(--hn-brown)}
 :where(hr,.hn-divider,.gold-divider,.hn-gold-divider,.section-divider){height:2px;border:0;background:var(--hn-gold-gh);opacity:1}
 :where(.hn-nav,#hnPublicNav,.site-header,.admin-topbar,.admin-header,.admin-nav,.topbar,.navbar){background-color:var(--hn-brown);color:#fff;border-bottom-color:rgba(212,175,55,.6)}
 :where(.hn-nav,#hnPublicNav,.site-header,.admin-topbar,.admin-header,.admin-nav,.topbar,.navbar) :where(a,.hn-brand,.hn-links,.hn-links>a,.hn-more-trigger,.hn-account-trigger,.menu-toggle,.hn-menu){color:#fff}
-:where(.hn-nav,#hnPublicNav,.site-header,.admin-topbar,.admin-header,.admin-nav,.topbar,.navbar) :where(.hn-action.primary,.hn-nav-special,.hn-mobile-primary,.nav-action.primary,.primary-button){background:#DD842A;background-image:none;color:#fff;border-color:transparent}
+:where(.hn-nav,#hnPublicNav,.site-header,.admin-topbar,.admin-header,.admin-nav,.topbar,.navbar) :where(.hn-action.primary,.hn-nav-special,.hn-mobile-primary,.nav-action.primary,.primary-button){background:var(--hn-rs);background-image:none;color:#fff;border-color:transparent}
 :where(main,.page-content,.content-area,.hn-main){color:var(--hn-brown)}
 :where(.card,.panel,.hn-card,.feature-card,.topic-card,.result-card,.search-result,.fiche-card,.article-card,.country-card,.city-card,.step-card,.overview-card,.plan-box){border-color:var(--hn-border)}
 @media(hover:hover){:where(.card,.panel,.hn-card,.feature-card,.topic-card,.result-card,.search-result,.fiche-card,.article-card,.country-card,.city-card,.step-card,.overview-card,.plan-box):hover{border-color:rgba(212,175,55,.48)}}
 :where(button,.btn,.button,a.button,.hn-action,.primary-button,.go,.admin-primary,.admin-save){background-image:none}
-:where(.gold-text,.text-gold,.hn-gold-text){color:#8B6914!important;background:none!important;-webkit-text-fill-color:#8B6914!important}
+:where(.gold-text,.text-gold,.hn-gold-text){color:var(--hn-gd-donker)!important;background:none!important;-webkit-text-fill-color:var(--hn-gd-donker)!important}
 :where(input,select,textarea){border-color:var(--hn-border)}
-:where(a,button,input,select,textarea,summary,[tabindex]):focus-visible{outline:3px solid #8B6914;outline-offset:3px}
-:where(.hn-footer,footer.site-footer,.site-footer){background:#674C2E;color:#fff}
+:where(a,button,input,select,textarea,summary,[tabindex]):focus-visible{outline:3px solid var(--hn-gd-donker);outline-offset:3px}
+:where(.hn-footer,footer.site-footer,.site-footer){background:var(--hn-br);color:#fff}
 :where(.hn-footer,footer.site-footer,.site-footer) :where(a,p,small,li,h2,h3){color:#fff}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
 
 
 /* HN full-width brand shell and refined interactive surfaces */
 :where(#hnPublicNav,.hn-nav,.site-header,.admin-topbar,.admin-header,.admin-nav,.topbar,.navbar){
-  width:100%;max-width:none;box-sizing:border-box;background:#674C2E!important;color:#FFFFFF!important;
+  width:100%;max-width:none;box-sizing:border-box;background:var(--hn-br)!important;color:#FFFFFF!important;
   border-bottom:1px solid rgba(212,175,55,.55);box-shadow:0 4px 16px rgba(58,42,24,.12)
 }
 :where(#hnPublicNav,.hn-nav,.site-header,.admin-topbar,.admin-header,.admin-nav,.topbar,.navbar) :where(a,button,span,.hn-brand,.hn-links,.hn-links>a,.hn-more-trigger,.hn-account-trigger,.menu-toggle,.hn-menu){color:#FFFFFF}
 :where(.hn-footer,footer,.site-footer,.admin-footer){
   display:block;width:100%;max-width:none;box-sizing:border-box;
-  background:#674C2E!important;background-image:none!important;color:#FFFFFF!important;
-  border-top:2px solid #D4AF37;box-shadow:0 -6px 22px rgba(58,42,24,.08)
+  background:var(--hn-br)!important;background-image:none!important;color:#FFFFFF!important;
+  border-top:2px solid var(--hn-gd);box-shadow:0 -6px 22px rgba(58,42,24,.08)
 }
 :where(.hn-footer,footer,.site-footer,.admin-footer) :where(a,p,small,li,h1,h2,h3,h4,label,span){color:#FFFFFF}
-:where(.hn-footer,footer,.site-footer,.admin-footer) a:hover{color:#F5E27A}
+:where(.hn-footer,footer,.site-footer,.admin-footer) a:hover{color:var(--hn-gd-licht)}
 :where(.card,.panel,.hn-card,.feature-card,.topic-card,.result-card,.search-result,.fiche-card,.article-card,.country-card,.city-card,.step-card,.overview-card,.plan-box,.modal,.popup,[role="dialog"],dialog){
   border-radius:16px;box-shadow:0 7px 22px rgba(58,42,24,.09);
   transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease
@@ -57,7 +57,7 @@ body{color:var(--hn-brown)}
 /* Corrective pass: cover legacy page headers and make the reveal state match hn-motion.js. */
 :where(.top,.pbar,header.site-header,body>header,.page-header,.admin-header,.admin-topbar,.admin-nav,#hnPublicNav,.hn-nav,.topbar,.navbar){
   box-sizing:border-box;
-  background-color:#674C2E!important;
+  background-color:var(--hn-br)!important;
   background-image:none;
   color:#FFFFFF!important;
   border-bottom:1px solid rgba(212,175,55,.6);
@@ -73,7 +73,7 @@ body{color:var(--hn-brown)}
 
 /* Header contrast repair: force readable text on brown shells, preserve contrast inside light controls. */
 :where(header,.top,.pbar,.page-header,.site-header,.admin-header,.admin-topbar,.admin-nav,.topbar,.navbar,#hnPublicNav,.hn-nav){
-  background-color:#674C2E!important;
+  background-color:var(--hn-br)!important;
   color:#FFFFFF!important;
 }
 :where(header,.top,.pbar,.page-header,.site-header,.admin-header,.admin-topbar,.admin-nav,.topbar,.navbar,#hnPublicNav,.hn-nav) :where(h1,h2,h3,h4,h5,h6,p,span,strong,small,label,li,a:not(.button):not(.btn),.brand,.logo,.navlinks,.navlinks a,.hn-brand,.hn-links>a,.hn-more-trigger){
@@ -85,14 +85,14 @@ body{color:var(--hn-brown)}
 }
 :where(header,.top,.pbar,.page-header,.site-header,.admin-header,.admin-topbar,.admin-nav,.topbar,.navbar,#hnPublicNav,.hn-nav) :where(button,.button,.btn,.hn-action.secondary,.hn-account-trigger,.hn-menu,.mobile-menu-toggle){
   background-color:#FFFFFF;
-  color:#674C2E!important;
+  color:var(--hn-br)!important;
 }
 :where(header,.top,.pbar,.page-header,.site-header,.admin-header,.admin-topbar,.admin-nav,.topbar,.navbar,#hnPublicNav,.hn-nav) :where(button,.button,.btn,.hn-action.secondary,.hn-account-trigger,.hn-menu,.mobile-menu-toggle) :where(span,strong,i){
-  color:#674C2E!important;
-  -webkit-text-fill-color:#674C2E;
+  color:var(--hn-br)!important;
+  -webkit-text-fill-color:var(--hn-br);
 }
 :where(header,.top,.pbar,.page-header,.site-header,.admin-header,.admin-topbar,.admin-nav,.topbar,.navbar,#hnPublicNav,.hn-nav) :where(.primary,.primary-button,.hn-action.primary,.hn-nav-special,.hn-mobile-primary,.go){
-  background:#DD842A!important;
+  background:var(--hn-rs)!important;
   color:#FFFFFF!important;
   -webkit-text-fill-color:#FFFFFF;
 }
