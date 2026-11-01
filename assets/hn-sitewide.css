@@ -1123,3 +1123,10 @@ body:not(.hn-admin-page):not(.hn-home):not(.home-page) main > .wrap > .hero .eye
 .section.soft h4, .section.soft h5, .section.soft h6,
 .section.soft p, .section.soft li, .section.soft strong { color: #ffffff; }
 .section:not(.soft) { background: #ffffff; }
+
+
+/* Centrale sectie-afwisseling: wit en donkerbruin. */
+.section.soft { background: var(--hn-br-donker); color: #ffffff; }
+.section.soft h1, .section.soft h2, .section.soft h3, .section.soft h4, .section.soft h5, .section.soft h6,
+.section.soft p, .section.soft li, .section.soft strong { color: #ffffff; }
+.section:not(.soft) { background: #ffffff; }
