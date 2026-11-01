@@ -289,6 +289,13 @@ for (const file of htmlFiles) {
     html = html.replace('</head>', publicNavStyleTag + '\n</head>');
   }
 
+  // Alle gewone platformpagina's gebruiken één gedeelde publieke navigatie.
+  // De homepage behoudt haar eigen funnelheader; leden- en beheerpagina's gebruiken hun eigen navigatie.
+  const isPublicPlatformPage = !isAdminSurface && !isMemberSurface && !['index.html','login.html','register.html','reset-password.html','update-password.html'].includes(file);
+  if (isPublicPlatformPage && !html.includes('/assets/public-nav.css')) {
+    html = html.replace('</head>', publicNavStyleTag + '\\n</head>');
+  }
+
   // Keep every page usable on phones, including older pages without a viewport declaration.
   if (!/<meta\s+name=[\"']viewport[\"']/i.test(html)) {
     html = html.replace('</head>', '<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n</head>');
@@ -299,6 +306,7 @@ for (const file of htmlFiles) {
   }
 
   const additionList = [
+    isPublicPlatformPage && !html.includes('/assets/public-nav.js') && !html.includes('assets/public-nav.js') ? publicNavScriptTag : '',
     isMemberSurface && !html.includes('/assets/hn-member-nav.js') && !html.includes('/assets/public-nav.js') ? publicNavScriptTag : '',
     isMemberSurface && !html.includes('/assets/hn-member-nav.js') ? memberNavScriptTag : '',
     isAdminSurface && file !== 'admin-cms.html' && !html.includes('/assets/hn-admin-nav.js') ? adminNavScriptTag : '',
