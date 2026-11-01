@@ -1,6 +1,6 @@
 /* Hijrah Netwerk — single source of truth for design tokens */
 :root {
-  /* Brand palette: white, brown, logo-rust, gold */
+  /* Brand palette: white, brown and logo-rust. Gold is the additional premium accent. */
   --hn-white: #ffffff;
   --hn-paper: #ffffff;
   --hn-br: #684a25;
@@ -8,9 +8,9 @@
   --hn-brown: #684a25;
   --hn-brown-dark: #4f3a23;
   --hn-bruin: #684a25;
-  --hn-rs: #e48628;
-  --hn-orange: var(--hn-rs); /* legacy alias; use hn-rs in new code */
-  --hn-rs-hover: #cf741d;
+  --hn-rs: #df842c;
+  --hn-orange: var(--hn-rs); /* legacy compatibility alias; the brand name is rust */
+  --hn-rs-hover: #c96f20;
   --hn-gd: #c9a227;
   --hn-gold: #c9a227;
   --hn-gd-licht: #e6c766;
