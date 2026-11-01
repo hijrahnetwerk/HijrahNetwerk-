@@ -1,6 +1,6 @@
 /* Hijrah Netwerk — single source of truth for design tokens */
 :root {
-  /* Brand palette: white, brown, orange, gold */
+  /* Brand palette: white, brown, logo-rust, gold */
   --hn-white: #ffffff;
   --hn-paper: #ffffff;
   --hn-br: #684a25;
@@ -8,9 +8,9 @@
   --hn-brown: #684a25;
   --hn-brown-dark: #4f3a23;
   --hn-bruin: #684a25;
-  --hn-rs: #df842c;
-  --hn-orange: #df842c;
-  --hn-rs-hover: #c87020;
+  --hn-rs: #e48628;
+  --hn-orange: var(--hn-rs); /* legacy alias; use hn-rs in new code */
+  --hn-rs-hover: #cf741d;
   --hn-gd: #c9a227;
   --hn-gold: #c9a227;
   --hn-gd-licht: #e6c766;
