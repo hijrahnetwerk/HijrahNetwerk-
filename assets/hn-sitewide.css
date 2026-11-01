@@ -4,7 +4,7 @@
 
    1. WIT       #ffffff
    2. BRUIN     #684a25 · #4f3a23
-   3. ORANJE    #df842c
+   3. ROEST     logo-kleur via --hn-rs
    4. GOUD      #c9a227 · #e6c766   — alleen premium
    5. FUNCTIONEEL #4e7d4a · #b23a2e — alleen systeemmeldingen
    ════════════════════════════════════════════════════════════ */
@@ -76,14 +76,15 @@ nav.main-nav a.active {
 }
 
 /* ── TYPOGRAFIE ─────────────────────────────────────────── */
-h1, h2, h3, h4, h5, h6 {
+h1, h2 {
   font-family: var(--hn-font-display);
   color: var(--hn-br-donker);
   letter-spacing: .02em;
 }
 h1 { font-size: clamp(26px, 4.5vw, 46px); font-weight: 700; line-height: 1.08; }
 h2 { font-size: clamp(20px, 3vw, 32px); font-weight: 600; line-height: 1.15; }
-h3 { font-size: clamp(16px, 2vw, 22px); font-weight: 600; line-height: 1.2; }
+h3, h4, h5, h6 { font-family: var(--hn-font-body); font-weight: 600; letter-spacing: 0; }
+h3 { font-size: clamp(16px, 2vw, 22px); line-height: 1.2; }
 
 p, li, td, th, label, input, select, textarea {
   font-family: var(--hn-font-body);
@@ -142,7 +143,7 @@ a.button:focus-visible {
 }
 button:active, .btn:active { filter: brightness(0.93); }
 
-/* Primair — oranje */
+/* Primair — HN-roest uit het centrale tokenbestand */
 .btn-primary,
 .nav-action.primary,
 .hn-action.primary,
@@ -333,18 +334,28 @@ button[type="submit"]:not(.btn-goud):not(.btn-secondary):not(.btn-outline) {
   background-clip: text;
 }
 
-/* ── HERO SECTIES ───────────────────────────────────────── */
-/* Licht hero — wit met subtiele goud gloed */
+/* ── HERO / PAGINAKOPPEN ────────────────────────────────── */
+/* Eén vaste kopstijl voor alle platformpagina's. */
 .hero,
 .hn-hero,
 .page-hero,
 .hero-section {
-  background: #ffffff;
-  border-bottom: 1px solid rgba(104,74,37,0.14);
+  background: var(--hn-br-donker);
+  color: #ffffff;
+  border-bottom: 3px solid var(--hn-rs);
 }
 .hero h1, .hn-hero h1, .page-hero h1, .hero-section h1,
-.hero h2, .hn-hero h2, .page-hero h2, .hero-section h2 {
-  color: var(--hn-br-donker);
+.hero h2, .hn-hero h2, .page-hero h2, .hero-section h2,
+.hero h3, .hn-hero h3, .page-hero h3, .hero-section h3,
+.hero p, .hn-hero p, .page-hero p, .hero-section p,
+.hero li, .hn-hero li, .page-hero li, .hero-section li {
+  color: #ffffff;
+}
+.hero h1, .hn-hero h1, .page-hero h1, .hero-section h1 {
+  font-family: var(--hn-font-display);
+}
+.hero p, .hn-hero p, .page-hero p, .hero-section p {
+  font-family: var(--hn-font-body);
 }
 
 /* Donker hero — bruin achtergrond */
@@ -364,7 +375,7 @@ button[type="submit"]:not(.btn-goud):not(.btn-secondary):not(.btn-outline) {
   color: #ffffff;
 }
 
-/* Oranje band — één per pagina max */
+/* HN-roest accentband — alleen waar de pagina dit functioneel nodig heeft */
 .oranje-band,
 .section-oranje,
 .cta-band {
@@ -1104,3 +1115,11 @@ body:not(.hn-admin-page):not(.hn-home):not(.home-page) main > .wrap > .hero .eye
   color: var(--hn-br-donker) !important;
   border-color: var(--hn-rs-hover) !important;
 }
+
+
+/* HN centraal: donkere koppen, afwisselende secties en vaste typografie. */
+.section.soft { background: var(--hn-br-donker); color: #ffffff; }
+.section.soft h1, .section.soft h2, .section.soft h3,
+.section.soft h4, .section.soft h5, .section.soft h6,
+.section.soft p, .section.soft li, .section.soft strong { color: #ffffff; }
+.section:not(.soft) { background: #ffffff; }
