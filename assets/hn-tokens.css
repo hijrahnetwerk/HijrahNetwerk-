@@ -27,6 +27,8 @@
   --hn-gd-shine: linear-gradient(90deg,#8a6a0a 0%,#c9a227 25%,#e6c766 48%,#f0d878 54%,#e6c766 60%,#c9a227 78%,#8a6a0a 100%);
   --hn-gd-shine-d: linear-gradient(105deg,#8a6a0a 0%,#c9a227 28%,#e6c766 46%,#f0d878 52%,#c9a227 72%,#8a6a0a 100%);
   --hn-gold-shine: var(--hn-gd-shine);
+  /* Shared warm-brown hero treatment, based on the HijrahTools header. */
+  --hn-hero-gradient: radial-gradient(ellipse at 82% 15%, rgba(216,182,101,.32), transparent 36%), linear-gradient(125deg,#684a25 0%,#79552f 58%,#916b36 100%);
 
   /* Functional colours: system feedback only */
   --hn-ok: #4e7d4a;
