@@ -1008,9 +1008,9 @@ body.hn-home { background: #684a25; color: #ffffff; }
    All platform page headers share one treatment. Page-specific CSS may
    control layout, but not the shared header palette or typography. */
 :root {
-  --hn-rs: #e48628;
+  --hn-rs: #df842c;
   --hn-orange: var(--hn-rs); /* compatibility alias only */
-  --hn-rs-hover: #cf741d;
+  --hn-rs-hover: #c96f20;
 }
 body:not(.hn-admin-page):not(.hn-home):not(.home-page)
 :where(.page-hero,.page-header,.hn-page-hero,.hn-tools-hero,.hero-banner,
@@ -1071,8 +1071,8 @@ body:not(.hn-admin-page):not(.hn-home):not(.home-page) #main-content > .hero,
 body:not(.hn-admin-page):not(.hn-home):not(.home-page) main > .hero,
 body:not(.hn-admin-page):not(.hn-home):not(.home-page) main > .wrap > .hero,
 body:not(.hn-admin-page):not(.hn-home):not(.home-page) :where(.page-hero,.page-header,.hn-page-hero,.hn-tools-hero,.hero-banner,.title-banner,.page-title-banner) {
-  background: var(--hn-br-donker) !important;
-  background-image: none !important;
+  background: var(--hn-hero-gradient) !important;
+  background-image: var(--hn-hero-gradient) !important;
   color: #fff !important;
   border: 0 !important;
   border-bottom: 4px solid var(--hn-rs) !important;
@@ -1134,3 +1134,102 @@ body:not(.hn-admin-page):not(.hn-home):not(.home-page) main > .wrap > .hero .eye
 /* Secundaire acties blijven bruin; de roestkleur is voor primaire acties. */
 .btn-secondary, .nav-action.secondary, .hn-action.secondary, .btn-soft, .btn-outline { background:var(--hn-br); color:#ffffff; border-color:var(--hn-br); }
 .btn-secondary:hover, .nav-action.secondary:hover, .btn-soft:hover, .btn-outline:hover { background:var(--hn-br-donker); color:#ffffff; border-color:var(--hn-br-donker); }
+
+
+/* ── HN DESIGN UPDATE 2026-11: WARM HERO + CONSISTENT ACTIONS ──
+   Applies site-wide. The homepage retains its own later, page-specific styling. */
+body:not(.hn-admin-page):not(.hn-home):not(.home-page)
+:where(.page-hero,.page-header,.hn-page-hero,.hn-tools-hero,.hero-banner,
+.title-banner,.page-title-banner,main > .hero,main > .wrap > .hero) {
+  background: var(--hn-hero-gradient) !important;
+  background-image: var(--hn-hero-gradient) !important;
+  color: #ffffff !important;
+  border: 0 !important;
+  border-bottom: 3px solid transparent !important;
+  border-image: var(--hn-gd-shine) 1 !important;
+  box-shadow: none !important;
+}
+body:not(.hn-admin-page):not(.hn-home):not(.home-page)
+:where(.page-hero,.page-header,.hn-page-hero,.hn-tools-hero,.hero-banner,
+.title-banner,.page-title-banner,main > .hero,main > .wrap > .hero)
+:where(h1,h2,h3,h4,h5,h6,p,li,.subtitle,.lead,.hn-subtitle) {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+/* Keep the header clean: no decorative circles behind the title. */
+body:not(.hn-admin-page):not(.hn-home):not(.home-page) .hn-tools-hero::after {
+  display: none !important;
+}
+
+/* Primary action: exact logo rust with white text. */
+:where(.btn-primary,.hn-btn-primary,.button-primary,.nav-action.primary,
+.hn-action.primary,.hn-mobile-primary,.go,.hn-tools-button.primary,
+button[type="submit"]:not(.btn-secondary):not(.btn-outline):not(.btn-goud)) {
+  background: var(--hn-rs) !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  border-color: var(--hn-rs) !important;
+}
+:where(.btn-primary,.hn-btn-primary,.button-primary,.nav-action.primary,
+.hn-action.primary,.hn-mobile-primary,.go,.hn-tools-button.primary,
+button[type="submit"]:not(.btn-secondary):not(.btn-outline):not(.btn-goud)):hover {
+  background: var(--hn-rs-hover) !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  border-color: var(--hn-rs-hover) !important;
+}
+
+/* Secondary action: solid brand brown. */
+:where(.btn-secondary,.hn-btn-secondary,.button-secondary,
+.nav-action.secondary,.hn-action.secondary) {
+  background: var(--hn-br) !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  border: 1px solid var(--hn-br) !important;
+}
+:where(.btn-secondary,.hn-btn-secondary,.button-secondary,
+.nav-action.secondary,.hn-action.secondary):hover {
+  background: var(--hn-br-donker) !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  border-color: var(--hn-br-donker) !important;
+}
+
+/* Neutral action: white surface with a fine brown outline. */
+:where(.btn-outline,.btn-soft,.button-outline) {
+  background: #ffffff !important;
+  color: var(--hn-br) !important;
+  -webkit-text-fill-color: var(--hn-br) !important;
+  border: 1px solid rgba(104,74,37,.42) !important;
+}
+:where(.btn-outline,.btn-soft,.button-outline):hover {
+  background: rgba(104,74,37,.06) !important;
+  color: var(--hn-br-donker) !important;
+  -webkit-text-fill-color: var(--hn-br-donker) !important;
+  border-color: var(--hn-br) !important;
+}
+
+/* Premium action: existing metallic-gold gradient, reserved for special actions. */
+:where(.btn-goud,.btn-premium,.hn-action.premium,.hn-tools-button.premium) {
+  background: var(--hn-gd-shine) !important;
+  color: var(--hn-br-donker) !important;
+  -webkit-text-fill-color: var(--hn-br-donker) !important;
+  border: 1px solid var(--hn-gd) !important;
+  box-shadow: var(--hn-gd-gloed) !important;
+}
+:where(.btn-goud,.btn-premium,.hn-action.premium,.hn-tools-button.premium):hover {
+  box-shadow: var(--hn-gd-gloed-hover) !important;
+  transform: translateY(-1px);
+}
+
+/* HijrahTools uses its own component classes; align its main action with the shared button system. */
+.hn-tools-button.primary {
+  background: var(--hn-rs) !important;
+  color: #ffffff !important;
+  border-color: var(--hn-rs) !important;
+}
+.hn-tools-button.primary:hover:not(:disabled) {
+  background: var(--hn-rs-hover) !important;
+  color: #ffffff !important;
+  border-color: var(--hn-rs-hover) !important;
+}
