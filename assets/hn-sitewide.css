@@ -1233,3 +1233,17 @@ button[type="submit"]:not(.btn-secondary):not(.btn-outline):not(.btn-goud)):hove
   color: #ffffff !important;
   border-color: var(--hn-rs-hover) !important;
 }
+
+
+/* Cover legacy page-level header.hero elements as well; #start is the homepage hero and is intentionally excluded. */
+body:not(.hn-admin-page):not(.hn-home):not(.home-page) header.hero:not(#start) {
+  background: var(--hn-hero-gradient) !important;
+  background-image: var(--hn-hero-gradient) !important;
+  color: #ffffff !important;
+  border-bottom: 3px solid transparent !important;
+  border-image: var(--hn-gd-shine) 1 !important;
+}
+body:not(.hn-admin-page):not(.hn-home):not(.home-page) header.hero:not(#start) :where(h1,h2,h3,h4,h5,h6,p,.lead,.subtitle) {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
