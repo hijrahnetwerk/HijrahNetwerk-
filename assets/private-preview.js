@@ -44,8 +44,10 @@
       await loadScript('/assets/config.js');
     }
 
+    // Use the pinned, self-hosted Supabase bundle. Do not depend on a third-party CDN
+    // for the pre-launch access check.
     if (!window.supabase || !window.supabase.createClient) {
-      await loadScript('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3');
+      await loadScript('/assets/vendor/supabase-js-2.117.3.umd.js');
     }
 
     if (!window.hijrahSupabase && window.supabase && window.supabase.createClient) {
