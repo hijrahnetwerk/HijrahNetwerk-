@@ -98,8 +98,12 @@ body{background:#FFFFFF!important;color:#684a25!important}
 main>section:not(.story):not(.fin):not(.goldwash){background:#FFFFFF!important;color:#684a25!important}
 main>section.goldwash,#over-ons{background:#FFFFFF!important;color:#684a25!important;border-block:1px solid rgba(104,74,37,.12)}
 main>section.story{background:#684a25!important;color:#FFFFFF!important;border-block:0!important;position:relative}
-main>section.story:before,main>section.story:after{display:none}
-main>section.story .wrap{border:1px solid #c9a227;border-radius:1rem;padding:clamp(1.5rem,4vw,3rem)}
+main>section.story:before{display:none}
+main>section.story:after{content:"";display:block;position:absolute;left:0;right:0;bottom:0;height:3px;background:var(--hn-gold-gh)}
+main>section.story .wrap{border:0;border-radius:0;padding:0 clamp(1.5rem,4vw,3rem)}
+main>section.story p{position:relative;padding-inline:clamp(1.5rem,4vw,3rem);font-style:italic}
+main>section.story p:before{content:"“";position:absolute;left:0;top:-.22em;color:#c9a227;font:700 3em/1 Georgia,serif}
+main>section.story p:after{content:"”";color:#c9a227;font:700 1.5em/1 Georgia,serif;margin-left:.15em}
 main>section.story :where(h1,h2,h3,p,li,a){color:#FFFFFF!important}
 .mom{background:#FFFFFF!important;color:#684a25!important}
 .card{background:#FFFFFF!important;color:#684a25!important;border:1px solid rgba(104,74,37,.18)!important;box-shadow:0 8px 24px rgba(58,42,24,.07)!important}
