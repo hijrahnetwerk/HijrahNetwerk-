@@ -6,6 +6,8 @@
 <link rel="stylesheet" href="/assets/hn-sitewide.css?v=3">
 <script src="/assets/hn-footer.js?v=1" defer></script>
 <script src="/assets/hn-motion.js?v=3" defer></script>
+<link rel="stylesheet" href="/assets/hn-admin-unified.css?v=20261121-3">
+<script src="/assets/hn-admin-shell.js?v=20261121-3" defer></script>
 </head><body><main class="wrap"><div class="top"><div><a href="/admin">← Admin</a><h1>HN Componenten & Templates</h1><p class="muted">Centraal beheer van de bouwstenen waarmee HN-pagina's worden opgebouwd.</p></div><a class="btn primary" href="/admin-builder">Pagina-bouwer openen</a></div><div id="msg" class="message"></div><div class="grid"><section class="panel"><h2>Componenten</h2><div id="components">Laden...</div></section><section class="panel"><h2>Pagina-templates</h2><div id="templates">Laden...</div><div style="margin-top:15px"><button class="btn" id="newTemplate">Template toevoegen</button></div></section></div></main><script>
 (()=>{const db=()=>window.hijrahSupabase,$=x=>document.getElementById(x),esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));function msg(t){$('msg').textContent=t;$('msg').classList.add('show');setTimeout(()=>$('msg').classList.remove('show'),3000)}
 async function auth(){const s=await db().auth.getSession();if(!s.data.session){location='/login?next=/admin-componenten';return false}const r=await db().from('profiles').select('role').eq('id',s.data.session.user.id).maybeSingle();if(r.data?.role!=='admin'){document.body.innerHTML='<h1 style="padding:40px">Geen toegang</h1>';return false}return true}
