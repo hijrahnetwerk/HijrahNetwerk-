@@ -1,0 +1,63 @@
+name: HN encrypted Supabase database backup
+
+on:
+  schedule:
+    - cron: "30 2 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: hn-supabase-backup
+  cancel-in-progress: false
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Check required secrets
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+          BACKUP_ENCRYPTION_PASSPHRASE: ${{ secrets.BACKUP_ENCRYPTION_PASSPHRASE }}
+        run: |
+          test -n "$SUPABASE_DB_URL" || { echo "::error::Missing GitHub Actions secret SUPABASE_DB_URL"; exit 1; }
+          test -n "$BACKUP_ENCRYPTION_PASSPHRASE" || { echo "::error::Missing GitHub Actions secret BACKUP_ENCRYPTION_PASSPHRASE"; exit 1; }
+
+      - name: Create PostgreSQL 17 database dump
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: |
+          set -euo pipefail
+          mkdir -p backup
+          BACKUP_FILE="supabase-$(date -u +%Y-%m-%dT%H-%M-%SZ).dump"
+          echo "BACKUP_FILE=$BACKUP_FILE" >> "$GITHUB_ENV"
+          docker run --rm \
+            -v "$PWD/backup:/backup" \
+            -e SUPABASE_DB_URL \
+            postgres:17-alpine \
+            sh -euc 'pg_dump --format=custom --no-owner --no-acl "$SUPABASE_DB_URL" --file="/backup/$1"' sh "$BACKUP_FILE"
+          test -s "backup/$BACKUP_FILE"
+          echo "Database dump created successfully."
+
+      - name: Encrypt database dump
+        env:
+          BACKUP_ENCRYPTION_PASSPHRASE: ${{ secrets.BACKUP_ENCRYPTION_PASSPHRASE }}
+        run: |
+          set -euo pipefail
+          openssl enc -aes-256-cbc -salt -pbkdf2 -iter 200000 \
+            -pass env:BACKUP_ENCRYPTION_PASSPHRASE \
+            -in "backup/$BACKUP_FILE" \
+            -out "backup/$BACKUP_FILE.enc"
+          rm "backup/$BACKUP_FILE"
+          test -s "backup/$BACKUP_FILE.enc"
+          echo "Encrypted backup created; plaintext dump removed."
+
+      - name: Upload encrypted backup artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: hn-supabase-backup-${{ github.run_id }}
+          path: backup/*.dump.enc
+          if-no-files-found: error
+          retention-days: 30
