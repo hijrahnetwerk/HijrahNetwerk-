@@ -60,4 +60,4 @@ jobs:
           name: hn-supabase-backup-${{ github.run_id }}
           path: backup/*.dump.enc
           if-no-files-found: error
-          retention-days: 30
+          retention-days: 7
