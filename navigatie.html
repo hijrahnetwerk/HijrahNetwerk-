@@ -140,7 +140,44 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--orange);
 .fiche-preview-actions .button{display:inline-flex;align-items:center;justify-content:center;min-height:42px;padding:10px 15px}
 .fiche-preview-footnote{font-size:11px;color:#8b8176;margin-top:14px}
 .fiche-preview-trigger{font:inherit;cursor:pointer}
-@media(max-width:560px){.fiche-preview{width:calc(100% - 16px);max-height:92vh;border-radius:16px}.fiche-preview-grid{grid-template-columns:1fr}.fiche-preview-actions{flex-direction:column}.fiche-preview-actions .button{width:100%}}
+@media(max-width:560px){
+ .fiche-preview{
+  position:fixed;inset:auto 0 0;margin:0;width:100%;max-width:none;
+  height:min(88dvh,820px);max-height:92dvh;
+  border:0;border-top:1px solid rgba(201,162,39,.7);
+  border-radius:22px 22px 0 0;box-shadow:0 -14px 44px rgba(32,24,16,.24);
+  overscroll-behavior:contain;
+ }
+ .fiche-preview-inner{padding:18px 18px calc(18px + env(safe-area-inset-bottom))}
+ .fiche-preview-head{position:sticky;top:-18px;z-index:2;background:#fff;padding:10px 0 8px}
+ .fiche-preview-close{width:44px;height:44px;font-size:25px}
+ .fiche-preview-title{font-size:23px;padding-right:4px}
+ .fiche-preview-summary{font-size:14px}
+ .fiche-preview-grid{grid-template-columns:1fr;gap:8px;margin:16px 0}
+ .fiche-preview-item{padding:11px 12px}
+ .fiche-preview-actions{
+  position:sticky;bottom:calc(-18px - env(safe-area-inset-bottom));
+  margin:18px -18px calc(-18px - env(safe-area-inset-bottom));
+  padding:12px 18px calc(14px + env(safe-area-inset-bottom));
+  background:rgba(255,255,255,.97);backdrop-filter:blur(12px);
+  border-top:1px solid rgba(104,74,37,.16);
+  flex-direction:column;gap:8px;
+ }
+ .fiche-preview-actions .button{width:100%;min-height:48px;border-radius:12px;font-size:14px}
+ body:has(.fiche-preview[open]){overflow:hidden}
+ .cards{gap:12px}
+ .card{border-radius:16px;padding:16px;min-height:0}
+ .card .actions .button{min-height:42px}
+ .filters{border-radius:16px;padding:14px}
+ .filters input,.filters select,.hero-search input{min-height:48px;font-size:16px}
+ .lang-chip{min-height:42px}
+ .side{border-radius:14px}
+}
+@media(min-width:561px) and (max-width:760px){
+ .fiche-preview{width:min(680px,calc(100% - 32px));max-height:90dvh}
+ .fiche-preview-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(prefers-reduced-motion:reduce){.fiche-preview,.fiche-preview-actions{scroll-behavior:auto;transition:none}}
 
 
 
