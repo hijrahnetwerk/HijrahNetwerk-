@@ -341,6 +341,13 @@ function selectExisting(el,doc){
   document.querySelectorAll(".hn-builder-preview").forEach(function(x){x.classList.remove("hn-builder-selected");});
   doc.querySelectorAll(".hn-editor-selected").forEach(function(x){x.classList.remove("hn-editor-selected");});
   el.classList.add("hn-editor-selected");
+  /* Directe tekstbewerking in de preview; de opgeslagen versie wordt pas aangepast na opslaan. */
+  if(el.tagName!=="IMG" && !["A","BUTTON","INPUT","TEXTAREA","SELECT"].includes(el.tagName)){
+    el.setAttribute("contenteditable","true");
+    el.setAttribute("spellcheck","true");
+    el.focus();
+    try{var range=doc.createRange();range.selectNodeContents(el);range.collapse(false);var sel=doc.defaultView.getSelection();sel.removeAllRanges();sel.addRange(range);}catch(e){}
+  }
   inspectExisting();
 }
 
@@ -364,7 +371,7 @@ function drawExisting(doc){
     var canMove=!!rootOf(doc).contains(x.el)&&!x.el.closest("header,footer,nav");
     x.el.draggable=canMove;
     if(!x.el.title)x.el.title="Sleep dit onderdeel naar een andere plek op de pagina";
-    x.el.ondragstart=function(e){if(!canMove){e.preventDefault();return;}drag=x;x.el.classList.add("hn-component-dragging");if(e.dataTransfer){e.dataTransfer.effectAllowed="move";e.dataTransfer.setData("text/plain",x.selector);}};
+    x.el.ondragstart=function(e){if(!canMove){e.preventDefault();return;}e.stopPropagation();drag=x;x.el.classList.add("hn-component-dragging");if(e.dataTransfer){e.dataTransfer.effectAllowed="move";e.dataTransfer.setData("text/plain",x.selector);}};
     x.el.ondragend=function(){x.el.classList.remove("hn-component-dragging");live.forEach(function(y){y.el.classList.remove("hn-drop-target")});drag=null;};
     x.el.ondragover=function(e){if(!drag||drag.el===x.el||drag.el.contains(x.el))return;e.preventDefault();x.el.classList.add("hn-drop-target");if(e.dataTransfer)e.dataTransfer.dropEffect="move";};
     x.el.ondragleave=function(){x.el.classList.remove("hn-drop-target");};
@@ -521,6 +528,7 @@ function inspect(){
 }
 
 function closeInspector(){
+  if(selectedExisting&&selectedExisting.element)selectedExisting.element.removeAttribute("contenteditable");
   $("blockInspector").hidden=true;selected=-1;selectedExisting=null;
   setSelection("page",page?"Pagina: "+page.title:"Niets geselecteerd","Pagina-instellingen");
   if($("liveFrame")&&$("liveFrame").contentDocument)$("liveFrame").contentDocument.querySelectorAll(".hn-editor-selected").forEach(function(x){x.classList.remove("hn-editor-selected");});
@@ -549,6 +557,7 @@ async function saveExisting(){
     if(found)Object.assign(found,payload);else overrides.push(payload);
   }
   var el=selectedExisting.element,attrs={},css={};
+  if(el)el.removeAttribute("contenteditable");
   if(selectedExisting.tag==="img"){
     var imageUrl=safeEditorUrl($("existingImageSrc").value);
     if(imageUrl===null){note("Gebruik voor afbeeldingen alleen een https-adres of een lokaal pad dat met / begint.",true);return;}
