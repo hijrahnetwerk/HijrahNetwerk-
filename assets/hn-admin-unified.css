@@ -1,0 +1,82 @@
+/* Hijrah Netwerk — gedeelde, lichte beheeropmaak
+   Eén rustige adminstijl voor alle beheerpagina's. */
+:root{
+  --hn-admin-bg:#f5f6f8;
+  --hn-admin-surface:#ffffff;
+  --hn-admin-text:#252a31;
+  --hn-admin-muted:#707782;
+  --hn-admin-line:#e4e7ec;
+  --hn-admin-accent:#df842c;
+  --hn-admin-accent-hover:#c87020;
+  --hn-admin-gold:#c9a227;
+  --hn-admin-radius:14px;
+  --hn-admin-shadow:0 4px 18px rgba(25,32,42,.045);
+}
+html{background:var(--hn-admin-bg)}
+body{background:var(--hn-admin-bg)!important;color:var(--hn-admin-text)!important;font-family:Inter,"DM Sans",system-ui,-apple-system,sans-serif!important}
+h1,h2,h3,h4,strong{color:inherit}
+p,.muted,.note,.intro p,.welcome-copy,.section-description{color:var(--hn-admin-muted)}
+a{transition:color .16s ease}
+input,select,textarea{border-color:var(--hn-admin-line)!important;border-radius:9px!important;color:var(--hn-admin-text)!important;background:#fff}
+input:focus,select:focus,textarea:focus{outline:2px solid rgba(223,132,44,.2)!important;border-color:var(--hn-admin-accent)!important}
+button,.button,.btn{border-radius:9px}
+.primary,.button-primary,.primary-button,.action-group .primary,.button.primary{
+  background:var(--hn-admin-accent)!important;background-image:none!important;
+  border-color:var(--hn-admin-accent)!important;color:#fff!important;
+  box-shadow:0 3px 9px rgba(223,132,44,.14)!important
+}
+.primary:hover,.button-primary:hover,.primary-button:hover,.button.primary:hover{background:var(--hn-admin-accent-hover)!important;border-color:var(--hn-admin-accent-hover)!important}
+.secondary,.button-secondary,.secondary-button,.btn.secondary{
+  background:#fff!important;border:1px solid var(--hn-admin-line)!important;color:#39414b!important
+}
+.panel,.card,.list-panel,.tools-section,.settings-disclosure,.stat-card,.overview-card,.monitor-box,.nav-item,.page-panel,.inspector,.canvas-panel,.builder-layout>.panel{
+  background:var(--hn-admin-surface)!important;border:1px solid var(--hn-admin-line)!important;
+  border-radius:var(--hn-admin-radius)!important;box-shadow:var(--hn-admin-shadow)!important
+}
+/* CMS */
+.admin-sidebar{background:#fff!important;border-right:1px solid var(--hn-admin-line)!important}
+.brand-mark{background:var(--hn-admin-accent)!important;box-shadow:none!important}
+.nav-link{color:#59616c!important}
+.nav-link:hover,.nav-link.active{background:#fff4e9!important;color:#a95414!important}
+.nav-link.active:before{background:var(--hn-admin-accent)!important}
+.nav-icon,.nav-link.active .nav-icon{color:var(--hn-admin-accent)!important}
+.sidebar-note{background:#f7f8fa!important;border-color:var(--hn-admin-line)!important}
+.topbar{background:rgba(255,255,255,.94)!important;border-color:var(--hn-admin-line)!important}
+.eyebrow{color:#a85d20!important}
+.primary-button{background:var(--hn-admin-accent)!important;color:#fff!important}
+.stat-symbol,.page-tab span{background:#fff4e9!important;color:#a85d20!important}
+.page-tab.active{color:#a85d20!important}
+.page-tab.active:after{background:var(--hn-admin-accent)!important}
+.pages-table thead th{background:#f7f8fa!important;border-color:var(--hn-admin-line)!important}
+.search-field,.sort-field select{border-color:var(--hn-admin-line)!important}
+/* Oudere admin- en werkruimte-layouts: geen donkerbruine zijbalken meer. */
+.sidebar,.hn-admin-sidebar,.side{
+  background:#fff!important;color:var(--hn-admin-text)!important;
+  border-right:1px solid var(--hn-admin-line)!important;box-shadow:none!important
+}
+.sidebar .logo,.hn-admin-logo-name,.side .logo{color:var(--hn-admin-text)!important}
+.admin-label,.hn-admin-label,.hn-admin-section-label{color:#8a929d!important;opacity:1!important}
+.nav-button,.hn-admin-nav-btn,.side .nav a{
+  color:#56606c!important;background:transparent!important;border:1px solid transparent!important
+}
+.nav-button:hover,.nav-button.active,.hn-admin-nav-btn:hover,.hn-admin-nav-btn.active,
+.side .nav a:hover,.side .nav a.active{
+  color:#a95414!important;background:#fff4e9!important;border-color:#f6dfc9!important
+}
+.hn-admin-logo-mark{background:var(--hn-admin-accent)!important;box-shadow:none!important}
+.topbar,.top,.builder-top,.builder-head{
+  background:#fff!important;color:var(--hn-admin-text)!important;
+  border-bottom:1px solid var(--hn-admin-line)!important;box-shadow:none!important
+}
+.topbar h1,.top h1,.builder-top h1,.builder-head h1,
+.builder-top p,.builder-top a,.builder-top label,.builder-top span{color:var(--hn-admin-text)!important;-webkit-text-fill-color:var(--hn-admin-text)!important}
+.panel,.card,.overview-card,.nav-item,.page-panel,.inspector,.canvas-panel{border-color:var(--hn-admin-line)!important}
+th{background:#f7f8fa!important;color:#727b87!important;border-color:var(--hn-admin-line)!important}
+td{border-color:var(--hn-admin-line)!important}
+.tag,.badge,.status-pill{background:#fff4e9!important;color:#a95414!important}
+.status-pill,.tag{border:1px solid #f6dfc9!important}
+.progress-fill,.fill,.bar .fill{background:var(--hn-admin-accent)!important}
+.hn-admin-stripe{background:var(--hn-admin-accent)!important}
+@media(max-width:760px){
+  .admin-sidebar,.sidebar,.hn-admin-sidebar,.side{border-right:0!important;border-bottom:1px solid var(--hn-admin-line)!important}
+}
