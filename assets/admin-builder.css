@@ -162,3 +162,6 @@
 #msg{margin:12px 14px;border-radius:12px;padding:11px 13px}
 @media(max-width:1050px){.builder-layout{gap:10px;padding:10px}.page-panel,.canvas-panel,.inspector{border-radius:13px!important}}
 @media(max-width:700px){.builder-head{position:sticky;top:0;flex-wrap:wrap;align-items:flex-start;padding:10px 12px}.head-title{align-items:flex-start;gap:9px}.head-title h1{font-size:19px}.head-actions{width:100%;justify-content:space-between}.builder-layout{padding:8px;gap:8px}.canvas-toolbar{top:0;padding:10px!important}.toolbar-actions{width:100%;flex-wrap:wrap}.toolbar-actions button{flex:1}#liveFrameWrap{padding:5px!important}}
+
+/* Existing-page visual editing controls */
+#existingVisualFields{background:#fbf8f3;border-top:1px solid rgba(103,76,46,.12)}#existingVisualFields label{display:grid;gap:6px;margin:0 0 12px;color:#674C2E;font-size:12px;font-weight:750}#existingVisualFields input{width:100%;min-height:39px;padding:9px 10px;border:1px solid rgba(103,76,46,.2);border-radius:10px;background:#fff;color:#4d3926}#existingVisualFields[hidden]{display:none!important}

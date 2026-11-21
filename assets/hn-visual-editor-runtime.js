@@ -30,7 +30,7 @@ async function run(){if(window.parent!==window&&new URLSearchParams(location.sea
   var r=await overP;if(!r.error)(r.data||[]).forEach(applyText);
   var l=await layP;if(l.error)return;
   var rows=l.data||[],base=root();
-  rows.forEach(function(row){try{var el=document.querySelector(row.selector);if(!el)return;el.hidden=row.is_visible===false;if(row.settings&&row.settings.css)Object.keys(row.settings.css).forEach(function(k){el.style[k]=row.settings.css[k]})}catch(e){console.warn('HN visual layout selector:',e)}});
+  rows.forEach(function(row){try{var el=document.querySelector(row.selector);if(!el)return;el.hidden=row.is_visible===false;if(row.settings&&row.settings.css)Object.keys(row.settings.css).forEach(function(k){el.style[k]=row.settings.css[k]});if(row.settings&&row.settings.attrs)Object.keys(row.settings.attrs).forEach(function(k){var v=row.settings.attrs[k];if(v==null||v==="")el.removeAttribute(k);else el.setAttribute(k,String(v))})}catch(e){console.warn('HN visual layout selector:',e)}});
   /* Apply explicit drag-and-drop placements first. Selectors are stored by the visual editor. */
   rows.filter(function(row){return row.settings&&row.settings.position_mode==='anchor'&&row.settings.parent_selector;}).sort(function(a,b){return (a.sort_order||0)-(b.sort_order||0)}).forEach(function(row){
     try{
