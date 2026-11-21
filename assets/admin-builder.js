@@ -346,6 +346,7 @@ function selectExisting(el,doc){
     el.setAttribute("contenteditable","true");
     el.setAttribute("spellcheck","true");
     el.focus();
+    el.addEventListener("input",function(){var field=document.getElementById("tx");if(field)field.value=el.textContent||"";});
     try{var range=doc.createRange();range.selectNodeContents(el);range.collapse(false);var sel=doc.defaultView.getSelection();sel.removeAllRanges();sel.addRange(range);}catch(e){}
   }
   inspectExisting();
@@ -550,7 +551,7 @@ function edit(k,v){
 
 async function saveExisting(){
   if(!selectedExisting||!page)return;
-  var text=$("tx").value,found=null;
+  var text=selectedExisting&&selectedExisting.element&&selectedExisting.element.isContentEditable?(selectedExisting.element.textContent||""):$("tx").value,found=null;
   for(var i=0;i<overrides.length;i++)if(overrides[i].selector===selectedExisting.selector)found=overrides[i];
   if(selectedExisting.tag!=="img"&&text.trim()){
     var payload={route:routeKey(),selector:selectedExisting.selector,element_type:selectedExisting.tag,original_text:selectedExisting.original,content_text:text};
