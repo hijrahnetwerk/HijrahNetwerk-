@@ -12,6 +12,7 @@ var icons={breadcrumbs:"KB",article_header:"PH",quote:"C",numbered_cards:"NK",st
 
 function esc(v){return String(v==null?"":v).replace(/[&<>"']/g,function(m){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m];});}
 function cleanSlug(v){return String(v||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().trim().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"");}
+function safeEditorUrl(v){v=String(v||"").trim();if(!v)return "";return /^(https?:\\/\\/|\\/(?!\\/)|#|mailto:|tel:)/i.test(v)?v:null;}
 function route(s){
   s=String(s||"").replace(/^\//,"").replace(/\.html$/i,"");
   var m={"":"/",home:"/",landen:"/landen",kennisbank:"/kennisbank",navigatie:"/navigatie",hijrahtools:"/hijrahtools","smart-search":"/smart-search",community:"/community",stappenplan:"/stappenplan",orientatie:"/orientatie",orientatietest:"/orientatietest",voorbereiding:"/voorbereiding",vertrek:"/vertrek",integratie:"/integratie",realiteitscheck:"/realiteitscheck",verhalen:"/verhalen",stedengids:"/stedengids",vergelijken:"/vergelijken",hulp:"/hulp","over-hn":"/over-hn"};
@@ -543,10 +544,15 @@ async function saveExisting(){
   }
   var el=selectedExisting.element,attrs={},css={};
   if(selectedExisting.tag==="img"){
-    attrs.src=$("existingImageSrc").value.trim();
-    attrs.alt=$("existingAlt").value.trim();
+    var imageUrl=safeEditorUrl($("existingImageSrc").value);
+    if(imageUrl===null){note("Gebruik voor afbeeldingen alleen een https-adres of een lokaal pad dat met / begint.",true);return;}
+    attrs.src=imageUrl;attrs.alt=$("existingAlt").value.trim();
   }
-  if(selectedExisting.tag==="a")attrs.href=$("existingHref").value.trim();
+  if(selectedExisting.tag==="a"){
+    var linkUrl=safeEditorUrl($("existingHref").value);
+    if(linkUrl===null){note("Gebruik voor links alleen https, http, mailto, tel of een lokaal pad.",true);return;}
+    attrs.href=linkUrl;
+  }
   [["backgroundColor","existingBg"],["padding","existingPadding"],["margin","existingMargin"],["maxWidth","existingWidth"],["borderRadius","existingRadius"]].forEach(function(pair){var v=$(pair[1]).value.trim();if(v)css[pair[0]]=v;});
   var layout=layouts.find(function(x){return x.selector===selectedExisting.selector;});
   if(!layout){layout={selector:selectedExisting.selector,sort_order:layouts.length,is_visible:true,settings:{}};layouts.push(layout);}
