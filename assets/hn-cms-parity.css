@@ -87,6 +87,7 @@ body:not(.admin-shell):not(.hn-admin-standard) :where(footer,.site-footer,.hn-fo
 
 /* Member navigation mirrors the CMS sidebar: white surface, restrained active state. */
 body.hnm-on{padding-left:250px!important}
+body.hnm-on .top{margin-left:250px!important;width:calc(100% - 250px)!important}
 body.hnm-on .hnm{top:0!important;bottom:0!important;left:0!important;width:250px!important;background:#fff!important;color:var(--hn-cms-ink)!important;border-right:1px solid var(--hn-cms-line)!important;box-shadow:none!important;font-family:Inter,"DM Sans",system-ui,sans-serif!important}
 body.hnm-on .hnm-card{background:#fff!important;color:var(--hn-cms-ink)!important;border-bottom:1px solid var(--hn-cms-line)!important}
 body.hnm-on .hnm-profile,body.hnm-on .hnm-name{color:var(--hn-cms-ink)!important}
