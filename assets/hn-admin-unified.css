@@ -1,0 +1,296 @@
+/* Hijrah Netwerk — gedeelde, lichte beheeropmaak
+   Eén rustige adminstijl voor alle beheerpagina's. */
+:root{
+  --hn-admin-bg:#f5f6f8;
+  --hn-admin-surface:#ffffff;
+  --hn-admin-text:#252a31;
+  --hn-admin-muted:#707782;
+  --hn-admin-line:#e4e7ec;
+  --hn-admin-accent:#df842c;
+  --hn-admin-accent-hover:#c87020;
+  --hn-admin-gold:#c9a227;
+  --hn-admin-radius:14px;
+  --hn-admin-shadow:0 4px 18px rgba(25,32,42,.045);
+}
+html{background:var(--hn-admin-bg)}
+body{background:var(--hn-admin-bg)!important;color:var(--hn-admin-text)!important;font-family:Inter,"DM Sans",system-ui,-apple-system,sans-serif!important}
+h1,h2,h3,h4,strong{color:inherit}
+p,.muted,.note,.intro p,.welcome-copy,.section-description{color:var(--hn-admin-muted)}
+a{transition:color .16s ease}
+input,select,textarea{border-color:var(--hn-admin-line)!important;border-radius:9px!important;color:var(--hn-admin-text)!important;background:#fff}
+input:focus,select:focus,textarea:focus{outline:2px solid rgba(223,132,44,.2)!important;border-color:var(--hn-admin-accent)!important}
+button,.button,.btn{border-radius:9px}
+.primary,.button-primary,.primary-button,.action-group .primary,.button.primary{
+  background:var(--hn-admin-accent)!important;background-image:none!important;
+  border-color:var(--hn-admin-accent)!important;color:#fff!important;
+  box-shadow:0 3px 9px rgba(223,132,44,.14)!important
+}
+.primary:hover,.button-primary:hover,.primary-button:hover,.button.primary:hover{background:var(--hn-admin-accent-hover)!important;border-color:var(--hn-admin-accent-hover)!important}
+.secondary,.button-secondary,.secondary-button,.btn.secondary{
+  background:#fff!important;border:1px solid var(--hn-admin-line)!important;color:#39414b!important
+}
+.panel,.card,.list-panel,.tools-section,.settings-disclosure,.stat-card,.overview-card,.monitor-box,.nav-item,.page-panel,.inspector,.canvas-panel,.builder-layout>.panel{
+  background:var(--hn-admin-surface)!important;border:1px solid var(--hn-admin-line)!important;
+  border-radius:var(--hn-admin-radius)!important;box-shadow:var(--hn-admin-shadow)!important
+}
+/* CMS */
+.admin-sidebar{background:#fff!important;border-right:1px solid var(--hn-admin-line)!important}
+.brand-mark{background:var(--hn-admin-accent)!important;box-shadow:none!important}
+.nav-link{color:#59616c!important}
+.nav-link:hover,.nav-link.active{background:#fff4e9!important;color:#a95414!important}
+.nav-link.active:before{background:var(--hn-admin-accent)!important}
+.nav-icon,.nav-link.active .nav-icon{color:var(--hn-admin-accent)!important}
+.sidebar-note{background:#f7f8fa!important;border-color:var(--hn-admin-line)!important}
+.topbar{background:rgba(255,255,255,.94)!important;border-color:var(--hn-admin-line)!important}
+.eyebrow{color:#a85d20!important}
+.primary-button{background:var(--hn-admin-accent)!important;color:#fff!important}
+.stat-symbol,.page-tab span{background:#fff4e9!important;color:#a85d20!important}
+.page-tab.active{color:#a85d20!important}
+.page-tab.active:after{background:var(--hn-admin-accent)!important}
+.pages-table thead th{background:#f7f8fa!important;border-color:var(--hn-admin-line)!important}
+.search-field,.sort-field select{border-color:var(--hn-admin-line)!important}
+/* Oudere admin- en werkruimte-layouts: geen donkerbruine zijbalken meer. */
+.sidebar,.hn-admin-sidebar,.side{
+  background:#fff!important;color:var(--hn-admin-text)!important;
+  border-right:1px solid var(--hn-admin-line)!important;box-shadow:none!important
+}
+.sidebar .logo,.hn-admin-logo-name,.side .logo{color:var(--hn-admin-text)!important}
+.admin-label,.hn-admin-label,.hn-admin-section-label{color:#8a929d!important;opacity:1!important}
+.nav-button,.hn-admin-nav-btn,.side .nav a{
+  color:#56606c!important;background:transparent!important;border:1px solid transparent!important
+}
+.nav-button:hover,.nav-button.active,.hn-admin-nav-btn:hover,.hn-admin-nav-btn.active,
+.side .nav a:hover,.side .nav a.active{
+  color:#a95414!important;background:#fff4e9!important;border-color:#f6dfc9!important
+}
+.hn-admin-logo-mark{background:var(--hn-admin-accent)!important;box-shadow:none!important}
+.topbar,.top,.builder-top,.builder-head{
+  background:#fff!important;color:var(--hn-admin-text)!important;
+  border-bottom:1px solid var(--hn-admin-line)!important;box-shadow:none!important
+}
+.topbar h1,.top h1,.builder-top h1,.builder-head h1,
+.builder-top p,.builder-top a,.builder-top label,.builder-top span{color:var(--hn-admin-text)!important;-webkit-text-fill-color:var(--hn-admin-text)!important}
+.panel,.card,.overview-card,.nav-item,.page-panel,.inspector,.canvas-panel{border-color:var(--hn-admin-line)!important}
+th{background:#f7f8fa!important;color:#727b87!important;border-color:var(--hn-admin-line)!important}
+td{border-color:var(--hn-admin-line)!important}
+.tag,.badge,.status-pill{background:#fff4e9!important;color:#a95414!important}
+.status-pill,.tag{border:1px solid #f6dfc9!important}
+.progress-fill,.fill,.bar .fill{background:var(--hn-admin-accent)!important}
+.hn-admin-stripe{background:var(--hn-admin-accent)!important}
+@media(max-width:760px){
+  .admin-sidebar,.sidebar,.hn-admin-sidebar,.side{border-right:0!important;border-bottom:1px solid var(--hn-admin-line)!important}
+}
+
+/* Aanvullende overrides voor legacy beheerpagina's.
+   Deze pagina's gebruiken eigen inline styles en oudere kleurvariabelen. */
+:root{
+  --brown:#39414b!important;
+  --orange:#df842c!important;
+  --gold:#c9a227!important;
+  --cream:#f5f6f8!important;
+  --text:#252a31!important;
+  --muted:#707782!important;
+  --border:#e4e7ec!important;
+  --success:#287653!important;
+  --green:#287653!important;
+  --red:#bd5b4b!important;
+  --hn-brown:#39414b!important;
+  --hn-orange:#df842c!important;
+  --hn-line:#e4e7ec!important;
+  --hn-bg:#f5f6f8!important;
+}
+.layout,.shell,.hn-builder{background:var(--hn-admin-bg)!important;color:var(--hn-admin-text)!important}
+.layout .sidebar,.shell .side,.hn-admin-sidebar,.sidebar,.side{
+  background:#fff!important;color:var(--hn-admin-text)!important;
+  border-right:1px solid var(--hn-admin-line)!important;
+}
+.sidebar .logo,.side .logo,.sidebar .logo a,.sidebar strong,.side strong{
+  color:var(--hn-admin-text)!important;
+}
+.sidebar .admin-label,.side .sub,.admin-label{
+  color:var(--hn-admin-muted)!important;opacity:1!important;
+}
+.sidebar .nav-button,.nav-button,.side .nav a,.hn-admin-nav-btn{
+  color:#56606c!important;background:transparent!important;
+  border:1px solid transparent!important;
+}
+.sidebar .nav-button:hover,.sidebar .nav-button.active,
+.nav-button:hover,.nav-button.active,.side .nav a:hover,.side .nav a.active,
+.hn-admin-nav-btn:hover,.hn-admin-nav-btn.active{
+  color:#a95414!important;background:#fff4e9!important;
+  border-color:#f6dfc9!important;
+}
+.layout .main,.shell main,.hn-builder{color:var(--hn-admin-text)!important}
+.layout .topbar,.shell .top,.builder-top,.builder-head{
+  background:#fff!important;color:var(--hn-admin-text)!important;
+  border-bottom:1px solid var(--hn-admin-line)!important;
+}
+.layout .topbar h1,.shell .top h1,.builder-top h1,.builder-top p,
+.builder-top a,.builder-top label,.builder-top span{
+  color:var(--hn-admin-text)!important;-webkit-text-fill-color:var(--hn-admin-text)!important;
+}
+.card,.panel,.plan-box,.monitor-box,.nav-item,.inspector,.canvas-panel,
+.tools-section,.settings-disclosure,.overview-card{
+  background:#fff!important;border:1px solid var(--hn-admin-line)!important;
+  border-radius:var(--hn-admin-radius)!important;box-shadow:var(--hn-admin-shadow)!important;
+}
+.card-number,.num,.plan-box-value{color:var(--hn-admin-text)!important}
+.card-label,.label,.plan-box-label,.meta,.small,.hint,.intro p{
+  color:var(--hn-admin-muted)!important;
+}
+input,select,textarea{
+  border:1px solid var(--hn-admin-line)!important;
+  background:#fff!important;color:var(--hn-admin-text)!important;
+}
+.button-primary,.btn.primary,.primary,.button.primary,
+button.primary,#save.button.primary{
+  background:var(--hn-admin-accent)!important;
+  border:1px solid var(--hn-admin-accent)!important;color:#fff!important;
+}
+.button-secondary,.btn.secondary,.secondary,.button.secondary,
+.button-danger,.btn.danger,.danger{
+  background:#fff!important;border:1px solid var(--hn-admin-line)!important;
+  color:#39414b!important;
+}
+th{background:#f7f8fa!important;color:#727b87!important;border-color:var(--hn-admin-line)!important}
+td,.step-row,.activity-item,.item{border-color:var(--hn-admin-line)!important}
+.status-pill,.status,.tag,.badge{
+  background:#fff4e9!important;color:#a95414!important;border-color:#f6dfc9!important;
+}
+.tab.active,.tabs .tab.active{
+  background:#fff4e9!important;color:#a95414!important;border-color:#f6dfc9!important;
+}
+.progress-fill,.fill,.progress-bar .fill{background:var(--hn-admin-accent)!important}
+
+
+/* Shared CMS layout for every legacy admin page. */
+body.hn-admin-standard{
+  min-height:100vh!important;
+  padding-left:250px!important;
+  background:var(--hn-admin-bg)!important;
+  color:var(--hn-admin-text)!important;
+  font-family:Inter,"DM Sans",system-ui,-apple-system,sans-serif!important;
+}
+body.hn-admin-standard .admin-sidebar[data-shared-admin]{
+  position:fixed!important;z-index:1000!important;inset:0 auto 0 0!important;
+  display:flex!important;flex-direction:column!important;width:250px!important;
+  padding:25px 16px 16px!important;background:#fff!important;
+  border-right:1px solid var(--hn-admin-line)!important;box-shadow:none!important;
+}
+body.hn-admin-standard .admin-sidebar[data-shared-admin] .brand{
+  display:flex!important;align-items:center!important;gap:11px!important;
+  padding:3px 10px 27px!important;text-decoration:none!important;color:var(--hn-admin-text)!important;
+}
+body.hn-admin-standard .admin-sidebar[data-shared-admin] .brand-mark{
+  display:grid!important;place-items:center!important;width:40px!important;height:40px!important;
+  border-radius:13px!important;background:var(--hn-admin-accent)!important;color:#fff!important;
+  font-weight:800!important;box-shadow:none!important;
+}
+body.hn-admin-standard .admin-sidebar[data-shared-admin] .brand strong,
+body.hn-admin-standard .admin-sidebar[data-shared-admin] .brand small{display:block!important}
+body.hn-admin-standard .admin-sidebar[data-shared-admin] .brand strong{font-size:13px!important;color:#252a31!important}
+body.hn-admin-standard .admin-sidebar[data-shared-admin] .brand small{margin-top:2px;color:#707782!important;font-size:11px!important}
+body.hn-admin-standard .admin-sidebar[data-shared-admin] .sidebar-label{
+  padding:0 12px 10px!important;color:#8a929d!important;font-size:10px!important;
+  font-weight:800!important;letter-spacing:.13em!important;
+}
+body.hn-admin-standard .admin-sidebar[data-shared-admin] .sidebar-nav{display:grid!important;gap:5px!important}
+body.hn-admin-standard .admin-sidebar[data-shared-admin] .nav-link{
+  position:relative!important;display:flex!important;align-items:center!important;gap:12px!important;
+  min-height:43px!important;padding:10px 12px!important;border:1px solid transparent!important;
+  border-radius:11px!important;background:transparent!important;color:#59616c!important;
+  text-decoration:none!important;font-size:12.5px!important;font-weight:600!important;
+}
+body.hn-admin-standard .admin-sidebar[data-shared-admin] .nav-link:hover,
+body.hn-admin-standard .admin-sidebar[data-shared-admin] .nav-link.active{
+  background:#fff4e9!important;border-color:#f6dfc9!important;color:#a95414!important;
+}
+body.hn-admin-standard .admin-sidebar[data-shared-admin] .nav-link.active:before{
+  content:"";position:absolute;left:0;top:10px;bottom:10px;width:3px;border-radius:0 4px 4px 0;background:var(--hn-admin-accent);
+}
+body.hn-admin-standard .admin-sidebar[data-shared-admin] .nav-icon{display:inline-grid;place-items:center;width:20px;color:var(--hn-admin-accent)!important;font-size:18px}
+body.hn-admin-standard .admin-sidebar[data-shared-admin] .sidebar-bottom{margin-top:auto}
+body.hn-admin-standard .admin-sidebar[data-shared-admin] .sidebar-note{
+  display:flex;align-items:center;gap:9px;margin:0 4px 14px;padding:13px 10px;
+  background:#f7f8fa!important;border:1px solid var(--hn-admin-line)!important;border-radius:12px;
+}
+body.hn-admin-standard .admin-sidebar[data-shared-admin] .sidebar-note strong,
+body.hn-admin-standard .admin-sidebar[data-shared-admin] .sidebar-note small{display:block}
+body.hn-admin-standard .admin-sidebar[data-shared-admin] .sidebar-note strong{font-size:11px;color:var(--hn-admin-text)}
+body.hn-admin-standard .admin-sidebar[data-shared-admin] .sidebar-note small{margin-top:2px;color:var(--hn-admin-muted);font-size:10px}
+body.hn-admin-standard .admin-sidebar[data-shared-admin] .back-site{
+  display:flex;justify-content:space-between;padding:11px 12px;border-top:1px solid var(--hn-admin-line);
+  color:#74695d!important;text-decoration:none;font-size:11px;font-weight:600;
+}
+body.hn-admin-standard .hn-legacy-sidebar-hidden{display:none!important}
+body.hn-admin-standard .top,
+body.hn-admin-standard .topbar,
+body.hn-admin-standard .builder-top,
+body.hn-admin-standard .builder-head{
+  background:#fff!important;background-image:none!important;color:var(--hn-admin-text)!important;
+  border-bottom:1px solid var(--hn-admin-line)!important;box-shadow:none!important;
+}
+body.hn-admin-standard .top,
+body.hn-admin-standard .builder-top,
+body.hn-admin-standard .builder-head{padding-left:clamp(20px,3vw,44px)!important;padding-right:clamp(20px,3vw,44px)!important}
+body.hn-admin-standard .top h1,
+body.hn-admin-standard .builder-top h1,
+body.hn-admin-standard .builder-top p,
+body.hn-admin-standard .builder-top a,
+body.hn-admin-standard .builder-top label,
+body.hn-admin-standard .builder-top span{color:var(--hn-admin-text)!important;-webkit-text-fill-color:var(--hn-admin-text)!important}
+body.hn-admin-standard .wrap,
+body.hn-admin-standard .content{max-width:1500px!important;margin-left:auto!important;margin-right:auto!important;padding:30px clamp(20px,3vw,44px)!important}
+body.hn-admin-standard .card,
+body.hn-admin-standard .panel,
+body.hn-admin-standard .nav-item,
+body.hn-admin-standard .page-panel,
+body.hn-admin-standard .canvas-panel,
+body.hn-admin-standard .inspector,
+body.hn-admin-standard .builder-layout>.panel{
+  background:#fff!important;border:1px solid var(--hn-admin-line)!important;
+  border-radius:14px!important;box-shadow:var(--hn-admin-shadow)!important;
+}
+body.hn-admin-standard h1,body.hn-admin-standard h2,body.hn-admin-standard h3,
+body.hn-admin-standard .panel h1,body.hn-admin-standard .panel h2{color:#252a31!important}
+body.hn-admin-standard p,body.hn-admin-standard .muted,body.hn-admin-standard .note,
+body.hn-admin-standard .meta,body.hn-admin-standard .intro p{color:var(--hn-admin-muted)!important}
+body.hn-admin-standard .btn.primary,
+body.hn-admin-standard .primary,
+body.hn-admin-standard .button.primary,
+body.hn-admin-standard .button-primary,
+body.hn-admin-standard .builder-top .button.primary,
+body.hn-admin-standard .builder-top button#save{
+  background:var(--hn-admin-accent)!important;background-image:none!important;
+  border:1px solid var(--hn-admin-accent)!important;color:#fff!important;-webkit-text-fill-color:#fff!important;
+}
+body.hn-admin-standard .btn.secondary,
+body.hn-admin-standard .secondary,
+body.hn-admin-standard .button.secondary,
+body.hn-admin-standard .danger,
+body.hn-admin-standard .button-danger{
+  background:#fff!important;border:1px solid var(--hn-admin-line)!important;color:#46505b!important;
+}
+body.hn-admin-standard input,body.hn-admin-standard select,body.hn-admin-standard textarea{
+  border:1px solid var(--hn-admin-line)!important;border-radius:9px!important;background:#fff!important;color:var(--hn-admin-text)!important;
+}
+body.hn-admin-standard th{background:#f7f8fa!important;color:#727b87!important;border-color:var(--hn-admin-line)!important}
+body.hn-admin-standard td,body.hn-admin-standard pre{border-color:var(--hn-admin-line)!important}
+body.hn-admin-standard .badge,body.hn-admin-standard .tag,body.hn-admin-standard .status-pill{
+  background:#fff4e9!important;color:#a95414!important;border:1px solid #f6dfc9!important;
+}
+@media(max-width:760px){
+ body.hn-admin-standard{padding-left:0!important;padding-top:0!important}
+ body.hn-admin-standard .admin-sidebar[data-shared-admin]{
+   position:relative!important;inset:auto!important;width:100%!important;height:auto!important;
+   padding:12px 14px!important;border-right:0!important;border-bottom:1px solid var(--hn-admin-line)!important;
+ }
+ body.hn-admin-standard .admin-sidebar[data-shared-admin] .brand{padding:0 6px 10px!important}
+ body.hn-admin-standard .admin-sidebar[data-shared-admin] .sidebar-label,
+ body.hn-admin-standard .admin-sidebar[data-shared-admin] .sidebar-bottom{display:none!important}
+ body.hn-admin-standard .admin-sidebar[data-shared-admin] .sidebar-nav{
+   display:flex!important;gap:5px!important;overflow-x:auto!important;padding-bottom:2px!important;
+ }
+ body.hn-admin-standard .admin-sidebar[data-shared-admin] .nav-link{flex:none!important;min-height:36px!important;padding:8px 10px!important;white-space:nowrap!important}
+ body.hn-admin-standard .wrap,body.hn-admin-standard .content{padding:20px 15px!important}
+}

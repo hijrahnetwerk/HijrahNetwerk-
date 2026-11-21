@@ -15,6 +15,7 @@
   <link rel="stylesheet" href="/assets/hn-design.css">
   <link rel="stylesheet" href="/assets/hn-sitewide.css?v=3">
   <script src="/assets/hn-motion.js?v=3" defer></script>
+<link rel="stylesheet" href="/assets/hn-admin-unified.css?v=20261121">
 </head>
 <body>
 <div class="admin-shell">
@@ -54,6 +55,18 @@
         <article class="stat-card"><span class="stat-label">Gepubliceerd</span><div class="stat-value" id="statPublished">—</div><span class="stat-foot"><span class="status-dot published-dot"></span> Live op de website</span><span class="stat-symbol">↗</span></article>
         <article class="stat-card"><span class="stat-label">Concepten</span><div class="stat-value" id="statDraft">—</div><span class="stat-foot"><span class="status-dot draft-dot"></span> Nog niet klaar</span><span class="stat-symbol">✎</span></article>
         <article class="stat-card"><span class="stat-label">Andere statussen</span><div class="stat-value" id="statOther">—</div><span class="stat-foot">Archief of controle</span><span class="stat-symbol">◷</span></article>
+      </section>
+
+      <section class="list-panel" id="homepageSection" style="margin-bottom:18px">
+        <div class="section-head">
+          <div><p class="eyebrow">WEBSITE-INSTELLING</p><h2>Welke pagina is je startpagina?</h2><p class="section-description">Kies welke pagina bezoekers zien wanneer ze de website openen. De oorspronkelijke startpagina blijft apart bewaard.</p></div>
+        </div>
+        <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;padding:0 24px 22px">
+          <label for="homepageSelect" style="font-weight:700;color:#625548">Startpagina</label>
+          <select id="homepageSelect" style="min-width:min(100%,320px);height:40px;padding:0 12px;border:1px solid #e7e0d7;border-radius:9px;background:#fff;color:#4f3a23"><option value="">Huidige website-startpagina</option></select>
+          <button id="saveHomepage" class="primary-button" type="button">Startpagina instellen</button>
+          <span id="homepageStatus" role="status" aria-live="polite"></span>
+        </div>
       </section>
 
       <section class="list-panel" id="pagesSection">
