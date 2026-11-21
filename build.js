@@ -357,7 +357,7 @@ for (const file of htmlFiles) {
   // CMS-parity layer: load after inline page styles so the shared visual system is authoritative.
   const isCmsParitySurface = !file.startsWith('admin') && file !== 'werkruimte.html';
   if (isCmsParitySurface && !html.includes('/assets/hn-cms-parity.css')) {
-    html = html.replace('</head>', '<link rel="stylesheet" href="/assets/hn-cms-parity.css">\\n</head>');
+    html = html.replace('</head>', '<link rel="stylesheet" href="/assets/hn-cms-parity.css"></head>');
   }
 
   const perfHead = (html.includes('id="hn-loader-critical"') ? '' : '<style id="hn-loader-critical">' + LOADER_CRITICAL_CSS + '</style><script id="hn-loader-critical-js">' + LOADER_CRITICAL_JS + '</script>\n') + PERF_HINTS;
