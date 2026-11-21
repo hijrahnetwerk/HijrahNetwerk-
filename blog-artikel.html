@@ -539,21 +539,41 @@ async function init(){
   if(!db||!slug){renderError('Kon de pagina niet laden.');return}
 
   // De publieke preview komt uit een strikt beperkte RPC: nooit de volledige ledeninhoud ophalen.
-  const teaserResult=await db.rpc('hn_public_blog_member_teaser',{p_slug:slug});
-  const teaser=teaserResult.error ? null : teaserResult.data;
+  let teaser=null;
+  try{
+    const teaserResult=await db.rpc('hn_public_blog_member_teaser',{p_slug:slug});
+    if(!teaserResult.error){
+      teaser=Array.isArray(teaserResult.data)?(teaserResult.data[0]||null):teaserResult.data;
+    }else{
+      console.warn('[HN artikel] Ledenpreview kon niet worden geladen:',teaserResult.error);
+    }
+  }catch(error){
+    console.warn('[HN artikel] Ledenpreview gaf een fout:',error);
+  }
 
-  const sessionResult=await db.auth.getSession();
-  const user=sessionResult.data&&sessionResult.data.session&&sessionResult.data.session.user;
+  let user=null;
   let approved=false;
-  if(user){
-    const profileResult=await db.from('profiles').select('role,application_status').eq('id',user.id).maybeSingle();
-    const profile=profileResult.data||{};
-    approved=profile.role==='admin'||profile.application_status==='approved';
+  try{
+    const sessionResult=await db.auth.getSession();
+    user=sessionResult.data&&sessionResult.data.session&&sessionResult.data.session.user;
+    if(user){
+      const profileResult=await db.from('profiles').select('role,application_status').eq('id',user.id).maybeSingle();
+      const profile=profileResult.data||{};
+      approved=profile.role==='admin'||profile.application_status==='approved';
+    }
+  }catch(error){
+    // Een sessie- of profielcontrole mag een openbare ledenpreview niet blokkeren.
+    console.warn('[HN artikel] Lidstatus kon niet worden gecontroleerd:',error);
   }
 
   // Eerst proberen als openbaar artikel te laden. De database-RLS blijft de echte toegangsgrens.
-  const publicResult=await db.from('blogs').select('*,countries(name)').eq('slug',slug).eq('published',true).eq('access_level','public').maybeSingle();
-  if(publicResult.data){
+  let publicResult=null;
+  try{
+    publicResult=await db.from('blogs').select('*,countries(name)').eq('slug',slug).eq('published',true).eq('access_level','public').maybeSingle();
+  }catch(error){
+    console.warn('[HN artikel] Publieke artikelquery gaf een fout:',error);
+  }
+  if(publicResult&&publicResult.data){
     const {data:rel}=await db.from('blogs').select('id,title,slug,intro,type').eq('published',true).eq('access_level','public').neq('id',publicResult.data.id).limit(3).order('published_at',{ascending:false});
     renderArticle(publicResult.data,rel||[]);
     return;
@@ -625,7 +645,10 @@ function renderMemberTeaser(teaser){
     </div></div></section>`;
 }
 
-init();
+init().catch(function(error){
+  console.error('[HN artikel] Onverwachte fout bij het laden:',error);
+  renderError('Het verhaal kon niet volledig worden geladen. Controleer je internetverbinding en probeer het opnieuw.');
+});
 })();
 </script>
 <script src="/assets/hn-footer.js" defer></script>
