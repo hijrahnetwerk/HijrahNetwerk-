@@ -2,6 +2,11 @@
   "buildCommand": "npm test && npm run build",
   "redirects": [
     {
+      "source": "/introductie.html",
+      "destination": "/introductie",
+      "permanent": true
+    },
+    {
       "source": "/admin-badges.html",
       "destination": "/admin-badges",
       "permanent": true
@@ -215,6 +220,10 @@
     {
       "source": "/over-hn",
       "destination": "/cms-page.html?slug=over-hn"
+    },
+    {
+      "source": "/introductie",
+      "destination": "/introductie.html"
     },
     {
       "source": "/paspoort",
