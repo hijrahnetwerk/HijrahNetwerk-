@@ -13,6 +13,7 @@ var icons={breadcrumbs:"KB",article_header:"PH",quote:"C",numbered_cards:"NK",st
 function esc(v){return String(v==null?"":v).replace(/[&<>"']/g,function(m){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m];});}
 function cleanSlug(v){return String(v||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().trim().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"");}
 function safeEditorUrl(v){v=String(v||"").trim();if(!v)return "";return /^(https?:\/\/|\/(?!\/)|#|mailto:|tel:)/i.test(v)?v:null;}
+function safeImageUrl(v){v=String(v||"").trim();if(!v)return "";return /^https:\/\//i.test(v)||/^\/(?!\/)/.test(v)?v:null;}
 function route(s){
   s=String(s||"").replace(/^\//,"").replace(/\.html$/i,"");
   var m={"":"/",home:"/",landen:"/landen",kennisbank:"/kennisbank",navigatie:"/navigatie",hijrahtools:"/hijrahtools","smart-search":"/smart-search",community:"/community",stappenplan:"/stappenplan",orientatie:"/orientatie",orientatietest:"/orientatietest",voorbereiding:"/voorbereiding",vertrek:"/vertrek",integratie:"/integratie",realiteitscheck:"/realiteitscheck",verhalen:"/verhalen",stedengids:"/stedengids",vergelijken:"/vergelijken",hulp:"/hulp","over-hn":"/over-hn"};
@@ -550,36 +551,38 @@ function edit(k,v){
 }
 
 async function saveExisting(){
-  if(!selectedExisting||!page)return;
-  var text=selectedExisting&&selectedExisting.element&&selectedExisting.element.isContentEditable?(selectedExisting.element.textContent||""):$("tx").value,found=null;
+  if(!selectedExisting||!page)return false;
+  var el=selectedExisting.element,attrs={},css={};
+  // Validate every URL before changing editor state or queued content.
+  if(selectedExisting.tag==="img"){
+    var imageUrl=safeImageUrl($("existingImageSrc").value);
+    if(imageUrl===null){note("Gebruik voor afbeeldingen alleen een https-adres of een lokaal pad dat met / begint.",true);return false;}
+    attrs.src=imageUrl;attrs.alt=$("existingAlt").value.trim();
+  }
+  if(selectedExisting.tag==="a"){
+    var linkUrl=safeEditorUrl($("existingHref").value);
+    if(linkUrl===null){note("Gebruik voor links alleen https, http, mailto, tel of een lokaal pad.",true);return false;}
+    attrs.href=linkUrl;
+  }
+  [["backgroundColor","existingBg"],["padding","existingPadding"],["margin","existingMargin"],["maxWidth","existingWidth"],["borderRadius","existingRadius"]].forEach(function(pair){var v=$(pair[1]).value.trim();if(v)css[pair[0]]=v;});
+  var text=el&&el.isContentEditable?(el.textContent||""): $("tx").value,found=null;
   for(var i=0;i<overrides.length;i++)if(overrides[i].selector===selectedExisting.selector)found=overrides[i];
   if(selectedExisting.tag!=="img"&&text.trim()){
     var payload={route:routeKey(),selector:selectedExisting.selector,element_type:selectedExisting.tag,original_text:selectedExisting.original,content_text:text};
     if(found)Object.assign(found,payload);else overrides.push(payload);
   }
-  var el=selectedExisting.element,attrs={},css={};
   if(el)el.removeAttribute("contenteditable");
-  if(selectedExisting.tag==="img"){
-    var imageUrl=safeEditorUrl($("existingImageSrc").value);
-    if(imageUrl===null){note("Gebruik voor afbeeldingen alleen een https-adres of een lokaal pad dat met / begint.",true);return;}
-    attrs.src=imageUrl;attrs.alt=$("existingAlt").value.trim();
-  }
-  if(selectedExisting.tag==="a"){
-    var linkUrl=safeEditorUrl($("existingHref").value);
-    if(linkUrl===null){note("Gebruik voor links alleen https, http, mailto, tel of een lokaal pad.",true);return;}
-    attrs.href=linkUrl;
-  }
-  [["backgroundColor","existingBg"],["padding","existingPadding"],["margin","existingMargin"],["maxWidth","existingWidth"],["borderRadius","existingRadius"]].forEach(function(pair){var v=$(pair[1]).value.trim();if(v)css[pair[0]]=v;});
   var layout=layouts.find(function(x){return x.selector===selectedExisting.selector;});
   if(!layout){layout={selector:selectedExisting.selector,sort_order:layouts.length,is_visible:true,settings:{}};layouts.push(layout);}
   layout.settings=layout.settings||{};layout.settings.attrs=attrs;layout.settings.css=css;
   Object.keys(attrs).forEach(function(k){if(el)el.setAttribute(k,attrs[k]);});
   Object.keys(css).forEach(function(k){if(el)el.style[k]=css[k];});
   note("Wijzigingen klaargezet. Kies ‘Concept opslaan’ of ‘Publiceren’ om ze te bewaren.");
+  return true;
 }
 
 async function save(pub){
-  if(selectedExisting){await saveExisting();selectedExisting=null;selected=-1;}
+  if(selectedExisting){var existingSaved=await saveExisting();if(!existingSaved)return;selectedExisting=null;selected=-1;}
   if(!page)return;
   page.title=$("title").value.trim();
   page.slug=cleanSlug($("slug").value);
