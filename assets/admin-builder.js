@@ -543,17 +543,17 @@ async function saveExisting(){
   }
   var el=selectedExisting.element,attrs={},css={};
   if(selectedExisting.tag==="img"){
-    if($("existingImageSrc").value.trim())attrs.src=$("existingImageSrc").value.trim();
+    attrs.src=$("existingImageSrc").value.trim();
     attrs.alt=$("existingAlt").value.trim();
   }
-  if(selectedExisting.tag==="a"&&$("existingHref").value.trim())attrs.href=$("existingHref").value.trim();
+  if(selectedExisting.tag==="a")attrs.href=$("existingHref").value.trim();
   [["backgroundColor","existingBg"],["padding","existingPadding"],["margin","existingMargin"],["maxWidth","existingWidth"],["borderRadius","existingRadius"]].forEach(function(pair){var v=$(pair[1]).value.trim();if(v)css[pair[0]]=v;});
   var layout=layouts.find(function(x){return x.selector===selectedExisting.selector;});
   if(!layout){layout={selector:selectedExisting.selector,sort_order:layouts.length,is_visible:true,settings:{}};layouts.push(layout);}
   layout.settings=layout.settings||{};layout.settings.attrs=attrs;layout.settings.css=css;
   Object.keys(attrs).forEach(function(k){if(el)el.setAttribute(k,attrs[k]);});
   Object.keys(css).forEach(function(k){if(el)el.style[k]=css[k];});
-  renderPreview();note("Wijzigingen klaargezet. Kies ‘Concept opslaan’ of ‘Publiceren’ om ze te bewaren.");
+  note("Wijzigingen klaargezet. Kies ‘Concept opslaan’ of ‘Publiceren’ om ze te bewaren.");
 }
 
 async function save(pub){
@@ -723,7 +723,7 @@ function bind(){
     if(!selectedExisting)return;
     overrides=overrides.filter(function(x){return x.selector!==selectedExisting.selector;});
     layouts=layouts.filter(function(x){return x.selector!==selectedExisting.selector;});
-    renderPreview();note("Herstel klaargezet. Publiceer om het origineel terug te zetten.");
+    selectedExisting=null;closeInspector();loadLive();note("Herstel klaargezet. Publiceer om het origineel terug te zetten.");
   };
   $("cancelExisting").onclick=function(){closeInspector();};
   $("resetAllLayout").onclick=function(){globalLayoutAction("reset");};
