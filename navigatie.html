@@ -119,6 +119,30 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--orange);
 @media(max-width:700px){.lang-chips{flex-wrap:nowrap;overflow-x:auto;padding:0 4px 4px;margin:0 -4px;scrollbar-width:none}.lang-chips::-webkit-scrollbar{display:none}.lang-chip{flex:none}}
 @media(prefers-reduced-motion:reduce){.lang-chip{transition:none}}
 
+/* HN fiche preview popup */
+.fiche-preview{width:min(720px,calc(100% - 28px));max-width:720px;max-height:min(88vh,900px);padding:0;border:1px solid rgba(104,74,37,.22);border-radius:20px;background:#fff;color:#684a25;box-shadow:0 24px 80px rgba(32,24,16,.3);overflow:auto}
+.fiche-preview::backdrop{background:rgba(35,27,19,.62);backdrop-filter:blur(3px)}
+.fiche-preview-inner{padding:clamp(20px,4vw,34px)}
+.fiche-preview-head{display:flex;align-items:flex-start;justify-content:space-between;gap:18px}
+.fiche-preview-kicker{font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#9b7735}
+.fiche-preview-title{font-size:clamp(23px,4vw,30px);line-height:1.2;margin:7px 0;color:#684a25}
+.fiche-preview-close{flex:none;width:40px;height:40px;border:1px solid rgba(104,74,37,.25);border-radius:50%;background:#fff;color:#684a25;font-size:23px;cursor:pointer}
+.fiche-preview-summary{font-size:15px;color:#756d63;margin:12px 0 18px}
+.fiche-preview-tags{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}
+.fiche-preview-tag{display:inline-flex;padding:5px 10px;border:1px solid rgba(104,74,37,.2);border-radius:30px;background:#fbf8f3;font-size:11px;color:#684a25}
+.fiche-preview-status{display:inline-flex;padding:6px 10px;border-radius:30px;background:#f6f0e5;color:#684a25;font-size:11px;font-weight:700}
+.fiche-preview-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:20px 0}
+.fiche-preview-item{min-width:0;padding:12px;border:1px solid rgba(104,74,37,.14);border-radius:12px;background:#fff}
+.fiche-preview-label{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:#8b7965;margin-bottom:4px}
+.fiche-preview-value{font-size:13px;overflow-wrap:anywhere;color:#684a25}
+.fiche-preview-warning{padding:12px 14px;border-left:3px solid #df842c;border-radius:8px;background:#fff8ef;color:#684a25;font-size:13px;margin:14px 0}
+.fiche-preview-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:22px;padding-top:18px;border-top:1px solid rgba(104,74,37,.16)}
+.fiche-preview-actions .button{display:inline-flex;align-items:center;justify-content:center;min-height:42px;padding:10px 15px}
+.fiche-preview-footnote{font-size:11px;color:#8b8176;margin-top:14px}
+.fiche-preview-trigger{font:inherit;cursor:pointer}
+@media(max-width:560px){.fiche-preview{width:calc(100% - 16px);max-height:92vh;border-radius:16px}.fiche-preview-grid{grid-template-columns:1fr}.fiche-preview-actions{flex-direction:column}.fiche-preview-actions .button{width:100%}}
+
+
 
 /* HN Navigatie: explicit page-level styling, loaded after this page's legacy rules. */
 /* Hero/titelheader van Hijrah Navigatie: bruin vlak, witte tekst, gouden details. */
@@ -272,6 +296,25 @@ body>.top,.top{
 </div>
 </main>
 
+<dialog class="fiche-preview" id="fichePreview" aria-labelledby="fichePreviewTitle">
+  <div class="fiche-preview-inner">
+    <div class="fiche-preview-head">
+      <div>
+        <div class="fiche-preview-kicker">Hijrah Navigatie · snelle fiche</div>
+        <div class="fiche-preview-tags" id="fichePreviewTags"></div>
+        <h2 class="fiche-preview-title" id="fichePreviewTitle">Fiche bekijken</h2>
+      </div>
+      <button class="fiche-preview-close" type="button" id="fichePreviewClose" aria-label="Venster sluiten">×</button>
+    </div>
+    <p class="fiche-preview-summary" id="fichePreviewSummary"></p>
+    <div id="fichePreviewStatus"></div>
+    <div class="fiche-preview-grid" id="fichePreviewFields"></div>
+    <div id="fichePreviewWarning"></div>
+    <div class="fiche-preview-actions" id="fichePreviewActions"></div>
+    <p class="fiche-preview-footnote">Controleer belangrijke gegevens zoals openingstijden, tarieven en beschikbaarheid altijd bij de aanbieder.</p>
+  </div>
+</dialog>
+
 <script>
 const db=()=>window.hijrahSupabase;
 const esc=v=>v==null?'':String(v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
@@ -342,6 +385,53 @@ function catButtons(){
 function slugify(value){return String(value||'').toLowerCase().trim().normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').replace(/&/g,'-en-').replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');}
 function publicSlug(value){return String(value||'').replace(/-([0-9a-f]{8})-([0-9a-f]{4})-([0-9a-f]{4})-([0-9a-f]{4})-([0-9a-f]{12})$/i,'');}
 function ficheUrl(topic,city,category){const cityName=city||'';const categoryName=category||'';const slug=publicSlug(topic.slug||topic.id);const parts=['/locaties',slugify(cityName)];if(categoryName)parts.push(slugify(categoryName));parts.push(slugify(slug));return parts.join('/');}
+
+function previewValue(value){return value==null?'':String(value).trim()}
+function openFichePreview(topicId){
+ const topic=rows.find(item=>String(item.id)===String(topicId));
+ if(!topic)return;
+ const d=data(topic);
+ const city=cities.find(item=>String(item.id)===String(topic.city_id))?.name||'';
+ const country=countries.find(item=>String(item.id)===String(topic.country_id))?.name||'';
+ const category=categories.find(item=>String(item.id)===String(topic.category_id))?.name||'';
+ const verificationMap={verified:'Bron bevestigd',official:'Officieel bevestigd',multiple_sources:'Meerdere bronnen',community_confirmed:'Community bevestigd',community_experience:'Community-ervaring',unverified:'Niet bevestigd',needs_review:'Controle nodig',outdated:'Verouderd'};
+ const verification=topic.verification_status||d.verification_status||'';
+ const tags=[category,city,country,topic.information_type].filter(Boolean);
+ document.getElementById('fichePreviewTags').innerHTML=tags.map(value=>'<span class="fiche-preview-tag">'+esc(value)+'</span>').join('');
+ document.getElementById('fichePreviewTitle').textContent=topic.title||'Zonder titel';
+ document.getElementById('fichePreviewSummary').textContent=topic.summary||d.short_description||'Praktische informatie voor emigranten.';
+ document.getElementById('fichePreviewStatus').innerHTML=verificationMap[verification]?'<span class="fiche-preview-status">'+esc(verificationMap[verification])+'</span>':'';
+ const fields=[
+  ['Type',d.service_type],
+  ['Specialisatie',d.specialties],
+  ['Adres',d.address],
+  ['Wijk',d.neighborhood],
+  ['Talen',(langsOf(topic).list||[]).map(item=>item.name).join(', ')],
+  ['Telefoon',d.phone],
+  ['E-mail',d.email],
+  ['Openingstijden',d.opening_hours],
+  ['Prijs / kosten',d.price],
+  ['Verzekering',d.insurance]
+ ].filter(item=>previewValue(item[1]));
+ document.getElementById('fichePreviewFields').innerHTML=fields.map(item=>'<div class="fiche-preview-item"><span class="fiche-preview-label">'+esc(item[0])+'</span><div class="fiche-preview-value">'+esc(item[1])+'</div></div>').join('');
+ document.getElementById('fichePreviewWarning').innerHTML=d.warning?'<div class="fiche-preview-warning"><strong>Aandachtspunt</strong><br>'+esc(d.warning)+'</div>':'';
+ const fullFicheUrl=ficheUrl(topic,city,category);
+ const articleRows=rows.filter(item=>item.visibility!=='fiche_only');
+ const articleSlug=previewValue(d.article_slug);
+ const articleId=previewValue(d.article_id);
+ const article=articleRows.find(item=>(articleSlug&&item.slug===articleSlug)||(articleId&&item.id===articleId));
+ const actions=[];
+ if(d.phone)actions.push('<a class="button secondary" href="tel:'+esc(String(d.phone).replace(/[^+\d]/g,''))+'">Bellen</a>');
+ const website=safeExternalHref(d.website);
+ if(website)actions.push('<a class="button secondary" href="'+esc(website)+'" target="_blank" rel="noopener noreferrer">Website</a>');
+ const maps=safeExternalHref(d.maps_url);
+ if(maps)actions.push('<a class="button secondary" href="'+esc(maps)+'" target="_blank" rel="noopener noreferrer">Route</a>');
+ actions.push('<a class="button primary" href="'+esc(fullFicheUrl)+'">Volledige fiche als pagina</a>');
+ if(article)actions.push('<a class="button primary" href="/artikels/'+encodeURIComponent(publicSlug(article.slug||article.id))+'">Meer lezen in het artikel</a>');
+ document.getElementById('fichePreviewActions').innerHTML=actions.join('');
+ const dialog=document.getElementById('fichePreview');
+ if(!dialog.open)dialog.showModal();
+}
 
 const LANG_ORDER=['Nederlands','Engels','Frans','Arabisch','Darija','Berbers','Turks','Spaans','Duits'],LANG_CORE=['Nederlands','Engels','Frans','Arabisch'];
 const LANG_SYN={nl:'Nederlands',nederlands:'Nederlands',dutch:'Nederlands',vlaams:'Nederlands',en:'Engels',engels:'Engels',english:'Engels',fr:'Frans',frans:'Frans',francais:'Frans',french:'Frans',ar:'Arabisch',arabisch:'Arabisch',arabic:'Arabisch',fusha:'Arabisch',standaardarabisch:'Arabisch',darija:'Darija',marokkaans:'Darija',moroccan:'Darija',berbers:'Berbers',tamazight:'Berbers',amazigh:'Berbers',tarifit:'Berbers',riffijns:'Berbers',turks:'Turks',turkish:'Turks',es:'Spaans',spaans:'Spaans',spanish:'Spaans',de:'Duits',duits:'Duits',german:'Duits'};
@@ -442,7 +532,7 @@ function render(){
  };
    const verification=x.verification_status||d.verification_status||'';
    const verificationLabel=verificationMap[verification]||'';
-   const ficheButton=fiche?'<a class="button primary" href="'+esc(ficheUrl(fiche,city,cat))+'">Snel bekijken</a>':'';
+   const ficheButton=fiche?'<button class="button primary fiche-preview-trigger" type="button" data-fiche-preview-id="'+esc(fiche.id)+'">Snel bekijken</button>':'';
    const articleButton=article?'<a class="button secondary" href="/artikels/'+encodeURIComponent(publicSlug(article.slug||article.id))+'">Meer lezen</a>':'';
    const detailHref=fiche?ficheUrl(fiche,city,cat):'/artikels/'+encodeURIComponent(publicSlug(article?.slug||article?.id||x.id));
    const countryHref=x.country_id?'/navigatie?country='+encodeURIComponent(x.country_id):'/navigatie';
@@ -455,7 +545,7 @@ function render(){
     (country?'<a class="card-tag" href="'+countryHref+'">'+esc(country)+'</a>':'')+
     (x.information_type?'<span class="card-tag">'+esc(x.information_type)+'</span>':'')+
     '</div>'+
-    '<h2><a class="card-title-link" href="'+detailHref+'">'+esc(x.title||'Zonder titel')+'</a></h2>'+
+    '<h2><a class="card-title-link" href="'+detailHref+'"'+(isFiche?' data-fiche-preview-id="'+esc(x.id)+'"':'')+'>'+esc(x.title||'Zonder titel')+'</a></h2>'+
     '<p class="summary">'+esc(x.summary||d.short_description||'Praktische informatie voor emigranten.')+'</p>'+
     (info?'<div class="info-list">'+info+'</div>':'')+
     (verificationLabel?'<div class="source-status">✓ <strong>'+esc(verificationLabel)+'</strong></div>':'')+
@@ -532,6 +622,16 @@ async function init(){
   updateQuickLinks();
   render();
 }
+document.getElementById('cards').addEventListener('click',e=>{
+ const trigger=e.target.closest('[data-fiche-preview-id]');
+ if(!trigger)return;
+ e.preventDefault();
+ openFichePreview(trigger.dataset.fichePreviewId);
+});
+document.getElementById('fichePreviewClose').addEventListener('click',()=>document.getElementById('fichePreview').close());
+document.getElementById('fichePreview').addEventListener('click',e=>{
+ if(e.target===e.currentTarget)e.currentTarget.close();
+});
 document.getElementById('heroQ').addEventListener('input',e=>{
  document.getElementById('q').value=e.target.value;
  render();
