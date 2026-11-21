@@ -173,8 +173,6 @@ const designFontsTag = '<link rel="preconnect" href="https://fonts.googleapis.co
 const sitewideStyleTag = '<link rel="stylesheet" href="/assets/hn-sitewide.css">';
 const mobilePolishTag = '<link rel="stylesheet" href="/assets/hn-mobile-polish.css">';
 const globalRuntimeTag = '<script src="/assets/hn-global-runtime.js"></script>';
-const adminBarTag = '<script src="/assets/hn-admin-bar.js?v=20261013"></script>';
-const adminBarStyleTag = '<link rel="stylesheet" href="/assets/hn-admin-bar.css?v=20261013">';
 const footerTag = '<script src="/assets/hn-footer.js?v=20261013" defer></script>';
 const privatePreviewTag = '<script src="/assets/private-preview.js" data-hn-private-preview></script>';
 const backToTopStyleTag = '<link rel="stylesheet" href="/assets/hn-back-to-top.css?v=20261014">';
@@ -226,8 +224,9 @@ for (const file of htmlFiles) {
   html = html.replace(/assets\/public-nav\.(css|js)(?:\?[^"\']*)?/g, 'assets/public-nav.$1?v=20261011-1');
   html = html.replace(/\/assets\/hn-footer\.js(?:\?[^"']*)?/g, '/assets/hn-footer.js?v=20261013');
   html = html.replace(/\/assets\/hn-passport\.js(?:\?[^"']*)?/g, '/assets/hn-passport.js?v=20261014');
-  html = html.replace(/\/assets\/hn-admin-bar\.js(?:\?[^"']*)?/g, '/assets/hn-admin-bar.js?v=20261013');
-  html = html.replace(/\/assets\/hn-admin-bar\.css(?:\?[^"']*)?/g, '/assets/hn-admin-bar.css?v=20261013');
+  // De oude zwevende HN Beheerbalk wordt niet meer op publieke pagina's geladen.
+  html = html.replace(/<script\b(?=[^>]*src=["'][^"']*\/assets\/hn-admin-bar\.js(?:\?[^"']*)?["'])[^>]*><\/script>\s*/gi, '');
+  html = html.replace(/<link\b(?=[^>]*href=["'][^"']*\/assets\/hn-admin-bar\.css(?:\?[^"']*)?["'])[^>]*>\s*/gi, '');
   html = html.replace(/<script src=["']\/copy-protection\.js(?:\?[^"']*)?["']><\/script>/g, '');
 
   // Verwijder oude favicon-verwijzingen voordat de juiste HN-favicon opnieuw
@@ -295,8 +294,6 @@ for (const file of htmlFiles) {
     !html.includes('/assets/hn-sitewide.css') ? sitewideStyleTag : '',
     !html.includes('/assets/hn-mobile-polish.css') ? mobilePolishTag : '',
     !html.includes(globalRuntimeTag) ? globalRuntimeTag : '',
-    !html.includes('/assets/hn-admin-bar.js?v=20261013') ? adminBarTag : '',
-    !html.includes('/assets/hn-admin-bar.css?v=20261013') ? adminBarStyleTag : '',
     !html.includes('/assets/hn-motion.js') ? motionTag : '',
 
     file !== 'index.html' && !html.includes('/assets/hn-footer.js') && !isAdminSurface && !['login.html','register.html','reset-password.html','update-password.html','dashboard.html','paspoort.html','mijn-kaart.html'].includes(file) ? footerTag : '',
