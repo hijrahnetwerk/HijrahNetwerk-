@@ -214,6 +214,10 @@
   ],
   "rewrites": [
     {
+      "source": "/startpagina",
+      "destination": "/startpagina.html"
+    },
+    {
       "source": "/privacy",
       "destination": "/privacy.html"
     },

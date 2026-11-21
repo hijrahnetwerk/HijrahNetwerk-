@@ -196,7 +196,7 @@ const faviconTag = '<link rel="icon" type="image/png" href="' + faviconPath + '"
   const memberSurfacePages = new Set(['dashboard.html','mijn-badges.html','mijn-kaart.html','profiel.html','bijdragen.html']);
   const publicNavStyleTag = '<link rel="stylesheet" href="/assets/public-nav.css?v=20261011-1">';
   const publicNavScriptTag = '<script src="/assets/public-nav.js?v=20261011-1" defer></script>';
-  const memberNavScriptTag = '<script src="/assets/hn-member-nav.js?v=20261011-dashboard-nav1" defer></script>';
+  const memberNavScriptTag = '<script src="/assets/hn-member-nav.js?v=20261121-cmsnav2" defer></script>';
   const adminNavScriptTag = '<script src="/assets/hn-admin-nav.js?v=20261011-1" defer></script>';
 
 const htmlFiles = fs.readdirSync(__dirname).filter(name => name.endsWith('.html'));
@@ -352,6 +352,12 @@ for (const file of htmlFiles) {
     const tag = '<meta name="robots" content="noindex,nofollow">';
     if (existingRobots) html = html.replace(existingRobots[0], tag);
     else html = html.replace('</head>', tag + '\n</head>');
+  }
+
+  // CMS-parity layer: load after inline page styles so the shared visual system is authoritative.
+  const isCmsParitySurface = !file.startsWith('admin') && file !== 'werkruimte.html';
+  if (isCmsParitySurface && !html.includes('/assets/hn-cms-parity.css')) {
+    html = html.replace('</head>', '<link rel="stylesheet" href="/assets/hn-cms-parity.css"></head>');
   }
 
   const perfHead = (html.includes('id="hn-loader-critical"') ? '' : '<style id="hn-loader-critical">' + LOADER_CRITICAL_CSS + '</style><script id="hn-loader-critical-js">' + LOADER_CRITICAL_JS + '</script>\n') + PERF_HINTS;

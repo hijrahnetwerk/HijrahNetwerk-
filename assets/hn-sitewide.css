@@ -934,3 +934,99 @@ main, .page-content, .content-wrap, .hn-main {
 @media (prefers-reduced-motion: reduce) {
   .hn-ripple-wave { display:none; }
 }
+
+
+/* ─────────────────────────────────────────────────────────────
+   HN UNIFIED PUBLIC + MEMBER THEME
+   Visual language aligned with the CMS: neutral canvas, white
+   surfaces, charcoal typography, rust actions, restrained gold.
+   Does not replace public navigation or alter page functionality.
+   ───────────────────────────────────────────────────────────── */
+:root {
+  --hn-ui-bg: #f5f6f8;
+  --hn-ui-surface: #ffffff;
+  --hn-ui-text: #252a31;
+  --hn-ui-muted: #707782;
+  --hn-ui-line: #e4e7ec;
+  --hn-ui-rust: #df842c;
+  --hn-ui-rust-hover: #c87020;
+  --hn-ui-gold: #c9a227;
+  --hn-ui-radius: 14px;
+  --hn-ui-shadow: 0 4px 18px rgba(25,32,42,.045);
+}
+body:not(:has(.admin-shell)):not(.hn-admin-page) {
+  background: var(--hn-ui-bg);
+  color: var(--hn-ui-text);
+  font-family: Inter, "DM Sans", system-ui, -apple-system, sans-serif;
+}
+body:not(:has(.admin-shell)):not(.hn-admin-page) :where(main,.page-content,.content-area,.hn-main) {
+  color: var(--hn-ui-text);
+}
+body:not(:has(.admin-shell)):not(.hn-admin-page) :where(h1,h2,h3,h4,h5,h6) {
+  color: var(--hn-ui-text);
+  letter-spacing: -.025em;
+}
+body:not(:has(.admin-shell)):not(.hn-admin-page) :where(p,li,small,.muted,.description,.subtitle) {
+  color: var(--hn-ui-muted);
+}
+body:not(:has(.admin-shell)):not(.hn-admin-page) :where(.card,.panel,.hn-card,.feature-card,.topic-card,.result-card,.search-result,.fiche-card,.article-card,.country-card,.city-card,.step-card,.overview-card,.plan-box,.tool-card,.content-card) {
+  background: var(--hn-ui-surface);
+  color: var(--hn-ui-text);
+  border: 1px solid var(--hn-ui-line);
+  border-radius: var(--hn-ui-radius);
+  box-shadow: var(--hn-ui-shadow);
+}
+body:not(:has(.admin-shell)):not(.hn-admin-page) :where(.card,.panel,.hn-card,.feature-card,.topic-card,.result-card,.search-result,.fiche-card,.article-card,.country-card,.city-card,.step-card,.overview-card,.plan-box,.tool-card,.content-card) :where(h1,h2,h3,h4,h5,h6,strong) {
+  color: var(--hn-ui-text);
+}
+body:not(:has(.admin-shell)):not(.hn-admin-page) :where(input,select,textarea) {
+  color: var(--hn-ui-text);
+  background: #fff;
+  border: 1px solid var(--hn-ui-line);
+  border-radius: 9px;
+  box-shadow: none;
+}
+body:not(:has(.admin-shell)):not(.hn-admin-page) :where(input,select,textarea):focus {
+  outline: 2px solid rgba(223,132,44,.2);
+  border-color: var(--hn-ui-rust);
+  box-shadow: none;
+}
+body:not(:has(.admin-shell)):not(.hn-admin-page) :where(.btn-primary,.primary-button,.hn-action.primary,.btn-primary,.go,button[type="submit"]) {
+  background: var(--hn-ui-rust);
+  border-color: var(--hn-ui-rust);
+  color: #fff;
+  box-shadow: 0 3px 9px rgba(223,132,44,.14);
+}
+body:not(:has(.admin-shell)):not(.hn-admin-page) :where(.btn-primary,.primary-button,.hn-action.primary,.go,button[type="submit"]):hover {
+  background: var(--hn-ui-rust-hover);
+  border-color: var(--hn-ui-rust-hover);
+  color: #fff;
+}
+body:not(:has(.admin-shell)):not(.hn-admin-page) :where(.btn-secondary,.secondary-button,.btn-outline,.btn-soft) {
+  background: #fff;
+  color: var(--hn-ui-text);
+  border: 1px solid var(--hn-ui-line);
+}
+body:not(:has(.admin-shell)):not(.hn-admin-page) :where(table) {
+  border-color: var(--hn-ui-line);
+}
+body:not(:has(.admin-shell)):not(.hn-admin-page) :where(th) {
+  background: #f7f8fa;
+  color: var(--hn-ui-muted);
+  border-color: var(--hn-ui-line);
+}
+body:not(:has(.admin-shell)):not(.hn-admin-page) :where(td) {
+  color: var(--hn-ui-text);
+  border-color: var(--hn-ui-line);
+}
+body:not(:has(.admin-shell)):not(.hn-admin-page) :where(.section,.hn-section) {
+  border-color: var(--hn-ui-line);
+}
+@media (prefers-reduced-motion: reduce) {
+  body:not(:has(.admin-shell)):not(.hn-admin-page) *,
+  body:not(:has(.admin-shell)):not(.hn-admin-page) *::before,
+  body:not(:has(.admin-shell)):not(.hn-admin-page) *::after {
+    animation-duration: .01ms !important;
+    transition-duration: .01ms !important;
+  }
+}
