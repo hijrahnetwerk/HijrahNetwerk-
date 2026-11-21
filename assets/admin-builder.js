@@ -12,7 +12,7 @@ var icons={breadcrumbs:"KB",article_header:"PH",quote:"C",numbered_cards:"NK",st
 
 function esc(v){return String(v==null?"":v).replace(/[&<>"']/g,function(m){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m];});}
 function cleanSlug(v){return String(v||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().trim().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"");}
-function safeEditorUrl(v){v=String(v||"").trim();if(!v)return "";return /^(https?:\\/\\/|\\/(?!\\/)|#|mailto:|tel:)/i.test(v)?v:null;}
+function safeEditorUrl(v){v=String(v||"").trim();if(!v)return "";return /^(https?:\/\/|\/(?!\/)|#|mailto:|tel:)/i.test(v)?v:null;}
 function route(s){
   s=String(s||"").replace(/^\//,"").replace(/\.html$/i,"");
   var m={"":"/",home:"/",landen:"/landen",kennisbank:"/kennisbank",navigatie:"/navigatie",hijrahtools:"/hijrahtools","smart-search":"/smart-search",community:"/community",stappenplan:"/stappenplan",orientatie:"/orientatie",orientatietest:"/orientatietest",voorbereiding:"/voorbereiding",vertrek:"/vertrek",integratie:"/integratie",realiteitscheck:"/realiteitscheck",verhalen:"/verhalen",stedengids:"/stedengids",vergelijken:"/vergelijken",hulp:"/hulp","over-hn":"/over-hn"};
