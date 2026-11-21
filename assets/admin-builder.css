@@ -165,3 +165,8 @@
 
 /* Existing-page visual editing controls */
 #existingVisualFields{background:#fbf8f3;border-top:1px solid rgba(103,76,46,.12)}#existingVisualFields label{display:grid;gap:6px;margin:0 0 12px;color:#674C2E;font-size:12px;font-weight:750}#existingVisualFields input{width:100%;min-height:39px;padding:9px 10px;border:1px solid rgba(103,76,46,.2);border-radius:10px;background:#fff;color:#4d3926}#existingVisualFields[hidden]{display:none!important}
+
+/* Directe tekstbewerking in de visuele pagina-bouwer */
+.hn-editor-editable[contenteditable="true"]{outline:2px solid #df842c!important;outline-offset:2px;cursor:text;min-width:1em;min-height:1em;}
+.hn-component-dragging{opacity:.45!important;}
+.hn-drop-target{outline:3px dashed #df842c!important;outline-offset:2px;}
