@@ -512,7 +512,7 @@ function featuredCard(b){
     <div class="body">
       <div>
         <div class="meta">
-          <span class="featured-badge">✦ Uitgelicht</span>
+          <span class="featured-badge">${b.access_level==="members"?"🔒 Alleen voor leden":"✦ Uitgelicht"}</span>
           ${b.fase?`<span class="fase-tag">${faseLabel(b.fase)}</span>`:''}
           ${land?`<span style="font-size:12px;color:var(--muted)">📍 ${esc(land)}</span>`:''}
         </div>
@@ -525,7 +525,7 @@ function featuredCard(b){
           <span class="author-name">${esc(b.author_name||'Hijrah Netwerk')}</span>
           <span class="author-date">${b.published_at?new Date(b.published_at).toLocaleDateString('nl-NL',{day:'numeric',month:'long',year:'numeric'}):''}</span>
         </div>
-        <span class="read-time">⏱ ${rt} min</span>
+        <span class="read-time">${b.access_level==="members"?"🔒 Alleen voor leden":"⏱ "+rt+" min"}</span>
         <span class="read-arrow">→</span>
       </div>
     </div>
@@ -548,7 +548,7 @@ function blogCard(b,delay){
     <div class="card-cover" style="background:${b.cover_url?'#000':grd}">
       ${b.cover_url?`<img src="${esc(b.cover_url)}" alt="${esc(b.title)}" loading="lazy">`:''}
       <div class="card-cover-deco">${compassSvg('#fff')}</div>
-      <span class="card-type-badge">${typeLabel(b.type)}</span>
+      <span class="card-type-badge">${typeLabel(b.type)}${b.access_level==="members"?" · Leden":""}</span>
     </div>
     <div class="card-body">
       <div class="card-meta">
@@ -562,7 +562,7 @@ function blogCard(b,delay){
           <div class="card-author-dot">${initials(b.author_name)}</div>
           <div>
             <div class="card-author-name">${esc(b.author_name||'HN')}</div>
-            <div class="card-read-time">⏱ ${rt} min lezen</div>
+            <div class="card-read-time">${b.access_level==="members"?"🔒 Alleen voor leden":"⏱ "+rt+" min lezen"}</div>
           </div>
         </div>
         <span class="card-arrow">→</span>
@@ -632,30 +632,85 @@ function observeReveal(){
 
 /* ── INIT ── */
 async function init(){
-  // Wacht op Supabase
   for(let i=0;i<80&&!window.hijrahSupabase;i++)await new Promise(r=>setTimeout(r,100));
   const db=window.hijrahSupabase;
+  const grid=document.getElementById('bloGrid');
   if(!db){
-    document.getElementById('bloGrid').innerHTML=`<div class="state-box"><div class="state-icon">⚠️</div><h3>Kon niet laden</h3><p>Verbinding mislukt. Probeer de pagina te herladen.</p></div>`;
-    return;
-  }
-
-  const {data,error}=await db.from('blogs')
-    .select('id,title,slug,intro,author_name,cover_url,type,fase,country_id,access_level,published_at,read_time_min,content,countries(name)')
-    .eq('published',true)
-    .eq('access_level','public')
-    .order('published_at',{ascending:false});
-
-  if(error||!data){
-    document.getElementById('bloGrid').innerHTML=`<div class="state-box"><div class="state-icon">🧭</div><h3>Nog geen verhalen</h3><p>De eerste verhalen worden binnenkort gepubliceerd.</p></div>`;
-    document.getElementById('countBadge').textContent='0 verhalen';
+    grid.innerHTML='<div class="state-box"><div class="state-icon">⚠️</div><h3>Verhalen tijdelijk niet beschikbaar</h3><p>De verbinding met de verhalenbank kon niet worden gemaakt. Probeer het later opnieuw.</p></div>';
+    document.getElementById('countBadge').textContent='Laden mislukt';
     updateStats([]);
     return;
   }
 
-  allBlogs=data;
-  updateStats(data);
-  fillLandenFilter(data);
+  const fields='id,title,slug,intro,author_name,cover_url,type,fase,country_id,access_level,published_at,read_time_min,content,consent_confirmed,countries(name)';
+  const publicResult=await db.from('blogs')
+    .select(fields)
+    .eq('published',true)
+    .eq('access_level','public')
+    .order('published_at',{ascending:false});
+
+  if(publicResult.error){
+    console.error('[HN verhalen] Publieke publicaties konden niet worden geladen:',publicResult.error);
+    grid.innerHTML='<div class="state-box"><div class="state-icon">⚠️</div><h3>Verhalen konden niet worden geladen</h3><p>Er ging iets mis bij het ophalen van de publicaties. Probeer de pagina opnieuw te laden.</p></div>';
+    document.getElementById('countBadge').textContent='Laden mislukt';
+    updateStats([]);
+    return;
+  }
+
+  let visible=publicResult.data||[];
+  let approved=false;
+  try{
+    const sessionResult=await db.auth.getSession();
+    const user=sessionResult.data&&sessionResult.data.session&&sessionResult.data.session.user;
+    if(user){
+      const profileResult=await db.from('profiles').select('role,application_status').eq('id',user.id).maybeSingle();
+      const profile=profileResult.data||{};
+      approved=profile.role==='admin'||profile.application_status==='approved';
+    }
+  }catch(e){console.warn('[HN verhalen] Lidstatus kon niet worden gecontroleerd:',e)}
+
+  if(approved){
+    const memberResult=await db.from('blogs')
+      .select(fields)
+      .eq('published',true)
+      .eq('access_level','members')
+      .order('published_at',{ascending:false});
+    if(memberResult.error){
+      console.warn('[HN verhalen] Ledenpublicaties konden niet worden geladen:',memberResult.error);
+    }else{
+      visible=visible.concat(memberResult.data||[]);
+    }
+  }else{
+    const teaserResult=await db.rpc('hn_public_blog_member_teasers');
+    if(teaserResult.error){
+      console.warn('[HN verhalen] Ledenpreviews konden niet worden geladen:',teaserResult.error);
+    }else if(Array.isArray(teaserResult.data)){
+      const teasers=teaserResult.data.map(t=>({
+        title:t.title,
+        slug:t.slug,
+        type:t.type,
+        intro:t.member_preview_mode==='teaser'&&t.member_preview_text
+          ?t.member_preview_text
+          :'Dit verhaal is alleen beschikbaar voor goedgekeurde HN-leden.',
+        author_name:'Hijrah Netwerk',
+        published_at:t.published_at,
+        access_level:'members',
+        read_time_min:null,
+        content:'',
+        country_id:null,
+        countries:null,
+        consent_confirmed:true
+      }));
+      visible=visible.concat(teasers);
+    }
+  }
+
+  allBlogs=visible.filter(b=>
+    !['verhaal','interview','ervaring'].includes(b.type)||b.consent_confirmed===true
+  );
+  allBlogs.sort((a,b)=>new Date(b.published_at||0)-new Date(a.published_at||0));
+  updateStats(allBlogs);
+  fillLandenFilter(allBlogs);
   render();
   observeReveal();
 }
