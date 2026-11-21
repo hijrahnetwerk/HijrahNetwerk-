@@ -441,6 +441,12 @@ async function renderCmsPreview(doc){
     var add=doc.createElement("button");add.type="button";add.className="hn-builder-add";add.textContent="+";add.title="Voeg een HN-component vóór dit onderdeel toe";add.addEventListener("click",function(e){e.preventDefault();e.stopPropagation();if(!pendingType){note("Kies eerst links een HN-component.");return;}addAt(pendingType,"cms:"+String(s.component_id||(s.content||{}).component_id||""));});root.appendChild(add);root.appendChild(node);
   });
   var end=doc.createElement("button");end.type="button";end.className="hn-builder-add";end.textContent="+";end.title="Voeg een HN-component onderaan toe";end.addEventListener("click",function(e){e.preventDefault();e.stopPropagation();if(!pendingType){note("Kies eerst links een HN-component.");return;}addAt(pendingType,"__end__");});root.appendChild(end);
+  /* CMS-preview: maak ook inhoud binnen CMS-componenten selecteerbaar en verplaatsbaar. */
+  ensureEditorElements(doc);
+  applyOverrides(doc);
+  applyLayouts(doc);
+  bindExisting(doc);
+  drawExisting(doc);
 }
 
 function loadLive(){
