@@ -135,11 +135,11 @@ if (!registration.includes('id="register-form"') ||
     !registration.includes('blijft in afwachting')) {
   failures.push('Registration must provide a real sign-up form and clearly explain pending manual approval.');
 }
-if (!myHijrah.includes('href="/#inschrijven">Aanmelden voor de wachtlijst</a>') || myHijrah.includes('href="/register">Account aanvragen')) {
-  failures.push('The Mijn Hijrah logged-out CTA must point to the waitlist while registration is closed.');
+if (!myHijrah.includes('href="/register">Account aanvragen</a>')) {
+  failures.push('The Mijn Hijrah logged-out CTA must lead to the controlled account registration page.');
 }
-if (!footer.includes('href="/#inschrijven">Wachtlijst voor de community</a>') || footer.includes('href="/register">Aanmelden</a>')) {
-  failures.push('The public footer must not imply that community account registration is open.');
+if (!footer.includes('href="/register">Account aanvragen</a>')) {
+  failures.push('The public footer must include the controlled account registration link.');
 }
 if (!passport.includes('.bk{grid-template-columns:minmax(0,1fr)}') || !passport.includes('@media(max-width:380px)') || !passport.includes('.stp svg{width:min(100%,96px);height:auto}')) {
   failures.push('HN Paspoort must include narrow-screen layout rules for page cards and stamps.');
