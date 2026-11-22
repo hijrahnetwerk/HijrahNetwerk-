@@ -241,15 +241,16 @@ for (const file of htmlFiles) {
     continue;
   }
 
-  // Alleen de funnelhomepage blijft publiek. Alle platformpagina's vereisen een ingelogde admin.
-  // Login- en herstelpagina's blijven bereikbaar zodat de beheerder kan inloggen.
-  if (file !== 'index.html' && !['login.html','reset-password.html','update-password.html'].includes(file) && !html.includes('data-hn-private-preview')) {
+  // De startpagina en accountpagina's blijven publiek. De leden- en beheerpagina's
+  // gebruiken de bestaande toegangscontrole; auth-pagina's laden geen privacypreview.
+  const isPublicAuthPage = ['login.html','register.html','reset-password.html','update-password.html'].includes(file);
+  if (file !== 'index.html' && !isPublicAuthPage && !html.includes('data-hn-private-preview')) {
     html = html.replace('</head>', privatePreviewTag + '\n</head>');
   }
 
   // Kopieerbescherming wordt in de head gestart, vóórdat de pagina-inhoud interactief wordt.
   // Alleen een door Supabase bevestigde adminrol kan de bescherming opheffen.
-  if (!html.includes(copyProtectionTag)) {
+  if (!isPublicAuthPage && !html.includes(copyProtectionTag)) {
     html = html.replace('</head>', copyProtectionTag + '\n</head>');
   }
 
@@ -295,8 +296,8 @@ for (const file of htmlFiles) {
     !html.includes('/assets/hn-sitewide.css') ? sitewideStyleTag : '',
     !html.includes('/assets/hn-mobile-polish.css') ? mobilePolishTag : '',
     !html.includes(globalRuntimeTag) ? globalRuntimeTag : '',
-    !html.includes('/assets/hn-admin-bar.js?v=20261013') ? adminBarTag : '',
-    !html.includes('/assets/hn-admin-bar.css?v=20261013') ? adminBarStyleTag : '',
+    !isPublicAuthPage && !html.includes('/assets/hn-admin-bar.js?v=20261013') ? adminBarTag : '',
+    !isPublicAuthPage && !html.includes('/assets/hn-admin-bar.css?v=20261013') ? adminBarStyleTag : '',
     !html.includes('/assets/hn-motion.js') ? motionTag : '',
 
     file !== 'index.html' && !html.includes('/assets/hn-footer.js') && !isAdminSurface && !['login.html','register.html','reset-password.html','update-password.html','dashboard.html','paspoort.html','mijn-kaart.html'].includes(file) ? footerTag : '',
