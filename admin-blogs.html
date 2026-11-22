@@ -1155,6 +1155,12 @@ async function init(){
   }
   await Promise.all([loadCountries(),loadEditorOptions(),loadBlogs()]);
   updateMemberPreviewSettings();
+  const requestedEdit=new URLSearchParams(location.search).get('edit');
+  if(requestedEdit){
+    const target=allBlogs.find(blog=>String(blog.id)===requestedEdit);
+    if(target)window.editBlog(target.id);
+    else toast('Dit artikel kon niet worden gevonden in het beheer. Vernieuw de pagina en probeer opnieuw.','err');
+  }
 }
 
 init();
