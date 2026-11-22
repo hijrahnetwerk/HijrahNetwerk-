@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Blogs & Verhalen — HN Admin</title>
+<title>Blogs & Ervaringen — HN Admin</title>
 <link rel="icon" href="/favicon.ico" sizes="any">
 
 <style>
@@ -369,10 +369,10 @@ button,input,select,textarea{font:inherit;cursor:pointer}
 <!-- TOP BAR -->
 <div class="topbar">
   <div class="topbar-inner">
-    <h1>✦ <span>Blogs</span> & Verhalen</h1>
+    <h1>✦ <span>Blogs</span> & Ervaringen</h1>
     <a href="/admin" class="btn btn-secondary btn-sm">← Admin</a>
     <a href="/verhalen" target="_blank" class="btn btn-secondary btn-sm">👁 Bekijk pagina</a>
-    <button class="btn btn-primary" id="btnNieuw">+ Nieuw verhaal</button>
+    <button class="btn btn-primary" id="btnNieuw">+ Nieuwe publicatie</button>
   </div>
 </div>
 
@@ -390,7 +390,7 @@ button,input,select,textarea{font:inherit;cursor:pointer}
   <div class="toolbar">
     <div class="filter-tabs" id="typeTabs">
       <button class="tab active" data-type="">Alles</button>
-      <button class="tab" data-type="verhaal">✈ Verhalen</button>
+      <button class="tab" data-type="verhaal">✈ Ervaringen</button>
       <button class="tab" data-type="interview">🎙 Interviews</button>
       <button class="tab" data-type="ervaring">💬 Ervaringen</button>
       <button class="tab" data-type="artikel">📚 Artikelen</button>
@@ -436,7 +436,7 @@ button,input,select,textarea{font:inherit;cursor:pointer}
 <div class="modal-overlay" id="editorModal">
   <div class="modal">
     <div class="modal-head">
-      <h2 id="modalTitle">Nieuw verhaal</h2>
+      <h2 id="modalTitle">Nieuwe publicatie</h2>
       <button class="modal-close" id="modalClose">×</button>
     </div>
     <div class="modal-body">
@@ -457,7 +457,7 @@ button,input,select,textarea{font:inherit;cursor:pointer}
       <div class="field">
         <label>Type</label>
         <div class="select-with-add"><select id="fType"></select><button type="button" class="btn btn-secondary btn-sm" data-add-option="type" data-select="fType">+ Optie</button></div>
-          <option value="verhaal">✈ Verhaal</option>
+          <option value="verhaal">✈ Ervaring</option>
           <option value="interview">🎙 Interview</option>
           <option value="ervaring">💬 Ervaring</option>
           <option value="artikel">📚 Artikel</option>
@@ -570,7 +570,7 @@ button,input,select,textarea{font:inherit;cursor:pointer}
           <div class="preview-cover" id="prevCover">🧭</div>
           <div class="preview-body">
             <div class="preview-type" id="prevType">✈ Verhaal</div>
-            <div class="preview-title" id="prevTitle">Titel van het verhaal</div>
+            <div class="preview-title" id="prevTitle">Titel van de publicatie</div>
             <div class="preview-intro" id="prevIntro">Kort intro verschijnt hier…</div>
           </div>
         </div>
@@ -610,7 +610,7 @@ button,input,select,textarea{font:inherit;cursor:pointer}
 
       <section class="member-preview-settings" id="memberPreviewSettings" hidden>
         <h3>Wat zien niet-leden?</h3>
-        <p>Kies per verhaal of niet-leden alleen de titel zien, of ook de door jou geschreven teaser. De volledige inhoud blijft alleen voor goedgekeurde leden zichtbaar.</p>
+        <p>Kies per publicatie of niet-leden alleen de titel zien, of ook de door jou geschreven teaser. De volledige inhoud blijft alleen voor goedgekeurde leden zichtbaar.</p>
         <div class="field">
           <label for="fMemberPreviewMode">Openbare weergave</label>
           <select id="fMemberPreviewMode">
@@ -666,7 +666,7 @@ button,input,select,textarea{font:inherit;cursor:pointer}
 <!-- DELETE CONFIRM -->
 <div class="confirm-overlay" id="confirmOverlay">
   <div class="confirm-box">
-    <h3>Verhaal verwijderen?</h3>
+    <h3>Publicatie verwijderen?</h3>
     <p id="confirmMsg">Dit kan niet worden teruggedraaid.</p>
     <div class="confirm-actions">
       <button class="btn btn-secondary" id="confirmCancel">Annuleren</button>
@@ -721,7 +721,7 @@ function renderTable(){
   });
 
   if(!list.length){
-    $('tableBody').innerHTML=`<tr class="empty-row"><td colspan="8">Geen verhalen gevonden.</td></tr>`;
+    $('tableBody').innerHTML=`<tr class="empty-row"><td colspan="8">Geen publicaties gevonden.</td></tr>`;
     return;
   }
 
@@ -895,7 +895,7 @@ function clearForm(){
 
 /* ── LIVE PREVIEW ── */
 function updatePreview(){
-  const title=$('fTitle').value||'Titel van het verhaal';
+  const title=$('fTitle').value||'Titel van de publicatie';
   const intro=$('fIntro').value||'Kort intro verschijnt hier…';
   const type=$('fType').value;
   const cover=$('fCover').value;
@@ -957,7 +957,7 @@ $('fTitle').addEventListener('input',function(){
 /* ── NIEUW BLOG ── */
 $('btnNieuw').addEventListener('click',()=>{
   clearForm();
-  openModal('Nieuw verhaal / interview');
+  openModal('Nieuwe publicatie / interview');
 });
 
 /* ── EDIT BLOG ── */
@@ -988,7 +988,7 @@ window.editBlog=function(id){
   $('fMemberPreviewText').value=b.member_preview_text||'';
   updateMemberPreviewSettings();
   updatePreview();
-  openModal('Verhaal bewerken');
+  openModal('Publicatie bewerken');
 };
 
 /* ── TOGGLE PUBLICATIE ── */
@@ -1019,7 +1019,7 @@ $('confirmOk').addEventListener('click',async()=>{
   const {error}=await db.from('blogs').delete().eq('id',deleteTarget);
   deleteTarget=null;
   if(error){toast('Fout bij verwijderen: '+error.message,'err');return}
-  toast('Verhaal verwijderd');
+  toast('Publicatie verwijderd');
   await loadBlogs();
 });
 
