@@ -417,6 +417,18 @@ function getSlug(){
   return parts[parts.length-1]||'';
 }
 
+/* Meta-elementen veilig aanpassen: ontbrekende head-tags mogen het artikel niet blokkeren. */
+function setPageMeta(id,attribute,value){
+  const el=document.getElementById(id);
+  if(el) el.setAttribute(attribute,value);
+  else console.warn('[HN artikel] Meta-element ontbreekt:',id);
+}
+function removePageMetaAttribute(id,attribute){
+  const el=document.getElementById(id);
+  if(el) el.removeAttribute(attribute);
+  else console.warn('[HN artikel] Meta-element ontbreekt:',id);
+}
+
 /* Render artikel */
 function renderArticle(b,related){
   const rt=articleReadingTime(b);
@@ -431,16 +443,16 @@ function renderArticle(b,related){
   const subtitle=introMatch?introMatch[1].trim():'';
   const introDisplay=(introMatch?introMatch[2]:rawIntro).trim();
   const description=String([subtitle,introDisplay].filter(Boolean).join(' ')||b.title||'Lees dit verhaal op Hijrah Netwerk.').replace(/\s+/g,' ').trim().slice(0,300);
-  document.getElementById('pageMeta').setAttribute('content',description);
-  document.getElementById('pageOgTitle').setAttribute('content',`${b.title} — Hijrah Netwerk`);
-  document.getElementById('pageOgDescription').setAttribute('content',description);
+  setPageMeta('pageMeta','content',description);
+  setPageMeta('pageOgTitle','content',`${b.title} — Hijrah Netwerk`);
+  setPageMeta('pageOgDescription','content',description);
   const canonicalUrl=location.origin+'/verhalen/'+encodeURIComponent(b.slug||getSlug());
-  document.getElementById('pageCanonical').setAttribute('href',canonicalUrl);
-  document.getElementById('pageOgUrl').setAttribute('content',canonicalUrl);
+  setPageMeta('pageCanonical','href',canonicalUrl);
+  setPageMeta('pageOgUrl','content',canonicalUrl);
   const restricted=b.access_level!=='public';
-  document.getElementById('pageRobots').setAttribute('content','index,follow');
+  setPageMeta('pageRobots','content','index,follow');
   const ogImage=document.getElementById('pageOgImage');
-  if(b.cover_url&&/^https?:\/\//i.test(b.cover_url)){ogImage.setAttribute('content',b.cover_url)}else{ogImage.removeAttribute('content')}
+  if(ogImage){if(b.cover_url&&/^https?:\/\//i.test(b.cover_url)){ogImage.setAttribute('content',b.cover_url)}else{ogImage.removeAttribute('content')}}
 
   document.getElementById('articleRoot').innerHTML=`
   <!-- COMPACTE ARTIKELHEADER -->
@@ -658,13 +670,13 @@ function renderMemberTeaser(teaser){
   const publicTeaser=previewMode==='teaser'?String(teaser.member_preview_text||'').trim():'';
   const description=pageTitle+' is een besloten verhaal op Hijrah Netwerk.'+(publicTeaser?' '+publicTeaser:' Word lid om het volledige verhaal te lezen.');
   document.getElementById('pageTitle').textContent=pageTitle+' — Hijrah Netwerk';
-  document.getElementById('pageMeta').setAttribute('content',description.slice(0,200));
+  setPageMeta('pageMeta','content',description.slice(0,200));
   document.getElementById('pageRobots').setAttribute('content','index,follow');
-  document.getElementById('pageCanonical').setAttribute('href',canonicalUrl);
-  document.getElementById('pageOgTitle').setAttribute('content',pageTitle+' — Hijrah Netwerk');
-  document.getElementById('pageOgDescription').setAttribute('content',description.slice(0,200));
-  document.getElementById('pageOgUrl').setAttribute('content',canonicalUrl);
-  document.getElementById('pageOgImage').removeAttribute('content');
+  setPageMeta('pageCanonical','href',canonicalUrl);
+  setPageMeta('pageOgTitle','content',pageTitle+' — Hijrah Netwerk');
+  setPageMeta('pageOgDescription','content',description.slice(0,200));
+  setPageMeta('pageOgUrl','content',canonicalUrl);
+  removePageMetaAttribute('pageOgImage','content');
   document.getElementById('articleRoot').innerHTML=`
     <section class="art-hero">
       <div class="art-hero-overlay"></div>
