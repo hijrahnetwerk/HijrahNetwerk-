@@ -264,10 +264,11 @@ const pathParts=location.pathname.split('/').filter(Boolean).map(x=>decodeURICom
 const isLocationPath=pathParts[0]==='locaties';
 const pathRouteSlug=isLocationPath?pathParts[pathParts.length-1]:'';
 const routeSlug=location.pathname.match(/^\/fiche\/([^/]+)\/?$/)?.[1]||params.get('slug')||pathRouteSlug||'';
-const hierarchicalCitySlug=params.get('city_slug')|| (isLocationPath?pathParts[1]||'':'');
+const isCategoryOnlyPath=Boolean(isLocationPath&&pathParts.length===3&&!params.get('city_slug')&&!params.get('area_slug'));
+const hierarchicalCitySlug=params.get('city_slug')|| (isLocationPath&&!isCategoryOnlyPath?pathParts[1]||'':'');
 const hierarchicalAreaSlug=params.get('area_slug')|| (isLocationPath && pathParts.length===4?pathParts[2]||'':'');
-const hierarchicalCategorySlug=params.get('category_slug')|| (isLocationPath?(pathParts.length===4?pathParts[3]:pathParts[2])||'':'');
-const isHierarchicalRoute=Boolean(isLocationPath&&routeSlug&&hierarchicalCitySlug);
+const hierarchicalCategorySlug=params.get('category_slug')|| (isLocationPath?(isCategoryOnlyPath?pathParts[1]:(pathParts.length===4?pathParts[3]:pathParts[2]))||'':'');
+const isHierarchicalRoute=Boolean(isLocationPath&&routeSlug&&(hierarchicalCitySlug||isCategoryOnlyPath));
 
 const icon={
   pin:'<span class="icon"><svg viewBox="0 0 24 24"><path d="M12 21s7-6.2 7-12A7 7 0 1 0 5 9c0 5.8 7 12 7 12Z"/><circle cx="12" cy="9" r="2.3"/></svg></span>',
@@ -525,9 +526,9 @@ async function renderFiche(){
   const loc=[city,country].filter(Boolean).join(', ');
   const cat=(ca.data||[]).find(y=>y.id===x.category_id)?.name||'';
   const hierarchicalCity=(ci.data||[]).find(y=>slugify(y.name)===slugify(hierarchicalCitySlug));
-  const breadcrumbCity=hierarchicalCity?.name||city||breadcrumbLabel(hierarchicalCitySlug);
+  const breadcrumbCity=hierarchicalCity?.name||city||(isCategoryOnlyPath?'':breadcrumbLabel(hierarchicalCitySlug));
   const breadcrumbCountry=(c.data||[]).find(y=>y.id===hierarchicalCity?.country_id)?.name||country;
-  const breadcrumbArea=d.neighborhood||breadcrumbLabel(hierarchicalAreaSlug);
+  const breadcrumbArea=d.neighborhood||(isCategoryOnlyPath?'':breadcrumbLabel(hierarchicalAreaSlug));
   const breadcrumbCategory=cat||breadcrumbLabel(hierarchicalCategorySlug);
   const exps=Array.isArray(d.experiences)?d.experiences:[];
   const experienceUserIds=[...new Set(exps.map(e=>e?.submitted_by||e?.user_id).filter(Boolean))];
@@ -657,14 +658,15 @@ async function renderFiche(){
   if(mapsUrl)structuredData.hasMap=mapsUrl;
   if(d.for_children)structuredData.description=seoDescription+' '+String(d.for_children);
 
-  const breadcrumbItems=[
-    {"@type":"ListItem","position":1,"name":"Home","item":"https://hijrah-netwerk.vercel.app/"},
-    breadcrumbCountry?{"@type":"ListItem","position":2,"name":breadcrumbCountry,"item":"https://hijrah-netwerk.vercel.app/landen"}:null,
-    breadcrumbCity?{"@type":"ListItem","position":breadcrumbCountry?3:2,"name":breadcrumbCity,"item":"https://hijrah-netwerk.vercel.app/stad/"+encodeURIComponent(hierarchicalCity?.slug||slugify(breadcrumbCity))}:null,
-    breadcrumbArea?{"@type":"ListItem","position":breadcrumbCountry&&breadcrumbCity?4:3,"name":breadcrumbArea}:null,
-    breadcrumbCategory?{"@type":"ListItem","position":breadcrumbCountry&&breadcrumbCity&&breadcrumbArea?5:(breadcrumbCountry&&breadcrumbCity?4:3),"name":breadcrumbCategory}:null,
-    {"@type":"ListItem","position":breadcrumbCountry&&breadcrumbCity&&breadcrumbArea&&breadcrumbCategory?6:(breadcrumbCountry&&breadcrumbCity&&breadcrumbArea?5:(breadcrumbCountry&&breadcrumbCity?4:3)),"name":pageTitle}
-  ].filter(Boolean);
+  const breadcrumbNames=['Home',breadcrumbCountry,breadcrumbCity,breadcrumbArea,breadcrumbCategory,pageTitle].filter(Boolean);
+  const breadcrumbItems=breadcrumbNames.map((name,index)=>({
+    "@type":"ListItem",
+    "position":index+1,
+    "name":name,
+    ...(index===0?{"item":"https://hijrah-netwerk.vercel.app/"}:{}),
+    ...(name===breadcrumbCountry?{"item":"https://hijrah-netwerk.vercel.app/landen"}:{}),
+    ...(name===breadcrumbCity?{"item":"https://hijrah-netwerk.vercel.app/stad/"+encodeURIComponent(hierarchicalCity?.slug||slugify(breadcrumbCity))}:{})
+  }));
 
   const schemaPayload=isHierarchicalRoute
     ? [structuredData,{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":breadcrumbItems}]
@@ -803,15 +805,16 @@ async function renderFiche(){
   const relatedArticles=relatedItems.filter(r=>r.related_topic.visibility!=='fiche_only'&&['related_article','related_content'].includes(r.relationship_type));
   const relatedFiches=relatedItems.filter(r=>r.related_topic.visibility==='fiche_only'&&['related_fiche','related_place'].includes(r.relationship_type));
 
-  if(x.content || practiceArticleId){
-    const articleId = practiceArticleId || id;
-    const articleLabel = practiceArticleId
-      ? 'Lees het uitgebreide artikel over de praktijk →'
-      : 'Lees meer in de Kennisbank →';
-    html+='<section class="card"><h2>Meer informatie</h2><p class="card-sub">'+(practiceArticleId
-      ? 'Deze fiche houdt de belangrijkste gegevens van deze arts overzichtelijk. Voor achtergrondinformatie over Cabinet Médical Ibn Zuhr en beide artsen kun je het uitgebreide artikel lezen.'
-      : 'De fiche geeft je de belangrijkste gegevens. Voor achtergrondinformatie en uitgebreide informatie kun je het volledige artikel in de Kennisbank lezen.'
-    )+'</p><div class="hero-actions"><a class="button primary" href="/artikels/'+encodeURIComponent(String(practiceArticleSlug||articleId).replace(/-([0-9a-f]{8})-([0-9a-f]{4})-([0-9a-f]{4})-([0-9a-f]{4})-([0-9a-f]{12})$/i,''))+'">'+articleLabel+'</a></div></section>';
+  if(x.content || practiceArticleId || d.article_slug){
+    const articleHref=d.article_slug
+      ? '/verhalen/'+encodeURIComponent(d.article_slug)
+      : '/artikels/'+encodeURIComponent(String(practiceArticleSlug||practiceArticleId||id).replace(/-([0-9a-f]{8})-([0-9a-f]{4})-([0-9a-f]{4})-([0-9a-f]{4})-([0-9a-f]{12})$/i,''));
+    const articleLabel=d.article_slug
+      ? 'Lees het achtergrondartikel over Hijrah Netwerk →'
+      : practiceArticleId
+        ? 'Lees het uitgebreide artikel over de praktijk →'
+        : 'Lees meer in de Kennisbank →';
+    html+='<section class="card"><h2>Meer informatie</h2><p class="card-sub">De fiche geeft je de belangrijkste gegevens. In het achtergrondartikel lees je meer over de organisatie, de werkwijze en de beschikbare onderdelen van Hijrah Netwerk.</p><div class="hero-actions"><a class="button primary" href="'+esc(articleHref)+'">'+articleLabel+'</a></div></section>';
   }
 
   if(relatedArticles.length||relatedFiches.length){
@@ -868,9 +871,12 @@ async function renderFiche(){
   html+='<p class="note">Belangrijke gegevens zoals openingstijden, tarieven en beschikbaarheid kunnen veranderen. Controleer ze bij de bron voordat je vertrekt.</p></section>';
   html+='</aside></div>';
 
-  html+='<section class="card" style="margin-top:18px"><h2>Informatie corrigeren</h2><p class="empty-note">Zie je iets dat niet klopt of verouderd is? Stuur de correctie naar HN. Niets wordt automatisch aangepast.</p><div class="hero-actions"><a class="button secondary" href="/bijdragen?type=correction&title='+encodeURIComponent(pageTitle)+'">Correctie insturen</a><a class="button outline" href="#claim" onclick="var x=document.getElementById(\'claim\');if(x)x.open=true">Vermelding claimen</a></div></section>';
+  const isHijrahNetwerkListing=slugify(pageTitle)==='hijrah-netwerk'||slugify(d.practice_name)==='hijrah-netwerk';
+  html+='<section class="card" style="margin-top:18px"><h2>Informatie corrigeren</h2><p class="empty-note">Zie je iets dat niet klopt of verouderd is? Stuur de correctie naar HN. Niets wordt automatisch aangepast.</p><div class="hero-actions"><a class="button secondary" href="/bijdragen?type=correction&title='+encodeURIComponent(pageTitle)+'">Correctie insturen</a></div></section>';
 
-  html+='<details class="card" id="claim" style="margin-top:18px"><summary style="cursor:pointer;font-weight:700;color:var(--brown-dark)">Ben jij eigenaar of beheerder?</summary><div style="padding-top:12px"><h2 style="display:none">Ben jij eigenaar of beheerder?</h2><p class="card-sub">Je kunt bij HN aangeven dat je deze vermelding beheert. HN controleert de aanvraag eerst. Een claim betekent niet automatisch dat de gegevens worden aangepast of dat de vermelding wordt overgenomen.</p><form id="claimForm" class="form-grid" style="margin-top:14px"><div><label style="display:block;font-size:12px;margin-bottom:5px;color:var(--muted)">Naam</label><input id="claimName" required style="width:100%;padding:11px;border:1px solid var(--border);border-radius:9px"></div><div><label style="display:block;font-size:12px;margin-bottom:5px;color:var(--muted)">Rol</label><input id="claimRole" placeholder="Bijv. eigenaar, arts, medewerker" style="width:100%;padding:11px;border:1px solid var(--border);border-radius:9px"></div><div><label style="display:block;font-size:12px;margin-bottom:5px;color:var(--muted)">E-mail</label><input id="claimEmail" type="email" required style="width:100%;padding:11px;border:1px solid var(--border);border-radius:9px"></div><div><label style="display:block;font-size:12px;margin-bottom:5px;color:var(--muted)">Telefoon</label><input id="claimPhone" type="tel" style="width:100%;padding:11px;border:1px solid var(--border);border-radius:9px"></div><div style="grid-column:1/-1"><label style="display:block;font-size:12px;margin-bottom:5px;color:var(--muted)">Bericht</label><textarea id="claimMessage" rows="3" placeholder="Hoe kunnen we controleren dat je deze vermelding beheert?"></textarea></div><div style="grid-column:1/-1"><button class="button primary" type="submit">Claimaanvraag versturen</button><span id="claimResult" class="note" style="display:inline-block;margin-left:10px"></span></div></form></div></details>';
+  if(!isHijrahNetwerkListing){
+    html+='<details class="card" id="claim" style="margin-top:18px"><summary style="cursor:pointer;font-weight:700;color:var(--brown-dark)">Ben jij eigenaar of beheerder?</summary><div style="padding-top:12px"><h2 style="display:none">Ben jij eigenaar of beheerder?</h2><p class="card-sub">Je kunt bij HN aangeven dat je deze vermelding beheert. HN controleert de aanvraag eerst. Een claim betekent niet automatisch dat de gegevens worden aangepast of dat de vermelding wordt overgenomen.</p><form id="claimForm" class="form-grid" style="margin-top:14px"><div><label style="display:block;font-size:12px;margin-bottom:5px;color:var(--muted)">Naam</label><input id="claimName" required style="width:100%;padding:11px;border:1px solid var(--border);border-radius:9px"></div><div><label style="display:block;font-size:12px;margin-bottom:5px;color:var(--muted)">Rol</label><input id="claimRole" placeholder="Bijv. eigenaar, arts, medewerker" style="width:100%;padding:11px;border:1px solid var(--border);border-radius:9px"></div><div><label style="display:block;font-size:12px;margin-bottom:5px;color:var(--muted)">E-mail</label><input id="claimEmail" type="email" required style="width:100%;padding:11px;border:1px solid var(--border);border-radius:9px"></div><div><label style="display:block;font-size:12px;margin-bottom:5px;color:var(--muted)">Telefoon</label><input id="claimPhone" type="tel" style="width:100%;padding:11px;border:1px solid var(--border);border-radius:9px"></div><div style="grid-column:1/-1"><label style="display:block;font-size:12px;margin-bottom:5px;color:var(--muted)">Bericht</label><textarea id="claimMessage" rows="3" placeholder="Hoe kunnen we controleren dat je deze vermelding beheert?"></textarea></div><div style="grid-column:1/-1"><button class="button primary" type="submit">Claimaanvraag versturen</button><span id="claimResult" class="note" style="display:inline-block;margin-left:10px"></span></div></form></div></details>';
+  }
 
   if(isHierarchicalRoute){
     const crumbs=[];
