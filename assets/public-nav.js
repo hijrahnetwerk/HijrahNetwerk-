@@ -3,7 +3,7 @@
 'use strict';
 if(window.__hnPublicNavLoaded)return;window.__hnPublicNavLoaded=true;
 var fallback=[
-{label:'Landen & Steden',href:'/landen'},{label:'Verhalen',href:'/verhalen'},
+{label:'Landen & Steden',href:'/landen'},{label:'Ervaringen',href:'/verhalen'},
 {label:'Hijrah Navigatie',href:'/navigatie',special:true},{label:'HijrahTools',href:'/hijrahtools'},
 {label:'Community',href:'/community'},{label:'Over HN',href:'/#over-ons'}
 ];
