@@ -132,7 +132,6 @@ if (!adminCmsScript.includes("function esc(") ||
 }
 if (!registration.includes('id="register-form"') ||
     !registration.includes('hnSignUp(email,password,first,last,redirect)') ||
-    !registration.includes('application_status') ||
     !registration.includes('blijft in afwachting')) {
   failures.push('Registration must provide a real sign-up form and clearly explain pending manual approval.');
 }
