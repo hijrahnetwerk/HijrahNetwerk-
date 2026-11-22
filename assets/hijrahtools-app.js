@@ -288,7 +288,7 @@
     body += '<div class="hnt-experience-tools"><button type="button" class="hnt-primary" data-search-experiences>Zoek ervaringen</button><a class="hnt-link" href="/verhalen">Open alle HN-verhalen ↗</a></div>';
     body += '<div id="hnt-experience-results" class="hnt-experience-results"><p class="hnt-loading">Gepubliceerde HN-informatie laden…</p></div>';
     body += '<p class="hnt-note">Een persoonlijke ervaring is geen garantie dat de situatie voor jou hetzelfde is. Officiële regels controleer je altijd bij de bevoegde instantie.</p>';
-    return shell('9','Doorzoek gepubliceerde HN-informatie. De tool toont geen verzonnen verhalen en maakt zichtbaar wanneer informatie een persoonlijke ervaring is.',body,'Zoek ervaringen');
+    return shell('9','Doorzoek gepubliceerde HN-informatie. De tool toont geen verzonnen ervaringen en maakt zichtbaar wanneer informatie een persoonlijke ervaring is.',body,'Zoek ervaringen');
   }
   function renderDashboard() {
     var stepDone = stepItems.filter(function(s){return !!state.steps.checked[s[0]];}).length;
@@ -591,11 +591,11 @@
       return true;
     });
     if(!experienceRows.length) {
-      el.innerHTML='<p class="hnt-empty">Er zijn momenteel geen gepubliceerde fiches beschikbaar via deze koppeling. Je kunt ook de HN-verhalenpagina bekijken of later opnieuw zoeken.</p>';
+      el.innerHTML='<p class="hnt-empty">Er zijn momenteel geen gepubliceerde fiches beschikbaar via deze koppeling. Je kunt ook de HN-ervaringenpagina bekijken of later opnieuw zoeken.</p>';
       return;
     }
     if(!filtered.length){
-      var emptyText=kind==='ervaring'?'Er zijn nog geen gepubliceerde HN-ervaringen die bij dit filter passen. De tool toont geen fictieve verhalen; bekijk de HN-verhalenpagina of kom later terug.':'Geen resultaten met deze filters. Probeer een andere zoekterm.';
+      var emptyText=kind==='ervaring'?'Er zijn nog geen gepubliceerde HN-ervaringen die bij dit filter passen. De tool toont geen fictieve verhalen; bekijk de HN-ervaringenpagina of kom later terug.':'Geen resultaten met deze filters. Probeer een andere zoekterm.';
       el.innerHTML='<p class="hnt-empty">'+esc(emptyText)+' <a class="hnt-link" href="/verhalen">Bekijk HN-verhalen ↗</a></p>';return;
     }
     el.innerHTML=filtered.slice(0,40).map(function(row){
