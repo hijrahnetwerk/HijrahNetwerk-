@@ -3,28 +3,105 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Account aanmaken | Hijrah Netwerk</title>
+<meta name="robots" content="noindex,nofollow">
+<title>Account aanvragen | Hijrah Netwerk</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Raleway:wght@300;400;500;600;700&family=Amiri:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/assets/hn-tokens.css?v=3">
-<link rel="stylesheet" href="auth-style.css">
-
+<link rel="stylesheet" href="/auth-style.css">
 <link rel="stylesheet" href="/assets/hn-sitewide.css?v=3">
-<script src="/assets/hn-footer.js?v=1" defer></script>
-<script src="/assets/hn-motion.js?v=3" defer></script>
+<style>
+.auth-page{width:100%;max-width:500px;margin:0 auto}
+.back-link{display:inline-block;margin:0 0 18px;color:#684a25;font-size:14px}
+.auth-card{display:block;width:100%;max-width:500px;margin:0 auto;background:#fff;border:1px solid #ece5da;border-radius:22px;padding:clamp(22px,5vw,36px);box-shadow:0 8px 24px rgba(104,74,37,.08)}
+.hn-stripe{height:3px;margin:-36px -36px 26px;background:linear-gradient(90deg,#684a25,#df842c,#c9a227,#F0D060,#c9a227,#df842c,#684a25)}
+.brand{display:flex;align-items:center;gap:10px;margin-bottom:22px;font-weight:700;color:#684a25}
+.brand-mark{display:grid;place-items:center;width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,#684a25,#df842c);color:#fff;font-weight:800}
+h1{margin:0 0 8px;font-family:'DM Sans',sans-serif;font-size:clamp(23px,5vw,28px);color:#684a25}
+.lead{margin:0 0 22px;color:#5c5346;font-size:14.5px;line-height:1.6}
+.field{margin-bottom:15px}.field label{display:block;margin-bottom:7px;font-size:13px;font-weight:700;color:#684a25}
+.field input{display:block;width:100%;min-height:46px;padding:12px 14px;border:1px solid #d8cec0;border-radius:10px;background:#fff;color:#2f2419;font:inherit}
+.field input:focus{outline:2px solid rgba(221,132,42,.3);border-color:#df842c}
+.btn{display:flex;justify-content:center;align-items:center;width:100%;min-height:46px;border:0;border-radius:999px;background:#df842c;color:#fff;font:700 15px 'DM Sans',sans-serif;cursor:pointer}
+.btn:disabled{opacity:.65;cursor:wait}
+.msg{display:none;margin:14px 0 0;padding:11px 13px;border-radius:10px;font-size:13px;line-height:1.5;overflow-wrap:anywhere}
+.msg.error,.msg.success{display:block}.msg.error{background:#fbebe9;color:#8e2f28}.msg.success{background:#e9f5ee;color:#276749}
+.auth-links{display:flex;flex-direction:column;gap:12px;margin-top:20px;text-align:center;font-size:13.5px;color:#5c5346}
+.auth-links a{color:#9b5721;font-weight:700}
+.auth-note{margin:18px 0 0;padding:13px 14px;border-radius:12px;background:#fbf7f0;color:#684a25;font-size:13px;line-height:1.55}
+@media(max-width:380px){body{padding:14px}.auth-card{padding:20px}.hn-stripe{margin:-20px -20px 22px}}
+</style>
 </head>
 <body>
-<div class="hn-stripe" style="height:3px;background:linear-gradient(90deg,#684a25,#df842c,#c9a227,#F0D060,#c9a227,#df842c,#684a25);background-size:300% 100%;animation:hn-stripe 5s linear infinite"></div>
-<div class="auth-page">
+<main class="auth-page">
 <a href="/" class="back-link">← Terug naar de website</a>
-<div class="auth-card">
-<div class="auth-logo"><strong>HN</strong><span>Hijrah Netwerk</span></div>
-<h1>De community gaat stap voor stap open</h1>
-<p class="auth-intro">Een persoonlijk HN-account wordt pas geopend wanneer de community voor nieuwe leden beschikbaar is.</p>
-<p class="auth-intro"><a href="/#inschrijven" style="font-weight:700;color:#684a25">Laat je e-mailadres achter voor de lancering.</a></p>
-<p class="auth-switch">Heb je al toegang? <a href="/login">Inloggen</a></p>
-</div>
-</div>
+<section class="auth-card" aria-labelledby="register-title">
+<div class="hn-stripe" aria-hidden="true"></div>
+<div class="brand"><span class="brand-mark" aria-hidden="true">HN</span><span>Hijrah Netwerk</span></div>
+<h1 id="register-title">Account aanvragen</h1>
+<p class="lead">Maak een persoonlijk HN-account aan. Na je registratie controleren we je aanvraag. Toegang tot de besloten ledenomgeving wordt pas na goedkeuring geactiveerd.</p>
+<div id="register-message" class="msg" role="status" aria-live="polite"></div>
+<form id="register-form">
+<div class="field"><label for="first-name">Voornaam</label><input id="first-name" name="first_name" autocomplete="given-name" maxlength="80" required></div>
+<div class="field"><label for="last-name">Achternaam</label><input id="last-name" name="last_name" autocomplete="family-name" maxlength="100" required></div>
+<div class="field"><label for="email">E-mailadres</label><input id="email" name="email" type="email" autocomplete="email" maxlength="254" required></div>
+<div class="field"><label for="password">Wachtwoord</label><input id="password" name="password" type="password" autocomplete="new-password" minlength="8" required><small style="display:block;margin-top:6px;color:#756d63">Minstens 8 tekens.</small></div>
+<div class="field"><label for="password-confirm">Herhaal wachtwoord</label><input id="password-confirm" name="password_confirm" type="password" autocomplete="new-password" minlength="8" required></div>
+<button type="submit" class="btn" id="register-submit">Account aanvragen</button>
+</form>
+<p class="auth-note">Na het aanmaken ontvang je mogelijk eerst een e-mail om je adres te bevestigen. Daarna blijft je aanvraag in afwachting tot HN deze heeft beoordeeld. Een registratie geeft dus niet automatisch toegang tot besloten inhoud.</p>
+<nav class="auth-links" aria-label="Account hulp"><span>Heb je al een account? <a id="login-link" href="/login">Inloggen</a></span></nav>
+</section>
+</main>
+<script src="/assets/vendor/supabase-js-2.117.3.umd.js"></script>
+<script src="/config.js"></script>
+<script src="/supabase-client.js"></script>
+<script src="/auth.js"></script>
+<script>
+(function(){
+'use strict';
+var form=document.getElementById('register-form');
+var message=document.getElementById('register-message');
+var submit=document.getElementById('register-submit');
+var loginLink=document.getElementById('login-link');
+function safeNextPath(){
+ var value=new URLSearchParams(window.location.search).get('next')||'/dashboard';
+ if(!value.startsWith('/')||value.startsWith('//')||value.startsWith('/\\\\'))return '/dashboard';
+ if(value==='/register'||value.startsWith('/register?')||value==='/login')return '/dashboard';
+ return value;
+}
+var next=safeNextPath();
+loginLink.href='/login?next='+encodeURIComponent(next);
+function setMessage(text,kind){message.textContent=text;message.className='msg'+(kind?' '+kind:'');}
+if(!window.hijrahSupabase||typeof hnSignUp!=='function'){
+ submit.disabled=true;
+ setMessage('De registratiedienst kon niet worden geladen. Vernieuw de pagina. Blijft dit probleem bestaan, meld het dan aan de beheerder.','error');
+ return;
+}
+form.addEventListener('submit',async function(event){
+ event.preventDefault();
+ var first=document.getElementById('first-name').value.trim();
+ var last=document.getElementById('last-name').value.trim();
+ var email=document.getElementById('email').value.trim();
+ var password=document.getElementById('password').value;
+ var confirm=document.getElementById('password-confirm').value;
+ if(password.length<8){setMessage('Kies een wachtwoord van minstens 8 tekens.','error');return;}
+ if(password!==confirm){setMessage('De twee wachtwoorden komen niet overeen.','error');document.getElementById('password-confirm').focus();return;}
+ submit.disabled=true;setMessage('Je accountaanvraag wordt verwerkt.','');
+ try{
+  var redirect=window.location.origin+'/login?next='+encodeURIComponent(next);
+  var result=await hnSignUp(email,password,first,last,redirect);
+  if(result.error){setMessage(typeof hnFriendlyError==='function'?hnFriendlyError(result.error):result.error.message||'Registreren is niet gelukt. Probeer het opnieuw.','error');return;}
+  if(result.data&&result.data.session){await window.hijrahSupabase.auth.signOut();}
+  form.reset();
+  setMessage('Je accountaanvraag is ontvangen. Controleer je e-mail als je een bevestigingsbericht hebt gekregen. Je aanvraag blijft in afwachting tot HN deze heeft beoordeeld. Je kunt pas inloggen nadat je aanvraag is goedgekeurd.','success');
+ }catch(error){
+  console.error('[HN registratie] Aanmaken account mislukt',error);
+  setMessage('Er ging iets mis bij het aanmaken van je account. Probeer het later opnieuw.','error');
+ }finally{submit.disabled=false;}
+});
+})();
+</script>
 </body>
 </html>
