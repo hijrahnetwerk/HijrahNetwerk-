@@ -274,6 +274,10 @@
       "destination": "/kennisbank.html?slug=:slug"
     },
     {
+      "source": "/locaties/:category/:slug",
+      "destination": "/api/og?category_slug=:category&slug=:slug"
+    },
+    {
       "source": "/locaties/:city/:area/:category/:slug",
       "destination": "/api/og?city_slug=:city&area_slug=:area&category_slug=:category&slug=:slug"
     },
