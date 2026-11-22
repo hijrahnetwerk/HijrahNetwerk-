@@ -53,7 +53,7 @@
             <li><a href="/navigatie">Hijrah Navigatie</a></li>
             <li><a href="/vergelijken">Landen- en stedenvergelijker</a></li>
             <li><a href="/smart-search">Smart Search</a></li>
-            <li><a href="/verhalen">Verhalen &amp; interviews</a></li>
+            <li><a href="/verhalen">Ervaringen &amp; interviews</a></li>
             <li><a href="/hijrahtools">Bekijk alle HijrahTools</a></li>
           </ul></nav>
           <nav class="hn-footer-col" aria-label="Mijn Hijrah Planner"><h3>Mijn Hijrah Planner</h3><ul>
@@ -65,7 +65,7 @@
           <nav class="hn-footer-col" aria-label="Community"><h3>Community</h3><ul>
             <li><a href="/community">Over de community</a></li>
             <li><a href="/bijdragen">Bijdragen</a></li>
-            <li><a href="/verhalen">Verhalen &amp; interviews</a></li>
+            <li><a href="/verhalen">Ervaringen &amp; interviews</a></li>
             <li><a href="/register">Account aanvragen</a></li>
           </ul></nav>
           <nav class="hn-footer-col" aria-label="Hulp en informatie"><h3>Hulp &amp; informatie</h3><ul>
