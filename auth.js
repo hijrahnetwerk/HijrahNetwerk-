@@ -3,13 +3,21 @@
  * Alle functies gebruiken de officiële supabase-js client (window.hijrahSupabase).
  */
 
-async function hnSignUp() {
-  return {
-    data: null,
-    error: {
-      message: 'Nieuwe accounts zijn tijdelijk gesloten. Meld je aan voor de lancering via de HN-wachtlijst.'
+async function hnSignUp(email, password, firstName, lastName, emailRedirectTo) {
+  if (!window.hijrahSupabase || !window.hijrahSupabase.auth) {
+    return { data: null, error: { message: 'De registratiedienst is niet beschikbaar. Vernieuw de pagina en probeer opnieuw.' } };
+  }
+  return await window.hijrahSupabase.auth.signUp({
+    email: String(email || '').trim().toLowerCase(),
+    password: String(password || ''),
+    options: {
+      emailRedirectTo: emailRedirectTo || (window.location.origin + '/login'),
+      data: {
+        first_name: String(firstName || '').trim(),
+        last_name: String(lastName || '').trim()
+      }
     }
-  };
+  });
 }
 
 async function hnSignIn(email, password) {
