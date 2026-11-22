@@ -3,14 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title id="pageTitle">Verhaal — Hijrah Netwerk</title>
-<meta name="description" id="pageMeta" content="Lees dit verhaal op Hijrah Netwerk.">
+<title id="pageTitle">Ervaring — Hijrah Netwerk</title>
+<meta name="description" id="pageMeta" content="Lees deze ervaring op Hijrah Netwerk.">
 <meta name="robots" id="pageRobots" content="noindex,nofollow">
 <link rel="canonical" id="pageCanonical" href="https://hijrah-netwerk.vercel.app/verhalen/">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="Hijrah Netwerk">
-<meta property="og:title" id="pageOgTitle" content="Verhaal — Hijrah Netwerk">
-<meta property="og:description" id="pageOgDescription" content="Lees dit verhaal op Hijrah Netwerk.">
+<meta property="og:title" id="pageOgTitle" content="Ervaring — Hijrah Netwerk">
+<meta property="og:description" id="pageOgDescription" content="Lees deze ervaring op Hijrah Netwerk.">
 <meta property="og:url" id="pageOgUrl" content="https://hijrah-netwerk.vercel.app/verhalen/">
 <meta property="og:image" id="pageOgImage" content="">
 <link rel="icon" href="/favicon.ico" sizes="any">
@@ -441,7 +441,7 @@ function renderArticle(b,related){
   const introMatch=rawIntro.match(/^(.+?\?)\s*(.*)$/s);
   const subtitle=introMatch?introMatch[1].trim():'';
   const introDisplay=(introMatch?introMatch[2]:rawIntro).trim();
-  const description=String([subtitle,introDisplay].filter(Boolean).join(' ')||b.title||'Lees dit verhaal op Hijrah Netwerk.').replace(/\s+/g,' ').trim().slice(0,300);
+  const description=String([subtitle,introDisplay].filter(Boolean).join(' ')||b.title||'Lees deze ervaring op Hijrah Netwerk.').replace(/\s+/g,' ').trim().slice(0,300);
   setPageMeta('pageMeta','content',description);
   setPageMeta('pageOgTitle','content',`${b.title} — Hijrah Netwerk`);
   setPageMeta('pageOgDescription','content',description);
@@ -470,7 +470,7 @@ function renderArticle(b,related){
         ${introDisplay?'<p class="art-hero-intro">'+esc(introDisplay)+'</p>':''}
       </div>
       <div class="art-breadcrumb-wrap">
-        <nav class="art-breadcrumb" aria-label="Broodkruimel"><a href="/verhalen">← Terug naar verhalen</a><span aria-hidden="true">/</span><span aria-current="page">${esc(typeLabel(b.type))}</span></nav>
+        <nav class="art-breadcrumb" aria-label="Broodkruimel"><a href="/verhalen">← Terug naar ervaringen</a><span aria-hidden="true">/</span><span aria-current="page">${esc(typeLabel(b.type))}</span></nav>
       </div>
     </div>
   </section>
@@ -488,7 +488,7 @@ function renderArticle(b,related){
 
         <!-- ASIDE -->
         <aside class="art-aside reveal">
-          <h4>Over dit verhaal</h4>
+          <h4>Over deze ervaring</h4>
           ${date?`<div class="aside-stat"><span class="aside-icon">▦</span><div><div class="aside-label">${esc(date)}</div><div class="aside-val">Gepubliceerd</div></div></div>`:'' }
           ${verifiedDate?`<div class="aside-stat"><span class="aside-icon">✓</span><div><div class="aside-label">${esc(verifiedDate)}</div><div class="aside-val">Laatst gecontroleerd</div></div></div>`:'' }
           <div class="aside-stat">
@@ -502,7 +502,7 @@ function renderArticle(b,related){
           </div>
           ${tags.length?`<div class="aside-stat"><span class="aside-icon">🏷</span><div><div class="aside-label">${tags.map(t=>esc(t)).join(', ')}</div><div class="aside-val">Tags</div></div></div>`:''}
 
-          ${b.access_level==='public'?'<div class="share-btns"><h4 style="margin-top:4px">Deel dit verhaal</h4><a class="share-btn" href="https://wa.me/?text='+encodeURIComponent(b.title+' — '+location.href)+'" target="_blank" rel="noopener noreferrer">💬 Deel via WhatsApp</a></div>':'<p class="member-only-note" style="margin-top:18px;padding:12px 14px;border-radius:12px;background:#f8f0df;border:1px solid rgba(198,161,91,.4);font-size:12px;line-height:1.55">Besloten ledenverhaal. Deel de inhoud niet buiten Hijrah Netwerk.</p>'}
+          ${b.access_level==='public'?'<div class="share-btns"><h4 style="margin-top:4px">Deel deze ervaring</h4><a class="share-btn" href="https://wa.me/?text='+encodeURIComponent(b.title+' — '+location.href)+'" target="_blank" rel="noopener noreferrer">💬 Deel via WhatsApp</a></div>':'<p class="member-only-note" style="margin-top:18px;padding:12px 14px;border-radius:12px;background:#f8f0df;border:1px solid rgba(198,161,91,.4);font-size:12px;line-height:1.55">Besloten ledenverhaal. Deel de inhoud niet buiten Hijrah Netwerk.</p>'}
         </aside>
       </div>
     </div>
@@ -514,7 +514,7 @@ function renderArticle(b,related){
   ${related&&related.length?`
   <section class="related">
     <div class="wrap-wide">
-      <h2 class="reveal">Meer verhalen & interviews</h2>
+      <h2 class="reveal">Meer ervaringen & interviews</h2>
       <div class="rel-grid">
         ${related.map(r=>`
         <a class="rel-card reveal" href="/verhalen/${esc(r.slug)}">
@@ -529,9 +529,9 @@ function renderArticle(b,related){
   <!-- CTA -->
   <section style="padding:64px 0;background:linear-gradient(135deg,var(--br),#5a3820,var(--br));color:#fff;text-align:center">
     <div class="wrap">
-      <h2 style="font-size:clamp(22px,4vw,36px);letter-spacing:-.04em;margin-bottom:12px;color:#fff">Heb jij ook een hijrahverhaal te delen?</h2>
-      <p style="color:rgba(255,255,255,.82);margin-bottom:28px;max-width:520px;margin-inline:auto">Vertel over jouw ervaringen met emigreren, aankomen en je plek vinden. Met jouw verhaal help je andere zusters zich beter voor te bereiden.</p>
-      <a class="btn btn-primary" href="/bijdragen?type=experience">✍ Stuur jouw verhaal in</a>
+      <h2 style="font-size:clamp(22px,4vw,36px);letter-spacing:-.04em;margin-bottom:12px;color:#fff">Heb jij ook een ervaring te delen?</h2>
+      <p style="color:rgba(255,255,255,.82);margin-bottom:28px;max-width:520px;margin-inline:auto">Vertel over jouw ervaringen met emigreren, aankomen en je plek vinden. Met jouw ervaring help je andere zusters zich beter voor te bereiden.</p>
+      <a class="btn btn-primary" href="/bijdragen?type=experience">✍ Deel jouw ervaring</a>
     </div>
   </section>
   `;
@@ -623,7 +623,7 @@ async function init(){
     return;
   }
 
-  renderError('Dit verhaal bestaat niet of is niet gepubliceerd.');
+  renderError('Deze ervaring bestaat niet of is niet gepubliceerd.');
   if(isAdmin)addAdminViewToolbar(adminView||'admin',teaser?.id);
 }
 
@@ -632,9 +632,9 @@ function renderError(msg){
   document.getElementById('articleRoot').innerHTML=`
   <div class="loading-state wrap" style="min-height:60vh">
     
-    <h2 style="font-size:24px">Verhaal niet gevonden</h2>
-    <p style="color:var(--muted)">${esc(msg||'Dit verhaal bestaat niet of is niet gepubliceerd.')}</p>
-    <a class="btn btn-primary" href="/verhalen">← Terug naar verhalen</a>
+    <h2 style="font-size:24px">Ervaring niet gevonden</h2>
+    <p style="color:var(--muted)">${esc(msg||'Deze ervaring bestaat niet of is niet gepubliceerd.')}</p>
+    <a class="btn btn-primary" href="/verhalen">← Terug naar ervaringen</a>
   </div>`;
 }
 
@@ -655,7 +655,7 @@ function addAdminViewToolbar(activeView,articleId){
   options.forEach(([value,text])=>{const option=document.createElement('option');option.value=value;option.textContent=text;option.selected=value===activeView;select.appendChild(option)});
   select.addEventListener('change',()=>{const url=new URL(location.href);url.searchParams.set('hn_view',select.value);location.assign(url.pathname+url.search+url.hash)});
   const edit=document.createElement('a');edit.className='hn-dock-link primary';edit.href='/admin-blogs?edit='+encodeURIComponent(articleId||'');edit.textContent='✎ Bewerk deze pagina';
-  const list=document.createElement('a');list.className='hn-dock-link';list.href='/admin-blogs';list.textContent='Alle verhalen beheren';
+  const list=document.createElement('a');list.className='hn-dock-link';list.href='/admin-blogs';list.textContent='Alle ervaringen beheren';
   const hint=document.createElement('div');hint.className='hn-dock-hint';hint.textContent='De voorbeeldweergave verandert niets aan de echte toegangsinstelling. Die pas je aan via de editor.';
   panel.append(heading,label,select,edit,list,hint);
   const trigger=document.createElement('button');trigger.type='button';trigger.className='hn-dock-trigger';trigger.textContent='⚙ Beheer';
@@ -667,10 +667,10 @@ function addAdminViewToolbar(activeView,articleId){
 
 function renderMemberTeaser(teaser){
   const canonicalUrl=location.origin+'/verhalen/'+encodeURIComponent(teaser.slug||getSlug());
-  const pageTitle=String(teaser.title||'Verhaal voor leden');
+  const pageTitle=String(teaser.title||'Ervaring voor leden');
   const previewMode=teaser.member_preview_mode==='teaser'?'teaser':'title';
   const publicTeaser=previewMode==='teaser'?String(teaser.member_preview_text||'').trim():'';
-  const description=pageTitle+' is een besloten verhaal op Hijrah Netwerk.'+(publicTeaser?' '+publicTeaser:' Word lid om het volledige verhaal te lezen.');
+  const description=pageTitle+' is een besloten ervaring op Hijrah Netwerk.'+(publicTeaser?' '+publicTeaser:' Word lid om het volledige verhaal te lezen.');
   document.getElementById('pageTitle').textContent=pageTitle+' — Hijrah Netwerk';
   setPageMeta('pageMeta','content',description.slice(0,200));
   setPageMeta('pageRobots','content','index,follow');
@@ -683,8 +683,8 @@ function renderMemberTeaser(teaser){
     <section class="art-hero">
       <div class="art-hero-overlay"></div>
       <div class="wrap"><div class="art-hero-inner">
-        <a class="back-link" href="/verhalen">← Terug naar verhalen</a>
-        <div class="art-type">Besloten HN-verhaal</div>
+        <a class="back-link" href="/verhalen">← Terug naar ervaringen</a>
+        <div class="art-type">Besloten HN-ervaring</div>
         <h1>${esc(pageTitle)}</h1>
         <div class="art-meta-row"><span>Alleen voor goedgekeurde HN-leden</span></div>
       </div></div>
@@ -692,7 +692,7 @@ function renderMemberTeaser(teaser){
     <div class="gold-divider"></div>
     <section class="art-content"><div class="wrap-wide"><div class="member-gate">
       <div class="member-gate-copy">
-        <p class="member-gate-eyebrow">Dit verhaal is onderdeel van de HN-community</p>
+        <p class="member-gate-eyebrow">Deze ervaring is onderdeel van de HN-community</p>
         ${previewMode==='teaser'&&publicTeaser?'<p class="member-public-teaser">'+esc(publicTeaser)+'</p>':''}
         <h2>Lees het volledige verhaal als HN-lid</h2>
         <p>${previewMode==='teaser'?'Hierboven zie je de openbare samenvatting. Het volledige verhaal blijft alleen beschikbaar voor goedgekeurde leden.':'Dit verhaal is besloten. Word lid om de volledige inhoud te lezen.'}</p>
@@ -707,7 +707,7 @@ function renderMemberTeaser(teaser){
 
 init().catch(function(error){
   console.error('[HN artikel] Onverwachte fout bij het laden:',error);
-  renderError('Het verhaal kon niet volledig worden geladen. Controleer je internetverbinding en probeer het opnieuw.');
+  renderError('De ervaring kon niet volledig worden geladen. Controleer je internetverbinding en probeer het opnieuw.');
 });
 })();
 </script>
