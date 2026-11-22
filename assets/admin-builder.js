@@ -561,12 +561,12 @@ async function saveExisting(){
   if(el)el.removeAttribute("contenteditable");
   if(selectedExisting.tag==="img"){
     var imageUrl=safeEditorUrl($("existingImageSrc").value);
-    if(imageUrl===null){note("Gebruik voor afbeeldingen alleen een https-adres of een lokaal pad dat met / begint.",true);return;}
+    if(imageUrl===null){note("Gebruik voor afbeeldingen alleen een https-adres of een lokaal pad dat met / begint.",true);return false;}
     attrs.src=imageUrl;attrs.alt=$("existingAlt").value.trim();
   }
   if(selectedExisting.tag==="a"){
     var linkUrl=safeEditorUrl($("existingHref").value);
-    if(linkUrl===null){note("Gebruik voor links alleen https, http, mailto, tel of een lokaal pad.",true);return;}
+    if(linkUrl===null){note("Gebruik voor links alleen https, http, mailto, tel of een lokaal pad.",true);return false;}
     attrs.href=linkUrl;
   }
   [["backgroundColor","existingBg"],["padding","existingPadding"],["margin","existingMargin"],["maxWidth","existingWidth"],["borderRadius","existingRadius"]].forEach(function(pair){var v=$(pair[1]).value.trim();if(v)css[pair[0]]=v;});
@@ -576,10 +576,11 @@ async function saveExisting(){
   Object.keys(attrs).forEach(function(k){if(el)el.setAttribute(k,attrs[k]);});
   Object.keys(css).forEach(function(k){if(el)el.style[k]=css[k];});
   note("Wijzigingen klaargezet. Kies ‘Concept opslaan’ of ‘Publiceren’ om ze te bewaren.");
+  return true;
 }
 
 async function save(pub){
-  if(selectedExisting){await saveExisting();selectedExisting=null;selected=-1;}
+  if(selectedExisting){var staged=await saveExisting();if(staged===false)return;selectedExisting=null;selected=-1;}
   if(!page)return;
   page.title=$("title").value.trim();
   page.slug=cleanSlug($("slug").value);
@@ -637,17 +638,20 @@ async function persistOverrides(u){
   if(existingRows.error)return existingRows;
   // Eén selector mag per route maar één keer in een upsert-payload voorkomen.
   // Bij dubbele selectors wint de laatste bewerkte waarde.
-  var uniqueBySelector={};
+  // Map + afzonderlijke upserts voorkomen dubbele conflict-keys in één SQL-commando.
+  // Bij herhaalde selectors blijft de laatst bewerkte inhoud behouden.
+  var uniqueBySelector=new Map();
   for(var i=0;i<overrides.length;i++){
     var o=overrides[i];
-    if(!o||!o.selector)continue;
-    uniqueBySelector[o.selector]={route:routeKey(),selector:o.selector,element_type:o.element_type||null,original_text:o.original_text||null,content_text:o.content_text||"",updated_by:u};
+    if(!o||typeof o.selector!=="string"||!o.selector.trim())continue;
+    var selectorValue=o.selector.trim();
+    uniqueBySelector.set(selectorValue,{route:routeKey(),selector:selectorValue,element_type:o.element_type||null,original_text:o.original_text||null,content_text:o.content_text||"",updated_by:u});
   }
-  var rows=Object.keys(uniqueBySelector).map(function(selector){return uniqueBySelector[selector];});
+  var rows=Array.from(uniqueBySelector.values());
   var keep={};
-  rows.forEach(function(row){keep[row.selector]=true;});
-  if(rows.length){
-    var q=await db.from("hn_content_overrides").upsert(rows,{onConflict:"route,selector"});
+  for(var j=0;j<rows.length;j++){
+    var row=rows[j];keep[row.selector]=true;
+    var q=await db.from("hn_content_overrides").upsert(row,{onConflict:"route,selector"});
     if(q.error)return q;
   }
   for(var j=0;j<(existingRows.data||[]).length;j++)if(!keep[existingRows.data[j].selector]){
@@ -660,10 +664,16 @@ async function persistOverrides(u){
 async function persistLayouts(u){
   var existingRows=await db.from("hn_page_layout_overrides").select("id,selector").eq("route",routeKey());
   if(existingRows.error)return existingRows;
-  var keep={};
+  var uniqueBySelector=new Map();
   for(var i=0;i<layouts.length;i++){
-    var o=layouts[i];keep[o.selector]=true;
-    var q=await db.from("hn_page_layout_overrides").upsert({route:routeKey(),selector:o.selector,sort_order:i,is_visible:o.is_visible!==false,settings:o.settings||{},updated_by:u},{onConflict:"route,selector"});
+    var o=layouts[i];
+    if(!o||typeof o.selector!=="string"||!o.selector.trim())continue;
+    uniqueBySelector.set(o.selector.trim(),o);
+  }
+  var rows=Array.from(uniqueBySelector.values()),keep={};
+  for(var j=0;j<rows.length;j++){
+    var o=rows[j],selectorValue=o.selector.trim();keep[selectorValue]=true;
+    var q=await db.from("hn_page_layout_overrides").upsert({route:routeKey(),selector:selectorValue,sort_order:j,is_visible:o.is_visible!==false,settings:o.settings||{},updated_by:u},{onConflict:"route,selector"});
     if(q.error)return q;
   }
   for(var j=0;j<(existingRows.data||[]).length;j++)if(!keep[existingRows.data[j].selector]){
