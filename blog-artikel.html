@@ -545,10 +545,26 @@ async function init(){
   const sessionResult=await db.auth.getSession();
   const user=sessionResult.data&&sessionResult.data.session&&sessionResult.data.session.user;
   let approved=false;
+  let isAdmin=false;
   if(user){
     const profileResult=await db.from('profiles').select('role,application_status').eq('id',user.id).maybeSingle();
     const profile=profileResult.data||{};
-    approved=profile.role==='admin'||profile.application_status==='approved';
+    isAdmin=profile.role==='admin';
+    approved=isAdmin||profile.application_status==='approved';
+  }
+
+  const requestedView=new URLSearchParams(location.search).get('hn_view');
+  const adminView=isAdmin?(['admin','public','members'].includes(requestedView)?requestedView:'admin'):null;
+
+  // Beheerders kunnen het volledige gepubliceerde artikel openen. De database-RLS blijft de echte toegangsgrens.
+  if(isAdmin&&adminView!=='public'){
+    const adminResult=await db.from('blogs').select('*,countries(name)').eq('slug',slug).eq('published',true).maybeSingle();
+    if(adminResult.data){
+      const {data:rel}=await db.from('blogs').select('id,title,slug,intro,type').eq('published',true).eq('access_level','public').neq('id',adminResult.data.id).limit(3).order('published_at',{ascending:false});
+      renderArticle(adminResult.data,rel||[]);
+      addAdminViewToolbar(adminView);
+      return;
+    }
   }
 
   // Eerst proberen als openbaar artikel te laden. De database-RLS blijft de echte toegangsgrens.
@@ -556,22 +572,26 @@ async function init(){
   if(publicResult.data){
     const {data:rel}=await db.from('blogs').select('id,title,slug,intro,type').eq('published',true).eq('access_level','public').neq('id',publicResult.data.id).limit(3).order('published_at',{ascending:false});
     renderArticle(publicResult.data,rel||[]);
+    if(isAdmin)addAdminViewToolbar('public');
     return;
   }
 
   if(teaser){
-    if(!approved){
+    if(!approved||adminView==='public'){
       renderMemberTeaser(teaser);
+      if(isAdmin)addAdminViewToolbar('public');
       return;
     }
     const memberResult=await db.from('blogs').select('*,countries(name)').eq('id',teaser.id).eq('published',true).maybeSingle();
-    if(memberResult.error||!memberResult.data){renderError('Je account heeft geen toegang tot de volledige inhoud. Controleer of je HN-lidmaatschap is goedgekeurd.');return}
+    if(memberResult.error||!memberResult.data){renderError('Je account heeft geen toegang tot de volledige inhoud. Controleer of je HN-lidmaatschap is goedgekeurd.');if(isAdmin)addAdminViewToolbar(adminView);return}
     const {data:rel}=await db.from('blogs').select('id,title,slug,intro,type').eq('published',true).eq('access_level','public').neq('id',memberResult.data.id).limit(3).order('published_at',{ascending:false});
     renderArticle(memberResult.data,rel||[]);
+    if(isAdmin)addAdminViewToolbar(adminView);
     return;
   }
 
   renderError('Dit verhaal bestaat niet of is niet gepubliceerd.');
+  if(isAdmin)addAdminViewToolbar(adminView||'admin');
 }
 
 /* Foutpagina */
@@ -583,6 +603,30 @@ function renderError(msg){
     <p style="color:var(--muted)">${esc(msg||'Dit verhaal bestaat niet of is niet gepubliceerd.')}</p>
     <a class="btn btn-primary" href="/verhalen">← Terug naar verhalen</a>
   </div>`;
+}
+
+function addAdminViewToolbar(activeView){
+  const root=document.getElementById('articleRoot');
+  if(!root||document.getElementById('hnAdminViewToolbar'))return;
+  const options=[['admin','Beheer'],['public','Openbare weergave'],['members','Ledenweergave']];
+  const bar=document.createElement('div');
+  bar.id='hnAdminViewToolbar';
+  bar.setAttribute('role','region');
+  bar.setAttribute('aria-label','Voorbeeldweergave voor beheerder');
+  bar.style.cssText='position:sticky;top:0;z-index:2500;display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 16px;background:#fff;border:1px solid rgba(104,74,37,.2);box-shadow:0 5px 18px rgba(50,30,10,.12);font:13px system-ui,sans-serif;color:#684a25';
+  const label=document.createElement('strong');
+  label.textContent='Beheer · Bekijk als:';
+  const select=document.createElement('select');
+  select.setAttribute('aria-label','Kies weergave');
+  select.style.cssText='padding:8px 12px;border:1px solid #c9a227;border-radius:9px;background:#fff;color:#684a25;font:inherit';
+  options.forEach(([value,text])=>{const option=document.createElement('option');option.value=value;option.textContent=text;option.selected=value===activeView;select.appendChild(option)});
+  select.addEventListener('change',()=>{const url=new URL(location.href);url.searchParams.set('hn_view',select.value);location.assign(url.pathname+url.search+url.hash)});
+  const back=document.createElement('a');
+  back.href='/admin-blogs';
+  back.textContent='Terug naar artikelbeheer ↗';
+  back.style.cssText='margin-left:auto;color:#684a25;text-decoration:underline;text-underline-offset:3px';
+  bar.append(label,select,back);
+  root.prepend(bar);
 }
 
 function renderMemberTeaser(teaser){
