@@ -620,7 +620,7 @@ async function init(){
     if(memberResult.error||!memberResult.data){renderError('Je account heeft geen toegang tot de volledige inhoud. Controleer of je HN-lidmaatschap is goedgekeurd.');return}
     const {data:rel}=await db.from('blogs').select('id,title,slug,intro,type').eq('published',true).eq('access_level','public').neq('id',memberResult.data.id).limit(3).order('published_at',{ascending:false});
     renderArticle(memberResult.data,rel||[]);
-    if(isAdmin)addAdminViewToolbar(adminView,adminResult.data.id);
+    if(isAdmin)addAdminViewToolbar(adminView,memberResult.data.id);
     return;
   }
 
