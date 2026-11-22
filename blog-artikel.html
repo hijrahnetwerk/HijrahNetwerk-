@@ -247,7 +247,6 @@ a{color:inherit;text-decoration:none}
     <p>Artikel laden…</p>
   </div>
 </div>
-
 <script>
 (function(){
 'use strict';
@@ -484,21 +483,21 @@ function renderArticle(b,related){
       <div class="art-layout">
         <!-- HOOFDTEKST -->
         <div>
-          ${date||verifiedDate?'<div class="article-check-meta">'+(date?'<span><strong>Gepubliceerd:</strong> '+esc(date)+'</span>':'')+(verifiedDate?'<span><strong>Laatst gecontroleerd:</strong> '+esc(verifiedDate)+'</span>':'')+'</div>':''}
-          <div class="art-body reveal">${renderArticleBlocks(b.content_blocks,b.content)}${renderArticleSources(b.sources,b.verification_status,null)}${verifiedDate?'<div class="article-check-footer"><strong>Laatst gecontroleerd:</strong> '+esc(verifiedDate)+'</div>':''}</div>
+          <div class="art-body reveal">${renderArticleBlocks(b.content_blocks,b.content)}${renderArticleSources(b.sources,b.verification_status,null)}</div>
         </div>
 
         <!-- ASIDE -->
         <aside class="art-aside reveal">
           <h4>Over dit verhaal</h4>
+          ${date?`<div class="aside-stat"><span class="aside-icon">▦</span><div><div class="aside-label">${esc(date)}</div><div class="aside-val">Gepubliceerd</div></div></div>`:'' }
+          ${verifiedDate?`<div class="aside-stat"><span class="aside-icon">✓</span><div><div class="aside-label">${esc(verifiedDate)}</div><div class="aside-val">Laatst gecontroleerd</div></div></div>`:'' }
           <div class="aside-stat">
             <span class="aside-icon">✈</span>
             <div><div class="aside-label">${typeLabel(b.type)}</div></div>
           </div>
           ${land?`<div class="aside-stat"><span class="aside-icon">📍</span><div><div class="aside-label">${esc(land)}</div><div class="aside-val">Bestemming</div></div></div>`:''}
           ${b.fase?`<div class="aside-stat"><div><div class="aside-label">${faseLabel(b.fase)}</div><div class="aside-val">Hijrahfase</div></div></div>`:''}
-          <div class="aside-stat">
-            <span class="aside-icon">⏱</span>
+          <div class="aside-stat">            <span class="aside-icon">⏱</span>
             <div><div class="aside-label">± ${rt} min</div><div class="aside-val">Leestijd van de artikelinhoud</div></div>
           </div>
           ${tags.length?`<div class="aside-stat"><span class="aside-icon">🏷</span><div><div class="aside-label">${tags.map(t=>esc(t)).join(', ')}</div><div class="aside-val">Tags</div></div></div>`:''}
@@ -530,9 +529,9 @@ function renderArticle(b,related){
   <!-- CTA -->
   <section style="padding:64px 0;background:linear-gradient(135deg,var(--br),#5a3820,var(--br));color:#fff;text-align:center">
     <div class="wrap">
-      <h2 style="font-size:clamp(22px,4vw,36px);letter-spacing:-.04em;margin-bottom:12px;color:#fff">Jouw verhaal telt ook.</h2>
-      <p style="color:rgba(255,255,255,.75);margin-bottom:28px;max-width:480px;margin-inline:auto">Heb je zelf de stap gezet? Deel jouw ervaring en help anderen die dezelfde weg bewandelen.</p>
-      <a class="btn btn-primary" href="/bijdragen?type=experience">✍ Deel jouw verhaal</a>
+      <h2 style="font-size:clamp(22px,4vw,36px);letter-spacing:-.04em;margin-bottom:12px;color:#fff">Heb jij ook een hijrahverhaal te delen?</h2>
+      <p style="color:rgba(255,255,255,.82);margin-bottom:28px;max-width:520px;margin-inline:auto">Vertel over jouw ervaringen met emigreren, aankomen en je plek vinden. Met jouw verhaal help je andere zusters zich beter voor te bereiden.</p>
+      <a class="btn btn-primary" href="/bijdragen?type=experience">✍ Stuur jouw verhaal in</a>
     </div>
   </section>
   `;
