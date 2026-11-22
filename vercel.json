@@ -2,6 +2,11 @@
   "buildCommand": "npm test && npm run build",
   "redirects": [
     {
+      "source": "/locaties/reizen-en-verhizen/hijrah-netwerk",
+      "destination": "/locaties/reizen-verhuizen/hijrah-netwerk",
+      "permanent": true
+    },
+    {
       "source": "/introductie.html",
       "destination": "/introductie",
       "permanent": true
