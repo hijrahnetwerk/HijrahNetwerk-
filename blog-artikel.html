@@ -590,7 +590,7 @@ async function init(){
       if(adminResult.data){
         const {data:rel}=await db.from('blogs').select('id,title,slug,intro,type').eq('published',true).eq('access_level','public').neq('id',adminResult.data.id).limit(3).order('published_at',{ascending:false});
         renderArticle(adminResult.data,rel||[]);
-        addAdminViewToolbar(adminView);
+        addAdminViewToolbar(adminView,adminResult.data.id);
         return;
       }
     }catch(error){console.warn('[HN artikel] Beheerquery gaf een fout:',error)}
@@ -606,26 +606,26 @@ async function init(){
   if(publicResult&&publicResult.data){
     const {data:rel}=await db.from('blogs').select('id,title,slug,intro,type').eq('published',true).eq('access_level','public').neq('id',publicResult.data.id).limit(3).order('published_at',{ascending:false});
     renderArticle(publicResult.data,rel||[]);
-    if(isAdmin)addAdminViewToolbar('public');
+    if(isAdmin)addAdminViewToolbar('public',publicResult.data?.id||teaser?.id);
     return;
   }
 
   if(teaser){
     if(!approved||adminView==='public'){
       renderMemberTeaser(teaser);
-      if(isAdmin)addAdminViewToolbar('public');
+      if(isAdmin)addAdminViewToolbar('public',publicResult.data?.id||teaser?.id);
       return;
     }
     const memberResult=await db.from('blogs').select('*,countries(name)').eq('id',teaser.id).eq('published',true).maybeSingle();
     if(memberResult.error||!memberResult.data){renderError('Je account heeft geen toegang tot de volledige inhoud. Controleer of je HN-lidmaatschap is goedgekeurd.');return}
     const {data:rel}=await db.from('blogs').select('id,title,slug,intro,type').eq('published',true).eq('access_level','public').neq('id',memberResult.data.id).limit(3).order('published_at',{ascending:false});
     renderArticle(memberResult.data,rel||[]);
-    if(isAdmin)addAdminViewToolbar(adminView);
+    if(isAdmin)addAdminViewToolbar(adminView,adminResult.data.id);
     return;
   }
 
   renderError('Dit verhaal bestaat niet of is niet gepubliceerd.');
-  if(isAdmin)addAdminViewToolbar(adminView||'admin');
+  if(isAdmin)addAdminViewToolbar(adminView||'admin',teaser?.id);
 }
 
 /* Foutpagina */
@@ -639,28 +639,31 @@ function renderError(msg){
   </div>`;
 }
 
-function addAdminViewToolbar(activeView){
-  const root=document.getElementById('articleRoot');
-  if(!root||document.getElementById('hnAdminViewToolbar'))return;
-  const options=[['admin','Beheer'],['public','Openbare weergave'],['members','Ledenweergave']];
-  const bar=document.createElement('div');
-  bar.id='hnAdminViewToolbar';
-  bar.setAttribute('role','region');
-  bar.setAttribute('aria-label','Voorbeeldweergave voor beheerder');
-  bar.style.cssText='position:sticky;top:0;z-index:2500;display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 16px;background:#fff;border:1px solid rgba(104,74,37,.2);box-shadow:0 5px 18px rgba(50,30,10,.12);font:13px system-ui,sans-serif;color:#684a25';
-  const label=document.createElement('strong');
-  label.textContent='Beheer · Bekijk als:';
-  const select=document.createElement('select');
-  select.setAttribute('aria-label','Kies weergave');
-  select.style.cssText='padding:8px 12px;border:1px solid #c9a227;border-radius:9px;background:#fff;color:#684a25;font:inherit';
+function addAdminViewToolbar(activeView,articleId){
+  if(document.getElementById('hnAdminViewToolbar'))return;
+  const options=[['admin','Beheermodus'],['public','Openbare weergave'],['members','Ledenweergave']];
+  const dock=document.createElement('div');
+  dock.id='hnAdminViewToolbar';
+  dock.setAttribute('role','region');
+  dock.setAttribute('aria-label','Pagina beheren');
+  dock.style.cssText='position:fixed;right:18px;bottom:calc(18px + env(safe-area-inset-bottom,0px));z-index:99999;font:13px system-ui,sans-serif;color:#684a25';
+  const style=document.createElement('style');
+  style.textContent='#hnAdminViewToolbar .hn-dock-trigger{border:1px solid rgba(201,162,39,.65);border-radius:999px;background:#684a25;color:#fff;padding:11px 16px;box-shadow:0 5px 22px rgba(35,24,12,.2);font:600 13px system-ui;cursor:pointer}#hnAdminViewToolbar .hn-dock-panel{display:none;width:min(290px,calc(100vw - 32px));margin-bottom:9px;padding:14px;background:#fff;border:1px solid rgba(104,74,37,.2);border-radius:16px;box-shadow:0 12px 38px rgba(35,24,12,.2)}#hnAdminViewToolbar.open .hn-dock-panel{display:grid;gap:11px}#hnAdminViewToolbar .hn-dock-panel label{font-weight:700}#hnAdminViewToolbar select,#hnAdminViewToolbar .hn-dock-link{box-sizing:border-box;width:100%;padding:10px 11px;border:1px solid rgba(104,74,37,.2);border-radius:9px;background:#fff;color:#684a25;font:inherit;text-decoration:none}#hnAdminViewToolbar .hn-dock-link.primary{background:#df842c;border-color:#df842c;color:#fff;font-weight:700;text-align:center}#hnAdminViewToolbar .hn-dock-hint{font-size:11px;color:#806d59;line-height:1.45}@media(max-width:600px){#hnAdminViewToolbar{right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px))}#hnAdminViewToolbar .hn-dock-trigger{padding:10px 14px}}';
+  const panel=document.createElement('div');panel.className='hn-dock-panel';
+  const heading=document.createElement('strong');heading.textContent='Pagina beheren';
+  const label=document.createElement('label');label.textContent='Bekijk de pagina als';
+  const select=document.createElement('select');select.setAttribute('aria-label','Kies weergave');
   options.forEach(([value,text])=>{const option=document.createElement('option');option.value=value;option.textContent=text;option.selected=value===activeView;select.appendChild(option)});
   select.addEventListener('change',()=>{const url=new URL(location.href);url.searchParams.set('hn_view',select.value);location.assign(url.pathname+url.search+url.hash)});
-  const back=document.createElement('a');
-  back.href='/admin-blogs';
-  back.textContent='Terug naar artikelbeheer ↗';
-  back.style.cssText='margin-left:auto;color:#684a25;text-decoration:underline;text-underline-offset:3px';
-  bar.append(label,select,back);
-  root.prepend(bar);
+  const edit=document.createElement('a');edit.className='hn-dock-link primary';edit.href='/admin-blogs?edit='+encodeURIComponent(articleId||'');edit.textContent='✎ Bewerk deze pagina';
+  const list=document.createElement('a');list.className='hn-dock-link';list.href='/admin-blogs';list.textContent='Alle verhalen beheren';
+  const hint=document.createElement('div');hint.className='hn-dock-hint';hint.textContent='De voorbeeldweergave verandert niets aan de echte toegangsinstelling. Die pas je aan via de editor.';
+  panel.append(heading,label,select,edit,list,hint);
+  const trigger=document.createElement('button');trigger.type='button';trigger.className='hn-dock-trigger';trigger.textContent='⚙ Beheer';
+  trigger.setAttribute('aria-expanded','false');
+  trigger.addEventListener('click',()=>{const open=dock.classList.toggle('open');trigger.setAttribute('aria-expanded',String(open))});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'){dock.classList.remove('open');trigger.setAttribute('aria-expanded','false')}});
+  dock.append(style,panel,trigger);document.body.appendChild(dock);
 }
 
 function renderMemberTeaser(teaser){
@@ -671,7 +674,7 @@ function renderMemberTeaser(teaser){
   const description=pageTitle+' is een besloten verhaal op Hijrah Netwerk.'+(publicTeaser?' '+publicTeaser:' Word lid om het volledige verhaal te lezen.');
   document.getElementById('pageTitle').textContent=pageTitle+' — Hijrah Netwerk';
   setPageMeta('pageMeta','content',description.slice(0,200));
-  document.getElementById('pageRobots').setAttribute('content','index,follow');
+  setPageMeta('pageRobots','content','index,follow');
   setPageMeta('pageCanonical','href',canonicalUrl);
   setPageMeta('pageOgTitle','content',pageTitle+' — Hijrah Netwerk');
   setPageMeta('pageOgDescription','content',description.slice(0,200));
