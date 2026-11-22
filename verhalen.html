@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Verhalen & Interviews — Hijrah Netwerk</title>
-<meta name="description" content="Persoonlijke verhalen, interviews en ervaringen van mensen die de stap naar emigratie hebben gezet.">
+<title>Ervaringen & Interviews — Hijrah Netwerk</title>
+<meta name="description" content="Ervaringen, interviews en artikelen van mensen die de stap naar emigratie hebben gezet.">
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="canonical" href="https://hijrah-netwerk.vercel.app/verhalen">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -375,17 +375,17 @@ button,input,select{font:inherit;cursor:pointer}
 
   <div class="wrap">
     <div class="hero-inner hn-reveal">
-      <div class="eyebrow">✦ Verhalen, interviews & artikelen</div>
+      <div class="eyebrow">✦ Ervaringen, interviews & artikelen</div>
       <h1>Ervaringen en kennis<br><span>uit de praktijk.</span></h1>
-      <p>Persoonlijke verhalen, verdiepende interviews, artikelen, blogs en praktische gidsen over emigreren en leven in een islamitisch land.</p>
+      <p>Lees ervaringen van emigranten, verdiepende interviews, artikelen, blogs en praktische gidsen over emigreren en leven in een islamitisch land.</p>
       <div class="hero-stats">
         <div class="stat"><span class="stat-n" id="stat-total">—</span><span class="stat-l">Publicaties</span></div>
         <div class="stat"><span class="stat-n" id="stat-landen">—</span><span class="stat-l">Landen</span></div>
         <div class="stat"><span class="stat-n" id="stat-interviews">—</span><span class="stat-l">Interviews</span></div>
       </div>
       <div class="hero-actions">
-        <a class="btn btn-primary" href="/bijdragen?type=experience">✍ Deel jouw verhaal</a>
-        <a class="btn btn-ghost" href="#verhalen">Lees verhalen ↓</a>
+        <a class="btn btn-primary" href="/bijdragen?type=experience">✍ Deel jouw ervaring</a>
+        <a class="btn btn-ghost" href="#verhalen">Bekijk ervaringen ↓</a>
       </div>
     </div>
   </div>
@@ -399,7 +399,7 @@ button,input,select{font:inherit;cursor:pointer}
     <div class="filter-inner">
       <div class="filter-tabs" id="typeTabs">
         <button class="tab active" data-type="">Alles</button>
-        <button class="tab" data-type="verhaal">✈ Verhalen</button>
+        <button class="tab" data-type="verhaal">✈ Ervaringen</button>
         <button class="tab" data-type="interview">🎙 Interviews</button>
         <button class="tab" data-type="ervaring">💬 Ervaringen</button>
         <button class="tab" data-type="artikel">📚 Artikelen</button>
@@ -423,13 +423,13 @@ button,input,select{font:inherit;cursor:pointer}
       </div>
       <div class="search-box">
         <span class="search-icon">⌕</span>
-        <input type="search" id="zoekInput" placeholder="Zoek in verhalen…" autocomplete="off">
+        <input type="search" id="zoekInput" placeholder="Zoek in ervaringen…" autocomplete="off">
       </div>
     </div>
   </div>
 </div>
 
-<!-- VERHALEN GRID -->
+<!-- ERVARINGEN GRID -->
 <section class="section" id="verhalen">
   <div class="wrap">
     <div class="grid-head reveal">
@@ -439,7 +439,7 @@ button,input,select{font:inherit;cursor:pointer}
     <div class="blog-grid" id="bloGrid">
       <div class="state-box">
         <div class="spinner"></div>
-        <p>Verhalen laden…</p>
+        <p>Ervaringen laden…</p>
       </div>
     </div>
   </div>
@@ -450,9 +450,9 @@ button,input,select{font:inherit;cursor:pointer}
 <!-- CTA -->
 <section class="cta-section reveal">
   <div class="wrap">
-    <h2>Jouw verhaal telt.</h2>
+    <h2>Jouw ervaring telt.</h2>
     <p>Ben jij geëmigreerd of bezig met de voorbereiding? Deel jouw ervaring en help anderen die dezelfde stap overwegen.</p>
-    <a class="btn btn-primary" href="/bijdragen?type=experience">Deel een verhaal of ervaring</a>
+    <a class="btn btn-primary" href="/bijdragen?type=experience">Deel jouw ervaring</a>
   </div>
 </section>
 
@@ -585,10 +585,10 @@ function render(){
     return true;
   });
 
-  document.getElementById('countBadge').textContent=list.length===1?'1 verhaal':`${list.length} verhalen`;
+  document.getElementById('countBadge').textContent=list.length===1?'1 ervaring':`${list.length} ervaringen`;
 
   if(!list.length){
-    grid.innerHTML=`<div class="state-box"><div class="state-icon">🧭</div><h3>Geen verhalen gevonden</h3><p>Probeer een andere zoekterm of filter.</p></div>`;
+    grid.innerHTML=`<div class="state-box"><div class="state-icon">🧭</div><h3>Geen ervaringen gevonden</h3><p>Probeer een andere zoekterm of filter.</p></div>`;
     return;
   }
 
@@ -636,7 +636,7 @@ async function init(){
   const db=window.hijrahSupabase;
   const grid=document.getElementById('bloGrid');
   if(!db){
-    grid.innerHTML='<div class="state-box"><div class="state-icon">⚠️</div><h3>Verhalen tijdelijk niet beschikbaar</h3><p>De verbinding met de verhalenbank kon niet worden gemaakt. Probeer het later opnieuw.</p></div>';
+    grid.innerHTML='<div class="state-box"><div class="state-icon">⚠️</div><h3>Ervaringen tijdelijk niet beschikbaar</h3><p>De verbinding met de verhalenbank kon niet worden gemaakt. Probeer het later opnieuw.</p></div>';
     document.getElementById('countBadge').textContent='Laden mislukt';
     updateStats([]);
     return;
@@ -650,8 +650,8 @@ async function init(){
     .order('published_at',{ascending:false});
 
   if(publicResult.error){
-    console.error('[HN verhalen] Publieke publicaties konden niet worden geladen:',publicResult.error);
-    grid.innerHTML='<div class="state-box"><div class="state-icon">⚠️</div><h3>Verhalen konden niet worden geladen</h3><p>Er ging iets mis bij het ophalen van de publicaties. Probeer de pagina opnieuw te laden.</p></div>';
+    console.error('[HN ervaringen] Publieke publicaties konden niet worden geladen:',publicResult.error);
+    grid.innerHTML='<div class="state-box"><div class="state-icon">⚠️</div><h3>Ervaringen konden niet worden geladen</h3><p>Er ging iets mis bij het ophalen van de publicaties. Probeer de pagina opnieuw te laden.</p></div>';
     document.getElementById('countBadge').textContent='Laden mislukt';
     updateStats([]);
     return;
@@ -667,7 +667,7 @@ async function init(){
       const profile=profileResult.data||{};
       approved=profile.role==='admin'||profile.application_status==='approved';
     }
-  }catch(e){console.warn('[HN verhalen] Lidstatus kon niet worden gecontroleerd:',e)}
+  }catch(e){console.warn('[HN ervaringen] Lidstatus kon niet worden gecontroleerd:',e)}
 
   if(approved){
     const memberResult=await db.from('blogs')
@@ -676,14 +676,14 @@ async function init(){
       .eq('access_level','members')
       .order('published_at',{ascending:false});
     if(memberResult.error){
-      console.warn('[HN verhalen] Ledenpublicaties konden niet worden geladen:',memberResult.error);
+      console.warn('[HN ervaringen] Ledenpublicaties konden niet worden geladen:',memberResult.error);
     }else{
       visible=visible.concat(memberResult.data||[]);
     }
   }else{
     const teaserResult=await db.rpc('hn_public_blog_member_teasers');
     if(teaserResult.error){
-      console.warn('[HN verhalen] Ledenpreviews konden niet worden geladen:',teaserResult.error);
+      console.warn('[HN ervaringen] Ledenpreviews konden niet worden geladen:',teaserResult.error);
     }else if(Array.isArray(teaserResult.data)){
       const teasers=teaserResult.data.map(t=>({
         title:t.title,
