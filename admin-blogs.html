@@ -569,7 +569,7 @@ button,input,select,textarea{font:inherit;cursor:pointer}
         <div class="preview-card">
           <div class="preview-cover" id="prevCover">🧭</div>
           <div class="preview-body">
-            <div class="preview-type" id="prevType">✈ Verhaal</div>
+            <div class="preview-type" id="prevType">✈ Ervaring</div>
             <div class="preview-title" id="prevTitle">Titel van de publicatie</div>
             <div class="preview-intro" id="prevIntro">Kort intro verschijnt hier…</div>
           </div>
@@ -687,7 +687,7 @@ button,input,select,textarea{font:inherit;cursor:pointer}
 const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 const slug=s=>String(s||'').toLowerCase().trim().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
 const $=id=>document.getElementById(id);
-const typeLabel=t=>({verhaal:'✈ Verhaal',interview:'🎙 Interview',ervaring:'💬 Ervaring',artikel:'📚 Artikel',blog:'✍ Blog',gids:'🧭 Praktische gids'}[t]||editorOptions.type?.find(o=>o.option_value===t)?.option_label||t);
+const typeLabel=t=>({verhaal:'✈ Ervaring',interview:'🎙 Interview',ervaring:'💬 Ervaring',artikel:'📚 Artikel',blog:'✍ Blog',gids:'🧭 Praktische gids'}[t]||editorOptions.type?.find(o=>o.option_value===t)?.option_label||t);
 const faseLabel=f=>({orienteren:'Oriënteren',voorbereiden:'Voorbereiden',integreren:'Integreren',terugkeren:'Terugkeren'}[f]||f);
 
 let db,allBlogs=[],countries=[],deleteTarget=null,editorOptions={type:[],fase:[],verification_status:[]};
@@ -1121,7 +1121,7 @@ $('btnSave').addEventListener('click',async()=>{
     return;
   }
   st.textContent='Opgeslagen!';st.className='modal-status ok';
-  toast(id?'Wijzigingen opgeslagen':'Nieuw verhaal aangemaakt');
+  toast(id?'Wijzigingen opgeslagen':'Nieuwe publicatie aangemaakt');
   closeModal();
   await loadBlogs();
 });
