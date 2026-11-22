@@ -417,6 +417,18 @@ function getSlug(){
   return parts[parts.length-1]||'';
 }
 
+/* Meta-elementen veilig aanpassen: ontbrekende head-tags mogen het artikel niet blokkeren. */
+function setPageMeta(id,attribute,value){
+  const el=document.getElementById(id);
+  if(el) el.setAttribute(attribute,value);
+  else console.warn('[HN artikel] Meta-element ontbreekt:',id);
+}
+function removePageMetaAttribute(id,attribute){
+  const el=document.getElementById(id);
+  if(el) el.removeAttribute(attribute);
+  else console.warn('[HN artikel] Meta-element ontbreekt:',id);
+}
+
 /* Render artikel */
 function renderArticle(b,related){
   const rt=articleReadingTime(b);
@@ -431,16 +443,16 @@ function renderArticle(b,related){
   const subtitle=introMatch?introMatch[1].trim():'';
   const introDisplay=(introMatch?introMatch[2]:rawIntro).trim();
   const description=String([subtitle,introDisplay].filter(Boolean).join(' ')||b.title||'Lees dit verhaal op Hijrah Netwerk.').replace(/\s+/g,' ').trim().slice(0,300);
-  document.getElementById('pageMeta').setAttribute('content',description);
-  document.getElementById('pageOgTitle').setAttribute('content',`${b.title} — Hijrah Netwerk`);
-  document.getElementById('pageOgDescription').setAttribute('content',description);
+  setPageMeta('pageMeta','content',description);
+  setPageMeta('pageOgTitle','content',`${b.title} — Hijrah Netwerk`);
+  setPageMeta('pageOgDescription','content',description);
   const canonicalUrl=location.origin+'/verhalen/'+encodeURIComponent(b.slug||getSlug());
-  document.getElementById('pageCanonical').setAttribute('href',canonicalUrl);
-  document.getElementById('pageOgUrl').setAttribute('content',canonicalUrl);
+  setPageMeta('pageCanonical','href',canonicalUrl);
+  setPageMeta('pageOgUrl','content',canonicalUrl);
   const restricted=b.access_level!=='public';
-  document.getElementById('pageRobots').setAttribute('content','index,follow');
+  setPageMeta('pageRobots','content','index,follow');
   const ogImage=document.getElementById('pageOgImage');
-  if(b.cover_url&&/^https?:\/\//i.test(b.cover_url)){ogImage.setAttribute('content',b.cover_url)}else{ogImage.removeAttribute('content')}
+  if(ogImage){if(b.cover_url&&/^https?:\/\//i.test(b.cover_url)){ogImage.setAttribute('content',b.cover_url)}else{ogImage.removeAttribute('content')}}
 
   document.getElementById('articleRoot').innerHTML=`
   <!-- COMPACTE ARTIKELHEADER -->
@@ -553,17 +565,35 @@ async function init(){
 
   let user=null;
   let approved=false;
+  let isAdmin=false;
   try{
     const sessionResult=await db.auth.getSession();
     user=sessionResult.data&&sessionResult.data.session&&sessionResult.data.session.user;
     if(user){
       const profileResult=await db.from('profiles').select('role,application_status').eq('id',user.id).maybeSingle();
       const profile=profileResult.data||{};
-      approved=profile.role==='admin'||profile.application_status==='approved';
+      isAdmin=profile.role==='admin';
+      approved=isAdmin||profile.application_status==='approved';
     }
   }catch(error){
     // Een sessie- of profielcontrole mag een openbare ledenpreview niet blokkeren.
     console.warn('[HN artikel] Lidstatus kon niet worden gecontroleerd:',error);
+  }
+
+  const requestedView=new URLSearchParams(location.search).get('hn_view');
+  const adminView=isAdmin?(['admin','public','members'].includes(requestedView)?requestedView:'admin'):null;
+
+  // Beheerders kunnen de volledige gepubliceerde inhoud bekijken; RLS blijft de toegangsgrens.
+  if(isAdmin&&adminView!=='public'){
+    try{
+      const adminResult=await db.from('blogs').select('*,countries(name)').eq('slug',slug).eq('published',true).maybeSingle();
+      if(adminResult.data){
+        const {data:rel}=await db.from('blogs').select('id,title,slug,intro,type').eq('published',true).eq('access_level','public').neq('id',adminResult.data.id).limit(3).order('published_at',{ascending:false});
+        renderArticle(adminResult.data,rel||[]);
+        addAdminViewToolbar(adminView,adminResult.data.id);
+        return;
+      }
+    }catch(error){console.warn('[HN artikel] Beheerquery gaf een fout:',error)}
   }
 
   // Eerst proberen als openbaar artikel te laden. De database-RLS blijft de echte toegangsgrens.
@@ -576,22 +606,26 @@ async function init(){
   if(publicResult&&publicResult.data){
     const {data:rel}=await db.from('blogs').select('id,title,slug,intro,type').eq('published',true).eq('access_level','public').neq('id',publicResult.data.id).limit(3).order('published_at',{ascending:false});
     renderArticle(publicResult.data,rel||[]);
+    if(isAdmin)addAdminViewToolbar('public',publicResult.data?.id||teaser?.id);
     return;
   }
 
   if(teaser){
-    if(!approved){
+    if(!approved||adminView==='public'){
       renderMemberTeaser(teaser);
+      if(isAdmin)addAdminViewToolbar('public',publicResult.data?.id||teaser?.id);
       return;
     }
     const memberResult=await db.from('blogs').select('*,countries(name)').eq('id',teaser.id).eq('published',true).maybeSingle();
     if(memberResult.error||!memberResult.data){renderError('Je account heeft geen toegang tot de volledige inhoud. Controleer of je HN-lidmaatschap is goedgekeurd.');return}
     const {data:rel}=await db.from('blogs').select('id,title,slug,intro,type').eq('published',true).eq('access_level','public').neq('id',memberResult.data.id).limit(3).order('published_at',{ascending:false});
     renderArticle(memberResult.data,rel||[]);
+    if(isAdmin)addAdminViewToolbar(adminView,memberResult.data.id);
     return;
   }
 
   renderError('Dit verhaal bestaat niet of is niet gepubliceerd.');
+  if(isAdmin)addAdminViewToolbar(adminView||'admin',teaser?.id);
 }
 
 /* Foutpagina */
@@ -605,6 +639,33 @@ function renderError(msg){
   </div>`;
 }
 
+function addAdminViewToolbar(activeView,articleId){
+  if(document.getElementById('hnAdminViewToolbar'))return;
+  const options=[['admin','Beheermodus'],['public','Openbare weergave'],['members','Ledenweergave']];
+  const dock=document.createElement('div');
+  dock.id='hnAdminViewToolbar';
+  dock.setAttribute('role','region');
+  dock.setAttribute('aria-label','Pagina beheren');
+  dock.style.cssText='position:fixed;right:18px;bottom:calc(18px + env(safe-area-inset-bottom,0px));z-index:99999;font:13px system-ui,sans-serif;color:#684a25';
+  const style=document.createElement('style');
+  style.textContent='#hnAdminViewToolbar .hn-dock-trigger{border:1px solid rgba(201,162,39,.65);border-radius:999px;background:#684a25;color:#fff;padding:11px 16px;box-shadow:0 5px 22px rgba(35,24,12,.2);font:600 13px system-ui;cursor:pointer}#hnAdminViewToolbar .hn-dock-panel{display:none;width:min(290px,calc(100vw - 32px));margin-bottom:9px;padding:14px;background:#fff;border:1px solid rgba(104,74,37,.2);border-radius:16px;box-shadow:0 12px 38px rgba(35,24,12,.2)}#hnAdminViewToolbar.open .hn-dock-panel{display:grid;gap:11px}#hnAdminViewToolbar .hn-dock-panel label{font-weight:700}#hnAdminViewToolbar select,#hnAdminViewToolbar .hn-dock-link{box-sizing:border-box;width:100%;padding:10px 11px;border:1px solid rgba(104,74,37,.2);border-radius:9px;background:#fff;color:#684a25;font:inherit;text-decoration:none}#hnAdminViewToolbar .hn-dock-link.primary{background:#df842c;border-color:#df842c;color:#fff;font-weight:700;text-align:center}#hnAdminViewToolbar .hn-dock-hint{font-size:11px;color:#806d59;line-height:1.45}@media(max-width:600px){#hnAdminViewToolbar{right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px))}#hnAdminViewToolbar .hn-dock-trigger{padding:10px 14px}}';
+  const panel=document.createElement('div');panel.className='hn-dock-panel';
+  const heading=document.createElement('strong');heading.textContent='Pagina beheren';
+  const label=document.createElement('label');label.textContent='Bekijk de pagina als';
+  const select=document.createElement('select');select.setAttribute('aria-label','Kies weergave');
+  options.forEach(([value,text])=>{const option=document.createElement('option');option.value=value;option.textContent=text;option.selected=value===activeView;select.appendChild(option)});
+  select.addEventListener('change',()=>{const url=new URL(location.href);url.searchParams.set('hn_view',select.value);location.assign(url.pathname+url.search+url.hash)});
+  const edit=document.createElement('a');edit.className='hn-dock-link primary';edit.href='/admin-blogs?edit='+encodeURIComponent(articleId||'');edit.textContent='✎ Bewerk deze pagina';
+  const list=document.createElement('a');list.className='hn-dock-link';list.href='/admin-blogs';list.textContent='Alle verhalen beheren';
+  const hint=document.createElement('div');hint.className='hn-dock-hint';hint.textContent='De voorbeeldweergave verandert niets aan de echte toegangsinstelling. Die pas je aan via de editor.';
+  panel.append(heading,label,select,edit,list,hint);
+  const trigger=document.createElement('button');trigger.type='button';trigger.className='hn-dock-trigger';trigger.textContent='⚙ Beheer';
+  trigger.setAttribute('aria-expanded','false');
+  trigger.addEventListener('click',()=>{const open=dock.classList.toggle('open');trigger.setAttribute('aria-expanded',String(open))});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'){dock.classList.remove('open');trigger.setAttribute('aria-expanded','false')}});
+  dock.append(style,panel,trigger);document.body.appendChild(dock);
+}
+
 function renderMemberTeaser(teaser){
   const canonicalUrl=location.origin+'/verhalen/'+encodeURIComponent(teaser.slug||getSlug());
   const pageTitle=String(teaser.title||'Verhaal voor leden');
@@ -612,13 +673,13 @@ function renderMemberTeaser(teaser){
   const publicTeaser=previewMode==='teaser'?String(teaser.member_preview_text||'').trim():'';
   const description=pageTitle+' is een besloten verhaal op Hijrah Netwerk.'+(publicTeaser?' '+publicTeaser:' Word lid om het volledige verhaal te lezen.');
   document.getElementById('pageTitle').textContent=pageTitle+' — Hijrah Netwerk';
-  document.getElementById('pageMeta').setAttribute('content',description.slice(0,200));
-  document.getElementById('pageRobots').setAttribute('content','index,follow');
-  document.getElementById('pageCanonical').setAttribute('href',canonicalUrl);
-  document.getElementById('pageOgTitle').setAttribute('content',pageTitle+' — Hijrah Netwerk');
-  document.getElementById('pageOgDescription').setAttribute('content',description.slice(0,200));
-  document.getElementById('pageOgUrl').setAttribute('content',canonicalUrl);
-  document.getElementById('pageOgImage').removeAttribute('content');
+  setPageMeta('pageMeta','content',description.slice(0,200));
+  setPageMeta('pageRobots','content','index,follow');
+  setPageMeta('pageCanonical','href',canonicalUrl);
+  setPageMeta('pageOgTitle','content',pageTitle+' — Hijrah Netwerk');
+  setPageMeta('pageOgDescription','content',description.slice(0,200));
+  setPageMeta('pageOgUrl','content',canonicalUrl);
+  removePageMetaAttribute('pageOgImage','content');
   document.getElementById('articleRoot').innerHTML=`
     <section class="art-hero">
       <div class="art-hero-overlay"></div>
