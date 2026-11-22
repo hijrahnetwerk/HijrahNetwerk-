@@ -470,7 +470,7 @@ let activeLand='';
 let zoekTerm='';
 
 /* ── RENDER HELPERS ── */
-function typeLabel(t){return{verhaal:'✈ Verhaal',interview:'🎙 Interview',ervaring:'💬 Ervaring',artikel:'📚 Artikel',blog:'✍ Blog',gids:'🧭 Praktische gids'}[t]||t}
+function typeLabel(t){return{verhaal:'✈ Ervaring',interview:'🎙 Interview',ervaring:'💬 Ervaring',artikel:'📚 Artikel',blog:'✍ Blog',gids:'🧭 Praktische gids'}[t]||t}
 function faseLabel(f){return{orienteren:'Oriënteren',voorbereiden:'Voorbereiden',integreren:'Integreren',terugkeren:'Terugkeren'}[f]||f}
 function readTime(content){
   const words=(content||'').split(/\s+/).length;
@@ -636,7 +636,7 @@ async function init(){
   const db=window.hijrahSupabase;
   const grid=document.getElementById('bloGrid');
   if(!db){
-    grid.innerHTML='<div class="state-box"><div class="state-icon">⚠️</div><h3>Ervaringen tijdelijk niet beschikbaar</h3><p>De verbinding met de verhalenbank kon niet worden gemaakt. Probeer het later opnieuw.</p></div>';
+    grid.innerHTML='<div class="state-box"><div class="state-icon">⚠️</div><h3>Ervaringen tijdelijk niet beschikbaar</h3><p>De verbinding met de ervaringenbank kon niet worden gemaakt. Probeer het later opnieuw.</p></div>';
     document.getElementById('countBadge').textContent='Laden mislukt';
     updateStats([]);
     return;
@@ -691,7 +691,7 @@ async function init(){
         type:t.type,
         intro:t.member_preview_mode==='teaser'&&t.member_preview_text
           ?t.member_preview_text
-          :'Dit verhaal is alleen beschikbaar voor goedgekeurde HN-leden.',
+          :'Deze ervaring is alleen beschikbaar voor goedgekeurde HN-leden.',
         author_name:'Hijrah Netwerk',
         published_at:t.published_at,
         access_level:'members',
