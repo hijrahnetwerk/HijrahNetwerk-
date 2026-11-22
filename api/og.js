@@ -70,6 +70,16 @@ export default async function handler(request) {
           const rows = await response.json();
           topic = Array.isArray(rows) ? rows[0] || null : null;
         }
+        if (!topic) {
+          endpoint.searchParams.set('slug', 'like.' + slug + '-*');
+          const aliasResponse = await fetch(endpoint, {
+            headers: { apikey: supabaseKey, Authorization: 'Bearer ' + supabaseKey }
+          });
+          if (aliasResponse.ok) {
+            const aliasRows = await aliasResponse.json();
+            topic = Array.isArray(aliasRows) ? aliasRows[0] || null : null;
+          }
+        }
       }
     } catch (_) {
       topic = null;
