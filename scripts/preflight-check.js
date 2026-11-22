@@ -130,6 +130,11 @@ if (!adminCmsScript.includes("function esc(") ||
     !adminCmsScript.includes("upsert({ key: 'privacy_contact', value: value }")) {
   failures.push('HN Beheercentrum must escape database content, support page-list interactions, and preserve privacy settings saving.');
 }
+if (!buildSource.includes("const isPublicAuthPage = ['login.html','register.html','reset-password.html','update-password.html'].includes(file)") ||
+    !buildSource.includes("if (!isPublicAuthPage && !html.includes(copyProtectionTag))") ||
+    !buildSource.includes("!isPublicAuthPage && !html.includes('/assets/hn-admin-bar.js")) {
+  failures.push('Public account pages must not receive private-preview, copy-protection, or admin-bar scripts.');
+}
 if (!registration.includes('id="register-form"') ||
     !registration.includes('hnSignUp(email,password,first,last,redirect)') ||
     !registration.includes('blijft in afwachting')) {
